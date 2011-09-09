@@ -1,0 +1,1 @@
+jamp +set fs_game "OpenRP"
