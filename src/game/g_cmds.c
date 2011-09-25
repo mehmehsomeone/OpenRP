@@ -3476,16 +3476,16 @@ void Cmd_openrpModAdmin_f(gentity_t *ent)
 
 	if(strcmp(argS, Pass1) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 1 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 1 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 1 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 1 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_1;
 		return;
 	}
 
 	if(strcmp(argS, Pass2) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 2 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 2 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 2 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 2 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_2;
 		return;
 	}
@@ -3493,24 +3493,24 @@ void Cmd_openrpModAdmin_f(gentity_t *ent)
 
 	if(strcmp(argS, Pass3) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 3 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 3 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 3 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 3 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_3;
 		return;
 	}
 
 		if(strcmp(argS, Pass4) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 4 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 4 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 4 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 4 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_4;
 		return;
 	}
 
 	if(strcmp(argS, Pass5) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 5 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 5 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 5 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 5 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_5;
 		return;
 	}
@@ -3518,23 +3518,23 @@ void Cmd_openrpModAdmin_f(gentity_t *ent)
 
 	if(strcmp(argS, Pass6) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 6 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 6 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 6 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 6 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_6;
 		return;
 	}
 		if(strcmp(argS, Pass7) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 7 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 7 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 7 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 7 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_7;
 		return;
 	}
 
 	if(strcmp(argS, Pass8) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 8 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 8 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 8 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 8 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_8;
 		return;
 	}
@@ -3542,29 +3542,29 @@ void Cmd_openrpModAdmin_f(gentity_t *ent)
 
 	if(strcmp(argS, Pass9) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 9 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 9 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 9 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 9 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_9;
 		return;
 	}
 
 	if(strcmp(argS, Pass10) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^2Logged in Successfully as a Level 10 Admin\n\""));
-		CmdAll(va("print \"%s ^3has logged in as a ^2Level 10 ^3Admin!\n\"", ent->client->pers.netname));
+		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 10 admin.\n\""));
+		CmdAll(va("print \"%s ^3has logged in as a ^2level 10 ^3admin!\n\"", ent->client->pers.netname));
 		ent->client->sess.admin = ADMIN_10;
 		return;
 	}
 
 	if(!ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are already logged in as an Admin. Use /qwlogout if you wish to login again\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are already logged in as an admin. Use /qwlogout if you wish to login again.\n\""));
 		return;
 	}
 
 	if(!strcmp(argS, Pass1) == 0 || !strcmp(argS, Pass2) == 0 ||!strcmp(argS, Pass3) == 0 || !strcmp(argS, Pass4) == 0 ||!strcmp(argS, Pass5) == 0 || !strcmp(argS, Pass6) == 0 ||!strcmp(argS, Pass7) == 0 || !strcmp(argS, Pass8) == 0 ||!strcmp(argS, Pass9) == 0 || !strcmp(argS, Pass10) == 0)
 	{
-		CmdEnt(ent-g_entities, va("print \"^1Invalid ^3Password\nMake sure you entered it correctly\n\""));
+		CmdEnt(ent-g_entities, va("print \"^1Invalid ^3password.\nMake sure you entered it correctly.\n\""));
 		return;
 	}
 }
@@ -3583,7 +3583,7 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_GRANTTEMP))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -3620,7 +3620,7 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 	}
 	else if(!tent->client->sess.admin == ADMIN_NO_ADMIN && !tent->client->sess.admin == ADMIN_TEMP)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3Player is already logged in as an Administrator\n\"", name));
+		CmdEnt(ent-g_entities, va("print \"^3Player is already logged in as an administrator.\n\"", name));
 		return;
 	}
 
@@ -3638,7 +3638,7 @@ void Cmd_QwLogout_f(gentity_t *ent)
 	if(ent->client->sess.admin != ADMIN_NO_ADMIN) //If they are Admin
 	{
 		ent->client->sess.admin = ADMIN_NO_ADMIN; //They ain't now
-		CmdEnt(ent-g_entities, va("print \"^3Successfully ^1Logged Out\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3Successfully ^1logged out.\n\""));
 		return;
 	}
 	else
@@ -3662,7 +3662,7 @@ void Cmd_QwBan_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_BAN))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -3670,7 +3670,7 @@ void Cmd_QwBan_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to ban\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to ban.\n\""));
 		return;
 	}
 	if(ClientNumbersFromString(arg, pids) != 1)
@@ -3695,7 +3695,7 @@ void Cmd_QwBan_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, victim->client->sess.admin))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -3724,7 +3724,7 @@ void Cmd_QwKick_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_KICK))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -3732,7 +3732,7 @@ void Cmd_QwKick_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to kick\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to kick.\n\""));
 		return;
 	}
 
@@ -3752,7 +3752,7 @@ void Cmd_QwKick_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, victim->client->sess.admin))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -3775,7 +3775,7 @@ void Cmd_QwWarn_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_WARN))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -3797,7 +3797,7 @@ void Cmd_QwWarn_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, player2->client->sess.admin))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -3832,7 +3832,7 @@ void Cmd_QwTeleport_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -3859,25 +3859,25 @@ void Cmd_QwTeleport_f(gentity_t *ent)
 
 		if(player2->client->sess.adminProtect)
 		{
-			CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command on this player. Player has AdminProtect ON.\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command on this player. Player has admin protect on.\n\""));
 			return;
 		}
 
 		if(!player2->client)
 		{
-			CmdEnt(ent-g_entities, va("print \"^3Player does not exist\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3Player does not exist.\n\""));
 			return;
 		}
 
 		if(player2->client->ps.duelInProgress)
 		{
-			CmdEnt(ent-g_entities, va("print \"^3You cannot use this command on someone who is duelling\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3You cannot use this command on someone who is duelling.\n\""));
 			return;
 		}
 
 		if(!G_AdminControl(ent->client->sess.admin, player2->client->sess.admin))
 		{
-			CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 			return;
 		}
 
@@ -3921,25 +3921,25 @@ void Cmd_QwTeleport_f(gentity_t *ent)
 
 		if(player2->client->sess.adminProtect)
 		{
-			CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command on this player. Player has AdminProtect ON.\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command on this player. Player has admin protect on.\n\""));
 			return;
 		}
 
 		if(!player2->client)
 		{
-			CmdEnt(ent-g_entities, va("print \"^3Player does not exist\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3Player does not exist.\n\""));
 			return;
 		}
 
 		if(player2->client->ps.duelInProgress)
 		{
-			CmdEnt(ent-g_entities, va("print \"^3You cannot use this command on someone who is duelling\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3You cannot use this command on someone who is duelling.\n\""));
 			return;
 		}
 
 		if(!G_AdminControl(ent->client->sess.admin, player2->client->sess.admin))
 		{
-			CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 			return;
 		}
 
@@ -3981,7 +3981,7 @@ void Cmd_QwKill_f(gentity_t *ent)
 
 		if(!G_CheckAdmin(ent, ADMIN_KILL))
 		{
-			CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 			return;
 		}
 
@@ -4003,13 +4003,13 @@ void Cmd_QwKill_f(gentity_t *ent)
 
 		if(!target->client)
 		{
-			CmdEnt(ent-g_entities, va("print \"^3Player does not exist\n\""));
+			CmdEnt(ent-g_entities, va("print \"^3Player does not exist.\n\""));
 			return;
 		}
 
 	if(target->client->sess.adminProtect)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command on this player. Player has AdminProtect ON.\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command on this player. Player has admin protect on.\n\""));
 		return;
 	}
 
@@ -4021,7 +4021,7 @@ void Cmd_QwKill_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, target->client->sess.admin))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4058,7 +4058,7 @@ void Cmd_QwAnnounce_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ANNOUNCE))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4067,13 +4067,13 @@ void Cmd_QwAnnounce_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the person to send the announcement too\nIf you wish to send it to all use -1\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the person to send the announcement to.\nIf you wish to send it to everyone use -1.\n\""));
 		return;
 	}
 
 	if(msg == "")
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You must type a message to send. Be sure to enclose your message within quotation marks ""MESSAGE""\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You must type a message to send. Make sure to enclose your message within quotation marks. Ie. ""Message.""\n\""));
 		return;
 	}
 
@@ -4102,7 +4102,7 @@ void Cmd_QwMute_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MUTE))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4110,7 +4110,7 @@ void Cmd_QwMute_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to Mute\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to mute.\n\""));
 		return;
 	}
 
@@ -4130,7 +4130,7 @@ void Cmd_QwMute_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4156,7 +4156,7 @@ void Cmd_QwUnMute_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MUTE))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nLogin to use this command.\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4190,7 +4190,7 @@ void Cmd_QwUnMute_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4216,7 +4216,7 @@ void Cmd_QwSleep_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nLogin to use this command.\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4250,7 +4250,7 @@ void Cmd_QwSleep_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4289,7 +4289,7 @@ void Cmd_QwUnsleep_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nLogin to use this command.\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4297,7 +4297,7 @@ void Cmd_QwUnsleep_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to Revive\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to unsleep.\n\""));
 		return;
 	}
 
@@ -4317,19 +4317,19 @@ void Cmd_QwUnsleep_f(gentity_t *ent)
 
 	if(!tent->client->sess.state & PLAYER_MUTE)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3This player is not Stunned\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3This player is not sleeping.\n\""));
 		return;
 	}
 
 	if(tent->client->ps.duelInProgress)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot use this command on someone who is duelling\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You cannot use this command on someone who is duelling.\n\""));
 		return;
 	}
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4343,7 +4343,7 @@ void Cmd_QwUnsleep_f(gentity_t *ent)
 	tent->client->ps.quickerGetup = qfalse;
 
 	//Play a nice healing sound... Ahh
-	G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
+	//G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
 }
 
 /*
@@ -4361,7 +4361,7 @@ void Cmd_QwProtect_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_PROTECT))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nLogin to use this command.\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4400,7 +4400,7 @@ void Cmd_QwProtect_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command that player!\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You can't perform this command on this player,\n as that player is an admin whose level is\n equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4431,14 +4431,14 @@ void Cmd_QwAdminProtect_f(gentity_t * ent)
 	if(ent->client->sess.adminProtect)
 	{
 		ent->client->sess.adminProtect = qfalse;
-		CmdEnt(ent-g_entities, va("print \"adminProtect 0 (OFF)\n\""));
+		CmdEnt(ent-g_entities, va("print \"Admin protect has been turned off.\n\""));
 		return;
 	}
 
 	if(!ent->client->sess.adminProtect)
 	{
 		ent->client->sess.adminProtect = qtrue;
-		CmdEnt(ent-g_entities, va("print \"adminProtect 1 (ON)\n\""));
+		CmdEnt(ent-g_entities, va("print \"Admin protect has been turned on.\n\""));
 		return;
 	}
 }
@@ -4494,7 +4494,7 @@ void Cmd_QwAdminWhois_f(gentity_t *ent)
 			if(other->client->sess.admin != ADMIN_NO_ADMIN)
 			{
 				{
-					CmdEnt(ent-g_entities, va("print \"%s ^2Admin Level ^3%i\n\"", other->client->pers.netname, (other->client->sess.admin-1)));
+					CmdEnt(ent-g_entities, va("print \"%s ^2Admin level ^3%i\n\"", other->client->pers.netname, (other->client->sess.admin-1)));
 				}
 			}
 		}
@@ -4531,7 +4531,7 @@ void Cmd_QwAllWeapons_f(gentity_t *ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_MERC))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nLogin to use this command.\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4586,13 +4586,13 @@ void Cmd_QwScale_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to Scale\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the player you wish to scale.\n\""));
 		return;
 	}
 
 	if(atoi(scale) > 999 || atoi(scale) < 0)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3Please choose a number between 0 and 999\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3Please choose a number between 0 and 999.\n\""));
 		return;
 	}
 
@@ -4606,7 +4606,7 @@ void Cmd_QwScale_f(gentity_t *ent)
 
 	if(tent->client->sess.adminProtect)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command on this player. Player has AdminProtect ON.\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You cannot perform this command on this player. Player has admin protect on.\n\""));
 		return;
 	}
 
@@ -4639,7 +4639,7 @@ void Cmd_Me_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You must type a message. Make sure it is enclosed within quotations marks. """"\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You must type a message. Make sure it is enclosed within quotations marks. ""Message.""\n\""));
 		return;
 	}
 
@@ -4724,14 +4724,8 @@ void Cmd_QwForceTeam_f(gentity_t *ent)
 	char arg1[MAX_STRING_CHARS]; 
 	char teamname[MAX_STRING_CHARS]; 
 	int clientid;
-		
-	if ( trap_Argc() != 3 )
-         { 
-            trap_SendServerCommand( ent-g_entities, "print \"Type in /help forceteam if you need help with this command.\n\"" ); 
-            return; 
-         }
 
-	else if ( g_gametype.integer >= GT_TEAM || g_gametype.integer == GT_FFA ) {	
+		 if ( g_gametype.integer >= GT_TEAM || g_gametype.integer == GT_FFA ) {	
 			trap_Argv( 1, arg1, sizeof( arg1 ) );
 			clientid = atoi( arg1 );
 			if (clientid == -1) 
@@ -4746,7 +4740,7 @@ void Cmd_QwForceTeam_f(gentity_t *ent)
          }
          if (!g_entities[clientid].inuse) 
          {
-            trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", arg1 ) ); 
+            trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active.\n\"", arg1 ) ); 
             return; 
 
          }
@@ -4765,10 +4759,7 @@ void Cmd_QwForceTeam_f(gentity_t *ent)
 			 || !Q_stricmp( teamname, "f" )) {
 			SetTeam(&g_entities[clientid], "free" );
 		}
-		else {
-			trap_SendServerCommand( ent-g_entities, "print \"Type in /help forceteam if you need help with this command.\n\"" ); 
-		}
-
+		
 		if (clientid == -1) 
          { 
             trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", arg1 ) ); 
@@ -4781,7 +4772,7 @@ void Cmd_QwForceTeam_f(gentity_t *ent)
          }  
          if (!g_entities[clientid].inuse) 
          {
-            trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", arg1 ) ); 
+            trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active.\n\"", arg1 ) ); 
             return; 
          }
 		 /*if (g_gametype.integer >= GT_TEAM && g_entities[clientid].r.svFlags & SVF_BOT){
@@ -4791,7 +4782,7 @@ void Cmd_QwForceTeam_f(gentity_t *ent)
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Wrong gametype! Must be FFA, TEAMFFA, SIEGE, or CTF\n\"") );
+		trap_SendServerCommand( ent-g_entities, va("print \"Wrong gametype! Must be FFA, TEAMFFA, SIEGE, or CTF.\n\"") );
 		return;
 	}
 	}
@@ -4809,7 +4800,7 @@ void Cmd_QwIP_f(gentity_t *ent)
 				
 	if(!G_CheckAdmin(ent, ADMIN_IP))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nLogin to use this command.\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 		   if ( trap_Argc() != 2 ) 
@@ -4837,7 +4828,7 @@ void Cmd_QwIP_f(gentity_t *ent)
          // either we have the client id or the string did not match 
          if (!g_entities[client_id].inuse) 
          { // check to make sure client slot is in use 
-            trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", arg1 ) ); 
+            trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active.\n\"", arg1 ) ); 
             return; 
          }
 		//Admins can see the IP address of each client
@@ -5049,7 +5040,7 @@ void ClientCommand( int clientNum ) {
 
 		if(!G_CheckAdmin(ent, ADMIN_GOD))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 		else
@@ -5060,7 +5051,7 @@ void ClientCommand( int clientNum ) {
 
 		if(!G_CheckAdmin(ent, ADMIN_NOTARGET))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 		else
@@ -5071,7 +5062,7 @@ void ClientCommand( int clientNum ) {
 
 		if(!G_CheckAdmin(ent, ADMIN_NOCLIP))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 		else
@@ -5082,7 +5073,7 @@ void ClientCommand( int clientNum ) {
 
 	if(!G_CheckAdmin(ent, ADMIN_NPC))
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command\nLogin to use this command\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 	else
