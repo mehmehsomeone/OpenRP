@@ -4487,14 +4487,14 @@ void Cmd_QwAdminWhois_f(gentity_t *ent)
 
 	for(i = 0; i < MAX_CLIENTS; i++)
 	{
-		other = &g_entities[i];
+		ent = &g_entities[i];
 
-		if(other->inuse && other->client)
+		if(ent->inuse && ent->client)
 		{
-			if(other->client->sess.admin != ADMIN_NO_ADMIN)
+			if(ent->client->sess.admin != ADMIN_NO_ADMIN)
 			{
 				{
-					CmdEnt(ent-g_entities, va("print \"%s ^2Admin level ^3%i\n\"", other->client->pers.netname, (other->client->sess.admin-1)));
+					CmdEnt(ent-g_entities, va("print \"%s ^2Admin level ^3%i\n\"", ent->client->pers.netname, (ent->client->sess.admin-1)));
 				}
 			}
 		}
@@ -5122,8 +5122,8 @@ void ClientCommand( int clientNum ) {
 		Cmd_QwAdminProtect_f(ent);
 	else if(Q_stricmp(cmd, "qwlogin") == 0)
 		Cmd_openrpModAdmin_f(ent);
-//	else if(Q_stricmp(cmd, "qwadminwhois") == 0)
-//		Cmd_QwAdminWhois_f(ent);
+	else if(Q_stricmp(cmd, "qwadminwhois") == 0)
+		Cmd_QwAdminWhois_f(ent);
 	else if(Q_stricmp(cmd, "qwlogout") == 0)
 		Cmd_QwLogout_f(ent);
 	else if(Q_stricmp(cmd, "qwkick") == 0)
