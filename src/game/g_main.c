@@ -218,7 +218,10 @@ vmCvar_t	g_powerDuelEndHealth;
 // DUEL_HEALTH
 vmCvar_t		g_showDuelHealths;
 
-//Admin Cvars Begin Here.
+//openrp Cvars Begin Here.
+
+//openrp Admin Cvars Begin Here.
+
 vmCvar_t		openrp_admin1Pass;
 vmCvar_t		openrp_admin2Pass; //I wonder what these do? :P
 vmCvar_t		openrp_admin3Pass;
@@ -233,7 +236,7 @@ vmCvar_t		openrp_warnLevel; //Sets the amount of warnings allowed
 vmCvar_t		openrp_motd;		//Sets the MOTD for the server
 vmCvar_t		openrp_duelOnlyServer; //Is the server Duel only?
 vmCvar_t		openrp_admin1Allow;
-vmCvar_t		openrp_admin2Allow; //Bitrates for Admins
+vmCvar_t		openrp_admin2Allow; //Bitvalues for Admins
 vmCvar_t		openrp_admin3Allow;
 vmCvar_t		openrp_admin4Allow;
 vmCvar_t		openrp_admin5Allow;
@@ -241,17 +244,22 @@ vmCvar_t		openrp_admin6Allow;
 vmCvar_t		openrp_admin7Allow;
 vmCvar_t		openrp_admin8Allow;
 vmCvar_t		openrp_admin9Allow;
-vmCvar_t		openrp_admin10Allow;;
-vmCvar_t		openrp_adminControl; //Determines whether lower level admins can admin higer levels etc.
+vmCvar_t		openrp_admin10Allow;
+vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
+
+//openrp Admin Cvars End Here.
 
 //Forums link in qwinfo.
-vmCvar_t openrp_forumslink ;
+vmCvar_t openrp_forumslink;
 
-//Admin Cvars End Here.
+//Prevent players from using /kill
+vmCvar_t openrp_playerkill;
 
 //[BlackNames]
 vmCvar_t	g_allowBlackNames;		// Allow clients to use black names
 //[/BlackNames]
+
+//openrp Cvars End Here.
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -494,8 +502,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_powerDuelStartHealth, "g_powerDuelStartHealth", "150", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_powerDuelEndHealth, "g_powerDuelEndHealth", "90", CVAR_ARCHIVE, 0, qtrue  },
 
-//openrp Server.cfg Things Begin Here.
-// hardcoded name, name used in server.cfg, value
+//OpenRP Server.cfg Things Begin Here.
+//Hardcoded name, Name used in server.cfg, Value
 	{ &openrp_admin1Pass, "openrp_admin1Pass", "admin1pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse  },
 	{ &openrp_admin2Pass, "openrp_admin2Pass", "admin2pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
 	{ &openrp_admin3Pass, "openrp_admin3Pass", "admin3pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
@@ -519,12 +527,14 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_admin9Allow, "openrp_admin9Allow", "1", 0 , 0, qtrue  },
 	{ &openrp_admin10Allow, "openrp_admin10Allow", "1", 0 , 0, qtrue  },
 	{ &openrp_adminControl, "openrp_adminControl", "1", CVAR_ARCHIVE, 0, qtrue  },
-	//openrp Server.cfg Things End Here.
+	{ &openrp_playerkill, "openrp_playerkill", "1", 0, 0, qtrue },
+
 
 	//[BlackNames]
 	//Toggles allowance of black names
 	{ &g_allowBlackNames, "g_allowBlackNames", "1", CVAR_ARCHIVE, 0, qtrue },
 	//[/BlackNames]
+	//OpenRP Server.cfg Things End Here.
 };
 
 // bk001129 - made static to avoid aliasing

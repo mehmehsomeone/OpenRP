@@ -523,9 +523,13 @@ void Cmd_Kill_f( gentity_t *ent ) {
 	if (ent->health <= 0) {
 		return;
 	}
+		if ( openrp_playerkill.integer == 0 )
+	{
+		return;
+	}
 
-	if ((g_gametype.integer == GT_DUEL || g_gametype.integer == GT_POWERDUEL) &&
-		level.numPlayingClients > 1 && !level.warmupTime)
+	else ((g_gametype.integer == GT_DUEL || g_gametype.integer == GT_POWERDUEL) &&
+		level.numPlayingClients > 1 && !level.warmupTime);
 	{
 		if (!g_allowDuelSuicide.integer)
 		{

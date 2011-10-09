@@ -1754,7 +1754,8 @@ extern	vmCvar_t	g_powerDuelEndHealth;
 
 extern vmCvar_t		g_showDuelHealths;
 
-//openrp Admin Cvars Begin Here.
+//OpenRP Cvars Begin Here.
+//OpenRP Admin Cvars Begin Here.
 extern vmCvar_t		openrp_admin1Pass;
 extern vmCvar_t		openrp_admin2Pass;
 extern vmCvar_t		openrp_admin3Pass;
@@ -1769,7 +1770,7 @@ extern vmCvar_t		openrp_warnLevel;
 extern vmCvar_t		openrp_motd;
 extern vmCvar_t		openrp_duelOnlyServer;
 extern vmCvar_t		openrp_admin1Allow;
-extern vmCvar_t		openrp_admin2Allow; //Bitrates for Admins
+extern vmCvar_t		openrp_admin2Allow; //Bitvalues for Admins
 extern vmCvar_t		openrp_admin3Allow;
 extern vmCvar_t		openrp_admin4Allow;
 extern vmCvar_t		openrp_admin5Allow; 
@@ -1778,12 +1779,15 @@ extern vmCvar_t		openrp_admin7Allow;
 extern vmCvar_t		openrp_admin8Allow; 
 extern vmCvar_t		openrp_admin9Allow;
 extern vmCvar_t		openrp_admin10Allow;
-extern vmCvar_t		openrp_adminControl; //Determines whether lower level admins can admin higer levels etc.
+extern vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
+//OpenRP Admin Cvars End Here.
 
-//FORUMS LINK IN QWINFO
-extern vmCvar_t openrp_forumslink ;
-//openrp Admin Cvars End Here.
+//Forums link in qwinfo.
+extern vmCvar_t openrp_forumslink;
 
+//Prevent players from using /kill
+extern vmCvar_t openrp_playerkill;
+//OpenRP Cvars End Here.
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
