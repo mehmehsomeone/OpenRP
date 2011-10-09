@@ -4511,10 +4511,10 @@ void Cmd_QwAdminWhois_f(gentity_t *ent)
 
 /*
 ======================
-Cmd_QwFullForce_f
+Cmd_QwEmpower_f
 ======================
 */
-void Cmd_QwFullForce_f(gentity_t *ent)
+void Cmd_QwEmpower_f(gentity_t *ent)
 {
 	ent->client->ps.trueNonJedi = qfalse;
 	ent->client->ps.trueJedi = qtrue;
@@ -5154,10 +5154,8 @@ void ClientCommand( int clientNum ) {
 		Cmd_QwDuels_f(ent);
 	else if(Q_stricmp(cmd, "qwgranttemp") == 0)
 		Cmd_QwGrantTempAdmin_f(ent);
-	else if(Q_stricmp(cmd, "qwemp") == 0)
-		Cmd_QwFullForce_f(ent);
-	else if(Q_stricmp(cmd, "qwallweapons") == 0)
-		Cmd_QwAllWeapons_f(ent);
+	else if(Q_stricmp(cmd, "qwempower") == 0)
+		Cmd_QwEmpower_f(ent);
 	else if(Q_stricmp(cmd, "qwengage_duel") == 0)
 		Cmd_EngageDuel_f(ent);
 	else if(Q_stricmp(cmd, "qwbitvalues") == 0)
