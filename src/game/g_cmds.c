@@ -4516,6 +4516,11 @@ Cmd_QwEmpower_f
 */
 void Cmd_QwEmpower_f(gentity_t *ent)
 {
+	if(!G_CheckAdmin(ent, ADMIN_EMPOWER))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
 	ent->client->ps.trueNonJedi = qfalse;
 	ent->client->ps.trueJedi = qtrue;
 	//make sure they only use the saber
@@ -4528,10 +4533,10 @@ void Cmd_QwEmpower_f(gentity_t *ent)
 
 /*
 ======================
-Cmd_QwAllWeapons_f
+Cmd_QwMerc_f
 ======================
 */
-void Cmd_QwAllWeapons_f(gentity_t *ent)
+void Cmd_QwMerc_f(gentity_t *ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_MERC))
 	{
@@ -5167,7 +5172,7 @@ void ClientCommand( int clientNum ) {
 	else if(Q_stricmp(cmd, "me") == 0)
 		Cmd_Me_f(ent);
 	else if(Q_stricmp(cmd, "qwmerc") == 0)
-		Cmd_QwAllWeapons_f(ent);
+		Cmd_QwMerc_f(ent);
 	else if(Q_stricmp(cmd, "qwannounce") == 0)
 		Cmd_QwAnnounce_f(ent);
 	//else if(Q_stricmp(cmd, "qwaddeffect") == 0)
