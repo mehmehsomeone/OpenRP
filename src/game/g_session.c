@@ -27,6 +27,7 @@ void G_WriteClientSessionData( gclient_t *client ) {
 	char		siegeClass[64];
 	char		saberType[64];
 	char		saber2Type[64];
+	char		myip[64];
 
 	strcpy(siegeClass, client->sess.siegeClass);
 
@@ -72,7 +73,14 @@ void G_WriteClientSessionData( gclient_t *client ) {
 		i++;
 	}
 
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s", 
+	strcpy(myip, client->sess.myip);
+
+	if (!myip[0])
+	{ //make sure there's at least something
+		strcpy(myip, "none");
+	}
+
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %s", 
 		client->sess.sessionTeam,
 		client->sess.spectatorTime,
 		client->sess.spectatorState,
@@ -87,7 +95,8 @@ void G_WriteClientSessionData( gclient_t *client ) {
 		client->sess.siegeDesiredTeam,
 		siegeClass,
 		saberType,
-		saber2Type
+		saber2Type,
+		myip
 		);
 
 	var = va( "session%i", client - level.clients );
@@ -128,9 +137,10 @@ void G_ReadSessionData( gclient_t *client ) {
 		&client->sess.selectedFP,
 		&client->sess.duelTeam,
 		&client->sess.siegeDesiredTeam,
-		client->sess.siegeClass,
-		client->sess.saberType,
-		client->sess.saber2Type
+		&client->sess.siegeClass,
+		&client->sess.saberType,
+		&client->sess.saber2Type,
+		&client->sess.myip
 		);
 
 	while (client->sess.siegeClass[i])
@@ -278,6 +288,39 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot ) {
 	sess->saberType[0] = 0;
 	sess->saber2Type[0] = 0;
 
+	/*if(firstTime)
+	{//only reset skillpoints for new players.
+		sess->myip[0] = 0;
+	}
+	else
+	{//remember the data from the last time.
+		char	s[MAX_STRING_CHARS];
+		const char	*var;
+		int tempInt;
+		char tempChar[64];
+
+		var = va( "session%i", client - level.clients );
+		trap_Cvar_VariableStringBuffer( var, s, sizeof(s) );
+		sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %s",
+			&tempInt,                 // bk010221 - format
+			&tempInt,
+			&tempInt,              // bk010221 - format
+			&tempInt,
+			&tempInt,
+			&tempInt,
+			&tempInt,                   // bk010221 - format
+			&tempInt,
+			&tempInt,
+			&tempInt,
+			&tempInt,
+			&tempInt,
+			&tempChar,
+			&tempChar,
+			&tempChar,
+			&client->sess.myip
+			);
+	}
+*/
 	G_WriteClientSessionData( client );
 }
 

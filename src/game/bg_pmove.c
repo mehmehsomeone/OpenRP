@@ -4438,7 +4438,6 @@ Sets mins, maxs, and pm->ps->viewheight
 */
 static void PM_CheckDuck (void)
 {
-	trace_t	trace;
 
 	if ( pm->ps->m_iVehicleNum > 0 && pm->ps->m_iVehicleNum < ENTITYNUM_NONE )
 	{//riding a vehicle or are a vehicle
@@ -9806,7 +9805,13 @@ qboolean PM_WeaponOkOnVehicle( int weapon )
 	case WP_MELEE:
 	case WP_SABER:
 	case WP_BLASTER:
-	//case WP_THERMAL:
+	case WP_REPEATER:
+	case WP_BRYAR_PISTOL:
+	case WP_DEMP2:
+	case WP_THERMAL:
+	case WP_DET_PACK:
+	case WP_TRIP_MINE:
+	case WP_BRYAR_OLD:
 		return qtrue;
 		break;
 	}

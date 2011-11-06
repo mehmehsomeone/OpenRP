@@ -735,6 +735,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OpenRP.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\ICARUS\Q3_Interface.h"
 				>
 			</File>

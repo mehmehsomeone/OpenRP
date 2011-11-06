@@ -245,7 +245,9 @@ vmCvar_t		openrp_admin7Allow;
 vmCvar_t		openrp_admin8Allow;
 vmCvar_t		openrp_admin9Allow;
 vmCvar_t		openrp_admin10Allow;
+vmCvar_t		openrp_adminTempallow;
 vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
+
 
 //openrp Admin Cvars End Here.
 
@@ -516,7 +518,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_admin10Pass, "openrp_admin10Pass", "admin10pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse  },
 	{ &openrp_warnLevel, "openrp_warnLevel", "3", CVAR_ARCHIVE, 0, qfalse  },
 	{ &openrp_motd, "openrp_motd", "MOTD", CVAR_ARCHIVE, 0, qfalse  },
-	{ &openrp_admin1Allow, "openrp_admin1Allow", "1", 0 , 0, qtrue  },
+	{ &openrp_admin1Allow, "openrp_admin1Allow", "67108863", 0 , 0, qtrue  },
 	{ &openrp_admin2Allow, "openrp_admin2Allow", "1", 0 , 0, qtrue  },
 	{ &openrp_admin3Allow, "openrp_admin3Allow", "1", 0 , 0, qtrue  },
 	{ &openrp_admin4Allow, "openrp_admin4Allow", "1", 0 , 0, qtrue  },
@@ -526,6 +528,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_admin8Allow, "openrp_admin8Allow", "1", 0 , 0, qtrue  },
 	{ &openrp_admin9Allow, "openrp_admin9Allow", "1", 0 , 0, qtrue  },
 	{ &openrp_admin10Allow, "openrp_admin10Allow", "1", 0 , 0, qtrue  },
+	{ &openrp_adminTempallow, "openrp_adminTempallow", "1", 0, 0, qtrue },
 	{ &openrp_adminControl, "openrp_adminControl", "1", CVAR_ARCHIVE, 0, qtrue  },
 	{ &openrp_playerkill, "openrp_playerkill", "1", 0, 0, qtrue },
 

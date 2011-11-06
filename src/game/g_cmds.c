@@ -2,6 +2,7 @@
 //
 #include "g_local.h"
 #include "bg_saga.h"
+#include "OpenRP.h"
 
 #include "../ui/menudef.h"			// for the voice chats
 
@@ -1653,13 +1654,13 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 
 	G_LogPrintf( "tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, text );
 	G_Say( ent, target, SAY_TELL, text );
-
+/*	
 	if(ent->client->sess.admin != ADMIN_NO_ADMIN) //If they are Admin
 	{
 			trap_SendServerCommand( ent-g_entities, "print \"tell: %s to %s: %s\n\"",  ent->client->pers.netname, target->client->pers.netname, text  );
 			return;
 	}
-
+*/
 	// don't tell to the player self if it was already directed to this player
 	// also don't send the chat back to a bot
 	if ( ent != target && !(ent->r.svFlags & SVF_BOT)) {
@@ -1883,7 +1884,7 @@ int G_ClientNumberFromStrippedName ( const char* name )
 	return -1;
 }
 
-//openrp Items Begin Here.
+//OpenRP Items Begin Here.
 /*
 ================
 G_CompareStrings
@@ -2732,6 +2733,13 @@ void Cmd_SaberAttackCycle_f(gentity_t *ent)
 	{
 		return;
 	}
+
+	if ( ent->client->ps.weapon != WP_SABER )
+//if the client is not currently weilding a saber
+{
+    //leave this function
+    return;
+}
 	/*
 	if (ent->client->ps.weaponTime > 0)
 	{ //no switching attack level when busy
@@ -3245,14 +3253,14 @@ qboolean TryGrapple(gentity_t *ent)
 qboolean saberKnockOutOfHand(gentity_t *saberent, gentity_t *saberOwner, vec3_t velocity);
 #endif
 
-//openrp Functions Begin Here.
+//OpenRP Functions Begin Here.
 static void Cmd_QwInfo_f( gentity_t *ent )
 {
-	trap_SendServerCommand( ent-g_entities, "print \"^5OpenRP SVN-- info \n ------------------------------------------ \n Website: \n ------------------------------------------ \n Client Commands: \n qwinfo - Displays all of this information you are reading\n\"" );
+	trap_SendServerCommand( ent-g_entities, "print \"^5OpenRP SVN - info \n ------------------------------------------ \n Website: http://code.google.com/p/openrp/ \n ------------------------------------------ \n\n Client Commands: \nqwinfo\nqwregister\nqwsetclass\nqwchangeclass\nqwjetpack\nqwadminprotect\nme\n\n Admin Commands:\nqwlogin\nqwlogout\nqwgranttemp\nqwban\nqwkick\nqwwarn\nqwtele\nqwkill\nqwmute\nqwunmute\nqwsleep\nqwunsleep\nqwprotect\nqwempower\nqwbitvalues\nqwscale\nqwresetscale\nqwmerc\nqwannounce\nqwaddeffect\nqwforceteam\nqwip\nqwstatus\nqwweather\nqwmap\n\"" );
 	return;
 }
 
-void Cmd_QwChangeclass_f (gentity_t *ent)
+static void Cmd_QwChangeclass_f (gentity_t *ent)
 {
     char *name;
     //int i;
@@ -3264,20 +3272,20 @@ void Cmd_QwChangeclass_f (gentity_t *ent)
     Com_Printf("2nd parameter (%i chars) is %s\n", strlen(name), name);
 //this is just for debugging. remove it later when you feel it works properly.
 
-    if (Q_stricmp(name, "Student") == 0) {
+    if (!Q_stricmp(name, "Student")) {
         ent->client->pers.nextplayerclass = PCLASS_STUDENT;
     }
-    else if (Q_stricmp(name, "Guardian") == 0) {
+    else if (!Q_stricmp(name, "Guardian")) {
         ent->client->pers.nextplayerclass = PCLASS_GUARDIAN;
     }
-    else if (Q_stricmp(name, "Consular") == 0) {
+    else if (!Q_stricmp(name, "Consular")) {
         ent->client->pers.nextplayerclass = PCLASS_CONSULAR;
     }
 
-    else if (Q_stricmp(name, "Sentinel") == 0) {
+    else if (!Q_stricmp(name, "Sentinel")) {
         ent->client->pers.nextplayerclass = PCLASS_SENTINEL;
     }
-    else if (Q_stricmp(name, "Warrior") == 0) {
+    else if (!Q_stricmp(name, "Warrior")) {
         ent->client->pers.nextplayerclass = PCLASS_WARRIOR;
     }
     else {
@@ -3289,12 +3297,12 @@ void Cmd_QwChangeclass_f (gentity_t *ent)
     return;
 }
 
-void Cmd_QwSetclass_f (gentity_t *ent)
+static void Cmd_QwSetclass_f (gentity_t *ent)
 {
 return;
 }
 
-void Cmd_QwGrantpoints_f (gentity_t *ent)
+static void Cmd_QwGrantpoints_f (gentity_t *ent)
 {
 return;
 }
@@ -3304,7 +3312,7 @@ static void Cmd_QwRegister_f (gentity_t *ent)
 return;
 }
 
-static void Cmd_QwLogin_f (gentity_t *ent)
+static void Cmd_QwAccLogin_f (gentity_t *ent)
 {
 return;
 }
@@ -3334,6 +3342,47 @@ static void Cmd_QwJetpack_f (gentity_t *ent)
 		ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_JETPACK);
     }
    }
+
+static void Cmd_QwAdminProtect_f(gentity_t * ent)
+{
+	if(ent->client->sess.adminProtect)
+	{
+		ent->client->sess.adminProtect = qfalse;
+		CmdEnt(ent-g_entities, va("print \"Admin protect has been turned off.\n\""));
+		return;
+	}
+
+	if(!ent->client->sess.adminProtect)
+	{
+		ent->client->sess.adminProtect = qtrue;
+		CmdEnt(ent-g_entities, va("print \"Admin protect has been turned on.\n\""));
+		return;
+	}
+}
+
+static void Cmd_Me_f(gentity_t *ent)
+{
+	char msg[MAX_SAY_TEXT];
+	char name[64];
+	int color;
+	int j = 0;
+	gentity_t *other;
+	trap_Argv(1, msg, sizeof(msg));
+
+	if(trap_Argc() < 2)
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You must type a message. Make sure it is enclosed within quotations marks.\n\""));
+		return;
+	}
+
+	Com_sprintf (name, sizeof(name), "%s%c%c "EC, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, msg);
+	color = COLOR_YELLOW;
+
+	for (j = 0; j < level.maxclients; j++) {
+		other = &g_entities[j];
+		G_SayTo( ent, other, SAY_ALL, color, name, msg, NULL );
+	}
+}
 
 //openrp Functions End HERE.
 
@@ -3397,7 +3446,7 @@ qboolean G_CheckAdmin(gentity_t *ent, int command)
 	}
 	if(ent->client->sess.admin == ADMIN_TEMP)
 	{
-		Bitvalues = TEMP_CMDS;
+		Bitvalues = openrp_adminTempallow.integer;
 	}
 
 	//If the Bitvalues 0 then return false because no commands can be allowed if it's 0
@@ -3445,10 +3494,10 @@ qboolean G_AdminControl(int UserAdmin, int TargetAdmin)
 
 /*
 ======================
-Cmd_openrpModAdmin_f
+Cmd_OpenRPAdmin_f
 ======================
 */
-void Cmd_openrpModAdmin_f(gentity_t *ent)
+void Cmd_OpenRPAdmin_f(gentity_t *ent)
 {
 	char arg[1024];
 	char argS[1024];
@@ -3707,12 +3756,9 @@ void Cmd_QwBan_f(gentity_t *ent)
 	trap_SendConsoleCommand( EXEC_INSERT, va("addip %s", victim->client->sess.IP));
 	trap_DropClient(pids[0], "was ^1permanently banned.");
 
-	CmdAll(va("print \"IP: %s", ent->client->sess.IP));
-
+	CmdEnt(ent-g_entities, va("print \"IP: %s", ent->client->sess.IP));
 	
 }
-
-
 
 /*
 ======================
@@ -4051,9 +4097,9 @@ Cmd_QwAnnounce_f
 */
 void Cmd_QwAnnounce_f(gentity_t *ent)
 {
-	char msg[1024];
+	char msg[MAX_STRING_CHARS];
 //	char formatmsg[1024];
-	char name[1024];
+	char name[MAX_STRING_CHARS];
 	//char   *p;
 
 //	int pids[MAX_CLIENTS];
@@ -4427,67 +4473,19 @@ void Cmd_QwProtect_f(gentity_t *ent)
 
 /*
 =========================
-Cmd_QwAdminProtect_f
-=========================
-*/
-void Cmd_QwAdminProtect_f(gentity_t * ent)
-{
-	if(ent->client->sess.adminProtect)
-	{
-		ent->client->sess.adminProtect = qfalse;
-		CmdEnt(ent-g_entities, va("print \"Admin protect has been turned off.\n\""));
-		return;
-	}
-
-	if(!ent->client->sess.adminProtect)
-	{
-		ent->client->sess.adminProtect = qtrue;
-		CmdEnt(ent-g_entities, va("print \"Admin protect has been turned on.\n\""));
-		return;
-	}
-}
-
-/*
-=========================
-Cmd_QwDuels_f
-=========================
-*/
-void Cmd_QwDuels_f(gentity_t *ent)
-{
-	int i = 0;
-	gentity_t *other;
-
-	for(i = 0; i < MAX_CLIENTS; i++)
-	{
-		other = &g_entities[i];
-
-		if(other->inuse && other->client)
-		{
-			if(!duels[i])
-			{
-				CmdEnt(ent-g_entities, va("print \"%s ^3has not yet duelled.\n\"", other->client->pers.netname));
-			}
-			else
-			{
-				CmdEnt(ent-g_entities, va("print \"%s\"", duels[i]));
-			}
-		}
-		else
-		{
-			continue;
-		}
-	}
-}
-
-/*
-=========================
 Cmd_QwAdminWhois_f
 =========================
 */
 void Cmd_QwAdminWhois_f(gentity_t *ent)
 {
 	int i = 0;
-	gentity_t *other;
+
+	if(!G_CheckAdmin(ent, ADMIN_ADMINWHOIS))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
+
 
 	for(i = 0; i < MAX_CLIENTS; i++)
 	{
@@ -4562,6 +4560,12 @@ Cmd_QwResetScale_f
 */
 void Cmd_QwResetScale_f(gentity_t *ent)
 {
+	if(!G_CheckAdmin(ent, ADMIN_SCALE))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
+
 	ent->client->ps.iModelScale = 0;
 	ent->client->sess.Scale = 0;
 	ent->client->sess.Scaled = qfalse;
@@ -4586,6 +4590,12 @@ void Cmd_QwScale_f(gentity_t *ent)
 	char err[MAX_STRING_CHARS];
 	char scale[999];
 	gentity_t *tent;
+
+	if(!G_CheckAdmin(ent, ADMIN_SCALE))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
 
 //	char vert[MAX_STRING_CHARS];
 //	char range[MAX_STRING_CHARS];
@@ -4634,44 +4644,20 @@ void Cmd_QwScale_f(gentity_t *ent)
 
 /*
 ======================
-Cmd_Me_f
-======================
-*/
-void Cmd_Me_f(gentity_t *ent)
-{
-	char msg[MAX_SAY_TEXT];
-	char name[64];
-	int color;
-	int j = 0;
-	gentity_t *other;
-	trap_Argv(1, msg, sizeof(msg));
-
-	if(trap_Argc() < 2)
-	{
-		CmdEnt(ent-g_entities, va("print \"^3You must type a message. Make sure it is enclosed within quotations marks. ""Message.""\n\""));
-		return;
-	}
-
-	Com_sprintf (name, sizeof(name), "%s%c%c "EC, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, msg);
-	color = COLOR_YELLOW;
-
-	for (j = 0; j < level.maxclients; j++) {
-		other = &g_entities[j];
-		G_SayTo( ent, other, SAY_ALL, color, name, msg, NULL );
-	}
-}
-
-/*
-======================
 Cmd_QwBitvalues_f
 ======================
 */
 void Cmd_QwBitvalues_f(gentity_t *ent)
 {
-	CmdAll(va("print \"Admin 1: %i\nAdmin 2: %i\nAdmin 3 %i\nAdmin 4: %i\nAdmin 5: %i\n\"", openrp_admin1Allow.integer, openrp_admin2Allow.integer, openrp_admin3Allow.integer, openrp_admin4Allow.integer, openrp_admin5Allow.integer));
-	CmdAll (va("print \"Admin 6: %i\nAdmin 7: %i\nAdmin 8: %i\nAdmin 9: %i\nAdmin 10:%i\n\"", openrp_admin6Allow.integer, openrp_admin7Allow.integer, openrp_admin8Allow.integer, openrp_admin9Allow.integer, openrp_admin10Allow.integer));
-}
+	if(!G_CheckAdmin(ent, ADMIN_BITVALUES))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
 
+	CmdAll(va("print \"Admin 1: %i\nAdmin 2: %i\nAdmin 3 %i\nAdmin 4: %i\nAdmin 5: %i\n\"", openrp_admin1Allow.integer, openrp_admin2Allow.integer, openrp_admin3Allow.integer, openrp_admin4Allow.integer, openrp_admin5Allow.integer));
+	CmdAll (va("print \"Admin 6: %i\nAdmin 7: %i\nAdmin 8: %i\nAdmin 9: %i\nAdmin 10:%i\nTemporary Admin:%i\n\"", openrp_admin6Allow.integer, openrp_admin7Allow.integer, openrp_admin8Allow.integer, openrp_admin9Allow.integer, openrp_admin10Allow.integer, openrp_adminTempallow.integer));
+}
 /*
 ======================
 Cmd_QwAddEffect_f
@@ -4686,6 +4672,12 @@ void Cmd_QwAddEffect_f(gentity_t *ent)
 		fileHandle_t	f;
 		char			line[256];
 		trap_Argv( 1,  arg1, sizeof( arg1 ) );
+
+	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
 	
 
 		if ( trap_Argc() != 2 )
@@ -4733,6 +4725,12 @@ void Cmd_QwForceTeam_f(gentity_t *ent)
 	char arg1[MAX_STRING_CHARS]; 
 	char teamname[MAX_STRING_CHARS]; 
 	int clientid;
+
+	if(!G_CheckAdmin(ent, ADMIN_FORCETEAM))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
 
 		 if ( g_gametype.integer >= GT_TEAM || g_gametype.integer == GT_FFA ) {	
 			trap_Argv( 1, arg1, sizeof( arg1 ) );
@@ -4812,11 +4810,7 @@ void Cmd_QwIP_f(gentity_t *ent)
 		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
-		   if ( trap_Argc() != 2 ) 
-         { 
-            trap_SendServerCommand( ent-g_entities, "print \"Type in /help whoip if you need help with this command.\n\"" ); 
-            return; 
-         } 
+		 
          trap_Argv( 1,  arg1, sizeof(  arg1 ) ); 
          clientid = atoi( arg1 );
          if (client_id == -1)
@@ -4846,6 +4840,154 @@ void Cmd_QwIP_f(gentity_t *ent)
 			return;
 		}
 		trap_SendServerCommand(ent-g_entities, va("print \"%s's^7 IP is %s\n\"", g_entities[client_id].client->pers.netname, g_entities[client_id].client->sess.myip));
+}
+
+/*
+======================
+Cmd_QwMap_f
+======================
+*/
+static void Cmd_QwMap_f(gentity_t *ent)
+{
+	char   arg1[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_MAP))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
+	{
+	trap_Argv( 1, arg1, sizeof( arg1 ) );
+	trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", arg1));
+	G_LogPrintf("%s used the map change command and changed the gametype to %s", ent->client->pers.netname, arg1);
+	trap_Argv( 2, arg1, sizeof( arg1 ) );
+	trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", arg1));
+	G_LogPrintf(" Mapped changed to %s.\n", arg1);
+	}
+
+}
+
+/*
+======================
+Cmd_QwWeather_f
+======================
+*/
+
+static void G_RemoveWeather( void ) { //ensiform's whacky weather clearer code
+int i; 
+char s[MAX_STRING_CHARS]; 
+for (i=1 ; i<MAX_FX ; i++) {
+trap_GetConfigstring( CS_EFFECTS + i, s, sizeof( s ) );
+if (!*s || !s[0]) { 
+return;
+}
+if (s[0] == '*')
+{ 
+trap_SetConfigstring( CS_EFFECTS + i, ""); 
+}
+}
+}
+
+static void Cmd_QwWeather_f(gentity_t *ent)
+	{
+		char	arg1[MAX_STRING_CHARS];
+		char	line[256];
+		char	savePath[MAX_QPATH];
+		int num;
+		vmCvar_t		mapname;
+		fileHandle_t	f;
+		trap_Argv( 1,  arg1, sizeof( arg1 ) );
+
+	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}	
+
+		trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
+		Com_sprintf(savePath, 1024*4, "mp_weather/%s.cfg", mapname.string);
+		trap_FS_FOpenFile(savePath, &f, FS_WRITE);
+			if (!Q_stricmp(arg1, "snow")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*snow");
+			}
+			else if (!Q_stricmp(arg1, "rain")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*rain 500");
+			}
+			else if (!Q_stricmp(arg1, "sandstorm")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*wind");
+				G_EffectIndex("*sand");
+			}
+			else if (!Q_stricmp(arg1, "blizzard")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*constantwind (100 100 -100)");
+				G_EffectIndex("*fog");
+				G_EffectIndex("*snow");
+			}
+			else if (!Q_stricmp(arg1, "fog")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*heavyrainfog");
+			}
+			else if (!Q_stricmp(arg1, "spacedust")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*spacedust 4000");
+			}
+			else if (!Q_stricmp(arg1, "acidrain")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*acidrain 500");
+			}
+			
+			if (!Q_stricmp(arg1, "clear")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				Com_sprintf( line, sizeof(line), "");
+			}
+			else {
+			Com_sprintf( line, sizeof(line), "weather %s\n", arg1);
+			}
+			trap_FS_Write( line, strlen(line), f);
+			trap_FS_FCloseFile( f );
+		}
+
+/*
+======================
+Cmd_QwStatus_f
+======================
+*/
+static void Cmd_QwStatus_f(gentity_t *ent)
+      {
+  int i;
+
+  	if(!G_CheckAdmin(ent, ADMIN_STATUS))
+	{
+		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_SendServerCommand(ent-g_entities, va("print \"\n^2Current clients connected & client status\n\n^3===================================\n\""));
+   for(i = 0; i < level.maxclients; i++) { 
+      if(g_entities[i].client->pers.connected == CON_CONNECTED) { 
+		  trap_SendServerCommand(ent-g_entities, va("print \"ID: %i Name: %s\"", i, g_entities[i].client->pers.netname));
+   trap_SendServerCommand(ent-g_entities, va("print \"\n^3===================================\n\n\""));
+	  }
+   }
 }
 
 //openrp Admin Functions End Here.
@@ -5056,6 +5198,7 @@ void ClientCommand( int clientNum ) {
 		{
 		Cmd_God_f (ent);
 		}
+
 	else if (Q_stricmp (cmd, "notarget") == 0)
 
 		if(!G_CheckAdmin(ent, ADMIN_NOTARGET))
@@ -5067,6 +5210,7 @@ void ClientCommand( int clientNum ) {
 		{
 		Cmd_Notarget_f (ent);
 		}
+
 	else if (Q_stricmp (cmd, "noclip") == 0)
 
 		if(!G_CheckAdmin(ent, ADMIN_NOCLIP))
@@ -5078,7 +5222,8 @@ void ClientCommand( int clientNum ) {
 		{
 		Cmd_Noclip_f (ent);
 		}
-	else if ( Q_stricmp( cmd, "NPC" ) == 0)
+
+		else if ( Q_stricmp( cmd, "NPC" ) == 0)
 
 	if(!G_CheckAdmin(ent, ADMIN_NPC))
 	{
@@ -5089,126 +5234,173 @@ void ClientCommand( int clientNum ) {
 	{
 		Cmd_NPC_f( ent );
 	}
+
 	else if (Q_stricmp (cmd, "kill") == 0)
 		Cmd_Kill_f (ent);
+
 	else if (Q_stricmp (cmd, "teamtask") == 0)
 		Cmd_TeamTask_f (ent);
+
 	else if (Q_stricmp (cmd, "levelshot") == 0)
 		Cmd_LevelShot_f (ent);
+
 	else if (Q_stricmp (cmd, "follow") == 0)
 		Cmd_Follow_f (ent);
+
 	else if (Q_stricmp (cmd, "follownext") == 0)
 		Cmd_FollowCycle_f (ent, 1);
+
 	else if (Q_stricmp (cmd, "followprev") == 0)
 		Cmd_FollowCycle_f (ent, -1);
+
 	else if (Q_stricmp (cmd, "team") == 0)
 		Cmd_Team_f (ent);
+
 	else if (Q_stricmp (cmd, "duelteam") == 0)
 		Cmd_DuelTeam_f (ent);
+
 	else if (Q_stricmp (cmd, "siegeclass") == 0)
 		Cmd_SiegeClass_f (ent);
+
 	else if (Q_stricmp (cmd, "forcechanged") == 0)
 		Cmd_ForceChanged_f (ent);
+
 	else if (Q_stricmp (cmd, "where") == 0)
 		Cmd_Where_f (ent);
+
 	else if (Q_stricmp (cmd, "callvote") == 0)
 		Cmd_CallVote_f (ent);
+
 	else if (Q_stricmp (cmd, "vote") == 0)
 		Cmd_Vote_f (ent);
+
 	else if (Q_stricmp (cmd, "callteamvote") == 0)
 		Cmd_CallTeamVote_f (ent);
+
 	else if (Q_stricmp (cmd, "teamvote") == 0)
 		Cmd_TeamVote_f (ent);
+
 	else if (Q_stricmp (cmd, "gc") == 0)
 		Cmd_GameCommand_f( ent );
+
 	else if (Q_stricmp (cmd, "setviewpos") == 0)
 		Cmd_SetViewpos_f( ent );
+
 	else if (Q_stricmp (cmd, "stats") == 0)
 		Cmd_Stats_f( ent );
 
 	// openrp Admin Commands Begin Here.
-	else if(Q_stricmp(cmd, "qwadminProtect") == 0)
-		Cmd_QwAdminProtect_f(ent);
-	else if(Q_stricmp(cmd, "qwlogin") == 0)
-		Cmd_openrpModAdmin_f(ent);
-	else if(Q_stricmp(cmd, "qwadminwhois") == 0)
+
+	else if(!Q_stricmp(cmd, "qwlogin"))
+		Cmd_OpenRPAdmin_f(ent);
+
+	else if(!Q_stricmp(cmd, "qwadminwhois"))
 		Cmd_QwAdminWhois_f(ent);
-	else if(Q_stricmp(cmd, "qwlogout") == 0)
+
+	else if(!Q_stricmp(cmd, "qwlogout"))
 		Cmd_QwLogout_f(ent);
-	else if(Q_stricmp(cmd, "qwkick") == 0)
+
+	else if(!Q_stricmp(cmd, "qwkick"))
 		Cmd_QwKick_f(ent);
-	else if(Q_stricmp(cmd, "qwban") == 0)
+
+	else if(!Q_stricmp(cmd, "qwban"))
 		Cmd_QwBan_f(ent);
-	else if(Q_stricmp(cmd, "qwwarn") == 0)
+
+	else if(!Q_stricmp(cmd, "qwwarn"))
 		Cmd_QwWarn_f(ent);
-	else if(Q_stricmp(cmd, "qwtele") == 0)
+
+	else if(!Q_stricmp(cmd, "qwtele"))
 		Cmd_QwTeleport_f(ent);
-	else if(Q_stricmp(cmd, "qwkill") == 0)
+
+	else if(!Q_stricmp(cmd, "qwkill"))
 		Cmd_QwKill_f(ent);
-	else if(Q_stricmp(cmd, "qwmute") == 0)
+
+	else if(!Q_stricmp(cmd, "qwmute"))
 		Cmd_QwMute_f(ent);
-	else if(Q_stricmp(cmd, "qwunmute") == 0)
+
+	else if(!Q_stricmp(cmd, "qwunmute"))
 		Cmd_QwUnMute_f(ent);
-	else if(Q_stricmp(cmd, "qwsleep") == 0)
+
+	else if(!Q_stricmp(cmd, "qwsleep"))
 		Cmd_QwSleep_f(ent);
-	else if(Q_stricmp(cmd, "qwunsleep") == 0)
+
+	else if(!Q_stricmp(cmd, "qwunsleep"))
 		Cmd_QwUnsleep_f(ent);
-	else if(Q_stricmp(cmd, "qwprotect") == 0)
+
+	else if(!Q_stricmp(cmd, "qwprotect"))
 		Cmd_QwProtect_f(ent);
-	else if(Q_stricmp(cmd, "qwduels") == 0)
-		Cmd_QwDuels_f(ent);
-	else if(Q_stricmp(cmd, "qwgranttemp") == 0)
+
+	else if(!Q_stricmp(cmd, "qwgranttemp"))
 		Cmd_QwGrantTempAdmin_f(ent);
-	else if(Q_stricmp(cmd, "qwempower") == 0)
+
+	else if(!Q_stricmp(cmd, "qwempower"))
 		Cmd_QwEmpower_f(ent);
-	else if(Q_stricmp(cmd, "qwengage_duel") == 0)
-		Cmd_EngageDuel_f(ent);
-	else if(Q_stricmp(cmd, "qwbitvalues") == 0)
+
+	else if(!Q_stricmp(cmd, "qwbitvalues"))
 		Cmd_QwBitvalues_f(ent);
-	else if(Q_stricmp(cmd, "qwscale") == 0)
+
+	else if(!Q_stricmp(cmd, "qwscale"))
 		Cmd_QwScale_f(ent);
-	else if(Q_stricmp(cmd, "qwresetscale") == 0)
+
+	else if(!Q_stricmp(cmd, "qwresetscale"))
 		Cmd_QwResetScale_f(ent);
-	else if(Q_stricmp(cmd, "me") == 0)
-		Cmd_Me_f(ent);
-	else if(Q_stricmp(cmd, "qwmerc") == 0)
+
+	else if(!Q_stricmp(cmd, "qwmerc"))
 		Cmd_QwMerc_f(ent);
-	else if(Q_stricmp(cmd, "qwannounce") == 0)
+
+	else if(!Q_stricmp(cmd, "qwannounce"))
 		Cmd_QwAnnounce_f(ent);
-	//else if(Q_stricmp(cmd, "qwaddeffect") == 0)
-		//Cmd_QwAddEffect_f(ent);
-	else if(Q_stricmp(cmd, "qwforceteam") == 0)
+
+	else if(!Q_stricmp(cmd, "qwaddeffect"))
+		Cmd_QwAddEffect_f(ent);
+
+	else if(!Q_stricmp(cmd, "qwforceteam"))
 		Cmd_QwForceTeam_f(ent);
-	//else if(Q_stricmp(cmd, "qwip") == 0)
-	//	Cmd_QwIP_f(ent);
 
-	//openrp Admin Commands End Here.
+	else if(!Q_stricmp(cmd, "qwip"))
+		Cmd_QwIP_f(ent);
 
-	//openrp Commands Begin Here
+	else if(!Q_stricmp(cmd, "qwstatus"))
+		Cmd_QwStatus_f(ent);
 
-	 else if ( !Q_stricmp( cmd, "qwinfo") )
-		 Cmd_QwInfo_f( ent );
+	else if(!Q_stricmp(cmd, "qwweather"))
+		Cmd_QwWeather_f(ent);
 
-	 else if ( !Q_stricmp ( cmd, "qwsetclass") )
-		 Cmd_QwSetclass_f( ent );
+	else if(!Q_stricmp(cmd, "qwmap"))
+		Cmd_QwMap_f(ent);
 
-	 else if ( !Q_stricmp ( cmd, "qwgrantpoints") )
-		 Cmd_QwGrantpoints_f( ent );
+	//OpenRP Admin Commands End Here.
 
-	 else if (Q_stricmp (cmd, "qwchangeclass") == 0)
-		Cmd_QwChangeclass_f( ent );
+	//OpenRP Commands Begin Here
 
-	 else if ( !Q_stricmp (cmd, "qwregister") )
-		 Cmd_QwRegister_f( ent );
+	 else if (!Q_stricmp(cmd, "qwinfo"))
+		 Cmd_QwInfo_f(ent);
 
-	 else if ( !Q_stricmp (cmd, "qwclassinfo") )
-		 Cmd_QwClassinfo_f( ent );
+	 else if (!Q_stricmp(cmd, "qwsetclass"))
+		 Cmd_QwSetclass_f(ent);
 
-	 else if ( !Q_stricmp (cmd, "qwjetpack") )
-		 Cmd_QwJetpack_f( ent );
+	 else if (!Q_stricmp(cmd, "qwgrantpoints"))
+		 Cmd_QwGrantpoints_f(ent);
 
+	 else if (!Q_stricmp(cmd, "qwchangeclass"))
+		Cmd_QwChangeclass_f(ent);
 
-	 // openrp Commands end here, yo.  /coolface
+	 else if (!Q_stricmp(cmd, "qwregister"))
+		 Cmd_QwRegister_f(ent);
+
+	 else if (!Q_stricmp(cmd, "qwclassinfo"))
+		 Cmd_QwClassinfo_f(ent);
+
+	 else if (!Q_stricmp(cmd, "qwjetpack"))
+		 Cmd_QwJetpack_f(ent);
+
+	 else if (!Q_stricmp(cmd, "me"))
+		Cmd_Me_f(ent);
+
+	 else if (!Q_stricmp(cmd, "qwadminprotect"))
+		Cmd_QwAdminProtect_f(ent);
+
+	 // OpenRP Commands end here, yo.  /coolface
 
 	/*
 	else if (Q_stricmp (cmd, "kylesmash") == 0)

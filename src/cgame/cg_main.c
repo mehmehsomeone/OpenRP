@@ -3485,8 +3485,12 @@ void CG_CreateModelFromSpawnEnt(cgSpawnEnt_t *ent)
 	VectorCopy(ent->origin, RefEnt->origin);
 	VectorCopy(ent->origin, RefEnt->lightingOrigin);
 
-	VectorScaleVector(mins, ent->scale, mins);
-	VectorScaleVector(maxs, ent->scale, maxs);
+	//[Invalid Model Bounds Fix]
+	//VectorScaleVector(mins, ent->scale, mins);
+	//VectorScaleVector(maxs, ent->scale, maxs);
+	VectorScaleVector(mins, RefEnt->modelScale, mins);
+	VectorScaleVector(maxs, RefEnt->modelScale, maxs);
+	//[/Invalid Model Bounds Fix]
 	*radius = Distance(mins, maxs);
 	*zOff = ent->zoffset;
 

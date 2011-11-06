@@ -3359,6 +3359,21 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 				}
 				return qtrue;
 			}
+
+			 if ( key == A_MWHEELUP ) 
+         {
+            listPtr->startPos -= ((int)item->special == FEEDER_Q3HEADS) ? viewmax : 1;
+            if (listPtr->startPos < 0)
+               listPtr->startPos = 0;
+            return qtrue;
+         }
+         if ( key == A_MWHEELDOWN ) 
+         {
+            listPtr->startPos += ((int)item->special == FEEDER_Q3HEADS) ? viewmax : 1;
+            if (listPtr->startPos > max)
+               listPtr->startPos = max;
+            return qtrue;
+         }
 		}
 		// mouse hit
 		if (key == A_MOUSE1 || key == A_MOUSE2) {
@@ -3817,7 +3832,8 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key) {
 			}
 		}
 
-		if ( key == A_ENTER || key == A_KP_ENTER || key == A_ESCAPE)  {
+		if ( key == A_ENTER || key == A_KP_ENTER || key == A_ESCAPE || (key == A_MOUSE1 && !Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) ))  {
+			DC->setOverstrikeMode( qfalse );
 			return qfalse;
 		}
 

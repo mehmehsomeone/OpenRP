@@ -2268,6 +2268,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	char		userinfo[MAX_INFO_STRING];
 	gentity_t	*ent;
 	gentity_t	*te;
+	char TmpIP[32] = {0};
 
 	ent = &g_entities[ clientNum ];
 
@@ -2275,8 +2276,10 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 
 	// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");
+	if (!isBot)
+		Q_strncpyz( TmpIP, value, sizeof(TmpIP) ); // Used later
 	if ( G_FilterPacket( value ) ) {
-		return "Banned.";
+		return "Banned";
 	}
 
 	if ( !( ent->r.svFlags & SVF_BOT ) && !isBot && g_needpass.integer ) {
@@ -2308,6 +2311,16 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 		G_InitSessionData( client, userinfo, isBot );
 	}
 	G_ReadSessionData( client );
+
+	if (firstTime && !isBot)
+	{
+		if(!TmpIP[0])
+		{// No IP sent when connecting, probably an unban hack attempt
+			client->pers.connected = CON_DISCONNECTED;
+			return "Invalid userinfo detected";
+		}
+		Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
+	}
 
 	if (g_gametype.integer == GT_SIEGE &&
 		(firstTime || level.newSession))
@@ -2578,7 +2591,7 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 
 		if ( g_gametype.integer != GT_DUEL || g_gametype.integer == GT_POWERDUEL ) {
 			trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " %s\n\"", client->pers.netname, G_GetStringEdString("MP_SVGAME", "PLENTER")) );
-			trap_SendServerCommand( ent-g_entities, "print \"^5OpenRP SVN\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^5OpenRP SVN\n^5Type /qwinfo into the console for a list of commands.\n\"" );
 		}
 	}
 	G_LogPrintf( "ClientBegin: %i\n", clientNum );

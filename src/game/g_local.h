@@ -113,13 +113,17 @@ extern vec3_t gPainPoint;
 #define ADMIN_WARN					4096 // /qwwarn command
 #define ADMIN_EMPOWER				8192 // /qwemp command
 #define ADMIN_MERC				    16384 // /qwmerc command
-#define ADMIN_IP					32768 //Admin is able to see a person's IP
+#define ADMIN_IP					32768 // /qwip command
 #define ADMIN_NOCLIP				65536 // /noclip command
 #define ADMIN_NOTARGET				131072 // /notarget command
 #define ADMIN_GOD					262144 // /god command
-
-//Bitvalue for Mods
-#define TEMP_CMDS					30768
+#define ADMIN_ADMINWHOIS			524288 // /qwadminwhois command
+#define ADMIN_SCALE					1048576 // /qwscale command
+#define ADMIN_BITVALUES				2097152 // /qwbitvalues command
+#define ADMIN_ADDEFFECT				4194304 // /qwaddeffect command
+#define ADMIN_FORCETEAM				8388608 // /qwforceteam command
+#define ADMIN_WEATHER				16777216 // /qwweather command
+#define ADMIN_STATUS				33554432 // /qwstatus command
 //openrp Bitvalues End Here.
 
 //openrp Defines Begin Here
@@ -1779,6 +1783,7 @@ extern vmCvar_t		openrp_admin7Allow;
 extern vmCvar_t		openrp_admin8Allow; 
 extern vmCvar_t		openrp_admin9Allow;
 extern vmCvar_t		openrp_admin10Allow;
+extern vmCvar_t		openrp_adminTempallow;
 extern vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
 //OpenRP Admin Cvars End Here.
 
