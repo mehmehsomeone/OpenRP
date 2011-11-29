@@ -3360,20 +3360,30 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 				return qtrue;
 			}
 
-			 if ( key == A_MWHEELUP ) 
-         {
-            listPtr->startPos -= ((int)item->special == FEEDER_Q3HEADS) ? viewmax : 1;
-            if (listPtr->startPos < 0)
-               listPtr->startPos = 0;
-            return qtrue;
-         }
-         if ( key == A_MWHEELDOWN ) 
-         {
-            listPtr->startPos += ((int)item->special == FEEDER_Q3HEADS) ? viewmax : 1;
-            if (listPtr->startPos > max)
-               listPtr->startPos = max;
-            return qtrue;
-         }
+				if ( key == A_MWHEELUP ) 
+			{
+				listPtr->startPos -= ((int)item->special == FEEDER_Q3HEADS) ? viewmax : 1;
+				if (listPtr->startPos < 0)
+				{
+					listPtr->startPos = 0;
+					Display_MouseMove(NULL, DC->cursorx, DC->cursory);
+					return qfalse;
+				}
+				Display_MouseMove(NULL, DC->cursorx, DC->cursory);
+				return qtrue;
+			}
+			if ( key == A_MWHEELDOWN ) 
+			{
+				listPtr->startPos += ((int)item->special == FEEDER_Q3HEADS) ? viewmax : 1;
+				if (listPtr->startPos > max)
+				{
+					listPtr->startPos = max;
+					Display_MouseMove(NULL, DC->cursorx, DC->cursory);
+					return qfalse;
+				}
+				Display_MouseMove(NULL, DC->cursorx, DC->cursory);
+				return qtrue;
+			}
 		}
 		// mouse hit
 		if (key == A_MOUSE1 || key == A_MOUSE2) {
