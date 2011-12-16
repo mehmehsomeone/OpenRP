@@ -496,7 +496,7 @@ typedef struct {
 	char		siegeClass[64];
 	char		saberType[64];
 	char		saber2Type[64];
-	char		myip[64];			// For SavedIPs
+//	char		myip[64];			// For SavedIPs
 	int			duelTeam;
 	int			siegeDesiredTeam;
 
@@ -1025,7 +1025,7 @@ qboolean	G_SpawnInt( const char *key, const char *defaultString, int *out );
 qboolean	G_SpawnVector( const char *key, const char *defaultString, float *out );
 void		G_SpawnEntitiesFromString( qboolean inSubBSP );
 char *G_NewString( const char *string );
-char *G_NewString2( const char *string );
+//char *G_NewString2( const char *string );
 
 //
 // g_cmds.c
@@ -1786,9 +1786,6 @@ extern vmCvar_t		openrp_admin10Allow;
 extern vmCvar_t		openrp_adminTempallow;
 extern vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
 //OpenRP Admin Cvars End Here.
-
-//Forums link in qwinfo.
-extern vmCvar_t openrp_forumslink;
 
 //Prevent players from using /kill
 extern vmCvar_t openrp_playerkill;

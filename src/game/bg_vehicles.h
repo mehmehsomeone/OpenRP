@@ -358,7 +358,7 @@ typedef struct
 
 #define	VFOFS(x) ((int)&(((vehicleInfo_t *)0)->x))
 
-#define MAX_VEHICLES	64	//sigh... no more than 64 individual vehicles
+#define MAX_VEHICLES	16	//sigh... no more than 64 individual vehicles
 #define VEHICLE_BASE	0
 #define VEHICLE_NONE	-1
 

@@ -251,8 +251,6 @@ vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perfo
 
 //openrp Admin Cvars End Here.
 
-//Forums link in qwinfo.
-vmCvar_t openrp_forumslink;
 
 //Prevent players from using /kill
 vmCvar_t openrp_playerkill;

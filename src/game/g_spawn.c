@@ -747,6 +747,7 @@ char *G_NewString( const char *string ) {
 	
 	return newb;
 }
+/*
 char *G_NewString2( const char *string )
 {
    char   *newb, *new_p;
@@ -779,8 +780,7 @@ char *G_NewString2( const char *string )
    return newb;
 }
 
-
-
+*/
 
 /*
 ===================

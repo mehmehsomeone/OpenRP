@@ -14,8 +14,8 @@ void WP_SetSaber( int entNum, saberInfo_t *sabers, int saberNum, const char *sab
 
 void Cmd_NPC_f( gentity_t *ent );
 void SetTeamQuick(gentity_t *ent, int team, qboolean doBegin);
-void SP_fx_runner( gentity_t *ent );
-void AddSpawnField(char *field, char *value);
+//void SP_fx_runner( gentity_t *ent );
+//void AddSpawnField(char *field, char *value);
 
 /*
 ==================
@@ -2497,7 +2497,7 @@ void Cmd_SetViewpos_f( gentity_t *ent ) {
 
 
 /*
-=================dd
+=================
 Cmd_Stats_f
 =================
 */
@@ -4663,6 +4663,7 @@ void Cmd_QwBitvalues_f(gentity_t *ent)
 Cmd_QwAddEffect_f
 ======================
 */
+/*
 void Cmd_QwAddEffect_f(gentity_t *ent)
 {
 		char   arg1[MAX_STRING_CHARS];
@@ -4715,6 +4716,7 @@ void Cmd_QwAddEffect_f(gentity_t *ent)
 
 				trap_FS_FCloseFile( f );
 }
+*/
 /*
 ======================
 Cmd_QwForceTeam_f
@@ -4799,6 +4801,7 @@ void Cmd_QwForceTeam_f(gentity_t *ent)
 Cmd_QwIP_f
 ======================
 */
+/*
 void Cmd_QwIP_f(gentity_t *ent)
       {
 		 int client_id = -1; 
@@ -4841,7 +4844,7 @@ void Cmd_QwIP_f(gentity_t *ent)
 		}
 		trap_SendServerCommand(ent-g_entities, va("print \"%s's^7 IP is %s\n\"", g_entities[client_id].client->pers.netname, g_entities[client_id].client->sess.myip));
 }
-
+*/
 /*
 ======================
 Cmd_QwMap_f
@@ -4872,7 +4875,7 @@ static void Cmd_QwMap_f(gentity_t *ent)
 Cmd_QwWeather_f
 ======================
 */
-
+/*
 static void G_RemoveWeather( void ) { //ensiform's whacky weather clearer code
 int i; 
 char s[MAX_STRING_CHARS]; 
@@ -4965,7 +4968,7 @@ static void Cmd_QwWeather_f(gentity_t *ent)
 			trap_FS_Write( line, strlen(line), f);
 			trap_FS_FCloseFile( f );
 		}
-
+*/
 /*
 ======================
 Cmd_QwStatus_f
@@ -5351,20 +5354,20 @@ void ClientCommand( int clientNum ) {
 	else if(!Q_stricmp(cmd, "qwannounce"))
 		Cmd_QwAnnounce_f(ent);
 
-	else if(!Q_stricmp(cmd, "qwaddeffect"))
-		Cmd_QwAddEffect_f(ent);
+//	else if(!Q_stricmp(cmd, "qwaddeffect"))
+//		Cmd_QwAddEffect_f(ent);
 
 	else if(!Q_stricmp(cmd, "qwforceteam"))
 		Cmd_QwForceTeam_f(ent);
 
-	else if(!Q_stricmp(cmd, "qwip"))
-		Cmd_QwIP_f(ent);
+	//else if(!Q_stricmp(cmd, "qwip"))
+	//	Cmd_QwIP_f(ent);
 
 	else if(!Q_stricmp(cmd, "qwstatus"))
 		Cmd_QwStatus_f(ent);
 
-	else if(!Q_stricmp(cmd, "qwweather"))
-		Cmd_QwWeather_f(ent);
+	//else if(!Q_stricmp(cmd, "qwweather"))
+	//	Cmd_QwWeather_f(ent);
 
 	else if(!Q_stricmp(cmd, "qwmap"))
 		Cmd_QwMap_f(ent);

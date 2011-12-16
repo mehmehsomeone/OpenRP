@@ -27,7 +27,7 @@ void G_WriteClientSessionData( gclient_t *client ) {
 	char		siegeClass[64];
 	char		saberType[64];
 	char		saber2Type[64];
-	char		myip[64];
+	//char		myip[64];
 
 	strcpy(siegeClass, client->sess.siegeClass);
 
@@ -72,7 +72,7 @@ void G_WriteClientSessionData( gclient_t *client ) {
 
 		i++;
 	}
-
+/*
 	strcpy(myip, client->sess.myip);
 
 	if (!myip[0])
@@ -81,6 +81,8 @@ void G_WriteClientSessionData( gclient_t *client ) {
 	}
 
 	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %s", 
+	*/
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s",
 		client->sess.sessionTeam,
 		client->sess.spectatorTime,
 		client->sess.spectatorState,
@@ -95,8 +97,9 @@ void G_WriteClientSessionData( gclient_t *client ) {
 		client->sess.siegeDesiredTeam,
 		siegeClass,
 		saberType,
-		saber2Type,
-		myip
+		saber2Type
+	//	saber2Type,
+	//	myip
 		);
 
 	var = va( "session%i", client - level.clients );
@@ -139,8 +142,9 @@ void G_ReadSessionData( gclient_t *client ) {
 		&client->sess.siegeDesiredTeam,
 		&client->sess.siegeClass,
 		&client->sess.saberType,
-		&client->sess.saber2Type,
-		&client->sess.myip
+		&client->sess.saber2Type
+	//	&client->sess.saber2Type,
+	//	&client->sess.myip
 		);
 
 	while (client->sess.siegeClass[i])
@@ -288,7 +292,8 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot ) {
 	sess->saberType[0] = 0;
 	sess->saber2Type[0] = 0;
 
-	/*if(firstTime)
+	/*
+	if(firstTime)
 	{//only reset skillpoints for new players.
 		sess->myip[0] = 0;
 	}
