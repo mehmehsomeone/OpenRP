@@ -1,5 +1,9 @@
 Thank you for downloading OpenRP!
 
+You can view more information about the mod at http://code.google.com/p/openrp/
+
+You can get the source code for the mod at http://code.google.com/p/openrp/source/checkout
+
 How do I install the mod? 
 Place OpenRP in your GameData folder.
 
