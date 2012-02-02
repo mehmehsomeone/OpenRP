@@ -4102,46 +4102,68 @@ void Cmd_QwKill_f(gentity_t *ent)
 Cmd_QwAnnounce_f
 =====================
 */
-void Cmd_QwAnnounce_f(gentity_t *ent)
-{
-	char msg[MAX_STRING_CHARS];
-//	char formatmsg[1024];
-	char name[MAX_STRING_CHARS];
-	//char   *p;
-
-//	int pids[MAX_CLIENTS];
-//	char err[MAX_STRING_CHARS];
-//	gentity_t *tent;
+static void Cmd_QwAnnounce_f(gentity_t *ent)
+{ 
+		 int clientid = -1;
+		 char   arg[MAX_STRING_CHARS];
+		 int pos = 0;
+		
+		 char real_msg[MAX_STRING_CHARS];
+		 char *msg = ConcatArgs(2); 
+		 while(*msg) { 
+    if(msg[0] == '\\' && msg[1] == 'n') { 
+          msg++;
+          real_msg[pos++] = '\n';
+    } else { 
+          real_msg[pos++] = *msg;
+    } 
+    msg++;
+}
+		 real_msg[pos] = 0;
+		 trap_Argv(1, arg, sizeof(arg));
 
 	if(!G_CheckAdmin(ent, ADMIN_ANNOUNCE))
 	{
 		CmdEnt(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
+		
+         if ( trap_Argc() < 2 ) 
+         { 
+            trap_SendServerCommand( ent-g_entities, "print \"Usage: /qwannounce clientid message\n\"" ); 
+            return; 
+         }
+		 	if(!Q_stricmp(arg, "all") | (!Q_stricmp(arg, "-1") ))
+			{
+				trap_SendServerCommand( -1, va("cp \"%s\"", real_msg) );
+				return;
+			}
 
-	trap_Argv(1, name, sizeof(name));
-	trap_Argv(2, msg, sizeof(msg));
+			clientid = atoi( arg );
 
-	if(trap_Argc() < 2)
-	{
-		CmdEnt(ent-g_entities, va("print \"^3You must give the name of the person to send the announcement to.\nIf you wish to send it to everyone use -1.\n\""));
-		return;
-	}
+			 if (clientid == -1) 
+			 { 
+				trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", arg ) ); 
+				return; 
+			 } 
+			 if (clientid == -2) 
+			 { 
+				trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", arg ) ); 
+				return; 
+			 }
+			 if (clientid >= MAX_CLIENTS || clientid < 0) 
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n\"", arg ) ); 
+            return;
+         }
+			 if (!g_entities[clientid].inuse) 
+			 {
+				trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", arg ) ); 
+				return; 
+			 }
 
-	if(msg == "")
-	{
-		CmdEnt(ent-g_entities, va("print \"^3You must type a message to send. Make sure to enclose your message within quotation marks. Ie. ""Message.""\n\""));
-		return;
-	}
-
-	{
-		//TextWrap(msg, formatmsg);
-		CmdAll(va("cp \"%s\"", msg));
-		return;
-	}
- //free( p );   //G_NewString2 uses malloc
-   return;
-}
+			 trap_SendServerCommand(clientid, va("cp \"%s\"", real_msg) );
+	  }
 
 
 
@@ -4532,6 +4554,11 @@ void Cmd_QwEmpower_f(gentity_t *ent)
 	ent->client->ps.weapon = WP_SABER;
 	ent->client->ps.stats[STAT_WEAPONS] = (1 << WP_SABER);
 
+	/*
+	ent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
+	ent->client->ps.fd.forcePowersKnown |= (1 << i);
+	*/
+
 	ent->client->ps.fd.forcePower = 100;
 	ent->client->ps.eFlags |= EF_BODYPUSH;
 }
@@ -4811,7 +4838,7 @@ Cmd_QwIP_f
 /*
 void Cmd_QwIP_f(gentity_t *ent)
       {
-		 int client_id = -1; 
+		 int clientid = -1; 
          char   arg1[MAX_STRING_CHARS];
 		 int clientid;
 				
@@ -4823,33 +4850,33 @@ void Cmd_QwIP_f(gentity_t *ent)
 		 
          trap_Argv( 1,  arg1, sizeof(  arg1 ) ); 
          clientid = atoi( arg1 );
-         if (client_id == -1)
+         if (clientid == -1)
          { 
             trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", arg1 ) ); 
             return; 
          } 
-         if (client_id == -2) 
+         if (clientid == -2) 
          { 
             trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", arg1 ) ); 
             return; 
          } 
-		 if (client_id >= MAX_CLIENTS || client_id < 0) 
+		 if (clientid >= MAX_CLIENTS || clientid < 0) 
          { 
             trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n\"", arg1 ) ); 
             return;
          }
          // either we have the client id or the string did not match 
-         if (!g_entities[client_id].inuse) 
+         if (!g_entities[clientid].inuse) 
          { // check to make sure client slot is in use 
             trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active.\n\"", arg1 ) ); 
             return; 
          }
 		//Admins can see the IP address of each client
-		if (g_entities[client_id].r.svFlags & SVF_BOT){
-			trap_SendServerCommand(ent-g_entities, va("print \"%s ^7does not have an IP address.\"", g_entities[client_id].client->pers.netname));
+		if (g_entities[clientid].r.svFlags & SVF_BOT){
+			trap_SendServerCommand(ent-g_entities, va("print \"%s ^7does not have an IP address.\"", g_entities[clientid].client->pers.netname));
 			return;
 		}
-		trap_SendServerCommand(ent-g_entities, va("print \"%s's^7 IP is %s\n\"", g_entities[client_id].client->pers.netname, g_entities[client_id].client->sess.myip));
+		trap_SendServerCommand(ent-g_entities, va("print \"%s's^7 IP is %s\n\"", g_entities[clientid].client->pers.netname, g_entities[clientid].client->sess.myip));
 }
 */
 /*
@@ -4999,6 +5026,127 @@ static void Cmd_QwStatus_f(gentity_t *ent)
 	  }
    }
 }
+
+/*
+======================
+Cmd_QwRename_f
+======================
+*/
+
+void uwRename(gentity_t *player, const char *newname) 
+{ 
+   char userinfo[MAX_INFO_STRING]; 
+   int clientNum = player-g_entities;
+   trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo)); 
+   Info_SetValueForKey(userinfo, "name", newname);
+   trap_SetUserinfo(clientNum, userinfo); 
+   ClientUserinfoChanged(clientNum); 
+   player->client->pers.netnameTime = level.time + 5000;
+}
+
+void uw2Rename(gentity_t *player, const char *newname) 
+{ 
+   char userinfo[MAX_INFO_STRING]; 
+   int clientNum = player-g_entities;
+   trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo)); 
+   Info_SetValueForKey(userinfo, "name", newname); 
+   trap_SetUserinfo(clientNum, userinfo); 
+   ClientUserinfoChanged(clientNum); 
+   player->client->pers.netnameTime = level.time + Q3_INFINITE;
+}
+
+static void Cmd_QwRename_f(gentity_t *ent)
+{ 
+   int clientid = -1; 
+   char arg1[1024];
+   char arg2[1024];
+   
+   if ( trap_Argc() != 3) 
+   { 
+      trap_SendServerCommand( ent-g_entities, "print \"Usage: /qwrename currentname newname\n\"" ); 
+      return;
+   }
+   trap_Argv( 1, arg1, sizeof( arg1 ) );
+   clientid = atoi( arg1 );
+   if (clientid == -1) 
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", arg1 ) ); 
+            return; 
+         } 
+         if (clientid == -2) 
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", arg1 ) ); 
+            return; 
+         }
+		 if (clientid >= MAX_CLIENTS || clientid < 0)  
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n\"", arg1 ) ); 
+            return;
+         }
+         if (!g_entities[clientid].inuse) 
+         { // check to make sure client slot is in use 
+            trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", arg1 ) ); 
+            return; 
+         }
+   trap_Argv( 2, arg2, sizeof( arg2 ) );
+	   //rename message goes here
+		G_LogPrintf("Rename (name) admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
+		trap_SendServerCommand(clientid, va("cvar name %s", arg2));
+		uwRename(&g_entities[clientid], arg2);
+}
+
+/*
+======================
+Cmd_QwSlap_f
+======================
+*/
+
+static void Cmd_QwSlap_f(gentity_t *ent)
+{
+	int clientid = -1; 
+	char   arg1[MAX_STRING_CHARS];
+			
+			if ( trap_Argc() != 2 )
+			{
+				trap_SendServerCommand( ent-g_entities, "print \"Usage: /slap name/clientid\n\"" );
+				return;
+			}
+			trap_Argv( 1, arg1, sizeof( arg1 ) );
+			clientid = atoi( arg1 );
+			if (clientid == -1) 
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", arg1 ) ); 
+            return; 
+         } 
+         if (clientid == -2) 
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", arg1 ) ); 
+            return; 
+         } 
+		 if (clientid >= MAX_CLIENTS || clientid < 0) 
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n\"", arg1 ) ); 
+            return;
+         }
+         if (!g_entities[clientid].inuse) 
+         {
+            trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", arg1 ) ); 
+            return; 
+         }
+		 /*
+		 if(g_entities[clientid].client->ps.duelInProgress){
+			 trap_SendServerCommand( ent-g_entities, va("print \"You cannot slap someone who is currently dueling.\n\"") ); 
+			return;
+		 }
+		 */
+		g_entities[clientid].client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
+		g_entities[clientid].client->ps.forceHandExtendTime = level.time + 3000;
+		g_entities[clientid].client->ps.velocity[2] += 500;
+		g_entities[clientid].client->ps.forceDodgeAnim = 0;
+		g_entities[clientid].client->ps.quickerGetup = qfalse;
+		G_LogPrintf("Slap admin command is executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
+		
+		}
 
 //openrp Admin Functions End Here.
 
@@ -5378,6 +5526,12 @@ void ClientCommand( int clientNum ) {
 
 	else if(!Q_stricmp(cmd, "qwmap"))
 		Cmd_QwMap_f(ent);
+
+	else if(!Q_stricmp(cmd, "qwrename"))
+		Cmd_QwRename_f(ent);
+
+	else if(!Q_stricmp(cmd, "qwslap"))
+		Cmd_QwSlap_f(ent);
 
 	//OpenRP Admin Commands End Here.
 
