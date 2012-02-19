@@ -3361,26 +3361,42 @@ static void Cmd_QwAdminProtect_f(gentity_t * ent)
 }
 
 static void Cmd_Me_f(gentity_t *ent)
-{
-	char msg[MAX_SAY_TEXT];
+{	
+	int clientid = -1;
+	char arg[MAX_STRING_CHARS];
+	int pos = 0;
+	char real_msg[MAX_SAY_TEXT];
+	char *msg = ConcatArgs(2); 
 	char name[64];
 	int color;
 	int j = 0;
 	gentity_t *other;
-	trap_Argv(1, msg, sizeof(msg));
+
+			 while(*msg) { 
+    if(msg[0] == '\\' && msg[1] == 'n') { 
+          msg++;
+          real_msg[pos++] = '\n';
+    } else { 
+          real_msg[pos++] = *msg;
+    } 
+    msg++;
+}
+		 real_msg[pos] = 0;
+
+	trap_Argv(1, arg, sizeof(arg));
 
 	if(trap_Argc() < 2)
 	{
-		CmdEnt(ent-g_entities, va("print \"^3You must type a message. Make sure it is enclosed within quotations marks.\n\""));
+		CmdEnt(ent-g_entities, va("print \"^3You must type an action.\n\""));
 		return;
 	}
 
-	Com_sprintf (name, sizeof(name), "%s%c%c "EC, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, msg);
+	Com_sprintf (name, sizeof(name), "%s%c%c "EC, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, real_msg);
 	color = COLOR_YELLOW;
 
 	for (j = 0; j < level.maxclients; j++) {
 		other = &g_entities[j];
-		G_SayTo( ent, other, SAY_ALL, color, name, msg, NULL );
+		G_SayTo( ent, other, SAY_ALL, color, name, real_msg, NULL );
 	}
 }
 
@@ -4105,7 +4121,7 @@ Cmd_QwAnnounce_f
 static void Cmd_QwAnnounce_f(gentity_t *ent)
 { 
 		 int clientid = -1;
-		 char   arg[MAX_STRING_CHARS];
+		 char arg[MAX_STRING_CHARS];
 		 int pos = 0;
 		
 		 char real_msg[MAX_STRING_CHARS];
