@@ -17,6 +17,7 @@ Kyle - Concepts
 Nile - Shield mod
 Buz - Coding
 Zanka/Zaxxeh - Coding
+Kidd - Coding
 
 Others:
 
