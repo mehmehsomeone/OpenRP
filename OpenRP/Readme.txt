@@ -7,8 +7,19 @@ You can get the source code for the mod at http://code.google.com/p/openrp/sourc
 How do I install the mod? 
 Place OpenRP in your GameData folder.
 
-Credits: 
-Fighter, Kavar, Kyle, Nile
+Credits:
+
+Main Development Team:
+
+Fighter - Coding
+Kavar (Retired) - Coding, animation, class system concepts
+Kyle - Concepts
+Nile - Shield mod
+Buz - Coding
+Zanka/Zaxxeh - Coding
+
+Others:
+
 Everyone who has given suggestions for the mod
 The open source projects used in this mod: The Multiplayer Xtra mod created by XharocK, ClanMod, xMod
 a public domain effects pack
