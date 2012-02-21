@@ -3841,6 +3841,7 @@ void Cmd_QwLogout_f(gentity_t *ent)
 	}
 	else
 	{
+		CmdEnt(ent-g_entities, va("print \"You are not an admin, so you can't logout of admin.\n\""));
 		return;
 	}
 }
