@@ -22,7 +22,7 @@ static	vec3_t	muzzle;
 
 // E11 Blaster
 //---------
-#define BLASTER_SPREAD				3.6f//1.2f
+#define BLASTER_SPREAD				0.5f//1.2f
 #define BLASTER_VELOCITY			5000
 #define BLASTER_DAMAGE				30
 
@@ -51,7 +51,7 @@ static	vec3_t	muzzle;
 
 // Heavy Repeater
 //----------
-#define REPEATER_SPREAD				1.2f
+#define REPEATER_SPREAD				0.75f
 #define	REPEATER_DAMAGE				15
 #define	REPEATER_VELOCITY			5000
 
@@ -90,9 +90,9 @@ static	vec3_t	muzzle;
 #define	ROCKET_VELOCITY				3750
 #define	ROCKET_DAMAGE				100
 #define	ROCKET_SPLASH_DAMAGE		100
-#define	ROCKET_SPLASH_RADIUS		160
+#define	ROCKET_SPLASH_RADIUS		800
 #define ROCKET_SIZE					3
-#define ROCKET_ALT_THINK_TIME		75
+#define ROCKET_ALT_THINK_TIME		50
 
 // Concussion Rifle
 //---------
