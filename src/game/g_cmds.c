@@ -3666,6 +3666,12 @@ void Cmd_OpenRPAdmin_f(gentity_t *ent)
 	SanitizeString2(openrp_admin9Pass.string, Pass9);
 	SanitizeString2(openrp_admin10Pass.string, Pass10);
 
+	if ( trap_Argc() < 2 )
+   {//Didn't provide enough args.
+      trap_SendServerCommand( ent-g_entities, va( "print \"Command Usage: /qwlogin (password)\n\"" ) );
+      return;
+   }
+   
 	if(strcmp(argS, Pass1) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
 		CmdEnt(ent-g_entities, va("print \"^2Logged in successfully as a level 1 admin.\n\""));
