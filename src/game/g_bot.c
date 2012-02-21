@@ -480,7 +480,7 @@ int G_RemoveRandomBot( int team ) {
 		}
 		strcpy(netname, cl->pers.netname);
 		Q_CleanStr(netname);
-		trap_SendConsoleCommand( EXEC_INSERT, va("kick \"%s\"\n", netname) );
+		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\"\n", cl->ps.clientNum));
 		return qtrue;
 	}
 	return qfalse;
