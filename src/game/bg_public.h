@@ -543,8 +543,9 @@ typedef enum {
 	PERS_KILLED,					// count of the number of times you died
 	// player awards tracking
 	//OpenRP credits stuff begins here, overwriting uneeded things because the max is 16.
-	PERS_CREDITS,						// Credits.
+	//PERS_CREDITS,						// Credits.
 	//OpenRP credits stuff ends here.
+	PERS_IMPRESSIVE_COUNT,
 	PERS_EXCELLENT_COUNT,			// two successive kills in a short amount of time
 	PERS_DEFEND_COUNT,				// defend awards
 	PERS_ASSIST_COUNT,				// assist awards

@@ -18,7 +18,7 @@ void SetTeamQuick(gentity_t *ent, int team, qboolean doBegin);
 //void AddSpawnField(char *field, char *value);
 
 //OpenRP credits stuff begins here.
-
+/*
 const gbuyable_t	bg_buylist[] = 
 {
 	// text				giTag				giType			quantity price	wc
@@ -62,7 +62,7 @@ const gbuyable_t	bg_buylist[] =
 	// end of list marker
 	{ NULL }
 };
-
+*/
 /*
 ==================
 Credit based commands
@@ -74,7 +74,7 @@ extern void GiveCredits( gentity_t *ent, int amount );
 extern void TakeCredits( gentity_t *ent, int amount );
 extern void TradeCredits( gentity_t *from, gentity_t *to, int amount );
 */
-
+/*
 void GiveCredits( gentity_t *ent, int amount ) {
 	if (!ent->client) return;
 
@@ -123,7 +123,7 @@ void TradeCredits( gentity_t *from, gentity_t *to, int amount ) {
 	TakeCredits(from, amount);
 	GiveCredits(to, amount);
 }
-
+*/
 /*
 ==================
 DeathmatchScoreboardMessage
@@ -3513,7 +3513,7 @@ static void Cmd_QwXP_f(gentity_t *ent)
 	CmdEnt (ent-g_entities, va("print \"Current XP: %i\n\"", XP));
 	return;
 }
-
+/*
 static void Cmd_QwGiveCredits_f(gentity_t *ent)
 {
 	//OpenRPTODO - Add check for admin bitvalue, make it so user can choose how much credits they want to give.
@@ -3522,7 +3522,7 @@ static void Cmd_QwGiveCredits_f(gentity_t *ent)
 	ent->client->ps.persistant[PERS_CREDITS] += num;
 	return;
 }
-
+*/
 //openrp Functions End HERE.
 
 
