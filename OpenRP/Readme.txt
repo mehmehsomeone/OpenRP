@@ -22,8 +22,9 @@ Kidd - Coding
 Others:
 
 Everyone who has given suggestions for the mod
-The open source projects used in this mod: The Multiplayer Xtra mod created by XharocK, ClanMod, xMod
-a public domain effects pack
+The open source projects used in this mod: The Multiplayer Xtra mod created by XharocK, ClanMod, xMod, RealJedi created by Acrion Trusen
+a public domain effects pack used in earlier revisions
+TK-231 for his Special Effects Mod V1 Base
 Xycaleth, eezstreet, Didz, and Raz0r for posting coding tutorials and bug fixes at www.jacoders.org
 Tzu and Flame for their cvar fixes for sabering
 Erstok for the location based damage cvar
