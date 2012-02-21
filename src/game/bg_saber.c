@@ -2669,7 +2669,9 @@ int bg_parryDebounce[NUM_FORCE_POWER_LEVELS] =
 	500,//if don't even have defense, can't use defense!
 	300,
 	150,
-	50
+	50,
+	20,
+	15
 };
 
 qboolean PM_SaberPowerCheck(void)

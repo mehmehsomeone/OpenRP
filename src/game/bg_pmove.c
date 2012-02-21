@@ -148,15 +148,63 @@ int forcePowerNeeded[NUM_FORCE_POWER_LEVELS][NUM_FORCE_POWERS] =
 		0,//FP_SABER_DEFENSE,
 		20//FP_SABERTHROW,
 		//NUM_FORCE_POWERS
+	},
+		
+	{ // level four force needed (-at-)
+		40,//FP_HEAL,//instant //You get 5 points of health.. for 50 force points!
+		10,//FP_LEVITATION,//hold/duration
+		25,//FP_SPEED,//duration
+		15,//FP_PUSH,//hold/duration
+		15,//FP_PULL,//hold/duration
+		20,//FP_TELEPATHY,//instant
+		30,//FP_GRIP,//hold/duration
+		1,//FP_LIGHTNING,//hold/duration
+		50,//FP_RAGE,//duration
+		5,//FP_PROTECT,//duration
+		5,//FP_ABSORB,//duration
+		15,//FP_TEAM_HEAL,//instant
+		15,//FP_TEAM_FORCE,//instant
+		20,//FP_DRAIN,//hold/duration
+		10,//FP_SEE,//duration
+		0,//FP_SABER_OFFENSE,
+		0,//FP_SABER_DEFENSE,
+		20//FP_SABERTHROW,
+		//NUM_FORCE_POWERS
+
+	},
+		
+	{ // level five force needed (OpenRP)
+		20,//FP_HEAL,//instant //You get 5 points of health.. for 50 force points!
+		8,//FP_LEVITATION,//hold/duration
+		15,//FP_SPEED,//duration
+		10,//FP_PUSH,//hold/duration
+		10,//FP_PULL,//hold/duration
+		15,//FP_TELEPATHY,//instant
+		20,//FP_GRIP,//hold/duration
+		1,//FP_LIGHTNING,//hold/duration
+		50,//FP_RAGE,//duration
+		5,//FP_PROTECT,//duration
+		5,//FP_ABSORB,//duration
+		10,//FP_TEAM_HEAL,//instant
+		15,//FP_TEAM_FORCE,//instant
+		15,//FP_DRAIN,//hold/duration
+		10,//FP_SEE,//duration
+		0,//FP_SABER_OFFENSE,
+		0,//FP_SABER_DEFENSE,
+		20//FP_SABERTHROW,
+		//NUM_FORCE_POWERS
 	}
+		
 };
 
 float forceJumpHeight[NUM_FORCE_POWER_LEVELS] = 
 {
-	32,//normal jump (+stepheight+crouchdiff = 66)
-	96,//(+stepheight+crouchdiff = 130)
-	192,//(+stepheight+crouchdiff = 226)
-	384//(+stepheight+crouchdiff = 418)
+	32,//normal jump (+stepheight+crouchdiff = 66) - jump 0
+	96,//(+stepheight+crouchdiff = 130)- jump 1
+	192,//(+stepheight+crouchdiff = 226)- jump 2
+	384,//(+stepheight+crouchdiff = 418)- jump 3
+	768,// blah blah 610  (-at-)- jump 4 (OpenRP)
+	8096,// blah blah 610  (-at-)- jump 5 (OpenRP)
 };
 
 float forceJumpStrength[NUM_FORCE_POWER_LEVELS] = 
@@ -165,6 +213,8 @@ float forceJumpStrength[NUM_FORCE_POWER_LEVELS] =
 	420,
 	590,
 	840
+	840, // (OpenRp)
+	920, // (OpenRp)
 };
 
 //rww - Get a pointer to the bgEntity by the index
@@ -1354,7 +1404,7 @@ void PM_SetPMViewAngle(playerState_t *ps, vec3_t angle, usercmd_t *ucmd)
 
 qboolean PM_AdjustAngleForWallRun( playerState_t *ps, usercmd_t *ucmd, qboolean doMove )
 {
-	if (( (ps->legsAnim) == BOTH_WALL_RUN_RIGHT || (ps->legsAnim) == BOTH_WALL_RUN_LEFT ) && ps->legsTimer > 500 )
+	if (( (ps->legsAnim) == BOTH_WALL_RUN_RIGHT || (ps->legsAnim) == BOTH_WALL_RUN_LEFT ) )// && ps->legsTimer > 500 )   Infinite wall run (OpenRP)
 	{//wall-running and not at end of anim
 		//stick to wall, if there is one
 		vec3_t	fwd, rt, traceTo, mins, maxs, fwdAngles;
@@ -10838,9 +10888,12 @@ void PmoveSingle (pmove_t *pmove) {
 				}
 			}
 */			
-			if (pm->ps->velocity[2] > 0)
+			if ( pm->ps->velocity[2] > 0 )
 			{
-				addIn = 12.0f - (gDist / 64.0f);
+				if ( pm->cmd.buttons & BUTTON_WALKING )
+					addIn = 2;
+				else
+					addIn = 12.0f - (gDist / 256.0f); // I want a little extra upward thrust (-at-) :: (gDist / 64.0f) / 4.f
 			}
 
 			if (addIn > 0.0f)
@@ -10849,22 +10902,44 @@ void PmoveSingle (pmove_t *pmove) {
 			}
 
 			pm->ps->eFlags |= EF_JETPACK_FLAMING; //going up
+			pm->ps->eFlags |= EF_JETPACK_ACTIVE;
+}
+		else if (pm->cmd.upmove < 0 && ( gDist > JETPACK_HOVER_HEIGHT || pm->cmd.buttons & BUTTON_WALKING ) )
+		{
+			pm->ps->velocity[2] -= 2;
+			pm->ps->eFlags &= ~EF_JETPACK_FLAMING;
+			pm->ps->eFlags &= ~EF_JETPACK_ACTIVE;  //going down!
 		}
 		else
 		{
+			pm->ps->eFlags |= EF_JETPACK_ACTIVE;
 			pm->ps->eFlags &= ~EF_JETPACK_FLAMING; //idling
 
 			if (pm->ps->velocity[2] < 256)
 			{
-				if (pm->ps->velocity[2] < -100)
-				{
-					pm->ps->velocity[2] = -100;
-				}
 				if (gDist < JETPACK_HOVER_HEIGHT)
 				{ //make sure we're always hovering off the ground somewhat while jetpack is active
 					pm->ps->velocity[2] += 2;
 				}
 			}
+		}
+
+		if ( (pm->cmd.upmove >= 0) && (pm->ps->velocity[2] < -100) )  // I moved this limit so that if someone starts the jetpack thrusting, they won't fall to their death (-at-)
+		{
+			pm->ps->velocity[2] = -100;
+		}
+
+
+		if (pm_entSelf && pm->cmd.buttons & BUTTON_WALKING && gDist <= 2) // +walk will turn off jetpack automatically at low altitudes
+		{
+			pm->ps->eFlags &= ~EF_JETPACK_ACTIVE;
+			pm->ps->eFlags &= ~EF_JETPACK_FLAMING; //idling
+
+#ifdef QAGAME
+			if ( pm->ps && pm->ps->clientNum < MAX_CLIENTS ) {
+				g_clients[pm->ps->clientNum].jetPackOn = qfalse;
+			}
+#endif
 		}
 	}
 
@@ -11126,11 +11201,11 @@ void PmoveSingle (pmove_t *pmove) {
 		PM_HoverTrace();
 	}
 	PM_SetWaterLevel();
-	if (pm->cmd.forcesel != -1 && (pm->ps->fd.forcePowersKnown & (1 << pm->cmd.forcesel)))
+	if (/*pm->cmd.forcesel != -1 && */(pm->ps->fd.forcePowersKnown & (1 << pm->cmd.forcesel)))
 	{
 		pm->ps->fd.forcePowerSelected = pm->cmd.forcesel;
 	}
-	if (pm->cmd.invensel != -1 && (pm->ps->stats[STAT_HOLDABLE_ITEMS] & (1 << pm->cmd.invensel)))
+	if (/*pm->cmd.invensel != -1 && */(pm->ps->stats[STAT_HOLDABLE_ITEMS] & (1 << pm->cmd.invensel)))
 	{
 		pm->ps->stats[STAT_HOLDABLE_ITEM] = BG_GetItemIndexByTag(pm->cmd.invensel, IT_HOLDABLE);
 	}

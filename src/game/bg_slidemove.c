@@ -183,11 +183,14 @@ void PM_VehicleImpact(bgEntity_t *pEnt, trace_t *trace)
 				if ( (trace->entityNum == ENTITYNUM_WORLD || hitEnt->s.solid == SOLID_BMODEL)//bounce off any brush
 					 && !VectorCompare(trace->plane.normal, vec3_origin) )//have a valid plane to bounce off of
 				{ //bounce off in the opposite direction of the impact
-					if (pSelfVeh->m_pVehicleInfo->type == VH_SPEEDER)
+					/*if (pSelfVeh->m_pVehicleInfo->type == VH_SPEEDER)
 					{
 						pm->ps->speed *= pml.frametime;
 						VectorCopy(trace->plane.normal, bounceDir);
 					}
+					else */ 
+					if ( pSelfVeh->m_pVehicleInfo->type == VH_SPEEDER && trace->plane.normal[2] > pSelfVeh->m_pVehicleInfo->maxSlope ) // if we can drive on it, then don't FUCKING bounce (-at-)
+						return;
 					else if ( trace->plane.normal[2] >= MIN_LANDING_SLOPE//flat enough to land on
 						&& pSelfVeh->m_LandTrace.fraction < 1.0f //ground present
 						&& pm->ps->speed <= MIN_LANDING_SPEED )

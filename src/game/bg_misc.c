@@ -172,24 +172,24 @@ int forceMasteryPoints[NUM_FORCE_MASTERY_LEVELS] =
 
 int bgForcePowerCost[NUM_FORCE_POWERS][NUM_FORCE_POWER_LEVELS] = //0 == neutral
 {
-	{	0,	2,	4,	6	},	// Heal			// FP_HEAL
-	{	0,	0,	2,	6	},	// Jump			//FP_LEVITATION,//hold/duration
-	{	0,	2,	4,	6	},	// Speed		//FP_SPEED,//duration
-	{	0,	1,	3,	6	},	// Push			//FP_PUSH,//hold/duration
-	{	0,	1,	3,	6	},	// Pull			//FP_PULL,//hold/duration
-	{	0,	4,	6,	8	},	// Mind Trick	//FP_TELEPATHY,//instant
-	{	0,	1,	3,	6	},	// Grip			//FP_GRIP,//hold/duration
-	{	0,	2,	5,	8	},	// Lightning	//FP_LIGHTNING,//hold/duration
-	{	0,	4,	6,	8	},	// Dark Rage	//FP_RAGE,//duration
-	{	0,	2,	5,	8	},	// Protection	//FP_PROTECT,//duration
-	{	0,	1,	3,	6	},	// Absorb		//FP_ABSORB,//duration
-	{	0,	1,	3,	6	},	// Team Heal	//FP_TEAM_HEAL,//instant
-	{	0,	1,	3,	6	},	// Team Force	//FP_TEAM_FORCE,//instant
-	{	0,	2,	4,	6	},	// Drain		//FP_DRAIN,//hold/duration
-	{	0,	2,	5,	8	},	// Sight		//FP_SEE,//duration
-	{	0,	1,	5,	8	},	// Saber Attack	//FP_SABER_OFFENSE,
-	{	0,	1,	5,	8	},	// Saber Defend	//FP_SABER_DEFENSE,
-	{	0,	4,	6,	8	}	// Saber Throw	//FP_SABERTHROW,
+	{	0,	2,	4,	6,	8,	12	},	// Heal			// FP_HEAL
+	{	0,	0,	2,	6,	8,	15	},	// Jump			//FP_LEVITATION,//hold/duration
+	{	0,	2,	4,	6,	8,	12	},	// Speed		//FP_SPEED,//duration
+	{	0,	1,	3,	6,	8,	10	},	// Push			//FP_PUSH,//hold/duration
+	{	0,	1,	3,	6,	8,	11	},	// Pull			//FP_PULL,//hold/duration
+	{	0,	4,	6,	8,	10,	18	},	// Mind Trick	//FP_TELEPATHY,//instant
+	{	0,	1,	3,	6,	12,	20	},	// Grip			//FP_GRIP,//hold/duration
+	{	0,	2,	5,	8,	15,	20	},	// Lightning	//FP_LIGHTNING,//hold/duration
+	{	0,	4,	6,	8,	10,	12	},	// Dark Rage	//FP_RAGE,//duration
+	{	0,	2,	5,	8,	10,	12	},	// Protection	//FP_PROTECT,//duration
+	{	0,	1,	3,	6,	8,	10	},	// Absorb		//FP_ABSORB,//duration
+	{	0,	1,	3,	6,	8,	15	},	// Team Heal	//FP_TEAM_HEAL,//instant
+	{	0,	1,	3,	6,	8,	18	},	// Team Force	//FP_TEAM_FORCE,//instant
+	{	0,	2,	4,	6,	14,	20	},	// Drain		//FP_DRAIN,//hold/duration
+	{	0,	2,	5,	8,	10,	12	},	// Sight		//FP_SEE,//duration
+	{	0,	1,	5,	8,	15,	20,	},	// Saber Attack	//FP_SABER_OFFENSE,
+	{	0,	1,	5,	8,	16,	22,	},	// Saber Defend	//FP_SABER_DEFENSE,
+	{	0,	4,	6,	8,	15,	22,	}	// Saber Throw	//FP_SABERTHROW,
 	//NUM_FORCE_POWERS
 };
 
@@ -223,14 +223,14 @@ int forcePowerDarkLight[NUM_FORCE_POWERS] = //0 == neutral
 	0,//FP_PUSH,//hold/duration
 	0,//FP_PULL,//hold/duration
 	FORCE_LIGHTSIDE,//FP_TELEPATHY,//instant
-	FORCE_DARKSIDE,//FP_GRIP,//hold/duration
-	FORCE_DARKSIDE,//FP_LIGHTNING,//hold/duration
-	FORCE_DARKSIDE,//FP_RAGE,//duration
+	FORCE_LIGHTSIDE,//FP_GRIP,//hold/duration
+	FORCE_LIGHTSIDE,//FP_LIGHTNING,//hold/duration
+	FORCE_LIGHTSIDE,//FP_RAGE,//duration
 	FORCE_LIGHTSIDE,//FP_PROTECT,//duration
 	FORCE_LIGHTSIDE,//FP_ABSORB,//duration
 	FORCE_LIGHTSIDE,//FP_TEAM_HEAL,//instant
-	FORCE_DARKSIDE,//FP_TEAM_FORCE,//instant
-	FORCE_DARKSIDE,//FP_DRAIN,//hold/duration
+	FORCE_LIGHTSIDE,//FP_TEAM_FORCE,//instant
+	FORCE_LIGHTSIDE,//FP_DRAIN,//hold/duration
 	0,//FP_SEE,//duration
 	0,//FP_SABER_OFFENSE,
 	0,//FP_SABER_DEFENSE,

@@ -1056,11 +1056,19 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		}
 		else if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_2)
 		{
-			duration = 15000;
+			duration = 25000;
 		}
 		else if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_3)
 		{
-			duration = 20000;
+			duration = 30000;
+		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_4)
+		{
+			duration = 50000;
+		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_5)
+		{
+			duration = 100000;
 		}
 		else //shouldn't get here
 		{
@@ -1097,6 +1105,14 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		{
 			duration = 30000;
 		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_TELEPATHY] == FORCE_LEVEL_4)
+		{
+			duration = 50000;
+		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_TELEPATHY] == FORCE_LEVEL_4)
+		{
+			duration = 85000;
+		}
 		else //shouldn't get here
 		{
 			break;
@@ -1132,6 +1148,14 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		else if (self->client->ps.fd.forcePowerLevel[FP_RAGE] == FORCE_LEVEL_3)
 		{
 			duration = 20000;
+		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_RAGE] == FORCE_LEVEL_4)
+		{
+			duration = 40000;
+		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_RAGE] == FORCE_LEVEL_5)
+		{
+			duration = 80000;
 		}
 		else //shouldn't get here
 		{
@@ -1184,6 +1208,14 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		else if (self->client->ps.fd.forcePowerLevel[FP_SEE] == FORCE_LEVEL_3)
 		{
 			duration = 30000;
+		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_SEE] == FORCE_LEVEL_4)
+		{
+			duration = 60000;
+		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_SEE] == FORCE_LEVEL_5)
+		{
+			duration = 80000;
 		}
 		else //shouldn't get here
 		{
@@ -1245,8 +1277,27 @@ void ForceHeal( gentity_t *self )
 	{
 		return;
 	}
-
-	if (self->client->ps.fd.forcePowerLevel[FP_HEAL] == FORCE_LEVEL_3)
+	if (self->client->ps.fd.forcePowerLevel[FP_HEAL] == FORCE_LEVEL_5)
+	{
+		self->health += 75; //This was 50, but that angered the Balance God.
+		
+		if (self->health > self->client->ps.stats[STAT_MAX_HEALTH])
+		{
+			self->health = self->client->ps.stats[STAT_MAX_HEALTH];
+		}
+		BG_ForcePowerDrain( &self->client->ps, FP_HEAL, 0 );
+	}
+	else if (self->client->ps.fd.forcePowerLevel[FP_HEAL] == FORCE_LEVEL_4)
+	{
+		self->health += 50; //This was 50, but that angered the Balance God.
+		
+		if (self->health > self->client->ps.stats[STAT_MAX_HEALTH])
+		{
+			self->health = self->client->ps.stats[STAT_MAX_HEALTH];
+		}
+		BG_ForcePowerDrain( &self->client->ps, FP_HEAL, 0 );
+	}
+	else if (self->client->ps.fd.forcePowerLevel[FP_HEAL] == FORCE_LEVEL_3)
 	{
 		self->health += 25; //This was 50, but that angered the Balance God.
 		
@@ -1345,6 +1396,14 @@ void ForceTeamHeal( gentity_t *self )
 	if (self->client->ps.fd.forcePowerLevel[FP_TEAM_HEAL] == FORCE_LEVEL_3)
 	{
 		radius *= 2;
+	}
+	if (self->client->ps.fd.forcePowerLevel[FP_TEAM_HEAL] == FORCE_LEVEL_4)
+	{
+		radius *= 2.5;
+	}
+	if (self->client->ps.fd.forcePowerLevel[FP_TEAM_HEAL] == FORCE_LEVEL_5)
+	{
+		radius *= 5;
 	}
 
 	while (i < MAX_CLIENTS)
@@ -1450,6 +1509,14 @@ void ForceTeamForceReplenish( gentity_t *self )
 	if (self->client->ps.fd.forcePowerLevel[FP_TEAM_FORCE] == FORCE_LEVEL_3)
 	{
 		radius *= 2;
+	}
+	if (self->client->ps.fd.forcePowerLevel[FP_TEAM_FORCE] == FORCE_LEVEL_4)
+	{
+		radius *= 2.5;
+	}
+	if (self->client->ps.fd.forcePowerLevel[FP_TEAM_FORCE] == FORCE_LEVEL_5)
+	{
+		radius *= 4;
 	}
 
 	while (i < MAX_CLIENTS)
@@ -2088,7 +2155,15 @@ void ForceDrainDamage( gentity_t *self, gentity_t *traceEnt, vec3_t dir, vec3_t 
 				{
 					dmg = 4;
 				}
-			
+				else if (self->client->ps.fd.forcePowerLevel[FP_DRAIN] == FORCE_LEVEL_3)
+				{
+					dmg = 6;
+				}
+				else if (self->client->ps.fd.forcePowerLevel[FP_DRAIN] == FORCE_LEVEL_3)
+				{
+					dmg = 10;
+				}
+
 				if (traceEnt->client)
 				{
 					modPowerLevel = WP_AbsorbConversion(traceEnt, traceEnt->client->ps.fd.forcePowerLevel[FP_ABSORB], self, FP_DRAIN, self->client->ps.fd.forcePowerLevel[FP_DRAIN], 1);
@@ -2778,6 +2853,16 @@ void ForceTelepathy(gentity_t *self)
 	else if (self->client->ps.fd.forcePowerLevel[FP_TELEPATHY] == FORCE_LEVEL_3)
 	{
 		visionArc = 360;
+		radius = MAX_TRICK_DISTANCE*2.0f;
+	}
+	else if (self->client->ps.fd.forcePowerLevel[FP_TELEPATHY] == FORCE_LEVEL_4)
+	{
+		visionArc = 540;
+		radius = MAX_TRICK_DISTANCE*2.0f;
+	}
+	else if (self->client->ps.fd.forcePowerLevel[FP_TELEPATHY] == FORCE_LEVEL_5)
+	{
+		visionArc = 720;
 		radius = MAX_TRICK_DISTANCE*2.0f;
 	}
 
@@ -4064,6 +4149,178 @@ void DoGripAction(gentity_t *self, forcePowers_t forcePower)
 	}
 
 	if (gripLevel == FORCE_LEVEL_3)
+	{
+		gripEnt->client->ps.fd.forceGripBeingGripped = level.time + 1000;
+
+		gripEnt->client->ps.otherKiller = self->s.number;
+		gripEnt->client->ps.otherKillerTime = level.time + 5000;
+		gripEnt->client->ps.otherKillerDebounceTime = level.time + 100;
+
+		gripEnt->client->ps.forceGripChangeMovetype = PM_FLOAT;
+
+		if (gripEnt->client->ps.forceGripMoveInterval < level.time)
+		{
+			float nvLen = 0;
+
+			VectorCopy(gripEnt->client->ps.origin, start_o);
+			AngleVectors(self->client->ps.viewangles, fwd, NULL, NULL);
+			fwd_o[0] = self->client->ps.origin[0] + fwd[0]*128;
+			fwd_o[1] = self->client->ps.origin[1] + fwd[1]*128;
+			fwd_o[2] = self->client->ps.origin[2] + fwd[2]*128;
+			fwd_o[2] += 16;
+			VectorSubtract(fwd_o, start_o, nvel);
+
+			nvLen = VectorLength(nvel);
+
+			if (nvLen < 16)
+			{ //within x units of desired spot
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*8;
+				gripEnt->client->ps.velocity[1] = nvel[1]*8;
+				gripEnt->client->ps.velocity[2] = nvel[2]*8;
+			}
+			else if (nvLen < 64)
+			{
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*128;
+				gripEnt->client->ps.velocity[1] = nvel[1]*128;
+				gripEnt->client->ps.velocity[2] = nvel[2]*128;
+			}
+			else if (nvLen < 128)
+			{
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*256;
+				gripEnt->client->ps.velocity[1] = nvel[1]*256;
+				gripEnt->client->ps.velocity[2] = nvel[2]*256;
+			}
+			else if (nvLen < 200)
+			{
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*512;
+				gripEnt->client->ps.velocity[1] = nvel[1]*512;
+				gripEnt->client->ps.velocity[2] = nvel[2]*512;
+			}
+			else
+			{
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*700;
+				gripEnt->client->ps.velocity[1] = nvel[1]*700;
+				gripEnt->client->ps.velocity[2] = nvel[2]*700;
+			}
+
+			gripEnt->client->ps.forceGripMoveInterval = level.time + 300; //only update velocity every 300ms, so as to avoid heavy bandwidth usage
+		}
+
+		if ((level.time - gripEnt->client->ps.fd.forceGripStarted) > 3000 && !self->client->ps.fd.forceGripDamageDebounceTime)
+		{ //if we managed to lift him into the air for 2 seconds, give him a crack
+			self->client->ps.fd.forceGripDamageDebounceTime = 1;
+			G_Damage(gripEnt, self, self, NULL, NULL, 40, DAMAGE_NO_ARMOR, MOD_FORCE_DARK);
+
+			//Must play custom sounds on the actual entity. Don't use G_Sound (it creates a temp entity for the sound)
+			G_EntitySound( gripEnt, CHAN_VOICE, G_SoundIndex(va( "*choke%d.wav", Q_irand( 1, 3 ) )) );
+
+			gripEnt->client->ps.forceHandExtend = HANDEXTEND_CHOKE;
+			gripEnt->client->ps.forceHandExtendTime = level.time + 2000;
+
+			if (gripEnt->client->ps.fd.forcePowersActive & (1 << FP_GRIP))
+			{ //choking, so don't let him keep gripping himself
+				WP_ForcePowerStop(gripEnt, FP_GRIP);
+			}
+		}
+		else if ((level.time - gripEnt->client->ps.fd.forceGripStarted) > 4000)
+		{
+			WP_ForcePowerStop(self, forcePower);
+		}
+		return;
+	}
+
+	if (gripLevel == FORCE_LEVEL_4)
+	{
+		gripEnt->client->ps.fd.forceGripBeingGripped = level.time + 1000;
+
+		gripEnt->client->ps.otherKiller = self->s.number;
+		gripEnt->client->ps.otherKillerTime = level.time + 5000;
+		gripEnt->client->ps.otherKillerDebounceTime = level.time + 100;
+
+		gripEnt->client->ps.forceGripChangeMovetype = PM_FLOAT;
+
+		if (gripEnt->client->ps.forceGripMoveInterval < level.time)
+		{
+			float nvLen = 0;
+
+			VectorCopy(gripEnt->client->ps.origin, start_o);
+			AngleVectors(self->client->ps.viewangles, fwd, NULL, NULL);
+			fwd_o[0] = self->client->ps.origin[0] + fwd[0]*128;
+			fwd_o[1] = self->client->ps.origin[1] + fwd[1]*128;
+			fwd_o[2] = self->client->ps.origin[2] + fwd[2]*128;
+			fwd_o[2] += 16;
+			VectorSubtract(fwd_o, start_o, nvel);
+
+			nvLen = VectorLength(nvel);
+
+			if (nvLen < 16)
+			{ //within x units of desired spot
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*8;
+				gripEnt->client->ps.velocity[1] = nvel[1]*8;
+				gripEnt->client->ps.velocity[2] = nvel[2]*8;
+			}
+			else if (nvLen < 64)
+			{
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*128;
+				gripEnt->client->ps.velocity[1] = nvel[1]*128;
+				gripEnt->client->ps.velocity[2] = nvel[2]*128;
+			}
+			else if (nvLen < 128)
+			{
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*256;
+				gripEnt->client->ps.velocity[1] = nvel[1]*256;
+				gripEnt->client->ps.velocity[2] = nvel[2]*256;
+			}
+			else if (nvLen < 200)
+			{
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*512;
+				gripEnt->client->ps.velocity[1] = nvel[1]*512;
+				gripEnt->client->ps.velocity[2] = nvel[2]*512;
+			}
+			else
+			{
+				VectorNormalize(nvel);
+				gripEnt->client->ps.velocity[0] = nvel[0]*700;
+				gripEnt->client->ps.velocity[1] = nvel[1]*700;
+				gripEnt->client->ps.velocity[2] = nvel[2]*700;
+			}
+
+			gripEnt->client->ps.forceGripMoveInterval = level.time + 300; //only update velocity every 300ms, so as to avoid heavy bandwidth usage
+		}
+
+		if ((level.time - gripEnt->client->ps.fd.forceGripStarted) > 3000 && !self->client->ps.fd.forceGripDamageDebounceTime)
+		{ //if we managed to lift him into the air for 2 seconds, give him a crack
+			self->client->ps.fd.forceGripDamageDebounceTime = 1;
+			G_Damage(gripEnt, self, self, NULL, NULL, 40, DAMAGE_NO_ARMOR, MOD_FORCE_DARK);
+
+			//Must play custom sounds on the actual entity. Don't use G_Sound (it creates a temp entity for the sound)
+			G_EntitySound( gripEnt, CHAN_VOICE, G_SoundIndex(va( "*choke%d.wav", Q_irand( 1, 3 ) )) );
+
+			gripEnt->client->ps.forceHandExtend = HANDEXTEND_CHOKE;
+			gripEnt->client->ps.forceHandExtendTime = level.time + 2000;
+
+			if (gripEnt->client->ps.fd.forcePowersActive & (1 << FP_GRIP))
+			{ //choking, so don't let him keep gripping himself
+				WP_ForcePowerStop(gripEnt, FP_GRIP);
+			}
+		}
+		else if ((level.time - gripEnt->client->ps.fd.forceGripStarted) > 4000)
+		{
+			WP_ForcePowerStop(self, forcePower);
+		}
+		return;
+	}
+
+	if (gripLevel == FORCE_LEVEL_5)
 	{
 		gripEnt->client->ps.fd.forceGripBeingGripped = level.time + 1000;
 
