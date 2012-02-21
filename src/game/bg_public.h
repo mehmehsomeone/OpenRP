@@ -542,7 +542,9 @@ typedef enum {
 	PERS_ATTACKEE_ARMOR,			// health/armor of last person we attacked
 	PERS_KILLED,					// count of the number of times you died
 	// player awards tracking
-	PERS_IMPRESSIVE_COUNT,			// two railgun hits in a row
+	//OpenRP credits stuff begins here, overwriting uneeded things because the max is 16.
+	PERS_CREDITS,						// Credits.
+	//OpenRP credits stuff ends here.
 	PERS_EXCELLENT_COUNT,			// two successive kills in a short amount of time
 	PERS_DEFEND_COUNT,				// defend awards
 	PERS_ASSIST_COUNT,				// assist awards
@@ -1115,6 +1117,32 @@ typedef enum {
 	IT_PERSISTANT_POWERUP,
 	IT_TEAM
 } itemType_t;
+
+//OpenRP credits stuff begins here.
+
+// shop item class for bg_buylist
+typedef enum {
+	WC_MELEE,
+	WC_PISTOL,
+	WC_RIFLE,
+	WC_HEAVY,
+	WC_GRENADE,
+	WC_ARMOR,
+	WC_AMMO,
+	WC_ITEM,
+	WC_DEPLOY
+} gwclass_t;
+
+typedef struct gbuyable_s {
+	char		*text;
+	int			giTag;
+	itemType_t	giType;
+	int			quantity;
+	int			price;
+	gwclass_t	wc;
+} gbuyable_t;
+
+//OpenRP credits stuff ends here.
 
 #define MAX_ITEM_MODELS 4
 

@@ -17,6 +17,113 @@ void SetTeamQuick(gentity_t *ent, int team, qboolean doBegin);
 //void SP_fx_runner( gentity_t *ent );
 //void AddSpawnField(char *field, char *value);
 
+//OpenRP credits stuff begins here.
+
+const gbuyable_t	bg_buylist[] = 
+{
+	// text				giTag				giType			quantity price	wc
+	{ "melee",			WP_MELEE,			IT_WEAPON,		0,		   0,	WC_MELEE },		// weaponless
+	{ "stun",			WP_STUN_BATON,		IT_WEAPON,		0,		 100,	WC_MELEE },		// knife
+	{ "saber",			WP_SABER,			IT_WEAPON,		0,		9000,	WC_MELEE },		// super weapon
+	{ "pistol",			WP_BRYAR_PISTOL,	IT_WEAPON,		0,		 200,	WC_PISTOL },	// pistol
+	{ "dpistol",		WP_BRYAR_OLD,		IT_WEAPON,		100,		 250,	WC_PISTOL },	// disrupter pistol
+	{ "blaster",		WP_BLASTER,			IT_WEAPON,		150,	1000,	WC_RIFLE },		// rifle
+	{ "disruptor",		WP_DISRUPTOR,		IT_WEAPON,		100,	2200,	WC_RIFLE },		// sniper rifle
+	{ "bowcaster",		WP_BOWCASTER,		IT_WEAPON,		150,	1200,	WC_RIFLE },		// rifle
+	{ "repeater",		WP_REPEATER,		IT_WEAPON,		150,	1600,	WC_RIFLE },		// auto rifle
+	{ "electro",		WP_DEMP2,			IT_WEAPON,		75,		1400,	WC_RIFLE },		// electro gun
+	{ "flechette",		WP_FLECHETTE,		IT_WEAPON,		150,	1200,	WC_RIFLE },		// shotgun
+	{ "launcher",		WP_ROCKET_LAUNCHER, IT_WEAPON,		3,		2200,	WC_HEAVY },		// rocket
+	{ "concussion",		WP_CONCUSSION,		IT_WEAPON,		100,		2800,	WC_HEAVY },		// mega rifle
+
+	{ "energy",			AMMO_BLASTER,		IT_AMMO,		50,		  25,	WC_AMMO },
+	{ "powercells",		AMMO_POWERCELL,		IT_AMMO,		50,		  25,	WC_AMMO },
+	{ "bolts",			AMMO_METAL_BOLTS,	IT_AMMO,		75,		  25,	WC_AMMO },
+	{ "rockets",		AMMO_ROCKETS,		IT_AMMO,		2,		 250,	WC_AMMO },
+	{ "thermal",		AMMO_THERMAL,		IT_AMMO,		1,		 250,	WC_GRENADE },
+	{ "mine",			AMMO_TRIPMINE,		IT_AMMO,		1,		 250,	WC_GRENADE },
+	{ "detpack",		AMMO_DETPACK,		IT_AMMO,		1,		 250,	WC_GRENADE },
+	{ "ammo",			AMMO_NONE,			IT_AMMO,		0,		   0,	WC_AMMO },
+
+	{ "health",			4,					IT_HEALTH,		25,		 150,	WC_ARMOR },		// heath boost
+	{ "shield",			2,					IT_ARMOR,		50,		 250,	WC_ARMOR },		// armor
+	{ "binoculars",		HI_BINOCULARS,		IT_HOLDABLE,	1,		 250,	WC_ITEM },		// binoculars!
+	{ "jetpack",		HI_JETPACK,			IT_HOLDABLE,	1,		 850,	WC_ITEM },		// jetpack!
+	{ "cloak",			HI_CLOAK,			IT_HOLDABLE,	1,		1200,	WC_ITEM },		// cloak pack!
+	{ "bacta",			HI_MEDPAC_BIG,		IT_HOLDABLE,	1,		 300,	WC_ITEM },		// portable health
+
+	{ "sentry",			HI_SENTRY_GUN,		IT_HOLDABLE,	1,		 350,	WC_DEPLOY },	// sentry
+	{ "seeker",			HI_SEEKER,			IT_HOLDABLE,	1,		 350,	WC_DEPLOY },	// seeker drone
+	{ "barrier",		HI_SHIELD,			IT_HOLDABLE,	1,		 250,	WC_DEPLOY },	// shield barrier
+
+//	{ "swoop",			1,					0,				1,		3000,	WC_DEPLOY },	// swoop bike
+//	{ "healthdisp",		HI_HEALTHDISP,		IT_HOLDABLE,	1,		 450,	WC_DEPLOY },	// health dispenser
+//	{ "ammodisp",		HI_AMMODISP,		IT_HOLDABLE,	1,		 450,	WC_DEPLOY },	// ammo dispenser
+	// end of list marker
+	{ NULL }
+};
+
+/*
+==================
+Credit based commands
+==================
+*/
+
+/*
+extern void GiveCredits( gentity_t *ent, int amount );
+extern void TakeCredits( gentity_t *ent, int amount );
+extern void TradeCredits( gentity_t *from, gentity_t *to, int amount );
+*/
+
+void GiveCredits( gentity_t *ent, int amount ) {
+	if (!ent->client) return;
+
+	if (!g_creditsEnabled.integer) return;
+
+	if (amount <= 0) return;
+
+	ent->client->ps.persistant[PERS_CREDITS] += amount;
+	ent->client->ps.persistant[PERS_CREDITS_EARNED] += amount;
+
+	trap_SendServerCommand( ent-g_entities, va("Credits: %i", ent->client->ps.persistant[PERS_CREDITS] ) );
+	}
+}
+
+void TakeCredits( gentity_t *ent, int amount ) {
+	if (!ent->client) return;
+
+	if (!g_creditsEnabled.integer) return;
+
+	if (amount <= 0) return;
+
+	if ( amount > ent->client->ps.persistant[PERS_MONEY] )
+		ent->client->ps.persistant[PERS_CREDITS] = 0;
+	else
+		ent->client->ps.persistant[PERS_CREDITS] -= amount;
+
+		trap_SendServerCommand( ent-g_entities, va("Credits: %i", ent->client->ps.persistant[PERS_CREDITS] ) );
+	}
+}
+
+void TradeCredits( gentity_t *from, gentity_t *to, int amount ) {
+	if (!from->client) return;
+	if (!to->client) return;
+
+	if (!g_creditsEnabled.integer) return;
+
+	if (amount <= 0) return;
+
+	// we can't take more credits than they have - no cheating!
+	if (amount > from->client->ps.persistant[PERS_CREDITS]) 
+		amount = from->client->ps.persistant[PERS_CREDITS];
+
+	from->client->ps.persistant[PERS_CREDITS] -= amount;
+	to->client->ps.persistant[PERS_CREDITS] += amount;
+
+	TakeCredits(from, amount);
+	GiveCredits(to, amount);
+}
+
 /*
 ==================
 DeathmatchScoreboardMessage
@@ -3404,6 +3511,15 @@ static void Cmd_QwXP_f(gentity_t *ent)
 {
 	int XP = 0;
 	CmdEnt (ent-g_entities, va("print \"Current XP: %i\n\"", XP));
+	return;
+}
+
+static void Cmd_QwGiveCredits_f(gentity_t *ent)
+{
+	//OpenRPTODO - Add check for admin bitvalue, make it so user can choose how much credits they want to give.
+	int num = 10000;
+
+	ent->client->ps.persistant[PERS_CREDITS] += num;
 	return;
 }
 
