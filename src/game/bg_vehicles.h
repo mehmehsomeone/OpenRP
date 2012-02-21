@@ -468,7 +468,11 @@ typedef struct
 } vehTurretStatus_t;
 // This is the implementation of the vehicle interface and any of the other variables needed. This
 // is what actually represents a vehicle. -AReis.
+#ifdef __GCC__
+struct Vehicle_s
+#else
 typedef struct Vehicle_s
+#endif
 {
 	// The entity who pilots/drives this vehicle.
 	// NOTE: This is redundant (since m_pParentEntity->owner _should_ be the pilot). This makes things clearer though.

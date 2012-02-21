@@ -25,6 +25,7 @@ extern stringID_table_t BSTable[];
 // so that we only get the C version of the includes (no full Icarus) in that
 // scenario, but I think we'll just try to leave this out instead.
 #ifndef _XBOX
+//#ifndef __linux__
 #if defined(__linux__) && defined(__GCC__) || !defined(__linux__)
 enum
 {

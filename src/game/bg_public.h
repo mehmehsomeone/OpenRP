@@ -409,7 +409,11 @@ extern int bgForcePowerCost[NUM_FORCE_POWERS][NUM_FORCE_POWER_LEVELS];
 
 #define	MAXTOUCH	32
 
+#ifdef __GCC__
+struct bgEntity_s
+#else
 typedef struct bgEntity_s
+#endif
 {
 	entityState_t	s;
 	playerState_t	*playerState;
