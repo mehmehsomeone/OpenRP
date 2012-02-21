@@ -22,19 +22,19 @@ void SetTeamQuick(gentity_t *ent, int team, qboolean doBegin);
 const gbuyable_t	bg_buylist[] = 
 {
 	// text				giTag				giType			quantity price	wc
-	{ "melee",			WP_MELEE,			IT_WEAPON,		0,		   0,	WC_MELEE },		// weaponless
-	{ "stun",			WP_STUN_BATON,		IT_WEAPON,		0,		 100,	WC_MELEE },		// knife
-	{ "saber",			WP_SABER,			IT_WEAPON,		0,		9000,	WC_MELEE },		// super weapon
-	{ "pistol",			WP_BRYAR_PISTOL,	IT_WEAPON,		0,		 200,	WC_PISTOL },	// pistol
-	{ "dpistol",		WP_BRYAR_OLD,		IT_WEAPON,		100,		 250,	WC_PISTOL },	// disrupter pistol
-	{ "blaster",		WP_BLASTER,			IT_WEAPON,		150,	1000,	WC_RIFLE },		// rifle
-	{ "disruptor",		WP_DISRUPTOR,		IT_WEAPON,		100,	2200,	WC_RIFLE },		// sniper rifle
-	{ "bowcaster",		WP_BOWCASTER,		IT_WEAPON,		150,	1200,	WC_RIFLE },		// rifle
-	{ "repeater",		WP_REPEATER,		IT_WEAPON,		150,	1600,	WC_RIFLE },		// auto rifle
-	{ "electro",		WP_DEMP2,			IT_WEAPON,		75,		1400,	WC_RIFLE },		// electro gun
-	{ "flechette",		WP_FLECHETTE,		IT_WEAPON,		150,	1200,	WC_RIFLE },		// shotgun
-	{ "launcher",		WP_ROCKET_LAUNCHER, IT_WEAPON,		3,		2200,	WC_HEAVY },		// rocket
-	{ "concussion",		WP_CONCUSSION,		IT_WEAPON,		100,		2800,	WC_HEAVY },		// mega rifle
+	{ "melee",			WP_MELEE,			IT_WEAPON,		0,		   0,	WC_MELEE },
+	{ "stun",			WP_STUN_BATON,		IT_WEAPON,		0,		 100,	WC_MELEE },
+	{ "saber",			WP_SABER,			IT_WEAPON,		0,		9000,	WC_MELEE },
+	{ "pistol",			WP_BRYAR_PISTOL,	IT_WEAPON,		0,		 200,	WC_PISTOL },
+	{ "dpistol",		WP_BRYAR_OLD,		IT_WEAPON,		100,		 250,	WC_PISTOL },
+	{ "blaster",		WP_BLASTER,			IT_WEAPON,		150,	1000,	WC_RIFLE },
+	{ "disruptor",		WP_DISRUPTOR,		IT_WEAPON,		100,	2200,	WC_RIFLE },
+	{ "bowcaster",		WP_BOWCASTER,		IT_WEAPON,		150,	1200,	WC_RIFLE },
+	{ "repeater",		WP_REPEATER,		IT_WEAPON,		150,	1600,	WC_RIFLE },
+	{ "electro",		WP_DEMP2,			IT_WEAPON,		75,		1400,	WC_RIFLE },
+	{ "flechette",		WP_FLECHETTE,		IT_WEAPON,		150,	1200,	WC_RIFLE },
+	{ "launcher",		WP_ROCKET_LAUNCHER, IT_WEAPON,		3,		2200,	WC_HEAVY },
+	{ "concussion",		WP_CONCUSSION,		IT_WEAPON,		100,		2800,	WC_HEAVY },
 
 	{ "energy",			AMMO_BLASTER,		IT_AMMO,		50,		  25,	WC_AMMO },
 	{ "powercells",		AMMO_POWERCELL,		IT_AMMO,		50,		  25,	WC_AMMO },
@@ -45,22 +45,22 @@ const gbuyable_t	bg_buylist[] =
 	{ "detpack",		AMMO_DETPACK,		IT_AMMO,		1,		 250,	WC_GRENADE },
 	{ "ammo",			AMMO_NONE,			IT_AMMO,		0,		   0,	WC_AMMO },
 
-	{ "health",			4,					IT_HEALTH,		25,		 150,	WC_ARMOR },		// heath boost
-	{ "shield",			2,					IT_ARMOR,		50,		 250,	WC_ARMOR },		// armor
-	{ "binoculars",		HI_BINOCULARS,		IT_HOLDABLE,	1,		 250,	WC_ITEM },		// binoculars!
-	{ "jetpack",		HI_JETPACK,			IT_HOLDABLE,	1,		 850,	WC_ITEM },		// jetpack!
-	{ "cloak",			HI_CLOAK,			IT_HOLDABLE,	1,		1200,	WC_ITEM },		// cloak pack!
-	{ "bacta",			HI_MEDPAC_BIG,		IT_HOLDABLE,	1,		 300,	WC_ITEM },		// portable health
+	{ "health",			4,					IT_HEALTH,		25,		 150,	WC_ARMOR },
+	{ "shield",			2,					IT_ARMOR,		50,		 250,	WC_ARMOR },
+	{ "binoculars",		HI_BINOCULARS,		IT_HOLDABLE,	1,		 250,	WC_ITEM },
+	{ "jetpack",		HI_JETPACK,			IT_HOLDABLE,	1,		 850,	WC_ITEM },
+	{ "cloak",			HI_CLOAK,			IT_HOLDABLE,	1,		1200,	WC_ITEM },
+	{ "bacta",			HI_MEDPAC_BIG,		IT_HOLDABLE,	1,		 300,	WC_ITEM },
 
-	{ "sentry",			HI_SENTRY_GUN,		IT_HOLDABLE,	1,		 350,	WC_DEPLOY },	// sentry
-	{ "seeker",			HI_SEEKER,			IT_HOLDABLE,	1,		 350,	WC_DEPLOY },	// seeker drone
-	{ "barrier",		HI_SHIELD,			IT_HOLDABLE,	1,		 250,	WC_DEPLOY },	// shield barrier
+	{ "sentry",			HI_SENTRY_GUN,		IT_HOLDABLE,	1,		 350,	WC_DEPLOY },
+	{ "seeker",			HI_SEEKER,			IT_HOLDABLE,	1,		 350,	WC_DEPLOY },
+	{ "barrier",		HI_SHIELD,			IT_HOLDABLE,	1,		 250,	WC_DEPLOY },
 
-//	{ "swoop",			1,					0,				1,		3000,	WC_DEPLOY },	// swoop bike
-//	{ "healthdisp",		HI_HEALTHDISP,		IT_HOLDABLE,	1,		 450,	WC_DEPLOY },	// health dispenser
-//	{ "ammodisp",		HI_AMMODISP,		IT_HOLDABLE,	1,		 450,	WC_DEPLOY },	// ammo dispenser
-	// end of list marker
-	{ NULL }
+//	{ "swoop",			1,					0,				1,		3000,	WC_DEPLOY },
+//	{ "healthdisp",		HI_HEALTHDISP,		IT_HOLDABLE,	1,		 450,	WC_DEPLOY },
+//	{ "ammodisp",		HI_AMMODISP,		IT_HOLDABLE,	1,		 450,	WC_DEPLOY },
+	
+	{ NULL } // end of list marker
 };
 */
 /*
@@ -4345,9 +4345,9 @@ void Cmd_QwMute_f(gentity_t *ent)
 		return;
 	}
 
-	if(!(tent->client->sess.state & PLAYER_MUTE))
+	if(!(tent->client->sess.state & PLAYER_MUTED))
 	{
-		tent->client->sess.state |= PLAYER_MUTE;
+		tent->client->sess.state |= PLAYER_MUTED;
 	}
 
 	CmdEnt(tent-g_entities, va("cp \"You were muted by an administrator.\""));
@@ -4393,7 +4393,7 @@ void Cmd_QwUnMute_f(gentity_t *ent)
 		return;
 	}
 
-	if(!tent->client->sess.state & PLAYER_MUTE)
+	if(!tent->client->sess.state & PLAYER_MUTED)
 	{
 		CmdEnt(ent-g_entities, va("print \"^3This player is not muted.\n\""));
 		return;
@@ -4405,9 +4405,9 @@ void Cmd_QwUnMute_f(gentity_t *ent)
 		return;
 	}
 
-	if((tent->client->sess.state & PLAYER_MUTE))
+	if((tent->client->sess.state & PLAYER_MUTED))
 	{
-		tent->client->sess.state -= PLAYER_MUTE; //bad way of doing it but it should work
+		tent->client->sess.state -= PLAYER_MUTED; //bad way of doing it but it should work
 	}
 	CmdEnt(tent-g_entities, va("cp \"You were unmuted by an administrator.\""));
 }
@@ -4465,9 +4465,9 @@ void Cmd_QwSleep_f(gentity_t *ent)
 		return;
 	}
 
-	if(!(tent->client->sess.state & PLAYER_STUN))
+	if(!(tent->client->sess.state & PLAYER_SLEEPING))
 	{
-		tent->client->sess.state |= PLAYER_STUN;
+		tent->client->sess.state |= PLAYER_SLEEPING;
 	}
 
 	tent2 = G_TempEntity( tent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
@@ -4526,7 +4526,7 @@ void Cmd_QwUnsleep_f(gentity_t *ent)
 		return;
 	}
 
-	if(!tent->client->sess.state & PLAYER_MUTE)
+	if(!tent->client->sess.state & PLAYER_MUTED)
 	{
 		CmdEnt(ent-g_entities, va("print \"^3This player is not sleeping.\n\""));
 		return;
@@ -4544,9 +4544,9 @@ void Cmd_QwUnsleep_f(gentity_t *ent)
 		return;
 	}
 
-	if((tent->client->sess.state & PLAYER_STUN))
+	if((tent->client->sess.state & PLAYER_SLEEPING))
 	{
-		tent->client->sess.state -= PLAYER_STUN;
+		tent->client->sess.state -= PLAYER_SLEEPING;
 	}
 
 	tent->client->ps.forceDodgeAnim = 0;

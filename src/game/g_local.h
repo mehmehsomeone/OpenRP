@@ -80,16 +80,16 @@ extern vec3_t gPainPoint;
 
 //openrp Defines Begin Here.
 //Some defines to make things clearer
-#define ADMIN_NO_ADMIN				0 //No Admin Priveleges
+#define ADMIN_NO_ADMIN				0 //No Admin Privileges
 #define ADMIN_TEMP					1 //Temporary Admin Level
 #define ADMIN_1						2 //Admin Level 1
-#define ADMIN_2						3 //Admin Leve 2
+#define ADMIN_2						3 //Admin Level 2
 #define ADMIN_3						4 //Admin Level 3
 #define ADMIN_4						5 //Admin Level 4
-#define ADMIN_5						6 //Admin Leve 5
+#define ADMIN_5						6 //Admin Level 5
 #define ADMIN_6						7 //Admin Level 6
 #define ADMIN_7						8 //Admin Level 7
-#define ADMIN_8						9 //Admin Leve 8
+#define ADMIN_8						9 //Admin Level 8
 #define ADMIN_9						10 //Admin Level 9
 #define ADMIN_10					11 //Admin Level 10
 
@@ -129,8 +129,8 @@ extern vec3_t gPainPoint;
 //openrp Defines Begin Here
 //Flags for player states
 #define PLAYER_NORMAL				1 // There are no states affecting this player
-#define PLAYER_STUN					2 // This player has been stunned
-#define PLAYER_MUTE					4 // This player has been muted
+#define PLAYER_SLEEPING					2 // This player has been stunned
+#define PLAYER_MUTED					4 // This player has been muted
 
 //Duel stuff
 #define SABER_DUEL					1
