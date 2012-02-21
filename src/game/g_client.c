@@ -2287,6 +2287,13 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 			static char sTemp[1024];
 			Q_strncpyz(sTemp, G_GetStringEdString("MP_SVGAME","INVALID_ESCAPE_TO_MAIN"), sizeof (sTemp) );
 			return sTemp;// return "Invalid password";
+			// Gordon: porting q3f flag bug fix
+ // If a player reconnects quickly after a disconnect, the client disconnect may never be called, thus flag can get lost in the ether
+ if( ent->inuse ) {
+ G_LogPrintf( "Forcing disconnect on active client: %i\n", ent-g_entities );
+ // so lets just fix up anything that should happen on a disconnect
+ ClientDisconnect( ent-g_entities );
+ }
 		}
 	}
 
