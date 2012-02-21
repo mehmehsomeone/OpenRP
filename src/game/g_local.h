@@ -129,7 +129,7 @@ extern vec3_t gPainPoint;
 //openrp Defines Begin Here
 //Flags for player states
 #define PLAYER_NORMAL				1 // There are no states affecting this player
-#define PLAYER_SLEEPING					2 // This player has been stunned
+#define PLAYER_SLEEPING					2 // This player has been put to sleep
 #define PLAYER_MUTED					4 // This player has been muted
 
 //Duel stuff
