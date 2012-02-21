@@ -15,32 +15,32 @@ static	vec3_t	muzzle;
 
 // Bryar Pistol
 //--------
-#define BRYAR_PISTOL_VEL			1600
-#define BRYAR_PISTOL_DAMAGE			10
+#define BRYAR_PISTOL_VEL			4750
+#define BRYAR_PISTOL_DAMAGE			15
 #define BRYAR_CHARGE_UNIT			200.0f	// bryar charging gives us one more unit every 200ms--if you change this, you'll have to do the same in bg_pmove
 #define BRYAR_ALT_SIZE				1.0f
 
 // E11 Blaster
 //---------
 #define BLASTER_SPREAD				3.6f//1.2f
-#define BLASTER_VELOCITY			2300
-#define BLASTER_DAMAGE				20
+#define BLASTER_VELOCITY			5000
+#define BLASTER_DAMAGE				30
 
 // Tenloss Disruptor
 //----------
-#define DISRUPTOR_MAIN_DAMAGE			30 //40
+#define DISRUPTOR_MAIN_DAMAGE			40 //40
 #define DISRUPTOR_MAIN_DAMAGE_SIEGE		50
 #define DISRUPTOR_NPC_MAIN_DAMAGE_CUT	0.25f
 
 #define DISRUPTOR_ALT_DAMAGE			100 //125
 #define DISRUPTOR_NPC_ALT_DAMAGE_CUT	0.2f
-#define DISRUPTOR_ALT_TRACES			3		// can go through a max of 3 damageable(sp?) entities
+#define DISRUPTOR_ALT_TRACES			5		// can go through a max of 3 damageable(sp?) entities
 #define DISRUPTOR_CHARGE_UNIT			50.0f	// distruptor charging gives us one more unit every 50ms--if you change this, you'll have to do the same in bg_pmove
 
 // Wookiee Bowcaster
 //----------
 #define	BOWCASTER_DAMAGE			50
-#define	BOWCASTER_VELOCITY			1300
+#define	BOWCASTER_VELOCITY			4500
 #define BOWCASTER_SPLASH_DAMAGE		0
 #define BOWCASTER_SPLASH_RADIUS		0
 #define BOWCASTER_SIZE				2
@@ -51,21 +51,21 @@ static	vec3_t	muzzle;
 
 // Heavy Repeater
 //----------
-#define REPEATER_SPREAD				1.4f
-#define	REPEATER_DAMAGE				14
-#define	REPEATER_VELOCITY			1600
+#define REPEATER_SPREAD				1.2f
+#define	REPEATER_DAMAGE				15
+#define	REPEATER_VELOCITY			5000
 
 #define REPEATER_ALT_SIZE				3	// half of bbox size
-#define	REPEATER_ALT_DAMAGE				60
+#define	REPEATER_ALT_DAMAGE				75
 #define REPEATER_ALT_SPLASH_DAMAGE		60
 #define REPEATER_ALT_SPLASH_RADIUS		128
 #define REPEATER_ALT_SPLASH_RAD_SIEGE	80
-#define	REPEATER_ALT_VELOCITY			1100
+#define	REPEATER_ALT_VELOCITY			2500
 
 // DEMP2
 //----------
 #define	DEMP2_DAMAGE				35
-#define	DEMP2_VELOCITY				1800
+#define	DEMP2_VELOCITY				4500
 #define	DEMP2_SIZE					2		// half of bbox size
 
 #define DEMP2_ALT_DAMAGE			8 //12		// does 12, 36, 84 at each of the 3 charge levels.
@@ -75,10 +75,10 @@ static	vec3_t	muzzle;
 
 // Golan Arms Flechette
 //---------
-#define FLECHETTE_SHOTS				5
-#define FLECHETTE_SPREAD			4.0f
+#define FLECHETTE_SHOTS				7
+#define FLECHETTE_SPREAD			3.5f
 #define FLECHETTE_DAMAGE			12//15
-#define FLECHETTE_VEL				3500
+#define FLECHETTE_VEL				4500
 #define FLECHETTE_SIZE				1
 #define FLECHETTE_MINE_RADIUS_CHECK	256
 #define FLECHETTE_ALT_DAMAGE		60
@@ -87,12 +87,12 @@ static	vec3_t	muzzle;
 
 // Personal Rocket Launcher
 //---------
-#define	ROCKET_VELOCITY				900
+#define	ROCKET_VELOCITY				3750
 #define	ROCKET_DAMAGE				100
 #define	ROCKET_SPLASH_DAMAGE		100
 #define	ROCKET_SPLASH_RADIUS		160
 #define ROCKET_SIZE					3
-#define ROCKET_ALT_THINK_TIME		100
+#define ROCKET_ALT_THINK_TIME		75
 
 // Concussion Rifle
 //---------
@@ -107,7 +107,7 @@ static	vec3_t	muzzle;
 #define	CONC_SPLASH_DAMAGE			40 //50
 #define	CONC_SPLASH_RADIUS			200 //300
 //alt
-#define CONC_ALT_DAMAGE				25 //100
+#define CONC_ALT_DAMAGE				100 //100
 #define CONC_ALT_NPC_DAMAGE_EASY	20
 #define CONC_ALT_NPC_DAMAGE_MEDIUM	35
 #define CONC_ALT_NPC_DAMAGE_HARD	50
@@ -126,14 +126,14 @@ static	vec3_t	muzzle;
 
 // ATST Main Gun
 //--------------
-#define ATST_MAIN_VEL				4000	// 
+#define ATST_MAIN_VEL				4500	// 
 #define ATST_MAIN_DAMAGE			25		// 
 #define ATST_MAIN_SIZE				3		// make it easier to hit things
 
 // ATST Side Gun
 //---------------
 #define ATST_SIDE_MAIN_DAMAGE				75
-#define ATST_SIDE_MAIN_VELOCITY				1300
+#define ATST_SIDE_MAIN_VELOCITY				4500
 #define ATST_SIDE_MAIN_NPC_DAMAGE_EASY		30
 #define ATST_SIDE_MAIN_NPC_DAMAGE_NORMAL	40
 #define ATST_SIDE_MAIN_NPC_DAMAGE_HARD		50
@@ -141,7 +141,7 @@ static	vec3_t	muzzle;
 #define ATST_SIDE_MAIN_SPLASH_DAMAGE		10	// yeah, pretty small, either zero out or make it worth having?
 #define ATST_SIDE_MAIN_SPLASH_RADIUS		16	// yeah, pretty small, either zero out or make it worth having?
 
-#define ATST_SIDE_ALT_VELOCITY				1100
+#define ATST_SIDE_ALT_VELOCITY				4500
 #define ATST_SIDE_ALT_NPC_VELOCITY			600
 #define ATST_SIDE_ALT_DAMAGE				130
 
