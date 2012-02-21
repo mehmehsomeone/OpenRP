@@ -19,12 +19,15 @@
 extern void G_CheapWeaponFire(int entNum, int ev);
 extern qboolean TryGrapple(gentity_t *ent); //g_cmds.c
 extern void trap_FX_PlayEffect( const char *file, vec3_t org, vec3_t fwd, int vol, int rad );
+extern gclient_t g_clients[MAX_CLIENTS]; // need this for jetpack auto-off (OpenRP)
 #endif
 
 extern qboolean BG_FullBodyTauntAnim( int anim );
 extern float PM_WalkableGroundDistance(void);
 extern qboolean PM_GroundSlideOkay( float zNormal );
 extern saberInfo_t *BG_MySaber( int clientNum, int saberNum );
+
+#define JETPACK_HOVER_HEIGHT	64
 
 pmove_t		*pm;
 pml_t		pml;
@@ -204,7 +207,7 @@ float forceJumpHeight[NUM_FORCE_POWER_LEVELS] =
 	192,//(+stepheight+crouchdiff = 226)- jump 2
 	384,//(+stepheight+crouchdiff = 418)- jump 3
 	768,// blah blah 610  (-at-)- jump 4 (OpenRP)
-	8096,// blah blah 610  (-at-)- jump 5 (OpenRP)
+	8096// blah blah 610  (-at-)- jump 5 (OpenRP)
 };
 
 float forceJumpStrength[NUM_FORCE_POWER_LEVELS] = 
@@ -212,9 +215,9 @@ float forceJumpStrength[NUM_FORCE_POWER_LEVELS] =
 	JUMP_VELOCITY,//normal jump
 	420,
 	590,
-	840
+	840,
 	840, // (OpenRp)
-	920, // (OpenRp)
+	920 // (OpenRp)
 };
 
 //rww - Get a pointer to the bgEntity by the index
@@ -10194,8 +10197,6 @@ extern void trap_SnapVector( float *v );
 extern int BG_EmplacedView(vec3_t baseAngles, vec3_t angles, float *newYaw, float constraint);
 extern qboolean BG_FighterUpdate(Vehicle_t *pVeh, const usercmd_t *pUcmd, vec3_t trMins, vec3_t trMaxs, float gravity,
 					  void (*traceFunc)( trace_t *results, const vec3_t start, const vec3_t lmins, const vec3_t lmaxs, const vec3_t end, int passEntityNum, int contentMask )); //FighterNPC.c
-
-#define JETPACK_HOVER_HEIGHT	64
 
 //#define _TESTING_VEH_PREDICTION
 
