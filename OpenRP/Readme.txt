@@ -9,15 +9,14 @@ Place OpenRP in your GameData folder.
 
 Credits:
 
-Main Development Team:
+Main Development Team Members:
 
 Fighter - Coding
-Kavar (Retired) - Coding, animation, class system concepts
-Kyle - Concepts
-Nile - Shield mod
+Kyle - Coding
 Buz - Coding
 Zanka/Zaxxeh - Coding
 Kidd - Coding
+Exe/Drex - Animations
 
 Others:
 
@@ -29,5 +28,7 @@ Xycaleth, eezstreet, Didz, and Raz0r for posting coding tutorials and bug fixes 
 Tzu and Flame for their cvar fixes for sabering
 Erstok for the location based damage cvar
 Hans Zimmer for the main menu song
+Kavar - Coding, animation, class system concepts
+Nile - Shield mod
 
 THIS MODIFICATION IS NOT MADE, DISTRIBUTED, OR SUPPORTED BY ACTIVISION,RAVEN, OR LUCASARTS ENTERTAINMENT COMPANY LLC. ELEMENTS TM & c LUCASARTS ENTERTAINMENT COMPANY LLC AND/OR ITS LICENSORS.
