@@ -30,5 +30,6 @@ Erstok for the location based damage cvar
 Hans Zimmer for the main menu song
 Kavar - Coding, animation, class system concepts
 Nile - Shield mod
+Naythan - Splash screen
 
 THIS MODIFICATION IS NOT MADE, DISTRIBUTED, OR SUPPORTED BY ACTIVISION,RAVEN, OR LUCASARTS ENTERTAINMENT COMPANY LLC. ELEMENTS TM & c LUCASARTS ENTERTAINMENT COMPANY LLC AND/OR ITS LICENSORS.
