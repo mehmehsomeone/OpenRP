@@ -28,5 +28,6 @@ TK-231 for his Special Effects Mod V1 Base
 Xycaleth, eezstreet, Didz, and Raz0r for posting coding tutorials and bug fixes at www.jacoders.org
 Tzu and Flame for their cvar fixes for sabering
 Erstok for the location based damage cvar
+Hans Zimmer for the main menu song
 
 THIS MODIFICATION IS NOT MADE, DISTRIBUTED, OR SUPPORTED BY ACTIVISION,RAVEN, OR LUCASARTS ENTERTAINMENT COMPANY LLC. ELEMENTS TM & c LUCASARTS ENTERTAINMENT COMPANY LLC AND/OR ITS LICENSORS.
