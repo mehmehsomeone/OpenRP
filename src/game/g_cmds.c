@@ -5710,7 +5710,7 @@ void ClientCommand( int clientNum ) {
 	else if(!Q_stricmp(cmd, "qwtele"))
 		Cmd_QwTeleport_f(ent);
 
-	else if(!Q_stricmp(cmd, "qslay"))
+	else if(!Q_stricmp(cmd, "qwslay"))
 		Cmd_QwSlay_f(ent);
 
 	else if(!Q_stricmp(cmd, "qwmute"))
