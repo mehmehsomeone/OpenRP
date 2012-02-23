@@ -3469,7 +3469,6 @@ static void Cmd_QwClassinfo_f (gentity_t *ent)
 {
 	trap_SendServerCommand( ent-g_entities, "print \"placeholder\n\"" );
 	return;
-
 }
 
 /*
@@ -3490,10 +3489,12 @@ static void Cmd_QwJetpack_f (gentity_t *ent)
 		{
 			Jetpack_Off(ent);
 		}
+		return;
     } 
     else 
     { 
 		ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_JETPACK);
+		return;
     }
    }
 
@@ -3562,6 +3563,7 @@ static void Cmd_Me_f(gentity_t *ent)
 		other = &g_entities[j];
 		G_SayTo( ent, other, SAY_ALL, color, name, real_msg, NULL );
 	}
+	return;
 }
 
 /*
@@ -3712,10 +3714,10 @@ qboolean G_AdminControl(int UserAdmin, int TargetAdmin)
 
 /*
 ======================
-Admin password stuff
+qwlogin Function
 ======================
 */
-void Cmd_OpenRPAdmin_f(gentity_t *ent)
+void Cmd_QwLogin_f(gentity_t *ent)
 {
 	char arg[MAX_STRING_CHARS];
 	char argS[MAX_STRING_CHARS];
@@ -3892,6 +3894,8 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 	{
 		tent->client->sess.admin = ADMIN_TEMP;
 		CmdEnt(ent-g_entities, va("print \"^5Player %s is now a temp admin.\n\"", name));
+		G_LogPrintf("Grant Temp Admin command executed by %s on %s.\n", ent->client->pers.netname, name);
+		return;
 	}
 	else if(tent->client->sess.admin == ADMIN_TEMP)
 	{
@@ -3901,9 +3905,8 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 	else if(!tent->client->sess.admin == ADMIN_NO_ADMIN && !tent->client->sess.admin == ADMIN_TEMP)
 	{
 		CmdEnt(ent-g_entities, va("print \"^5Player %s is already logged in as an admin.\n\"", name));
-		return;
 	}
-	G_LogPrintf("Grant Temp Admin command executed by %s on %s.\n", ent->client->pers.netname, name);
+	return;
 }
 
 /*
@@ -3984,7 +3987,7 @@ static void Cmd_QwBan_f(gentity_t *ent)
 
 	CmdEnt(ent-g_entities, va("print \"^5The IP of the person you banned is %s", ent->client->sess.IP));
 	G_LogPrintf("Ban admin command executed by %s on %s.\n", ent->client->pers.netname, name);
-	
+	return;
 }
 
 /*
@@ -4035,6 +4038,7 @@ static void Cmd_QwKick_f(gentity_t *ent)
 
 	trap_DropClient(pids[0], "^5was ^1kicked.");
 	G_LogPrintf("Kick admin command executed by %s on %s.\n", ent->client->pers.netname, name);
+	return;
 }
 
 /*
@@ -4089,8 +4093,9 @@ static void Cmd_QwWarn_f(gentity_t *ent)
 	{
 		trap_DropClient(player2-g_entities, "\nYou were Kicked.\nYou were warned!");
 		G_LogPrintf("%s was kicked because they received the maximum number of warnings from admins.\n", player2);
+		return;
 	}
-	
+	return;
 }
 
 /*
@@ -4241,6 +4246,7 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 		player2->client->ps.eFlags ^= EF_TELEPORT_BIT;
 	}
 	G_LogPrintf("Teleport admin command executed by %s. This caused %s to teleport to %s.\n", ent->client->pers.netname, name, name2);
+	return;
 }
 
 
@@ -4318,6 +4324,7 @@ static void Cmd_QwSlay_f(gentity_t *ent)
 			CmdEnt(target-g_entities, va("cp \"You were slain by an admin.\""));
 		}
 		G_LogPrintf("Slay admin command executed by %s on %s.\n", ent->client->pers.netname, name);
+		return;
 }
 
 /*
@@ -4386,6 +4393,7 @@ static void Cmd_QwAnnounce_f(gentity_t *ent)
 
 			 trap_SendServerCommand(clientid, va("cp \"%s\"", real_msg) );
 			 G_LogPrintf("Announce admin command executed by %s. The announcement was: %s\n", ent->client->pers.netname, real_msg);
+			 return;
 	  }
 
 /*
@@ -4441,6 +4449,7 @@ static void Cmd_QwMute_f(gentity_t *ent)
 	CmdAll(va("cp \"%s was muted by an admin.\"", name));
 	CmdEnt(tent-g_entities, va("cp \"You were muted by an admin.\""));
 	G_LogPrintf("Mute admin command executed by %s on %s.\n", ent->client->pers.netname, name);
+	return;
 }
 
 /*
@@ -4501,6 +4510,7 @@ static void Cmd_QwUnMute_f(gentity_t *ent)
 	}
 	CmdEnt(tent-g_entities, va("cp \"You were unmuted by an admin.\""));
 	G_LogPrintf("Unmute admin command executed by %s on %s.\n", ent->client->pers.netname, name);
+	return;
 }
 
 /*
@@ -4574,6 +4584,7 @@ static void Cmd_QwSleep_f(gentity_t *ent)
 
 	G_SetAnim(tent, NULL, SETANIM_BOTH, BOTH_STUMBLEDEATH1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
 	G_LogPrintf("Sleep admin command executed by %s on %s.\n", ent->client->pers.netname, name);
+	return;
 }
 
 /*
@@ -4647,6 +4658,7 @@ static void Cmd_QwUnsleep_f(gentity_t *ent)
 	//Play a nice healing sound... Ahh
 	//G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
 	G_LogPrintf("Unsleep admin command executed by %s on %s.\n", ent->client->pers.netname, name);
+	return;
 }
 
 /*
@@ -4720,6 +4732,7 @@ static void Cmd_QwProtect_f(gentity_t *ent)
 		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
 	}
 	G_LogPrintf("Protect admin command executed by %s.\n", ent->client->pers.netname);
+	return;
 }
 
 
@@ -4788,6 +4801,7 @@ static void Cmd_QwEmpower_f(gentity_t *ent)
 
 	CmdEnt(ent-g_entities, va("cp \"You have been empowered.\""));
 	G_LogPrintf("Empower admin command executed by %s.\n", ent->client->pers.netname);
+	return;
 }
 
 /*
@@ -4814,6 +4828,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 	}
 	CmdEnt(ent-g_entities, va("cp \"You have been merced.\""));
 	G_LogPrintf("Merc admin command executed by %s.\n", ent->client->pers.netname);
+	return;
 }
 
 /*
@@ -4840,6 +4855,7 @@ static void Cmd_QwResetScale_f(gentity_t *ent)
 
 	CmdEnt(ent-g_entities, va("print \"^5Model scale reset.\n\""));
 	G_LogPrintf("Reset Scale admin command executed by %s.\n", ent->client->pers.netname);
+	return;
 }
 
 /*
@@ -4904,7 +4920,9 @@ static void Cmd_QwScale_f(gentity_t *ent)
 
 	CmdEnt(ent-g_entities, va("print \"^5You have been scaled.\n\""));
 	G_LogPrintf("Scale admin command executed by %s.\n", ent->client->pers.netname);
+	return;
 }
+
 
 /*
 ============
@@ -4921,6 +4939,7 @@ static void Cmd_QwBitvalues_f(gentity_t *ent)
 
 	CmdEnt(ent-g_entities, va("print \"^2Admin 1: %i\nAdmin 2: %i\nAdmin 3 %i\nAdmin 4: %i\nAdmin 5: %i\n\"", openrp_admin1Allow.integer, openrp_admin2Allow.integer, openrp_admin3Allow.integer, openrp_admin4Allow.integer, openrp_admin5Allow.integer));
 	CmdEnt(ent-g_entities, va("print \"^2Admin 6: %i\nAdmin 7: %i\nAdmin 8: %i\nAdmin 9: %i\nAdmin 10:%i\nTemporary Admin:%i\n\"", openrp_admin6Allow.integer, openrp_admin7Allow.integer, openrp_admin8Allow.integer, openrp_admin9Allow.integer, openrp_admin10Allow.integer, openrp_adminTempallow.integer));
+	return;
 }
 /*
 ============
@@ -5063,6 +5082,7 @@ static void Cmd_QwForceTeam_f(gentity_t *ent)
 		trap_SendServerCommand( ent-g_entities, va("print \"^5You can't forceteam someone in this gametype.Gametype must be FFA, TEAMFFA, SIEGE, or CTF.\n\"") );
 		return;
 	}
+		 return;
 	}
 
 /*
@@ -5129,15 +5149,17 @@ static void Cmd_QwMap_f(gentity_t *ent)
 		CmdEnt(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
+	else
 	{
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_SendConsoleCommand( EXEC_APPEND, va("g_gametype %s\n", arg1));
 	G_LogPrintf("%s used the map command and changed the gametype to %s.\n", ent->client->pers.netname, arg1);
+
 	trap_Argv( 2, arg1, sizeof( arg1 ) );
 	trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", arg1));
 	G_LogPrintf("Map changed to %s by %s.\n", arg1, ent->client->pers.netname);
+	return;
 	}
-
 }
 
 /*
@@ -5261,6 +5283,7 @@ static void Cmd_QwStatus_f(gentity_t *ent)
    trap_SendServerCommand(ent-g_entities, va("print \"\n^5===================================\n\n\""));
 	  }
    }
+   return;
 }
 
 /*
@@ -5330,6 +5353,7 @@ static void Cmd_QwRename_f(gentity_t *ent)
 		uwRename(&g_entities[clientid], newname);
 
 	G_LogPrintf("Rename admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
+	return;
 }
 
 /*
@@ -5380,8 +5404,9 @@ static void Cmd_QwSlap_f(gentity_t *ent)
 		g_entities[clientid].client->ps.velocity[2] += 500;
 		g_entities[clientid].client->ps.forceDodgeAnim = 0;
 		g_entities[clientid].client->ps.quickerGetup = qfalse;
+
 		G_LogPrintf("Slap admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
-		
+		return;
 		}
 
 /*
@@ -5690,7 +5715,7 @@ void ClientCommand( int clientNum ) {
 	// openrp Admin Commands Begin Here.
 
 	else if(!Q_stricmp(cmd, "qwlogin"))
-		Cmd_OpenRPAdmin_f(ent);
+		Cmd_QwLogin_f(ent);
 
 	else if(!Q_stricmp(cmd, "qwadminwhois"))
 		Cmd_QwAdminWhois_f(ent);
