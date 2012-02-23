@@ -4759,24 +4759,24 @@ qwempower Function
 */
 static void Cmd_QwEmpower_f(gentity_t *ent)
 {
+	int i;
+
 	if(!G_CheckAdmin(ent, ADMIN_EMPOWER))
 	{
 		CmdEnt(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
-	ent->client->ps.trueNonJedi = qfalse;
-	ent->client->ps.trueJedi = qtrue;
 
-	//If they are empowered, let's make sure they can only use the saber.
-	ent->client->ps.weapon = WP_SABER;
-	ent->client->ps.stats[STAT_WEAPONS] = (1 << WP_SABER);
 
-	/*
+	ent->client->ps.eFlags &= ~EF_BODYPUSH;
+	ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER) | ( 1 << WP_MELEE);
+	ent->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
+																 1 << FP_TELEPATHY | 1 << FP_GRIP | 1 << FP_LIGHTNING | 1 << FP_RAGE | 
+																 1 << FP_PROTECT | 1 << FP_ABSORB | 1 << FP_DRAIN | 1 << FP_SEE);
+	for( i = 0; i < NUM_FORCE_POWERS; i ++ )
+	{
 	ent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
-	ent->client->ps.fd.forcePowersKnown |= (1 << i);
-	*/
-
-	ent->client->ps.fd.forcePower = 100;
+	}
 	ent->client->ps.eFlags |= EF_BODYPUSH;
 
 	CmdEnt(ent-g_entities, va("cp \"You have been empowered.\""));
