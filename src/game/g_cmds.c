@@ -4086,7 +4086,7 @@ static void Cmd_QwWarn_f(gentity_t *ent)
 
 	warns = player2->client->sess.warnLevel;
 
-	CmdEnt(player2-g_entities, va("cp \"You have been warned by an admin.\"",(atoi(openrp_warnLevel.string) - warns) ));
+	CmdEnt(player2-g_entities, va("cp \"You have been warned by an admin.\nYou have %s warnings.\"",(atoi(openrp_warnLevel.string) - warns) ));
 	G_LogPrintf("Warn admin command executed by %s on %s.\n", ent->client->pers.netname, name);
 
 	if(player2->client->sess.warnLevel == atoi(openrp_warnLevel.string))
@@ -4323,6 +4323,12 @@ static void Cmd_QwSlay_f(gentity_t *ent)
 			G_Damage(target, target, target, temp, temp, 9999, 0, MOD_TRIGGER_HURT);
 			CmdEnt(target-g_entities, va("cp \"You were slain by an admin.\""));
 		}
+		else
+		{
+		CmdEnt(ent-g_entities, va("print \"^5This player is dead.\n\""));
+		return;
+		}
+
 		G_LogPrintf("Slay admin command executed by %s on %s.\n", ent->client->pers.netname, name);
 		return;
 }
@@ -4446,7 +4452,6 @@ static void Cmd_QwMute_f(gentity_t *ent)
 	{
 		tent->client->sess.state |= PLAYER_MUTED;
 	}
-	CmdAll(va("cp \"%s was muted by an admin.\"", name));
 	CmdEnt(tent-g_entities, va("cp \"You were muted by an admin.\""));
 	G_LogPrintf("Mute admin command executed by %s on %s.\n", ent->client->pers.netname, name);
 	return;
@@ -4583,6 +4588,9 @@ static void Cmd_QwSleep_f(gentity_t *ent)
 	tent->client->ps.quickerGetup = qfalse;
 
 	G_SetAnim(tent, NULL, SETANIM_BOTH, BOTH_STUMBLEDEATH1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
+
+	CmdEnt(tent-g_entities, va("cp \"You are now sleeping.\""));
+
 	G_LogPrintf("Sleep admin command executed by %s on %s.\n", ent->client->pers.netname, name);
 	return;
 }
@@ -4657,6 +4665,9 @@ static void Cmd_QwUnsleep_f(gentity_t *ent)
 
 	//Play a nice healing sound... Ahh
 	//G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
+
+	CmdEnt(tent-g_entities, va("cp \"You are no longer sleeping.\""));
+
 	G_LogPrintf("Unsleep admin command executed by %s on %s.\n", ent->client->pers.netname, name);
 	return;
 }
@@ -4695,7 +4706,7 @@ static void Cmd_QwProtect_f(gentity_t *ent)
 			ent->client->ps.eFlags |= EF_INVULNERABLE;
 			ent->client->invulnerableTimer = level.time + Q3_INFINITE;
 		}
-
+		CmdEnt(ent-g_entities, va("cp \"You have been protected.\""));
 		return;
 	}
 
@@ -4731,6 +4742,9 @@ static void Cmd_QwProtect_f(gentity_t *ent)
 		tent->client->ps.eFlags |= EF_INVULNERABLE;
 		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
 	}
+
+	CmdEnt(tent-g_entities, va("cp \"You have been protected.\""));
+
 	G_LogPrintf("Protect admin command executed by %s.\n", ent->client->pers.netname);
 	return;
 }
@@ -4779,7 +4793,12 @@ qwempower Function
 */
 static void Cmd_QwEmpower_f(gentity_t *ent)
 {
+	char name[MAX_STRING_CHARS];
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
 	int i;
+	
 
 	if(!G_CheckAdmin(ent, ADMIN_EMPOWER))
 	{
@@ -4787,19 +4806,60 @@ static void Cmd_QwEmpower_f(gentity_t *ent)
 		return;
 	}
 
+	trap_Argv(1, name, sizeof(name));
 
-	ent->client->ps.eFlags &= ~EF_BODYPUSH;
-	ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER) | ( 1 << WP_MELEE);
-	ent->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
+	if(trap_Argc() < 2)
+	{
+		{
+			ent->client->ps.eFlags &= ~EF_BODYPUSH;
+			ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER) | ( 1 << WP_MELEE);
+			ent->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
+																		 1 << FP_TELEPATHY | 1 << FP_GRIP | 1 << FP_LIGHTNING | 1 << FP_RAGE | 
+																		 1 << FP_PROTECT | 1 << FP_ABSORB | 1 << FP_DRAIN | 1 << FP_SEE);
+			for( i = 0; i < NUM_FORCE_POWERS; i ++ )
+				{
+			ent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
+			}
+			ent->client->ps.eFlags |= EF_BODYPUSH;
+		}
+		CmdEnt(ent-g_entities, va("cp \"You have been empowered.\""));
+		return;
+	}
+	
+		if(ClientNumbersFromString(name, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!tent->inuse || !tent->client)
+	{
+		CmdEnt(ent-g_entities, va("print \"^5Player %s does not exist!\n\"", name));
+		return;
+	}
+
+	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
+	{
+		CmdEnt(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		return;
+	}
+
+	tent->client->ps.eFlags &= ~EF_BODYPUSH;
+	tent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER) | ( 1 << WP_MELEE);
+	tent->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
 																 1 << FP_TELEPATHY | 1 << FP_GRIP | 1 << FP_LIGHTNING | 1 << FP_RAGE | 
 																 1 << FP_PROTECT | 1 << FP_ABSORB | 1 << FP_DRAIN | 1 << FP_SEE);
 	for( i = 0; i < NUM_FORCE_POWERS; i ++ )
-	{
-	ent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
-	}
-	ent->client->ps.eFlags |= EF_BODYPUSH;
+		{
+			tent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
+		}
 
-	CmdEnt(ent-g_entities, va("cp \"You have been empowered.\""));
+	tent->client->ps.eFlags |= EF_BODYPUSH;
+
+	CmdEnt(tent-g_entities, va("cp \"You have been empowered.\""));
+
 	G_LogPrintf("Empower admin command executed by %s.\n", ent->client->pers.netname);
 	return;
 }
@@ -4811,22 +4871,67 @@ qwmerc Function
 */
 static void Cmd_QwMerc_f(gentity_t *ent)
 {
+	char name[MAX_STRING_CHARS];
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+
 	if(!G_CheckAdmin(ent, ADMIN_MERC))
 	{
 		CmdEnt(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
-	ent->client->ps.stats[STAT_WEAPONS] = (1 << (LAST_USEABLE_WEAPON+1))  - ( 1 << WP_NONE );
+	trap_Argv(1, name, sizeof(name));
+
+	if(trap_Argc() < 2)
 	{
+		ent->client->ps.stats[STAT_WEAPONS] = (1 << (LAST_USEABLE_WEAPON+1))  - ( 1 << WP_NONE );
+		{
 		int num = 999;
 		int	i;
 
 		for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
 			ent->client->ps.ammo[i] = num;
+			}
+		}
+		CmdEnt(ent-g_entities, va("cp \"You have been merc'd\""));
+		return;
+	}
+
+	if(ClientNumbersFromString(name, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!tent->inuse || !tent->client)
+	{
+		CmdEnt(ent-g_entities, va("print \"^5Player %s does not exist!\n\"", name));
+		return;
+	}
+
+	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
+	{
+		CmdEnt(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		return;
+	}
+
+
+	tent->client->ps.stats[STAT_WEAPONS] = (1 << (LAST_USEABLE_WEAPON+1))  - ( 1 << WP_NONE );
+	{
+		int num = 999;
+		int	i;
+
+		for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
+			tent->client->ps.ammo[i] = num;
 		}
 	}
-	CmdEnt(ent-g_entities, va("cp \"You have been merced.\""));
+
+	CmdEnt(tent-g_entities, va("cp \"You have been merc'd\""));
+
 	G_LogPrintf("Merc admin command executed by %s.\n", ent->client->pers.netname);
 	return;
 }
@@ -4838,22 +4943,60 @@ qwresetscale Function
 */
 static void Cmd_QwResetScale_f(gentity_t *ent)
 {
+	char name[MAX_STRING_CHARS];
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+
 	if(!G_CheckAdmin(ent, ADMIN_SCALE))
 	{
 		CmdEnt(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
+	trap_Argv(1, name, sizeof(name));
+
+	if(trap_Argc() < 2)
+	{
+		{
 	ent->client->ps.iModelScale = 0;
 	ent->client->sess.Scale = 0;
 	ent->client->sess.Scaled = qfalse;
 
-	trap_Cvar_Set("cg_thirdpersonvertoffset", "16");
-	trap_Cvar_Set("cg_thirdpersonrange", "80");
-
 	VectorSet(ent->modelScale, (ent->client->ps.iModelScale), (ent->client->ps.iModelScale), (ent->client->ps.iModelScale));
+		}
+		CmdEnt(ent-g_entities, va("cp \"Your scale has been reset.\""));
+	return;
+	}
 
-	CmdEnt(ent-g_entities, va("print \"^5Model scale reset.\n\""));
+	if(ClientNumbersFromString(name, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!tent->inuse || !tent->client)
+	{
+		CmdEnt(ent-g_entities, va("print \"^5Player %s does not exist!\n\"", name));
+		return;
+	}
+
+	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
+	{
+		CmdEnt(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		return;
+	}
+
+	tent->client->ps.iModelScale = 0;
+	tent->client->sess.Scale = 0;
+	tent->client->sess.Scaled = qfalse;
+
+	VectorSet(tent->modelScale, (tent->client->ps.iModelScale), (tent->client->ps.iModelScale), (tent->client->ps.iModelScale));
+
+	CmdEnt(tent-g_entities, va("cp \"Your scale has been reset.\""));
+
 	G_LogPrintf("Reset Scale admin command executed by %s.\n", ent->client->pers.netname);
 	return;
 }
@@ -4885,8 +5028,14 @@ static void Cmd_QwScale_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdEnt(ent-g_entities, va("print \"^5You must give the name of the player you wish to scale.\n\""));
-		return;
+		{
+	ent->client->ps.iModelScale = atoi(scale);
+	VectorSet(ent->modelScale, (ent->client->ps.iModelScale), (ent->client->ps.iModelScale), (ent->client->ps.iModelScale));
+	ent->client->sess.Scaled = qtrue;
+	ent->client->sess.Scale = atoi(scale);
+		}
+	CmdEnt(ent-g_entities, va("cp \"You have been scaled.\""));
+	return;
 	}
 
 	if(atoi(scale) > 999 || atoi(scale) < 0)
@@ -4918,7 +5067,8 @@ static void Cmd_QwScale_f(gentity_t *ent)
 	//vert = va("%f", 16 * (tent->client->ps.iModelScale / 100.f));
 	//range = va("%f", 80 * (tent->client->ps.iModelScale / 100.f));
 
-	CmdEnt(ent-g_entities, va("print \"^5You have been scaled.\n\""));
+	CmdEnt(tent-g_entities, va("cp \"You have been scaled.\""));
+
 	G_LogPrintf("Scale admin command executed by %s.\n", ent->client->pers.netname);
 	return;
 }
@@ -5318,7 +5468,13 @@ static void Cmd_QwRename_f(gentity_t *ent)
    int clientid = -1; 
    char currentname[MAX_STRING_CHARS];
    char newname[MAX_STRING_CHARS];
-   
+
+   if(!G_CheckAdmin(ent, ADMIN_RENAME))
+	{
+		CmdEnt(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
+
    if ( trap_Argc() != 3) 
    { 
       trap_SendServerCommand( ent-g_entities, "print \"^5Command Usage: /qwrename (currentname) (newname)\n\"" ); 
@@ -5363,49 +5519,62 @@ qwslap Function
 */
 static void Cmd_QwSlap_f(gentity_t *ent)
 {
-	int clientid = -1; 
-	char   name[MAX_STRING_CHARS];
-			
-			if ( trap_Argc() != 2 )
-			{
-				trap_SendServerCommand( ent-g_entities, "print \"^5Command Usage: /slap name/clientid\n\"" );
-				return;
-			}
-			trap_Argv( 1, name, sizeof( name ) );
-			clientid = atoi( name );
-			if (clientid == -1) 
-         { 
-            trap_SendServerCommand( ent-g_entities, va("print \"^5Can't find client ID for %s\n\"", name ) ); 
-            return; 
-         } 
-         if (clientid == -2) 
-         { 
-            trap_SendServerCommand( ent-g_entities, va("print \"^5Ambiguous client ID for %s\n\"", name ) ); 
-            return; 
-         } 
-		 if (clientid >= MAX_CLIENTS || clientid < 0) 
-         { 
-            trap_SendServerCommand( ent-g_entities, va("print \"^5Bad client ID for %s\n\"", name ) ); 
-            return;
-         }
-         if (!g_entities[clientid].inuse) 
-         {
-            trap_SendServerCommand( ent-g_entities, va("print \"^5Client %s is not active\n\"", name ) ); 
-            return; 
-         }
+	char name[MAX_STRING_CHARS];
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+
+	if(!G_CheckAdmin(ent, ADMIN_SLAP))
+	{
+		CmdEnt(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, name, sizeof(name));
+
+	if(trap_Argc() < 2)
+	{
+	trap_SendServerCommand( ent-g_entities, "print \"^5Command Usage: /qwslap (name/clientid)\n\"" );
+	return;
+	}
+
+	if(ClientNumbersFromString(name, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!tent->inuse || !tent->client)
+	{
+		CmdEnt(ent-g_entities, va("print \"^5Player %s does not exist!\n\"", name));
+		return;
+	}
+
+	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
+	{
+		CmdEnt(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		return;
+	}
+
+
 		 /*
-		 if(g_entities[clientid].client->ps.duelInProgress){
+		 if(tent->client->ps.duelInProgress){
 			 trap_SendServerCommand( ent-g_entities, va("print \"^5You can't slap someone who is currently dueling.\n\"") ); 
 			return;
 		 }
 		 */
-		g_entities[clientid].client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
-		g_entities[clientid].client->ps.forceHandExtendTime = level.time + 3000;
-		g_entities[clientid].client->ps.velocity[2] += 500;
-		g_entities[clientid].client->ps.forceDodgeAnim = 0;
-		g_entities[clientid].client->ps.quickerGetup = qfalse;
 
-		G_LogPrintf("Slap admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
+		tent->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
+		tent->client->ps.forceHandExtendTime = level.time + 3000;
+		tent->client->ps.velocity[2] += 500;
+		tent->client->ps.forceDodgeAnim = 0;
+		tent->client->ps.quickerGetup = qfalse;
+
+	CmdEnt(tent-g_entities, va("cp \"You have been slapped.\""));
+
+		G_LogPrintf("Slap admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		return;
 		}
 

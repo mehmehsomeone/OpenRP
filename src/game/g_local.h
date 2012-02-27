@@ -124,6 +124,9 @@ extern vec3_t gPainPoint;
 #define ADMIN_FORCETEAM				8388608 // /qwforceteam command
 #define ADMIN_WEATHER				16777216 // /qwweather command
 #define ADMIN_STATUS				33554432 // /qwstatus command
+#define ADMIN_RENAME				67108864 // /qwrename command
+#define ADMIN_SLAP					134217728 // /qwslap command
+
 //openrp Bitvalues End Here.
 
 //openrp Defines Begin Here
@@ -1770,9 +1773,11 @@ extern vmCvar_t		openrp_admin7Pass;
 extern vmCvar_t		openrp_admin8Pass;
 extern vmCvar_t		openrp_admin9Pass;
 extern vmCvar_t		openrp_admin10Pass;
+
 extern vmCvar_t		openrp_warnLevel;
+
 extern vmCvar_t		openrp_motd;
-extern vmCvar_t		openrp_duelOnlyServer;
+
 extern vmCvar_t		openrp_admin1Allow;
 extern vmCvar_t		openrp_admin2Allow; //Bitvalues for Admins
 extern vmCvar_t		openrp_admin3Allow;
@@ -1784,11 +1789,14 @@ extern vmCvar_t		openrp_admin8Allow;
 extern vmCvar_t		openrp_admin9Allow;
 extern vmCvar_t		openrp_admin10Allow;
 extern vmCvar_t		openrp_adminTempallow;
+
 extern vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
+
 //OpenRP Admin Cvars End Here.
 
 //Prevent players from using /kill
 extern vmCvar_t openrp_playerkill;
+
 //OpenRP Cvars End Here.
 
 void	trap_Printf( const char *fmt );

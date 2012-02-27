@@ -232,9 +232,11 @@ vmCvar_t		openrp_admin7Pass;
 vmCvar_t		openrp_admin8Pass;
 vmCvar_t		openrp_admin9Pass;
 vmCvar_t		openrp_admin10Pass;
+
 vmCvar_t		openrp_warnLevel; //Sets the amount of warnings allowed
+
 vmCvar_t		openrp_motd;		//Sets the MOTD for the server
-vmCvar_t		openrp_duelOnlyServer; //Is the server Duel only?
+
 vmCvar_t		openrp_admin1Allow;
 vmCvar_t		openrp_admin2Allow; //Bitvalues for Admins
 vmCvar_t		openrp_admin3Allow;
@@ -246,8 +248,8 @@ vmCvar_t		openrp_admin8Allow;
 vmCvar_t		openrp_admin9Allow;
 vmCvar_t		openrp_admin10Allow;
 vmCvar_t		openrp_adminTempallow;
-vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
 
+vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
 
 //openrp Admin Cvars End Here.
 
