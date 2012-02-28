@@ -4245,6 +4245,7 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 
 		player2->client->ps.eFlags ^= EF_TELEPORT_BIT;
 	}
+	CmdEnt(tent-g_entities, va("cp \"You were teleported to %s by an admin.\"", name2));
 	G_LogPrintf("Teleport admin command executed by %s. This caused %s to teleport to %s.\n", ent->client->pers.netname, name, name2);
 	return;
 }
