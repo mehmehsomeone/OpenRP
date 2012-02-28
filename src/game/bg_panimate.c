@@ -185,6 +185,35 @@ qboolean BG_InReboundRelease( int anim )
 	return qfalse;
 }
 
+//[LedgeGrab]
+qboolean BG_InLedgeMove( int anim )
+{
+	switch ( anim )
+	{
+	case BOTH_LEDGE_GRAB:
+	case BOTH_LEDGE_HOLD:
+	case BOTH_LEDGE_LEFT:
+	case BOTH_LEDGE_RIGHT:
+	case BOTH_LEDGE_MERCPULL:
+		return qtrue;
+		break;
+	}
+	return qfalse;
+}
+
+qboolean In_LedgeIdle( int anim )
+{		
+	switch ( anim )
+	{
+	case BOTH_LEDGE_GRAB:
+	case BOTH_LEDGE_HOLD:
+		return qtrue;
+		break;
+	}
+	return qfalse;
+}
+//[/LedgeGrab]
+
 qboolean BG_InBackFlip( int anim )
 {
 	switch ( anim )

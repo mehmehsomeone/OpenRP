@@ -1608,6 +1608,10 @@ qboolean BG_InSaberStandAnim( int anim );
 qboolean BG_InReboundJump( int anim );
 qboolean BG_InReboundHold( int anim );
 qboolean BG_InReboundRelease( int anim );
+//[LedgeGrab]
+qboolean BG_InLedgeMove( int anim );
+qboolean In_LedgeIdle( int anim );
+//[/LedgeGrab]
 qboolean BG_InBackFlip( int anim );
 qboolean BG_DirectFlippingAnim( int anim );
 qboolean BG_SaberInAttack( int move );
