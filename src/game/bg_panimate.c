@@ -2837,29 +2837,59 @@ void BG_SetAnimFinal(playerState_t *ps, animation_t *animations,
 
 	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, anim, &editAnimSpeed, ps->brokenLimbs);
 
-	// Set torso anim
+// Set torso anim
 	if (setAnimParts & SETANIM_TORSO)
 	{
 		// Don't reset if it's already running the anim
-		if( !(setAnimFlags & SETANIM_FLAG_RESTART) && (ps->torsoAnim) == anim )
+		//[AnimationSys]
+		//added SETANIM_FLAG_PACE flag
+		if( (ps->torsoAnim) == anim && !(setAnimFlags & SETANIM_FLAG_RESTART) && !(setAnimFlags & SETANIM_FLAG_PACE) )
+		//if( !(setAnimFlags & SETANIM_FLAG_RESTART) && (ps->torsoAnim) == anim )
+		//[/AnimationSys]
 		{
 			goto setAnimLegs;
 		}
 		// or if a more important anim is running
-		if( !(setAnimFlags & SETANIM_FLAG_OVERRIDE) && ((ps->torsoTimer > 0)||(ps->torsoTimer == -1)) )
+		//[AnimationSys]
+		if( ((ps->torsoTimer > 0)||(ps->torsoTimer == -1)) && 
+			( ((setAnimFlags & SETANIM_FLAG_PACE) && (ps->torsoAnim) == anim ) 
+			|| !(setAnimFlags & SETANIM_FLAG_OVERRIDE)) )
+		//if( !(setAnimFlags & SETANIM_FLAG_OVERRIDE) && ((ps->torsoTimer > 0)||(ps->torsoTimer == -1)) )
+		//[/AnimationSys]
 		{	
 			goto setAnimLegs;
 		}
 
-		BG_StartTorsoAnim(ps, anim);
+	BG_StartTorsoAnim(ps, anim);
 
 		if (setAnimFlags & SETANIM_FLAG_HOLD)
 		{
 			if (setAnimFlags & SETANIM_FLAG_HOLDLESS)
 			{	// Make sure to only wait in full 1/20 sec server frame intervals.
-				int dur;
-				int speedDif;
+
+				//[BugFix2]
+				//Yeah, I don't think this was working correctly before
+				//int dur;
+				//int speedDif;
+				if( editAnimSpeed > 0 )
+				{
+					if(animations[anim].numFrames < 2)
+					{//single frame animations should just run with one frame worth of animation.
+						ps->torsoTimer = fabs((float)(animations[anim].frameLerp)) * (1/editAnimSpeed);
+					}
+					else
+					{
+						ps->torsoTimer = (animations[anim].numFrames-1) * fabs((float)(animations[anim].frameLerp)) * (1/editAnimSpeed);
+					}
+
+					if(ps->torsoTimer > 1)
+					{	
+						//set the timer to be one unit of time less than the actual animation time so the timer will expire on the frame at which the animation finishes.
+						ps->torsoTimer--;
+					}
+				}
 				
+				/*
 				dur = (animations[anim].numFrames-1) * fabs((float)(animations[anim].frameLerp));
 				speedDif = dur - (dur * editAnimSpeed);
 				dur += speedDif;
@@ -2871,6 +2901,8 @@ void BG_SetAnimFinal(playerState_t *ps, animation_t *animations,
 				{
 					ps->torsoTimer = fabs((float)(animations[anim].frameLerp));
 				}
+				*/
+				//[/BugFix2]
 			}
 			else
 			{
@@ -2889,15 +2921,26 @@ setAnimLegs:
 	if (setAnimParts & SETANIM_LEGS)
 	{
 		// Don't reset if it's already running the anim
-		if( !(setAnimFlags & SETANIM_FLAG_RESTART) && (ps->legsAnim) == anim )
+		//[Ledgegrab]
+				//added SETANIM_FLAG_PACE flag
+		if( (ps->legsAnim) == anim && !(setAnimFlags & SETANIM_FLAG_RESTART) && !(setAnimFlags & SETANIM_FLAG_PACE) )
+		//if( !(setAnimFlags & SETANIM_FLAG_RESTART) && (ps->legsAnim) == anim )
+		//[/Ledgegrab]
 		{
 			goto setAnimDone;
 		}
+
 		// or if a more important anim is running
-		if( !(setAnimFlags & SETANIM_FLAG_OVERRIDE) && ((ps->legsTimer > 0)||(ps->legsTimer == -1)) )
+		//[AnimationSys]
+		if( ((ps->legsTimer > 0)||(ps->legsTimer == -1)) && 
+			( ((setAnimFlags & SETANIM_FLAG_PACE) && (ps->legsAnim) == anim ) 
+			|| !(setAnimFlags & SETANIM_FLAG_OVERRIDE)) )
+		//if( !(setAnimFlags & SETANIM_FLAG_OVERRIDE) && ((ps->legsTimer > 0)||(ps->legsTimer == -1)) )
+
 		{	
 			goto setAnimDone;
 		}
+		//[/AnimationSys]
 
 		BG_StartLegsAnim(ps, anim);
 
@@ -2905,9 +2948,31 @@ setAnimLegs:
 		{
 			if (setAnimFlags & SETANIM_FLAG_HOLDLESS)
 			{	// Make sure to only wait in full 1/20 sec server frame intervals.
-				int dur;
-				int speedDif;
+
+				//[BugFix2]
+				//Yeah, I don't think this was working correctly before
+				//int dur;
+				//int speedDif;
 				
+				if( editAnimSpeed > 0 )
+				{
+					if(animations[anim].numFrames < 2)
+					{//single frame animations should just run with one frame worth of animation.
+						ps->legsTimer = fabs((float)(animations[anim].frameLerp)) * (1/editAnimSpeed);
+					}
+					else
+					{
+						ps->legsTimer = (animations[anim].numFrames-1) * fabs((float)(animations[anim].frameLerp)) * (1/editAnimSpeed);
+					}
+
+					if(ps->legsTimer > 1)
+					{	
+						//set the timer to be one unit of time less than the actual animation time so the timer will expire on the frame at which the animation finishes.
+						ps->legsTimer--;
+					}
+				}
+
+				/*
 				dur = (animations[anim].numFrames-1) * fabs((float)(animations[anim].frameLerp));
 				speedDif = dur - (dur * editAnimSpeed);
 				dur += speedDif;
@@ -2919,6 +2984,9 @@ setAnimLegs:
 				{
 					ps->legsTimer = fabs((float)(animations[anim].frameLerp));
 				}
+				*/
+				//[/BugFix2]
+
 			}
 			else
 			{
@@ -3060,3 +3128,86 @@ void PM_SetAnim(int setAnimParts,int anim,int setAnimFlags, int blendTime)
 	BG_SetAnim(pm->ps, pm->animations, setAnimParts, anim, setAnimFlags, blendTime);
 }
 
+//[BugFix2]
+//Fixed the logic problem with the timers
+
+//BG versions of the animation point functions
+
+//Get the point in the animation and return a percentage of the current point in the anim between 0 and the total anim length (0.0f - 1.0f)
+//This function assumes that your animation timer is set to the exact length of the animation
+float BG_GetTorsoAnimPoint(playerState_t * ps, int AnimIndex)
+{
+	float attackAnimLength = 0;
+	float currentPoint = 0;
+	float animSpeedFactor = 1.0f;
+	float animPercentage = 0;
+
+	//Be sure to scale by the proper anim speed just as if we were going to play the animation
+	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, ps->torsoAnim, &animSpeedFactor, ps->brokenLimbs, ps->userInt3);
+
+	if( animSpeedFactor > 0 )
+	{
+		if(bgAllAnims[AnimIndex].anims[ps->torsoAnim].numFrames < 2)
+		{//single frame animations should just run with one frame worth of animation.
+			attackAnimLength = fabs((float)(bgAllAnims[AnimIndex].anims[ps->torsoAnim].frameLerp)) * (1/animSpeedFactor);
+		}
+		else
+		{
+			attackAnimLength = (bgAllAnims[AnimIndex].anims[ps->torsoAnim].numFrames-1) * fabs((float)(bgAllAnims[AnimIndex].anims[ps->torsoAnim].frameLerp)) * (1/animSpeedFactor);
+		}
+
+		if(attackAnimLength > 1)
+		{	
+			//set the timer to be one unit of time less than the actual animation time so the timer will expire on the frame at which the animation finishes.
+			attackAnimLength--;
+		}
+	}
+
+	currentPoint = ps->torsoTimer;
+
+	animPercentage = currentPoint/attackAnimLength;
+
+
+	//Com_Printf("%f\n", animPercentage);
+
+	return animPercentage;
+}
+
+
+float BG_GetLegsAnimPoint(playerState_t * ps, int AnimIndex)
+{
+	float attackAnimLength = 0;
+	float currentPoint = 0;
+	float animSpeedFactor = 1.0f;
+	float animPercentage = 0;
+
+	//Be sure to scale by the proper anim speed just as if we were going to play the animation
+	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, ps->legsAnim, &animSpeedFactor, ps->brokenLimbs, ps->userInt3);
+
+	if( animSpeedFactor > 0 )
+	{
+		if(bgAllAnims[AnimIndex].anims[ps->legsAnim].numFrames < 2)
+		{//single frame animations should just run with one frame worth of animation.
+			attackAnimLength = fabs((float)(bgAllAnims[AnimIndex].anims[ps->legsAnim].frameLerp)) * (1/animSpeedFactor);
+		}
+		else
+		{
+			attackAnimLength = (bgAllAnims[AnimIndex].anims[ps->legsAnim].numFrames-1) * fabs((float)(bgAllAnims[AnimIndex].anims[ps->legsAnim].frameLerp)) * (1/animSpeedFactor);
+		}
+		
+		if(attackAnimLength > 1)
+		{	
+			//set the timer to be one unit of time less than the actual animation time so the timer will expire on the frame at which the animation finishes.
+			attackAnimLength--;
+		}
+	}
+
+	currentPoint = ps->legsTimer;
+
+	animPercentage = currentPoint/attackAnimLength;
+
+	//Com_Printf("%f\n", animPercentage);
+
+	return animPercentage;
+}
+//[/BugFix2]

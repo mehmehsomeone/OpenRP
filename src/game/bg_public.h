@@ -501,6 +501,14 @@ extern	pmove_t		*pm;
 #define SETANIM_FLAG_RESTART	4//Allow restarting the anim if playing the same one (weapon fires)
 #define SETANIM_FLAG_HOLDLESS	8//Set the new timer
 
+//[AnimationSys]
+//new flag to be able to restart and override without overriding the same animation.
+//this is useful for situations where you want to have the animation timer pace
+//a repeating animation
+#define SETANIM_FLAG_PACE		16//acts like a SETANIM_FLAG_RESTART but only restarts if the 
+								  //animation is over.
+//[/AnimationSys]
+
 
 // if a full pmove isn't done on the client, you can just update the angles
 void PM_UpdateViewAngles( playerState_t *ps, const usercmd_t *cmd );
@@ -1602,6 +1610,11 @@ void BG_G2ATSTAngles(void *ghoul2, int time, vec3_t cent_lerpAngles );
 //BG anim utility functions:
 
 int BG_AnimLength( int index, animNumber_t anim );
+
+//[Ledgegrab/BugFix2]
+float BG_GetTorsoAnimPoint(playerState_t * ps, int AnimIndex);
+float BG_GetLegsAnimPoint(playerState_t * ps, int AnimIndex);
+//[/LedgegrabBugFix2]
 
 qboolean BG_InSpecialJump( int anim );
 qboolean BG_InSaberStandAnim( int anim );

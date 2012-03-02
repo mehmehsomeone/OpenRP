@@ -9316,14 +9316,6 @@ static void BG_G2ClientNeckAngles( void *ghoul2, int time, const vec3_t lookAngl
 {
 	vec3_t	lA;
 
-	//[CoOp]
-	//ported from SP
-	if ( cent->NPC_class == CLASS_HAZARD_TROOPER )
-	{//don't use upper bones
-		return;
-	}
-	//[/CoOp]
-
 	VectorCopy( lookAngles, lA );
 	//clamp the headangles (which should now be relative to the cervical (neck) angles
 	if ( lA[PITCH] < headClampMinAngles[PITCH] )
@@ -9353,108 +9345,39 @@ static void BG_G2ClientNeckAngles( void *ghoul2, int time, const vec3_t lookAngl
 		lA[ROLL] = headClampMaxAngles[ROLL];
 	}
 
-	//[CoOp]
-	if ( cent->NPC_class == CLASS_ASSASSIN_DROID )
-	{//each bone has only 1 axis of rotation!
-		//thoracic only pitches, split with cervical
-		if ( thoracicAngles[PITCH] )
-		{//already been set above, blend them
-			thoracicAngles[PITCH] = (thoracicAngles[PITCH] + (lA[PITCH] * 0.5f)) * 0.5f;
-		}
-		else
-		{
-			thoracicAngles[PITCH] = lA[PITCH] * 0.5f;
-		}
-		thoracicAngles[YAW] = thoracicAngles[ROLL] = 0.0f;
-		//cervical only pitches, split with thoracis
-		neckAngles[PITCH] = lA[PITCH] * 0.5f;
-		neckAngles[YAW] = 0.0f;
-		neckAngles[ROLL] = 0.0f;
-		//cranium only yaws
-		headAngles[PITCH] = 0.0f;
-		headAngles[YAW] = lA[YAW];
-		headAngles[ROLL] = 0.0f;
-		//no bones roll
-	}
-	else if ( cent->NPC_class == CLASS_SABER_DROID )
-	{//each bone has only 1 axis of rotation!
-		//no thoracic
-		VectorClear( thoracicAngles );
-		//cervical only yaws
-		neckAngles[PITCH] = 0.0f;
-		neckAngles[YAW] = lA[YAW];
-		neckAngles[ROLL] = 0.0f;
-		//cranium only pitches
-		headAngles[PITCH] = lA[PITCH];
-		headAngles[YAW] = 0.0f;
-		headAngles[ROLL] = 0.0f;
-		//none of the bones roll
+	//split it up between the neck and cranium
+	if ( thoracicAngles[PITCH] )
+	{//already been set above, blend them
+		thoracicAngles[PITCH] = (thoracicAngles[PITCH] + (lA[PITCH] * 0.4)) * 0.5f;
 	}
 	else
-	{//normal humaniod
-		//split it up between the neck and cranium
-
-		//[LedgeGrab]
-		if(BG_InLedgeMove( cent->legsAnim ))
-		{//lock arm parent bone to animation
-			thoracicAngles[PITCH] = 0;
-		}
-		else if ( thoracicAngles[PITCH] )
-		//if ( thoracicAngles[PITCH] )
-		//[/LedgeGrab]
-		{//already been set above, blend them
-			thoracicAngles[PITCH] = (thoracicAngles[PITCH] + (lA[PITCH] * 0.4)) * 0.5f;
-		}
-		else
-		{
-			thoracicAngles[PITCH] = lA[PITCH] * 0.4;
-		}
-		if ( thoracicAngles[YAW] )
-		{//already been set above, blend them
-			thoracicAngles[YAW] = (thoracicAngles[YAW] + (lA[YAW] * 0.1)) * 0.5f;
-		}
-		else
-		{
-			thoracicAngles[YAW] = lA[YAW] * 0.1;
-		}
-		if ( thoracicAngles[ROLL] )
-		{//already been set above, blend them
-			thoracicAngles[ROLL] = (thoracicAngles[ROLL] + (lA[ROLL] * 0.1)) * 0.5f;
-		}
-		else
-		{
-			thoracicAngles[ROLL] = lA[ROLL] * 0.1;
-		}
-
-
-		//[LedgeGrab]
-		if(BG_InLedgeMove( cent->legsAnim ))
-		{//lock the neckAngles to prevent the head from acting weird
-			VectorClear(neckAngles);
-			VectorClear(headAngles);
-		}
-		else
-		{
-			neckAngles[PITCH] = lA[PITCH] * 0.2f;
-			neckAngles[YAW] = lA[YAW] * 0.3f;
-			neckAngles[ROLL] = lA[ROLL] * 0.3f;
-	
-			headAngles[PITCH] = lA[PITCH] * 0.4;
-			headAngles[YAW] = lA[YAW] * 0.6;
-			headAngles[ROLL] = lA[ROLL] * 0.6;
-		}
-
-		/*
-		neckAngles[PITCH] = lA[PITCH] * 0.2f;
-		neckAngles[YAW] = lA[YAW] * 0.3f;
-		neckAngles[ROLL] = lA[ROLL] * 0.3f;
-
-		headAngles[PITCH] = lA[PITCH] * 0.4;
-		headAngles[YAW] = lA[YAW] * 0.6;
-		headAngles[ROLL] = lA[ROLL] * 0.6;
-		*/
-		//[/LedgeGrab]
+	{
+		thoracicAngles[PITCH] = lA[PITCH] * 0.4;
 	}
+	if ( thoracicAngles[YAW] )
+	{//already been set above, blend them
+		thoracicAngles[YAW] = (thoracicAngles[YAW] + (lA[YAW] * 0.1)) * 0.5f;
+	}
+	else
+		{
+		thoracicAngles[YAW] = lA[YAW] * 0.1;
+	}
+	if ( thoracicAngles[ROLL] )
+	{//already been set above, blend them
+		thoracicAngles[ROLL] = (thoracicAngles[ROLL] + (lA[ROLL] * 0.1)) * 0.5f;
+	}
+	else
+	{
+		thoracicAngles[ROLL] = lA[ROLL] * 0.1;
+	}
+
+	neckAngles[PITCH] = lA[PITCH] * 0.2f;
+	neckAngles[YAW] = lA[YAW] * 0.3f;
+	neckAngles[ROLL] = lA[ROLL] * 0.3f;
+
+	headAngles[PITCH] = lA[PITCH] * 0.4;
+	headAngles[YAW] = lA[YAW] * 0.6;
+	headAngles[ROLL] = lA[ROLL] * 0.6;
 
 	/* //non-applicable SP code
 	if ( G_RidingVehicle( cent->gent ) )// && type == VH_SPEEDER ?
@@ -9579,67 +9502,17 @@ static void BG_G2ClientSpineAngles( void *ghoul2, int motionBolt, vec3_t cent_le
 
 	//distribute the angles differently up the spine
 	//NOTE: each of these distributions must add up to 1.0f
-	//[CoOp]
-	//ported from SP.
-	//added in different bone handling support for some of NPCs
-	if ( NPC_class == CLASS_HAZARD_TROOPER )
-	{//only uses lower_lumbar and upper_lumbar to look around
-		VectorClear( thoracicAngles );
-		ulAngles[PITCH] = viewAngles[PITCH]*0.50f;
-		llAngles[PITCH] = viewAngles[PITCH]*0.50f;
+	thoracicAngles[PITCH] = viewAngles[PITCH]*0.20f;
+	llAngles[PITCH] = viewAngles[PITCH]*0.40f;
+	ulAngles[PITCH] = viewAngles[PITCH]*0.40f;
 
-		ulAngles[YAW] = viewAngles[YAW]*0.45f;
-		llAngles[YAW] = viewAngles[YAW]*0.55f;
+	thoracicAngles[YAW] = viewAngles[YAW]*0.20f;
+	ulAngles[YAW] = viewAngles[YAW]*0.35f;
+	llAngles[YAW] = viewAngles[YAW]*0.45f;
 
-		ulAngles[ROLL] = viewAngles[ROLL]*0.45f;
-		llAngles[ROLL] = viewAngles[ROLL]*0.55f;
-	}
-	else if ( NPC_class == CLASS_ASSASSIN_DROID )
-	{//each bone has only 1 axis of rotation!
-		//upper lumbar does not pitch
-		thoracicAngles[PITCH] = viewAngles[PITCH]*0.40f;
-		ulAngles[PITCH] = 0.0f;
-		llAngles[PITCH] = viewAngles[PITCH]*0.60f;
-		//only upper lumbar yaws
-		thoracicAngles[YAW] = 0.0f;
-		ulAngles[YAW] = viewAngles[YAW];
-		llAngles[YAW] = 0.0f;
-		//no bone is capable of rolling
-		thoracicAngles[ROLL] = 0.0f;
-		ulAngles[ROLL] = 0.0f;
-		llAngles[ROLL] = 0.0f;
-	}
-	else
-	{//use all 3 bones (normal humanoid models)
-		//[LedgeGrab]
-		if(BG_InLedgeMove( cent->legsAnim ))
-		{//lock spine to animation
-			thoracicAngles[PITCH] = 0;
-			llAngles[PITCH] = 0;
-			ulAngles[PITCH] = 0;
-		}
-		else
-		{
-		thoracicAngles[PITCH] = viewAngles[PITCH]*0.20f;
-		llAngles[PITCH] = viewAngles[PITCH]*0.40f;
-		ulAngles[PITCH] = viewAngles[PITCH]*0.40f;
-		}
-		/*
-		thoracicAngles[PITCH] = viewAngles[PITCH]*0.20f;
-		llAngles[PITCH] = viewAngles[PITCH]*0.40f;
-		ulAngles[PITCH] = viewAngles[PITCH]*0.40f;
-		*/
-		//[/LedgeGrab]
-
-		thoracicAngles[YAW] = viewAngles[YAW]*0.20f;
-		ulAngles[YAW] = viewAngles[YAW]*0.35f;
-		llAngles[YAW] = viewAngles[YAW]*0.45f;
-
-		thoracicAngles[ROLL] = viewAngles[ROLL]*0.20f;
-		ulAngles[ROLL] = viewAngles[ROLL]*0.35f;
-		llAngles[ROLL] = viewAngles[ROLL]*0.45f;
-	}
-	//[/CoOp]
+	thoracicAngles[ROLL] = viewAngles[ROLL]*0.20f;
+	ulAngles[ROLL] = viewAngles[ROLL]*0.35f;
+	llAngles[ROLL] = viewAngles[ROLL]*0.45f;
 }
 
 /*
