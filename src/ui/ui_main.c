@@ -974,9 +974,14 @@ void _UI_Refresh( int realtime )
 	} 
 #ifndef _XBOX	
 	// draw cursor
+	//OpenRP - Fixed it so the cursor isn't shown while a map is loading.
 	UI_SetColor( NULL );
 	if (Menu_Count() > 0) {
-		UI_DrawHandlePic( uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory, 48, 48, uiInfo.uiDC.Assets.cursor);
+		uiClientState_t	cstate;
+		trap_GetClientState( &cstate );
+		if(cstate.connState <= CA_DISCONNECTED || cstate.connState >= CA_ACTIVE) {
+			UI_DrawHandlePic( uiInfo.uiDC.cursorx, uiInfo.uiDC.cursory, 48, 48, uiInfo.uiDC.Assets.cursor);
+		}
 	}
 #endif
 

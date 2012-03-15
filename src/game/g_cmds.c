@@ -14,8 +14,8 @@ void WP_SetSaber( int entNum, saberInfo_t *sabers, int saberNum, const char *sab
 
 void Cmd_NPC_f( gentity_t *ent );
 void SetTeamQuick(gentity_t *ent, int team, qboolean doBegin);
-//void SP_fx_runner( gentity_t *ent );
-//void AddSpawnField(char *field, char *value);
+void SP_fx_runner( gentity_t *ent );
+void AddSpawnField(char *field, char *value);
 
 //OpenRP credits stuff begins here.
 /*
@@ -4827,6 +4827,12 @@ static void Cmd_QwEmpower_f(gentity_t *ent)
 			}
 			ent->client->ps.eFlags |= EF_BODYPUSH;
 		}
+
+		if(!(ent->client->sess.state & PLAYER_EMPOWERED))
+	{
+		ent->client->sess.state |= PLAYER_EMPOWERED;
+	}
+
 		CmdEnt(ent-g_entities, va("cp \"You have been empowered.\""));
 		return;
 	}
@@ -4863,6 +4869,12 @@ static void Cmd_QwEmpower_f(gentity_t *ent)
 
 	tent->client->ps.eFlags |= EF_BODYPUSH;
 
+	
+		if(!(tent->client->sess.state & PLAYER_EMPOWERED))
+	{
+		tent->client->sess.state |= PLAYER_EMPOWERED;
+	}
+
 	CmdEnt(tent-g_entities, va("cp \"You have been empowered.\""));
 
 	G_LogPrintf("Empower admin command executed by %s.\n", ent->client->pers.netname);
@@ -4889,21 +4901,55 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 
 	trap_Argv(1, name, sizeof(name));
 
-	if(trap_Argc() < 2)
+	//Mercing yourself
+	if(trap_Argc() < 2 && (!(ent->client->sess.state & PLAYER_MERCD))) //If the person who used the command did not specify a name, and if they are not currently a merc, then merc them.
 	{
-		ent->client->ps.stats[STAT_WEAPONS] = (1 << (LAST_USEABLE_WEAPON+1))  - ( 1 << WP_NONE );
+			//Give them every item.
+			ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
+			//Take away their saber
+			ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER);
+			//Give them every weapon.
+			ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+			| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
+			| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_TRIP_MINE) | (1 << WP_BRYAR_PISTOL);
 		{
 		int num = 999;
 		int	i;
 
-		for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
+		for ( i = 0 ; i < MAX_WEAPONS ; i++ ) { //Give them max ammo
 			ent->client->ps.ammo[i] = num;
 			}
 		}
-		CmdEnt(ent-g_entities, va("cp \"You have been merc'd\""));
+
+		ent->client->ps.weapon = WP_MELEE; //Switch their active weapon to melee.
+
+		ent->client->sess.state |= PLAYER_MERCD; //Give them merc flags, which says that they are a merc.
+
+		CmdEnt(ent-g_entities, va("cp \"^5You have been merc'd.\""));
 		return;
 	}
 
+	if(trap_Argc() < 2 && (ent->client->sess.state & PLAYER_MERCD)) //If the user is already a merc and they use the command again on themself, then unmerc them.
+	{
+		//Take away every item.
+		ent->client->ps.eFlags &= ~EF_SEEKERDRONE;
+		ent->client->ps.stats[STAT_HOLDABLE_ITEMS] &= ~(1 << HI_SEEKER) & ~(1 << HI_BINOCULARS) & ~(1 << HI_SENTRY_GUN) & ~(1 << HI_EWEB) & ~(1 << HI_CLOAK);
+		//Take away every weapon.
+		ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_STUN_BATON) & ~(1 << WP_BLASTER) & ~(1 << WP_DISRUPTOR) & ~(1 << WP_BOWCASTER)
+			& ~(1 << WP_REPEATER) & ~(1 << WP_DEMP2) & ~(1 << WP_FLECHETTE) & ~(1 << WP_ROCKET_LAUNCHER) & ~(1 << WP_THERMAL) & ~(1 << WP_DET_PACK)
+			& ~(1 << WP_BRYAR_OLD) & ~(1 << WP_CONCUSSION) & ~(1 << WP_TRIP_MINE) & ~(1 << WP_BRYAR_PISTOL);
+
+		ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_SABER); //Give them their saber back.
+
+		ent->client->ps.weapon = WP_MELEE; //Switch their active weapon to melee.
+
+		ent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
+
+		CmdEnt(ent-g_entities, va("cp \"^5You have been unmerc'd.\""));
+		return;
+	}
+
+	//Mercing another player
 	if(ClientNumbersFromString(name, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
@@ -5101,16 +5147,17 @@ static void Cmd_QwBitvalues_f(gentity_t *ent)
 qwaddeffect Function
 ============
 */
-
-/*
 static void Cmd_QwAddEffect_f(gentity_t *ent)
 {
 		char   arg1[MAX_STRING_CHARS];
 		gentity_t *fx_runner = G_Spawn();
-		char			savePath[MAX_QPATH];
+		char         loadPath[MAX_QPATH];
 		vmCvar_t		mapname;
-		fileHandle_t	f;
-		char			line[256];
+		fileHandle_t   f;
+	    char         buf[16384] = { 0 };// 16k file size
+		long         len;
+		
+
 		trap_Argv( 1,  arg1, sizeof( arg1 ) );
 
 	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
@@ -5139,23 +5186,25 @@ static void Cmd_QwAddEffect_f(gentity_t *ent)
 				//cm - Dom
 				//Effects are now written to a file sharing the name of the map we are on
 				//This file is read at the start of each map load and the effects placed automatically
+				Com_Printf( "^5Saving the effect...\n" );
 				trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
-				Com_sprintf(savePath, 1024*4, "mp_effects/%s.cfg", mapname.string);
-
-				trap_FS_FOpenFile(savePath, &f, FS_APPEND);
+				Com_sprintf( loadPath, sizeof( loadPath ), "mp_effects/%s.cfg", mapname.string );
+				len = trap_FS_FOpenFile( loadPath, &f, FS_WRITE );
 
 				if ( !f )
 				{
+					Com_Printf( "^5Failed to save the effect.\n" );
 					return;
 				}
 
 				//File saved in format: EffectName X Y Z
-				Com_sprintf( line, sizeof(line), "addeffect %s %i %i %i\n", arg1, (int)ent->client->ps.origin[0], (int)ent->client->ps.origin[1], (int)ent->client->ps.origin[2] - 5);
-				trap_FS_Write( line, strlen(line), f);
+				Com_sprintf( buf, sizeof(buf), "addeffect %s %i %i %i\n", arg1, (int)ent->client->ps.origin[0], (int)ent->client->ps.origin[1], (int)ent->client->ps.origin[2] - 5);
 
+			    trap_FS_Write( buf, strlen( buf ), f );
 				trap_FS_FCloseFile( f );
+
 }
-*/
+
 
 /*
 ============
@@ -5948,8 +5997,8 @@ void ClientCommand( int clientNum ) {
 	else if(!Q_stricmp(cmd, "qwannounce"))
 		Cmd_QwAnnounce_f(ent);
 
-//	else if(!Q_stricmp(cmd, "qwaddeffect"))
-//		Cmd_QwAddEffect_f(ent);
+	else if(!Q_stricmp(cmd, "qwaddeffect"))
+		Cmd_QwAddEffect_f(ent);
 
 	else if(!Q_stricmp(cmd, "qwforceteam"))
 		Cmd_QwForceTeam_f(ent);
