@@ -157,8 +157,8 @@ extern char gSharedBuffer[MAX_G_SHARED_BUFFER_SIZE];
 
 //Function Defines
 //openrp Defines Begin Here.
-#define CmdAll(Msg) trap_SendServerCommand(-1, Msg)					// Print to all
-#define CmdEnt(Ent, Msg) trap_SendServerCommand(Ent, Msg)		// Print to an ent
+#define CmdAll(Msg) trap_SendServerCommand(-1, Msg)					// Prints or center prints a message to everyone on the server.
+#define CmdMsg(Ent, Msg) trap_SendServerCommand(Ent, Msg)		//Prints or center prints a message to a certain person.
 
 //A little array to hold the last duel outcomes
 char *duels[MAX_CLIENTS];
@@ -501,7 +501,6 @@ typedef struct {
 	char		siegeClass[64];
 	char		saberType[64];
 	char		saber2Type[64];
-//	char		myip[64];			// For SavedIPs
 	int			duelTeam;
 	int			siegeDesiredTeam;
 

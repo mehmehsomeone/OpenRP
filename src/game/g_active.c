@@ -1671,6 +1671,8 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 	{ //hack, don't do while moving
 		return;
 	}
+	//OpenRP - enabled meditation and other anims in non-duel gametypes.
+	/*
 	if ( taunt != TAUNT_TAUNT )
 	{//normal taunt always allowed
 		if ( g_gametype.integer != GT_DUEL
@@ -1679,6 +1681,7 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 			return;
 		}
 	}
+	*/
 	if ( ent->client->ps.torsoTimer < 1 
 		&& ent->client->ps.forceHandExtend == HANDEXTEND_NONE 
 		&& ent->client->ps.legsTimer < 1 
