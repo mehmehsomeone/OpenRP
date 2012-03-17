@@ -4519,7 +4519,7 @@ static void Cmd_QwUnMute_f(gentity_t *ent)
 
 	if((tent->client->sess.state & PLAYER_MUTED))
 	{
-		tent->client->sess.state &= PLAYER_MUTED; //bad way of doing it but it should work
+		tent->client->sess.state -= PLAYER_MUTED; //bad way of doing it but it should work
 	}
 	CmdEnt(tent-g_entities, va("cp \"You were unmuted by an admin.\""));
 	G_LogPrintf("Unmute admin command executed by %s on %s.\n", cmdUser, cmdTarget);
@@ -4664,7 +4664,7 @@ static void Cmd_QwUnsleep_f(gentity_t *ent)
 
 	if((tent->client->sess.state & PLAYER_SLEEPING))
 	{
-		tent->client->sess.state &= PLAYER_SLEEPING;
+		tent->client->sess.state -= PLAYER_SLEEPING;
 	}
 
 	tent->client->ps.forceDodgeAnim = 0;
@@ -4924,11 +4924,11 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 			}
 		}
 
-		ent->client->ps.weapon = WP_MELEE; //Switch their active weapon to melee.
+		ent->client->ps.weapon = WP_BLASTER; //Switch their active weapon to the E-11.
 
 		ent->client->sess.state |= PLAYER_MERCD; //Give them merc flags, which says that they are a merc.
 
-		CmdEnt(ent-g_entities, va("cp \"^5You have been merc'd.\""));
+		CmdEnt(ent-g_entities, va("cp \"You have been merc'd.\""));
 		G_LogPrintf("Merc admin command executed by %s on themself.\n", cmdUser);
 		return;
 	}
@@ -4946,11 +4946,11 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 
 		ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_SABER); //Give them their saber back.
 
-		ent->client->ps.weapon = WP_MELEE; //Switch their active weapon to melee.
+		ent->client->ps.weapon = WP_SABER; //Switch their active weapon to the saber.
 
-		ent->client->sess.state &= PLAYER_MERCD; //Take away merc flags.
+		ent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
 
-		CmdEnt(ent-g_entities, va("cp \"^5You have been unmerc'd.\""));
+		CmdEnt(ent-g_entities, va("cp \"You have been unmerc'd.\""));
 		G_LogPrintf("Unmerc admin command executed by %s on themself.\n", cmdUser);
 		return;
 	}
@@ -5018,7 +5018,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 
 		tent->client->ps.weapon = WP_MELEE; //Switch their active weapon to melee.
 
-		tent->client->sess.state &= PLAYER_MERCD; //Take away merc flags.
+		tent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
 
 		CmdEnt(tent-g_entities, va("cp \"^5You have been unmerc'd.\""));
 		G_LogPrintf("Unmerc admin command executed by %s on %s.\n", cmdUser, cmdTarget);
@@ -5193,7 +5193,7 @@ static void Cmd_QwAddEffect_f(gentity_t *ent)
 {
 		char   arg1[MAX_STRING_CHARS];
 		gentity_t *fx_runner = G_Spawn();
-		char         loadPath[MAX_QPATH];
+		char         savePath[MAX_QPATH];
 		vmCvar_t		mapname;
 		fileHandle_t   f;
 	    char         buf[16384] = { 0 };// 16k file size
@@ -5230,12 +5230,12 @@ static void Cmd_QwAddEffect_f(gentity_t *ent)
 				//This file is read at the start of each map load and the effects placed automatically
 				Com_Printf( "^5Saving the effect...\n" );
 				trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
-				Com_sprintf( loadPath, sizeof( loadPath ), "mp_effects/%s.cfg", mapname.string );
-				len = trap_FS_FOpenFile( loadPath, &f, FS_WRITE );
+				Com_sprintf( savePath, sizeof( savePath ), "mp_effects/%s.cfg", mapname.string );
+				len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
 
 				if ( !f )
 				{
-					Com_Printf( "^5Failed to save the effect.\n" );
+					Com_Printf( "^1Failed to save the effect.\n" );
 					return;
 				}
 
@@ -5244,6 +5244,7 @@ static void Cmd_QwAddEffect_f(gentity_t *ent)
 
 			    trap_FS_Write( buf, strlen( buf ), f );
 				trap_FS_FCloseFile( f );
+				Com_Printf( "^5Effect saved.\n" );
 				G_LogPrintf("Addeffect (saved effect) command executed by %s.\n", cmdUser);
 				return;
 }
@@ -5325,7 +5326,7 @@ static void Cmd_QwForceTeam_f(gentity_t *ent)
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^5You can't forceteam someone in this gametype.Gametype must be FFA, TEAMFFA, SIEGE, or CTF.\n\"") );
+		trap_SendServerCommand( ent-g_entities, va("print \"^5You can't forceteam someone in this gametype. Gametype must be FFA, TEAMFFA, SIEGE, or CTF.\n\"") );
 		return;
 	}
 		 return;
@@ -5413,30 +5414,35 @@ static void Cmd_QwMap_f(gentity_t *ent)
 qwweather Function
 ============
 */
-/*
-static void G_RemoveWeather( void ) { //ensiform's whacky weather clearer code
-int i; 
-char s[MAX_STRING_CHARS]; 
-for (i=1 ; i<MAX_FX ; i++) {
-trap_GetConfigstring( CS_EFFECTS + i, s, sizeof( s ) );
-if (!*s || !s[0]) { 
-return;
-}
-if (s[0] == '*')
+static void G_RemoveWeather( void ) //ensiform's whacky weather clearer code
 { 
-trap_SetConfigstring( CS_EFFECTS + i, ""); 
-}
-}
+	int i; 
+	char s[MAX_STRING_CHARS]; 
+
+	for (i=1 ; i<MAX_FX ; i++) {
+	trap_GetConfigstring( CS_EFFECTS + i, s, sizeof( s ) );
+
+	if (!*s || !s[0]) { 
+	return;
+	}
+
+	if (s[0] == '*')
+	{ 
+	trap_SetConfigstring( CS_EFFECTS + i, ""); 
+	}
+	}
 }
 
 static void Cmd_QwWeather_f(gentity_t *ent)
 	{
 		char	arg1[MAX_STRING_CHARS];
-		char	line[256];
 		char	savePath[MAX_QPATH];
-		int num;
+		int		num;
 		vmCvar_t		mapname;
 		fileHandle_t	f;
+		char         buf[16384] = { 0 };// 16k file size
+		long         len;
+
 		trap_Argv( 1,  arg1, sizeof( arg1 ) );
 
 	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
@@ -5444,10 +5450,18 @@ static void Cmd_QwWeather_f(gentity_t *ent)
 		CmdEnt(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}	
-
+		Com_Printf( "^5Changing and saving the weather...\n" );
 		trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
-		Com_sprintf(savePath, 1024*4, "mp_weather/%s.cfg", mapname.string);
-		trap_FS_FOpenFile(savePath, &f, FS_WRITE);
+		Com_sprintf( savePath, sizeof( savePath ), "mp_weather/%s.cfg", mapname.string );
+		len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
+
+		
+		if ( !f )
+			{
+				Com_Printf( "^1Failed to change and save the weather.\n" );
+				return;
+			}
+						
 			if (!Q_stricmp(arg1, "snow")){
 				G_RemoveWeather();
 				num = G_EffectIndex("*clear");
@@ -5498,15 +5512,17 @@ static void Cmd_QwWeather_f(gentity_t *ent)
 				G_RemoveWeather();
 				num = G_EffectIndex("*clear");
 				trap_SetConfigstring( CS_EFFECTS + num, "");
-				Com_sprintf( line, sizeof(line), "");
+				Com_sprintf( buf, sizeof(buf), "");
 			}
 			else {
-			Com_sprintf( line, sizeof(line), "weather %s\n", arg1);
-			}
-			trap_FS_Write( line, strlen(line), f);
-			trap_FS_FCloseFile( f );
+			Com_sprintf( buf, sizeof(buf), "weather %s\n", arg1);
+			}	
+
+			    trap_FS_Write( buf, strlen( buf ), f );
+				trap_FS_FCloseFile( f );
+				Com_Printf( "^5Weather changed and saved. To change it back, use /qwweather clear\n" );
+				G_LogPrintf("Weather command executed by %s. The weather is now %s.\n", cmdUser, arg1);
 		}
-*/
 /*
 ============
 qwstatus Function
@@ -6050,8 +6066,8 @@ void ClientCommand( int clientNum ) {
 	else if(!Q_stricmp(cmd, "qwstatus"))
 		Cmd_QwStatus_f(ent);
 
-	//else if(!Q_stricmp(cmd, "qwweather"))
-	//	Cmd_QwWeather_f(ent);
+	else if(!Q_stricmp(cmd, "qwweather"))
+		Cmd_QwWeather_f(ent);
 
 	else if(!Q_stricmp(cmd, "qwmap"))
 		Cmd_QwMap_f(ent);
