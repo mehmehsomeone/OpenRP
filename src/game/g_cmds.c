@@ -2169,11 +2169,8 @@ const char *G_GetArenaInfoByMap( const char *map );
 void Cmd_CallVote_f( gentity_t *ent ) {
 	int		i;
 	char	arg1[MAX_STRING_TOKENS];
-//	char	arg2[MAX_STRING_TOKENS];
-	//Callvote  exploit fix
+//OpenRP - first callvote exploit fix.
 	char   arg2[MAX_CVAR_VALUE_STRING];
-//	int		n = 0;
-//	char*	type = NULL;
 	char*		mapName = 0;
 	const char*	arenaInfo;
 
@@ -2204,7 +2201,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 
-	//Another callvote exploit fix
+	//OpenRP - second callvote exploit fix.
 	if ( strchr( arg1, ';' ) || strchr( arg2, ';' ) ||
        strchr( arg1, '\r' ) || strchr( arg2, '\r' ) ||
        strchr( arg1, '\n' ) || strchr( arg2, '\n' ) )
@@ -5245,10 +5242,53 @@ static void Cmd_QwAddEffect_f(gentity_t *ent)
 			    trap_FS_Write( buf, strlen( buf ), f );
 				trap_FS_FCloseFile( f );
 				Com_Printf( "^5Effect saved.\n" );
-				G_LogPrintf("Addeffect (saved effect) command executed by %s.\n", cmdUser);
+				G_LogPrintf("Add effect (saved effect) command executed by %s.\n", cmdUser);
 				return;
 }
 
+/*
+============
+qwcleareffects Function
+============
+*/
+static void Cmd_QwClearEffects_f(gentity_t *ent)
+{
+		char         savePath[MAX_QPATH];
+		vmCvar_t		mapname;
+		fileHandle_t   f;
+	    char         buf[16384] = { 0 };// 16k file size
+		long         len;
+		
+
+	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
+	{
+		CmdEnt(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		return;
+	}
+
+				//cm - Dom
+				//Effects are now written to a file sharing the name of the map we are on
+				//This file is read at the start of each map load and the effects placed automatically
+				Com_Printf( "^5Clearing all effects...\n" );
+				trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
+				Com_sprintf( savePath, sizeof( savePath ), "mp_effects/%s.cfg", mapname.string );
+				len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
+
+				if ( !f )
+				{
+					Com_Printf( "^1Failed to clear all effects.\n" );
+					return;
+				}
+				
+				//Make the file blank.
+				Com_sprintf( buf, sizeof(buf), "");
+
+			    trap_FS_Write( buf, strlen( buf ), f );
+				trap_FS_FCloseFile( f );
+				Com_Printf( "^5All effects have been cleared.\n" );
+				G_LogPrintf("Clear effects command executed by %s.\n", cmdUser);
+				return;
+}
 
 /*
 ============
@@ -6056,6 +6096,9 @@ void ClientCommand( int clientNum ) {
 
 	else if(!Q_stricmp(cmd, "qwaddeffect"))
 		Cmd_QwAddEffect_f(ent);
+
+	else if(!Q_stricmp(cmd, "qwcleareffects"))
+	Cmd_QwClearEffects_f(ent);
 
 	else if(!Q_stricmp(cmd, "qwforceteam"))
 		Cmd_QwForceTeam_f(ent);
