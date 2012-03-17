@@ -21,7 +21,7 @@ Exe/Drex - Animations
 Others:
 
 Everyone who has given suggestions for the mod
-The open source projects used in this mod: The Multiplayer Xtra mod created by XharocK, ClanMod, xMod, RealJedi created by Acrion Trusen
+The open source projects used in this mod: The Multiplayer Xtra mod created by XharocK (Dominic Bodman) who is the author of a lot of the admin system code we use and some other code we use or base things on, ClanMod (permission given to use ClanMod code from eqrulez/NeWaGe), xMod by =X=Master HeX, RealJedi created by Acrion Trusen, OJP
 a public domain effects pack used in earlier revisions
 TK-231 for his Special Effects Mod V1 Base
 Xycaleth, eezstreet, Didz, and Raz0r for posting coding tutorials and bug fixes at www.jacoders.org
