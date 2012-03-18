@@ -3380,7 +3380,7 @@ static void Cmd_QwInfo_f( gentity_t *ent )
 	trap_SendServerCommand( ent-g_entities, "print \"^5OpenRP SVN - info\n ------------------------------------------\nWebsite:http://code.google.com/p/openrp/\n ------------------------------------------\n\nPlayer Commands:\nqwadminprotect\nqwinfo\nqwjetpack\n\nme\n\"" );
 	
 	if(ent->client->sess.admin != ADMIN_NO_ADMIN){
-	trap_SendServerCommand( ent-g_entities, "print \"^5Admin Commands:\nqwannounce\nqwban\nqwbitvalues\nqwempower\nqwforceteam\nqwgranttemp\nqwkick\nqwkill\nqwlogin\nqwlogout\nqwmap\nqwmerc\nqwmute\nqwunmute\nqwprotect\nqwresetscale\nqwscale\nqwsleep\nqwstatus\nqwtele\nqwunsleep\nqwwarn\nqwweather\n\"" );
+	trap_SendServerCommand( ent-g_entities, "print \"^5Admin Commands:\nqwaddeffect\nqwannounce\nqwban\nqwbitvalues\nqwcleareffects\nqwempower\nqwforceteam\nqwgranttemp\nqwip\nqwkick\nqwkill\nqwlogin\nqwlogout\nqwmap\nqwmerc\nqwmute\nqwunmute\nqwprotect\nqwresetscale\nqwscale\nqwsleep\nqwstatus\nqwtele\nqwunsleep\nqwwarn\nqwweather\n\"" );
 	}
 	return;
 }
