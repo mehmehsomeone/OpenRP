@@ -131,11 +131,14 @@ extern vec3_t gPainPoint;
 
 //openrp Defines Begin Here
 //Flags for player states
-#define PLAYER_NORMAL				1 // There are no states affecting this player.
-#define PLAYER_SLEEPING					2 // This player has been put to sleep.
-#define PLAYER_MUTED					4 // This player has been muted.
-#define PLAYER_EMPOWERED				8 // This player is empowered.
-#define PLAYER_MERCD					16 // This player is mercd.
+#define PLAYER_NORMAL				1 //There are no states affecting this player.
+#define PLAYER_SLEEPING					2 //This player has been put to sleep.
+#define PLAYER_MUTED					4 //This player has been muted.
+#define PLAYER_EMPOWERED				8 //This player is empowered.
+#define PLAYER_MERCD					16 //This player is mercd.
+
+#define PLAYER_ACCLOGGEDOUT			1 //This player is currently not logged in to an account.
+#define PLAYER_ACCLOGGEDIN			2 //This player is currently logged in to an account.
 
 //Duel stuff
 #define SABER_DUEL					1

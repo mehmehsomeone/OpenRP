@@ -3454,7 +3454,44 @@ qwregister Function
 */
 static void Cmd_QwRegister_f (gentity_t *ent)
 {
-return;
+	char username[MAX_STRING_CHARS];
+	char password[MAX_STRING_CHARS];
+	char         savePath[MAX_QPATH];
+	fileHandle_t   f;
+	char         buf[16384] = { 0 };// 16k file size
+	long         len;
+
+	if(trap_Argc() < 2){
+		CmdMsg(ent-g_entities, va("print \"^5Command Usage: /qwregister (username) (password)\n\""));
+		return;
+	}
+
+
+
+	if (!(ent->client->sess.state & PLAYER_ACCLOGGEDIN)){ //If the user of the command is not currently logged in to an account
+
+	trap_Argv( 1, username, sizeof( username ) );
+	trap_Argv( 2, password, sizeof( password ) );
+
+	Com_Printf( "^5Saving your registration information...\n" );	
+	Com_sprintf( savePath, sizeof( savePath ), "accounts.cfg");
+	len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
+
+	if ( !f )
+	{
+		Com_Printf( "^1Failed to save your registration information.\n" );
+		return;
+	}
+
+	Com_sprintf( buf, sizeof(buf), "%s %s\n", username, password);
+
+	trap_FS_Write( buf, strlen( buf ), f );
+	trap_FS_FCloseFile( f );
+	Com_Printf( "^5Registration information saved. You can now login with your information using /qwlogin.\n" );
+	G_LogPrintf("%s registered a new account for themselves.\n", cmdUserName);
+
+	return;
+	}
 }
 
 /*
@@ -5113,7 +5150,7 @@ static void Cmd_QwAddEffect_f(gentity_t *ent)
 
 		if ( trap_Argc() != 2 )
          { 
-			 trap_SendServerCommand( ent-g_entities, "print \"Usage: Example: /qwaddeffect env/small_fire\n\"" ); 
+			 trap_SendServerCommand( ent-g_entities, "print \"^5Command Usage: /qwaddeffect (effect) Example: /qwaddeffect env/small_fire\n\"" ); 
             return; 
          }
 				AddSpawnField("fxFile", effect);
@@ -5219,7 +5256,7 @@ static void Cmd_QwForceTeam_f(gentity_t *ent)
 
 	if(trap_Argc() != 3) //If the user doesn't specify both args.
 	{
-		CmdMsg(ent-g_entities, va("print \"^5Usage: /qwforceteam (name) (newteam)\n\""));
+		CmdMsg(ent-g_entities, va("print \"^5Command Usage: /qwforceteam (name) (newteam)\n\""));
 		return;
 	}
 
