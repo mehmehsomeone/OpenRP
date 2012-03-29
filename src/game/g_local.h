@@ -507,7 +507,7 @@ typedef struct {
 	int			duelTeam;
 	int			siegeDesiredTeam;
 
-		//openrp Defines Begin Here.
+	//OpenRP Defines Begin Here.
 	qboolean adminProtect;			//Is adminProtect on or off?
 	int admin;						//The admin level is the player
 	int adminAllowed;				//What commands are allowed for this player
@@ -519,7 +519,7 @@ typedef struct {
 	int Scale;						//The players new scale
 	qboolean PDChallenged;			//Has the player been challenged to a PowerDuel?
 	int time;						//Misc timer
-	//openrp Defines End Here.
+	//OpenRP Defines End Here.
 
 } clientSession_t;
 

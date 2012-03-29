@@ -2268,6 +2268,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	char		userinfo[MAX_INFO_STRING];
 	gentity_t	*ent;
 	gentity_t	*te;
+	char TmpIP[32] = {0};
 
 	ent = &g_entities[ clientNum ];
 
@@ -2275,8 +2276,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 
 	// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");
+	//Store the IP
+	if (!isBot)
+		Q_strncpyz(TmpIP, value, sizeof(TmpIP)); // Used later
 	if ( G_FilterPacket( value ) ) {
-		return "Banned.";
+		return "Banned";
 	}
 
 	if ( !( ent->r.svFlags & SVF_BOT ) && !isBot && g_needpass.integer ) {
@@ -2309,20 +2313,18 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	}
 	G_ReadSessionData( client );
 
-/*	
-	if (firstTime && !isBot)
-	{
-		if(!TmpIP[0])
-		{// No IP sent when connecting, probably an unban hack attempt
-			client->pers.connected = CON_DISCONNECTED;
-			return "Invalid userinfo detected";
-		}
-		Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
-	}
-	*/
-
 	if (g_gametype.integer == GT_SIEGE &&
 		(firstTime || level.newSession))
+
+		if (firstTime && !isBot)
+{
+	if(!TmpIP[0])
+	{// No IP sent when connecting, probably an unban hack attempt
+		client->pers.connected = CON_DISCONNECTED;
+		return "Invalid userinfo detected";
+	}
+	Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
+}
 	{ //if this is the first time then auto-assign a desired siege team and show briefing for that team
 		client->sess.siegeDesiredTeam = 0;//PickTeam(ent->s.number);
 		/*

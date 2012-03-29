@@ -3454,9 +3454,7 @@ qwregister Function
 */
 static void Cmd_QwRegister_f (gentity_t *ent)
 {
-	char username[MAX_STRING_CHARS];
-	char password[MAX_STRING_CHARS];
-	char         savePath[MAX_QPATH];
+	char username[MAX_STRING_CHARS], password[MAX_STRING_CHARS], savePath[MAX_QPATH];
 	fileHandle_t   f;
 	char         buf[16384] = { 0 };// 16k file size
 	long         len;
@@ -3571,11 +3569,9 @@ me Function
 */
 static void Cmd_Me_f(gentity_t *ent)
 {	
-	char arg[MAX_STRING_CHARS];
-	int pos = 0;
-	char real_msg[MAX_SAY_TEXT];
-	char *msg = ConcatArgs(2); 
-	char name[64];
+	char arg[MAX_STRING_CHARS], real_msg[MAX_SAY_TEXT], name[64];
+	int pos = 0; 
+	char *msg = ConcatArgs(2);  
 	int color;
 	int j = 0;
 	gentity_t *other;
@@ -3617,7 +3613,7 @@ qwxp Function
 static void Cmd_QwXP_f(gentity_t *ent)
 {
 	int XP = 0;
-	CmdMsg (ent-g_entities, va("print \"Current XP: %i\n\"", XP));
+	CmdMsg (ent-g_entities, va("print \"^5Current XP: %i\n\"", XP));
 	return;
 }
 
@@ -3639,7 +3635,7 @@ static void Cmd_QwGiveCredits_f(gentity_t *ent)
 
 /*
 ============
-OpenRP Non-Admin System Functions Begin Here
+OpenRP Non-Admin System Functions End Here
 ============
 */
 
@@ -3751,8 +3747,6 @@ qboolean G_AdminControl(int UserAdmin, int TargetAdmin)
 	{
 		return qfalse;
 	}
-
-
 }
 
 /*
@@ -3762,18 +3756,7 @@ qwlogin Function
 */
 void Cmd_QwLogin_f(gentity_t *ent)
 {
-	char password[MAX_STRING_CHARS];
-	char passwordS[MAX_STRING_CHARS];
-	char Pass1[256];
-	char Pass2[256];
-	char Pass3[256];
-	char Pass4[256];
-	char Pass5[256];
-	char Pass6[256];
-	char Pass7[256];
-	char Pass8[256];
-	char Pass9[256];
-	char Pass10[256];
+	char password[MAX_STRING_CHARS], passwordS[MAX_STRING_CHARS], Pass1[256], Pass2[256], Pass3[256], Pass4[256], Pass5[256], Pass6[256], Pass7[256], Pass8[256], Pass9[256], Pass10[256];
 
 	trap_Argv(1, password, sizeof(password));
 
@@ -3931,6 +3914,7 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 	{
 		tent->client->sess.admin = ADMIN_TEMP;
 		CmdMsg(ent-g_entities, va("print \"^5Player %s is now a temp admin.\n\"", cmdTargetName));
+		CmdMsg(tent-g_entities, va("cp \"^5You are now a temp admin.\n\"", cmdTargetName));
 		G_LogPrintf("Grant Temp Admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 		return;
 	}
@@ -3938,6 +3922,8 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 	{
 		tent->client->sess.admin = ADMIN_NO_ADMIN;
 		CmdMsg(ent-g_entities, va("print \"^5Player %s is no longer a temp admin.\n\"", cmdTargetName));
+		CmdMsg(tent-g_entities, va("cp \"^5You are no longer a temp admin.\n\"", cmdTargetName));
+		return;
 	}
 	else if(!tent->client->sess.admin == ADMIN_NO_ADMIN && !tent->client->sess.admin == ADMIN_TEMP)
 	{
@@ -4013,8 +3999,8 @@ static void Cmd_QwBan_f(gentity_t *ent)
 
 
 	trap_SendConsoleCommand( EXEC_INSERT, va("addip %s", tent->client->sess.IP));
-	CmdMsg(ent-g_entities, va("print \"^5The IP of the person you banned is %s\n", tent->client->sess.IP));
-	trap_DropClient(pids[0], "^5was ^1permanently banned.\n");
+	CmdMsg(ent-g_entities, va("print \"^5The IP of the person you banned is %s\n\"", tent->client->sess.IP));
+	trap_DropClient(pids[0], "^1was permanently banned.\n");
 
 	G_LogPrintf("Ban admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 	return;
@@ -4060,7 +4046,8 @@ static void Cmd_QwKick_f(gentity_t *ent)
 		return;
 	}
 
-	trap_DropClient(pids[0], "^5was ^1kicked.");
+	CmdMsg(ent-g_entities, va("print \"^5The IP of the person you kicked is %s\n\"", tent->client->sess.IP));
+	trap_DropClient(pids[0], "^1was kicked.");
 	G_LogPrintf("Kick admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 	return;
 }
@@ -4109,12 +4096,13 @@ static void Cmd_QwWarn_f(gentity_t *ent)
 
 	warns = tent->client->sess.warnLevel;
 
+	CmdMsg(ent-g_entities, va("print \"^5Player %s was warned.\n\"", cmdTargetName));
 	CmdMsg(tent-g_entities, va("cp \"You have been warned by an admin.\nYou have %s warnings.\"",(atoi(openrp_warnLevel.string) - warns) ));
 	G_LogPrintf("Warn admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 
 	if(tent->client->sess.warnLevel == atoi(openrp_warnLevel.string))
 	{
-		trap_DropClient(tent-g_entities, "\nYou were Kicked.\nYou were warned!");
+		trap_DropClient(pids[0], "^1was kicked because they received the maximum number of warnings from admins.\n.");
 		G_LogPrintf("%s was kicked because they received the maximum number of warnings from admins.\n", cmdTargetName);
 		return;
 	}
@@ -4131,11 +4119,10 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 	gentity_t *player;
 	gentity_t *player2;
 	gentity_t *tent;
-	char name[MAX_STRING_CHARS];
-	char name2[MAX_STRING_CHARS];
+	char name[MAX_STRING_CHARS], name2[MAX_STRING_CHARS], err[MAX_STRING_CHARS];
 	vec3_t origin;
 	int pids[MAX_CLIENTS];
-	char err[MAX_STRING_CHARS];
+	
 
 	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
 	{
@@ -4258,6 +4245,7 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 
 		player2->client->ps.eFlags ^= EF_TELEPORT_BIT;
 	}
+	CmdMsg(ent-g_entities, va("cp \"You teleported %s to %s.\n\"", name, name2));
 	CmdMsg(tent-g_entities, va("cp \"You were teleported to %s by an admin.\"", name2));
 	G_LogPrintf("Teleport admin command executed by %s. This caused %s to teleport to %s.\n", name, name2);
 	return;
@@ -4329,6 +4317,7 @@ static void Cmd_QwSlay_f(gentity_t *ent)
 		{
 			target->health = 0;
 			G_Damage(target, target, target, temp, temp, 9999, 0, MOD_TRIGGER_HURT);
+			CmdMsg(ent-g_entities, va("cp \"You slayed %s.\n\"", target));
 			CmdMsg(target-g_entities, va("cp \"You were slain by an admin.\""));
 		}
 		else
@@ -4349,9 +4338,8 @@ qwannounce Function
 static void Cmd_QwAnnounce_f(gentity_t *ent)
 { 
 		 int pos = 0;
-		 char real_msg[MAX_STRING_CHARS];
+		 char real_msg[MAX_STRING_CHARS], err[MAX_STRING_CHARS];
 		 int pids[MAX_CLIENTS];
-		 char err[MAX_STRING_CHARS];
 		 gentity_t *tent;
 		 char *msg = ConcatArgs(2);
 
@@ -4760,12 +4748,10 @@ qwempower Function
 */
 static void Cmd_QwEmpower_f(gentity_t *ent)
 {
-	int pids[MAX_CLIENTS];
+	int pids[MAX_CLIENTS], i;
 	char err[MAX_STRING_CHARS];
 	gentity_t *tent;
-	int i;
 	
-
 	if(!G_CheckAdmin(ent, ADMIN_EMPOWER))
 	{
 		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
@@ -5043,8 +5029,7 @@ qwscale Function
 static void Cmd_QwScale_f(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
-	char err[MAX_STRING_CHARS];
-	char scale[999];
+	char err[MAX_STRING_CHARS], scale[999];
 	gentity_t *tent;
 
 	if(!G_CheckAdmin(ent, ADMIN_SCALE))
@@ -5131,9 +5116,8 @@ qwaddeffect Function
 */
 static void Cmd_QwAddEffect_f(gentity_t *ent)
 {
-		char   effect[MAX_STRING_CHARS];
-		gentity_t *fx_runner = G_Spawn();
-		char         savePath[MAX_QPATH];
+		char   effect[MAX_STRING_CHARS], savePath[MAX_QPATH];
+		gentity_t *fx_runner = G_Spawn();         
 		vmCvar_t		mapname;
 		fileHandle_t   f;
 	    char         buf[16384] = { 0 };// 16k file size
@@ -5240,9 +5224,8 @@ qwforceteam Function
 static void Cmd_QwForceTeam_f(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
-	char err[MAX_STRING_CHARS];
+	char err[MAX_STRING_CHARS], teamname[MAX_STRING_CHARS];
 	gentity_t *tent;
-	char teamname[MAX_STRING_CHARS]; 
 	
 
 	if(!G_CheckAdmin(ent, ADMIN_FORCETEAM))
@@ -5338,7 +5321,7 @@ qwmap Function
 */
 static void Cmd_QwMap_f(gentity_t *ent)
 {
-	char   map[MAX_STRING_CHARS];
+	char map[MAX_STRING_CHARS];
 
 	if(!G_CheckAdmin(ent, ADMIN_MAP))
 	{
@@ -5348,6 +5331,7 @@ static void Cmd_QwMap_f(gentity_t *ent)
 	else
 	{
 	trap_Argv( 1, map, sizeof( map ) );
+	CmdAll(va("The map is being changed to %s", map));
 	trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
 	G_LogPrintf("Map changed to %s by %s.\n", map, cmdUserName);
 	return;
@@ -5380,8 +5364,7 @@ static void G_RemoveWeather( void ) //ensiform's whacky weather clearer code
 
 static void Cmd_QwWeather_f(gentity_t *ent)
 	{
-		char	weather[MAX_STRING_CHARS];
-		char	savePath[MAX_QPATH];
+		char	weather[MAX_STRING_CHARS], savePath[MAX_QPATH];
 		int		num;
 		vmCvar_t		mapname;
 		fileHandle_t	f;
@@ -5486,7 +5469,7 @@ static void Cmd_QwStatus_f(gentity_t *ent)
 	trap_SendServerCommand(ent-g_entities, va("print \"\n^5Current clients connected & client status\n\n^5===================================\n\""));
    for(i = 0; i < level.maxclients; i++) { 
       if(g_entities[i].client->pers.connected == CON_CONNECTED) { 
-		  trap_SendServerCommand(ent-g_entities, va("print \"^5ID: %i ^5Name: %s\"", i, g_entities[i].client->pers.netname));
+		  trap_SendServerCommand(ent-g_entities, va("print \"^5ID: %i ^5Name: %s IP: %s\"", i, g_entities[i].client->pers.netname,g_entities[i].client->sess.IP));
    trap_SendServerCommand(ent-g_entities, va("print \"\n^5===================================\n\n\""));
 	  }
    }
@@ -5523,8 +5506,7 @@ static void uw2Rename(gentity_t *player, const char *newname)
 static void Cmd_QwRename_f(gentity_t *ent)
 { 
    int clientid = -1; 
-   char currentname[MAX_STRING_CHARS];
-   char newname[MAX_STRING_CHARS];
+   char currentname[MAX_STRING_CHARS], newname[MAX_STRING_CHARS];
 
    if(!G_CheckAdmin(ent, ADMIN_RENAME))
 	{
@@ -5622,7 +5604,8 @@ static void Cmd_QwSlap_f(gentity_t *ent)
 		tent->client->ps.velocity[2] += 500;
 		tent->client->ps.forceDodgeAnim = 0;
 		tent->client->ps.quickerGetup = qfalse;
-
+		
+		CmdMsg(ent-g_entities, va("cp \"You sucessfully slapped %s.\n\"", cmdTargetName));
 		CmdMsg(tent-g_entities, va("cp \"You have been slapped.\""));
 
 		G_LogPrintf("Slap admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
