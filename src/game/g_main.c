@@ -1175,6 +1175,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 			i++;
 		}
 	}
+	trap_SendConsoleCommand( EXEC_INSERT, va( "exec mp_effects/%s ; wait ; wait ; exec mp_weather/%s", mapname.string, mapname.string ) );
 }
 
 
