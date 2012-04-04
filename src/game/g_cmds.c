@@ -341,7 +341,7 @@ Cmd_Give_f
 Give items to a client
 ==================
 */
-void Cmd_Give_f (gentity_t *CmdMsg, int baseArg)
+void Cmd_Give_f (gentity_t *trap_SendServerCommand, int baseArg)
 {
 	char		name[MAX_TOKEN_CHARS];
 	gentity_t	*ent;
@@ -352,7 +352,7 @@ void Cmd_Give_f (gentity_t *CmdMsg, int baseArg)
 	trace_t		trace;
 	char		arg[MAX_TOKEN_CHARS];
 
-	if ( !CheatsOk( CmdMsg ) ) {
+	if ( !CheatsOk( trap_SendServerCommand ) ) {
 		return;
 	}
 
@@ -386,7 +386,7 @@ void Cmd_Give_f (gentity_t *CmdMsg, int baseArg)
 	}
 	else
 	{
-		ent = CmdMsg;
+		ent = trap_SendServerCommand;
 	}
 
 	trap_Argv( 1+baseArg, name, sizeof( name ) );
@@ -639,6 +639,7 @@ void Cmd_Kill_f( gentity_t *ent ) {
 	}
 		if ( openrp_playerkill.integer == 0 )
 	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5/kill is disabled on this server.\n\"" ) );
 		return;
 	}
 
@@ -3460,7 +3461,7 @@ static void Cmd_QwRegister_f (gentity_t *ent)
 	long         len;
 
 	if(trap_Argc() < 2){
-		CmdMsg(ent-g_entities, va("print \"^5Command Usage: /qwregister (username) (password)\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /qwregister (username) (password)\n\""));
 		return;
 	}
 
@@ -3550,14 +3551,14 @@ static void Cmd_QwAdminProtect_f(gentity_t * ent)
 	if(ent->client->sess.adminProtect)
 	{
 		ent->client->sess.adminProtect = qfalse;
-		CmdMsg(ent-g_entities, va("print \"Admin protect has been turned off.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"Admin protect has been turned off.\n\""));
 		return;
 	}
 
 	if(!ent->client->sess.adminProtect)
 	{
 		ent->client->sess.adminProtect = qtrue;
-		CmdMsg(ent-g_entities, va("print \"Admin protect has been turned on.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"Admin protect has been turned on.\n\""));
 		return;
 	}
 }
@@ -3591,7 +3592,7 @@ static void Cmd_Me_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^3You must type an action.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^3You must type an action.\n\""));
 		return;
 	}
 
@@ -3613,7 +3614,7 @@ qwxp Function
 static void Cmd_QwXP_f(gentity_t *ent)
 {
 	int XP = 0;
-	CmdMsg (ent-g_entities, va("print \"^5Current XP: %i\n\"", XP));
+	trap_SendServerCommand (ent-g_entities, va("print \"^5Current XP: %i\n\"", XP));
 	return;
 }
 
@@ -3665,47 +3666,47 @@ qboolean G_CheckAdmin(gentity_t *ent, int command)
 	//Right they are admin so lets check what sort so we can assign bitvalues
 	if(ent->client->sess.admin == ADMIN_1)
 	{
-		Bitvalues = openrp_admin1Allow.integer;
+		Bitvalues = openrp_admin1Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_2)
 	{
-		Bitvalues = openrp_admin2Allow.integer;
+		Bitvalues = openrp_admin2Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_3)
 	{
-		Bitvalues = openrp_admin3Allow.integer;
+		Bitvalues = openrp_admin3Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_4)
 	{
-		Bitvalues = openrp_admin4Allow.integer;
+		Bitvalues = openrp_admin4Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_5)
 	{
-		Bitvalues = openrp_admin5Allow.integer;
+		Bitvalues = openrp_admin5Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_6)
 	{
-		Bitvalues = openrp_admin6Allow.integer;
+		Bitvalues = openrp_admin6Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_7)
 	{
-		Bitvalues = openrp_admin7Allow.integer;
+		Bitvalues = openrp_admin7Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_8)
 	{
-		Bitvalues = openrp_admin8Allow.integer;
+		Bitvalues = openrp_admin8Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_9)
 	{
-		Bitvalues = openrp_admin9Allow.integer;
+		Bitvalues = openrp_admin9Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_10)
 	{
-		Bitvalues = openrp_admin10Allow.integer;
+		Bitvalues = openrp_admin10Bitvalues.integer;
 	}
 	if(ent->client->sess.admin == ADMIN_TEMP)
 	{
-		Bitvalues = openrp_adminTempallow.integer;
+		Bitvalues = openrp_adminTempBitvalues.integer;
 	}
 
 	//If the Bitvalues 0 then return false because no commands can be allowed if it's 0
@@ -3781,16 +3782,16 @@ void Cmd_QwLogin_f(gentity_t *ent)
    
 	if(strcmp(passwordS, Pass1) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged in successfully as a level 1 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 1 ^5admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged in successfully as a level 1 admin.\n\""));
+		trap_SendServerCommand(-1, va( "print \"%s ^5has logged in as a ^2level 1 ^5admin!\n\"", cmdUserName ) );
 		ent->client->sess.admin = ADMIN_1;
 		return;
 	}
 
 	if(strcmp(passwordS, Pass2) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged in successfully as a level 2 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 2 ^5admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged in successfully as a level 2 admin.\n\""));
+		trap_SendServerCommand( -1, va("print \"%s ^5has logged in as a ^2level 2 ^5admin!\n\"", cmdUserName));
 		ent->client->sess.admin = ADMIN_2;
 		return;
 	}
@@ -3798,24 +3799,24 @@ void Cmd_QwLogin_f(gentity_t *ent)
 
 	if(strcmp(passwordS, Pass3) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged in successfully as a level 3 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 3 ^3admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged in successfully as a level 3 admin.\n\""));
+		trap_SendServerCommand( -1, va("print \"%s ^5has logged in as a ^2level 3 ^3admin!\n\"", cmdUserName));
 		ent->client->sess.admin = ADMIN_3;
 		return;
 	}
 
 		if(strcmp(passwordS, Pass4) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged in successfully as a level 4 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 4 ^5admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged in successfully as a level 4 admin.\n\""));
+		trap_SendServerCommand( -1, va("print \"%s ^5has logged in as a ^2level 4 ^5admin!\n\"", cmdUserName));
 		ent->client->sess.admin = ADMIN_4;
 		return;
 	}
 
 	if(strcmp(passwordS, Pass5) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged in successfully as a level 5 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 5 ^5admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged in successfully as a level 5 admin.\n\""));
+		trap_SendServerCommand( -1, va("print \"%s ^5has logged in as a ^2level 5 ^5admin!\n\"", cmdUserName));
 		ent->client->sess.admin = ADMIN_5;
 		return;
 	}
@@ -3823,23 +3824,23 @@ void Cmd_QwLogin_f(gentity_t *ent)
 
 	if(strcmp(passwordS, Pass6) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged in successfully as a level 6 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 6 ^5admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged in successfully as a level 6 admin.\n\""));
+		trap_SendServerCommand( -1, va("print \"%s ^5has logged in as a ^2level 6 ^5admin!\n\"", cmdUserName));
 		ent->client->sess.admin = ADMIN_6;
 		return;
 	}
 		if(strcmp(passwordS, Pass7) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged insuccessfully as a level 7 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 7 ^5admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged insuccessfully as a level 7 admin.\n\""));
+		trap_SendServerCommand( -1, va("print \"%s ^5has logged in as a ^2level 7 ^5admin!\n\"", cmdUserName));
 		ent->client->sess.admin = ADMIN_7;
 		return;
 	}
 
 	if(strcmp(passwordS, Pass8) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged in successfully as a level 8 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 8 ^5admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged in successfully as a level 8 admin.\n\""));
+		trap_SendServerCommand( -1, va("print \"%s ^5has logged in as a ^2level 8 ^5admin!\n\"", cmdUserName));
 		ent->client->sess.admin = ADMIN_8;
 		return;
 	}
@@ -3847,29 +3848,29 @@ void Cmd_QwLogin_f(gentity_t *ent)
 
 	if(strcmp(passwordS, Pass9) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged in successfully as a level 9 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 9 ^5admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged in successfully as a level 9 admin.\n\""));
+		trap_SendServerCommand( -1, va("print \"%s ^5has logged in as a ^2level 9 ^5admin!\n\"", cmdUserName));
 		ent->client->sess.admin = ADMIN_9;
 		return;
 	}
 
 	if(strcmp(passwordS, Pass10) == 0 && ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You have logged in successfully as a level 10 admin.\n\""));
-		CmdAll(va("print \"%s ^5has logged in as a ^2level 10 ^5admin!\n\"", cmdUserName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have logged in successfully as a level 10 admin.\n\""));
+		trap_SendServerCommand( -1, va("print \"%s ^5has logged in as a ^2level 10 ^5admin!\n\"", cmdUserName));
 		ent->client->sess.admin = ADMIN_10;
 		return;
 	}
 
 	if(!ent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are already logged in as an admin. Use /qwlogout if you wish to login again.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are already logged in as an admin. Use /qwlogout if you wish to login again.\n\""));
 		return;
 	}
 
 	if(!strcmp(passwordS, Pass1) == 0 || !strcmp(passwordS, Pass2) == 0 ||!strcmp(passwordS, Pass3) == 0 || !strcmp(passwordS, Pass4) == 0 ||!strcmp(passwordS, Pass5) == 0 || !strcmp(passwordS, Pass6) == 0 ||!strcmp(passwordS, Pass7) == 0 || !strcmp(passwordS, Pass8) == 0 ||!strcmp(passwordS, Pass9) == 0 || !strcmp(passwordS, Pass10) == 0)
 	{
-		CmdMsg(ent-g_entities, va("print \"^1Invalid ^5password.\nMake sure you entered it correctly.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Invalid ^5password.\nMake sure you entered it correctly.\n\""));
 		G_LogPrintf("%s tried to login to admin and failed because they entered an incorrect password.\n", cmdUserName);
 		return;
 	}
@@ -3888,7 +3889,7 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_GRANTTEMP))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -3896,7 +3897,7 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You must give the name of the player you wish to grant temporary admin to.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You must give the name of the player you wish to grant temporary admin to.\n\""));
 		return;
 	}
 
@@ -3904,7 +3905,7 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -3913,21 +3914,21 @@ void Cmd_QwGrantTempAdmin_f(gentity_t *ent)
 	if(tent->client->sess.admin == ADMIN_NO_ADMIN)
 	{
 		tent->client->sess.admin = ADMIN_TEMP;
-		CmdMsg(ent-g_entities, va("print \"^5Player %s is now a temp admin.\n\"", cmdTargetName));
-		CmdMsg(tent-g_entities, va("cp \"^5You are now a temp admin.\n\"", cmdTargetName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s is now a temp admin.\n\"", cmdTargetName));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are now a temp admin.\n\"", cmdTargetName));
 		G_LogPrintf("Grant Temp Admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 		return;
 	}
 	else if(tent->client->sess.admin == ADMIN_TEMP)
 	{
 		tent->client->sess.admin = ADMIN_NO_ADMIN;
-		CmdMsg(ent-g_entities, va("print \"^5Player %s is no longer a temp admin.\n\"", cmdTargetName));
-		CmdMsg(tent-g_entities, va("cp \"^5You are no longer a temp admin.\n\"", cmdTargetName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s is no longer a temp admin.\n\"", cmdTargetName));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer a temp admin.\n\"", cmdTargetName));
 		return;
 	}
 	else if(!tent->client->sess.admin == ADMIN_NO_ADMIN && !tent->client->sess.admin == ADMIN_TEMP)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5Player %s is already logged in as an admin.\n\"", cmdTargetName));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s is already logged in as an admin.\n\"", cmdTargetName));
 	}
 	return;
 }
@@ -3942,12 +3943,12 @@ static void Cmd_QwLogout_f(gentity_t *ent)
 	if(ent->client->sess.admin != ADMIN_NO_ADMIN) //If they are logged into admin...
 	{
 		ent->client->sess.admin = ADMIN_NO_ADMIN; //They are now logged out of admin.
-		CmdMsg(ent-g_entities, va("print \"^5You have successfully logged out of admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have successfully logged out of admin.\n\""));
 		return;
 	}
 	else
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not an admin, so you can't logout of admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not an admin, so you can't logout of admin.\n\""));
 		return;
 	}
 }
@@ -3965,7 +3966,7 @@ static void Cmd_QwBan_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_BAN))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -3973,13 +3974,13 @@ static void Cmd_QwBan_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You must give the name of the player you wish to ban.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You must give the name of the player you wish to ban.\n\""));
 		return;
 	}
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -3987,19 +3988,19 @@ static void Cmd_QwBan_f(gentity_t *ent)
 
 	//if(ent == victim)
 	//{
-	//	CmdMsg(ent-g_entities, va("print \"^5You can't ban yourself.\n\""));
+	//	trap_SendServerCommand(ent-g_entities, va("print \"^5You can't ban yourself.\n\""));
 	//	return;
 	//}
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
 
 	trap_SendConsoleCommand( EXEC_INSERT, va("addip %s", tent->client->sess.IP));
-	CmdMsg(ent-g_entities, va("print \"^5The IP of the person you banned is %s\n\"", tent->client->sess.IP));
+	trap_SendServerCommand(ent-g_entities, va("print \"^5The IP of the person you banned is %s\n\"", tent->client->sess.IP));
 	trap_DropClient(pids[0], "^1was permanently banned.\n");
 
 	G_LogPrintf("Ban admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
@@ -4019,7 +4020,7 @@ static void Cmd_QwKick_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_KICK))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4027,14 +4028,14 @@ static void Cmd_QwKick_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You must give the name of the player you wish to kick.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You must give the name of the player you wish to kick.\n\""));
 		return;
 	}
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -4042,11 +4043,11 @@ static void Cmd_QwKick_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
-	CmdMsg(ent-g_entities, va("print \"^5The IP of the person you kicked is %s\n\"", tent->client->sess.IP));
+	trap_SendServerCommand(ent-g_entities, va("print \"^5The IP of the person you kicked is %s\n\"", tent->client->sess.IP));
 	trap_DropClient(pids[0], "^1was kicked.");
 	G_LogPrintf("Kick admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 	return;
@@ -4066,7 +4067,7 @@ static void Cmd_QwWarn_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_WARN))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4074,7 +4075,7 @@ static void Cmd_QwWarn_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You must provide the name of the player you wish to warn.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You must provide the name of the player you wish to warn.\n\""));
 		return;
 	}
 
@@ -4088,7 +4089,7 @@ static void Cmd_QwWarn_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4096,8 +4097,8 @@ static void Cmd_QwWarn_f(gentity_t *ent)
 
 	warns = tent->client->sess.warnLevel;
 
-	CmdMsg(ent-g_entities, va("print \"^5Player %s was warned.\n\"", cmdTargetName));
-	CmdMsg(tent-g_entities, va("cp \"You have been warned by an admin.\nYou have %s warnings.\"",(atoi(openrp_warnLevel.string) - warns) ));
+	trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s was warned.\n\"", cmdTargetName));
+	trap_SendServerCommand(tent-g_entities, va("cp \"You have been warned by an admin.\nYou have %s warnings.\"",(atoi(openrp_warnLevel.string) - warns) ));
 	G_LogPrintf("Warn admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 
 	if(tent->client->sess.warnLevel == atoi(openrp_warnLevel.string))
@@ -4126,7 +4127,7 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4137,7 +4138,7 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 	//as the below if(!player1->client) check should stop it anyway.
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You must enter the name of the person you wish to teleport to.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You must enter the name of the person you wish to teleport to.\n\""));
 		return;
 	}
 
@@ -4146,7 +4147,7 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 		if(ClientNumbersFromString(name2, pids) != 1) //If the name or clientid is not found
 		{
 			G_MatchOnePlayer(pids, err, sizeof(err));
-			CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", name2));
+			trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", name2));
 			return;
 		}
 
@@ -4154,19 +4155,19 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 
 		if(player2->client->sess.adminProtect)
 		{
-			CmdMsg(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
 			return;
 		}
 
 		if(player2->client->ps.duelInProgress)
 		{
-			CmdMsg(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
 			return;
 		}
 
 		if(!G_AdminControl(ent->client->sess.admin, player2->client->sess.admin))
 		{
-			CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 			return;
 		}
 
@@ -4203,7 +4204,7 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 		if(ClientNumbersFromString(name, pids) != 1) //If the name or clientid is not found
 		{
 			G_MatchOnePlayer(pids, err, sizeof(err));
-			CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", name));
+			trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", name));
 			return;
 		}
 
@@ -4211,19 +4212,19 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 
 		if(player2->client->sess.adminProtect)
 		{
-			CmdMsg(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
 			return;
 		}
 
 		if(player2->client->ps.duelInProgress)
 		{
-			CmdMsg(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
 			return;
 		}
 
 		if(!G_AdminControl(ent->client->sess.admin, player2->client->sess.admin))
 		{
-			CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 			return;
 		}
 
@@ -4245,8 +4246,8 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 
 		player2->client->ps.eFlags ^= EF_TELEPORT_BIT;
 	}
-	CmdMsg(ent-g_entities, va("cp \"You teleported %s to %s.\n\"", name, name2));
-	CmdMsg(tent-g_entities, va("cp \"You were teleported to %s by an admin.\"", name2));
+	trap_SendServerCommand(ent-g_entities, va("cp \"You teleported %s to %s.\n\"", name, name2));
+	trap_SendServerCommand(tent-g_entities, va("cp \"You were teleported to %s by an admin.\"", name2));
 	G_LogPrintf("Teleport admin command executed by %s. This caused %s to teleport to %s.\n", name, name2);
 	return;
 }
@@ -4268,7 +4269,7 @@ static void Cmd_QwSlay_f(gentity_t *ent)
 
 		if(!G_CheckAdmin(ent, ADMIN_KILL))
 		{
-			CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 			return;
 		}
 
@@ -4276,14 +4277,14 @@ static void Cmd_QwSlay_f(gentity_t *ent)
 
 		if(trap_Argc() < 2)
 		{
-			CmdMsg(ent-g_entities, va("print \"^5You must give the name of the player you wish to slay.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You must give the name of the player you wish to slay.\n\""));
 			return;
 		}
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -4291,19 +4292,19 @@ static void Cmd_QwSlay_f(gentity_t *ent)
 
 	if(target->client->sess.adminProtect)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
 		return;
 	}
 
 	if(target->client->ps.duelInProgress)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
 		return;
 	}
 
 	if(!G_AdminControl(ent->client->sess.admin, target->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4317,12 +4318,12 @@ static void Cmd_QwSlay_f(gentity_t *ent)
 		{
 			target->health = 0;
 			G_Damage(target, target, target, temp, temp, 9999, 0, MOD_TRIGGER_HURT);
-			CmdMsg(ent-g_entities, va("cp \"You slayed %s.\n\"", target));
-			CmdMsg(target-g_entities, va("cp \"You were slain by an admin.\""));
+			trap_SendServerCommand(ent-g_entities, va("cp \"You slayed %s.\n\"", target));
+			trap_SendServerCommand(target-g_entities, va("cp \"You were slain by an admin.\""));
 		}
 		else
 		{
-		CmdMsg(ent-g_entities, va("print \"^5This player is dead.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5This player is dead.\n\""));
 		return;
 		}
 
@@ -4359,7 +4360,7 @@ static void Cmd_QwAnnounce_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ANNOUNCE))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 		
@@ -4378,13 +4379,13 @@ static void Cmd_QwAnnounce_f(gentity_t *ent)
 		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
 	tent = &g_entities[pids[0]];
 
-		CmdMsg(tent-g_entities, va("cp \"%s\"", real_msg));
+		trap_SendServerCommand(tent-g_entities, va("cp \"%s\"", real_msg));
 		G_LogPrintf("Announce admin command executed by %s. It was sent to %s. The announcement was: %s\n", cmdUserName, cmdTargetName, real_msg);
 		return;
 	  }
@@ -4402,7 +4403,7 @@ static void Cmd_QwMute_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MUTE))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4410,14 +4411,14 @@ static void Cmd_QwMute_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You must give the name of the player you wish to mute.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You must give the name of the player you wish to mute.\n\""));
 		return;
 	}
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -4425,7 +4426,7 @@ static void Cmd_QwMute_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4433,7 +4434,7 @@ static void Cmd_QwMute_f(gentity_t *ent)
 	{
 		tent->client->sess.state |= PLAYER_MUTED;
 	}
-	CmdMsg(tent-g_entities, va("cp \"You were muted by an admin.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"You were muted by an admin.\""));
 	G_LogPrintf("Mute admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 	return;
 }
@@ -4451,7 +4452,7 @@ static void Cmd_QwUnMute_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MUTE))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4459,14 +4460,14 @@ static void Cmd_QwUnMute_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You must give the name of the player you wish to unmute.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You must give the name of the player you wish to unmute.\n\""));
 		return;
 	}
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -4474,13 +4475,13 @@ static void Cmd_QwUnMute_f(gentity_t *ent)
 
 	if(!tent->client->sess.state & PLAYER_MUTED)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5This player is not muted.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5This player is not muted.\n\""));
 		return;
 	}
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4488,7 +4489,7 @@ static void Cmd_QwUnMute_f(gentity_t *ent)
 	{
 		tent->client->sess.state -= PLAYER_MUTED; //bad way of doing it but it should work
 	}
-	CmdMsg(tent-g_entities, va("cp \"You were unmuted by an admin.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"You were unmuted by an admin.\""));
 	G_LogPrintf("Unmute admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 	return;
 }
@@ -4507,7 +4508,7 @@ static void Cmd_QwSleep_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4515,14 +4516,14 @@ static void Cmd_QwSleep_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You must give the name of the player you wish to sleep.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You must give the name of the player you wish to sleep.\n\""));
 		return;
 	}
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -4530,13 +4531,13 @@ static void Cmd_QwSleep_f(gentity_t *ent)
 
 	//if(tent->client->ps.duelInProgress)
 	//{
-	//	CmdMsg(ent-g_entities, va("print \"^3You cannot use this command on someone who is dueling\n\""));
+	//	trap_SendServerCommand(ent-g_entities, va("print \"^3You cannot use this command on someone who is dueling\n\""));
 	//	return;
 	//}
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4558,7 +4559,7 @@ static void Cmd_QwSleep_f(gentity_t *ent)
 
 	G_SetAnim(tent, NULL, SETANIM_BOTH, BOTH_STUMBLEDEATH1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
 
-	CmdMsg(tent-g_entities, va("cp \"You are now sleeping.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"You are now sleeping.\""));
 
 	G_LogPrintf("Sleep admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 	return;
@@ -4578,7 +4579,7 @@ static void Cmd_QwUnsleep_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4586,14 +4587,14 @@ static void Cmd_QwUnsleep_f(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You must give the name of the player you wish to unsleep.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You must give the name of the player you wish to unsleep.\n\""));
 		return;
 	}
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -4601,19 +4602,19 @@ static void Cmd_QwUnsleep_f(gentity_t *ent)
 
 	if(!tent->client->sess.state & PLAYER_MUTED)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5This player is not sleeping.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5This player is not sleeping.\n\""));
 		return;
 	}
 
 	if(tent->client->ps.duelInProgress)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You cannot use this command on someone who is duelling.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is duelling.\n\""));
 		return;
 	}
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4629,7 +4630,7 @@ static void Cmd_QwUnsleep_f(gentity_t *ent)
 	//Play a nice healing sound... Ahh
 	//G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
 
-	CmdMsg(tent-g_entities, va("cp \"You are no longer sleeping.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"You are no longer sleeping.\""));
 
 	G_LogPrintf("Unsleep admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 	return;
@@ -4648,7 +4649,7 @@ static void Cmd_QwProtect_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_PROTECT))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4666,14 +4667,14 @@ static void Cmd_QwProtect_f(gentity_t *ent)
 			ent->client->ps.eFlags |= EF_INVULNERABLE;
 			ent->client->invulnerableTimer = level.time + Q3_INFINITE;
 		}
-		CmdMsg(ent-g_entities, va("cp \"You have been protected.\""));
+		trap_SendServerCommand(ent-g_entities, va("cp \"You have been protected.\""));
 		return;
 	}
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -4681,7 +4682,7 @@ static void Cmd_QwProtect_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4698,7 +4699,7 @@ static void Cmd_QwProtect_f(gentity_t *ent)
 		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
 	}
 
-	CmdMsg(tent-g_entities, va("cp \"You have been protected.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"You have been protected.\""));
 
 	G_LogPrintf("Protect admin command executed by %s.\n", cmdUserName);
 	return;
@@ -4716,7 +4717,7 @@ static void Cmd_QwAdminWhois_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ADMINWHOIS))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4730,7 +4731,7 @@ static void Cmd_QwAdminWhois_f(gentity_t *ent)
 			if(ent->client->sess.admin != ADMIN_NO_ADMIN)
 			{
 				{
-					CmdMsg(ent-g_entities, va("print \"%s ^2Admin level %i\n\"", ent->client->pers.netname, (ent->client->sess.admin-1)));
+					trap_SendServerCommand(ent-g_entities, va("print \"%s ^2Admin level %i\n\"", ent->client->pers.netname, (ent->client->sess.admin-1)));
 				}
 			}
 		}
@@ -4754,7 +4755,7 @@ static void Cmd_QwEmpower_f(gentity_t *ent)
 	
 	if(!G_CheckAdmin(ent, ADMIN_EMPOWER))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4780,14 +4781,14 @@ static void Cmd_QwEmpower_f(gentity_t *ent)
 		ent->client->sess.state |= PLAYER_EMPOWERED;
 	}
 
-		CmdMsg(ent-g_entities, va("cp \"You have been empowered.\""));
+		trap_SendServerCommand(ent-g_entities, va("cp \"You have been empowered.\""));
 		return;
 	}
 	
 		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -4795,7 +4796,7 @@ static void Cmd_QwEmpower_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4817,7 +4818,7 @@ static void Cmd_QwEmpower_f(gentity_t *ent)
 		tent->client->sess.state |= PLAYER_EMPOWERED;
 	}
 
-	CmdMsg(tent-g_entities, va("cp \"You have been empowered.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"You have been empowered.\""));
 
 	G_LogPrintf("Empower admin command executed by %s.\n", cmdUserName);
 	return;
@@ -4836,7 +4837,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MERC))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4866,7 +4867,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 
 		ent->client->sess.state |= PLAYER_MERCD; //Give them merc flags, which says that they are a merc.
 
-		CmdMsg(ent-g_entities, va("cp \"You have been merc'd.\""));
+		trap_SendServerCommand(ent-g_entities, va("cp \"You have been merc'd.\""));
 		G_LogPrintf("Merc admin command executed by %s on themself.\n", cmdUserName);
 		return;
 	}
@@ -4888,7 +4889,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 
 		ent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
 
-		CmdMsg(ent-g_entities, va("cp \"You have been unmerc'd.\""));
+		trap_SendServerCommand(ent-g_entities, va("cp \"You have been unmerc'd.\""));
 		G_LogPrintf("Unmerc admin command executed by %s on themself.\n", cmdUserName);
 		return;
 	}
@@ -4897,7 +4898,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -4905,7 +4906,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -4932,7 +4933,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 
 		tent->client->sess.state |= PLAYER_MERCD; //Give them merc flags, which says that they are a merc.
 
-		CmdMsg(tent-g_entities, va("cp \"You have been merc'd\""));
+		trap_SendServerCommand(tent-g_entities, va("cp \"You have been merc'd\""));
 		G_LogPrintf("Merc admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 		return;
 	}
@@ -4953,7 +4954,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 
 		tent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
 
-		CmdMsg(tent-g_entities, va("cp \"^5You have been unmerc'd.\""));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been unmerc'd.\""));
 		G_LogPrintf("Unmerc admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 		return;
 	}
@@ -4974,7 +4975,7 @@ static void Cmd_QwResetScale_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SCALE))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -4989,7 +4990,7 @@ static void Cmd_QwResetScale_f(gentity_t *ent)
 
 	VectorSet(ent->modelScale, (ent->client->ps.iModelScale), (ent->client->ps.iModelScale), (ent->client->ps.iModelScale));
 		}
-	CmdMsg(ent-g_entities, va("cp \"Your scale has been reset.\""));
+	trap_SendServerCommand(ent-g_entities, va("cp \"Your scale has been reset.\""));
 	G_LogPrintf("Reset Scale admin command executed by %s on themself.\n", cmdUserName);
 	return;
 	}
@@ -4997,7 +4998,7 @@ static void Cmd_QwResetScale_f(gentity_t *ent)
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -5005,7 +5006,7 @@ static void Cmd_QwResetScale_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -5015,7 +5016,7 @@ static void Cmd_QwResetScale_f(gentity_t *ent)
 
 	VectorSet(tent->modelScale, (tent->client->ps.iModelScale), (tent->client->ps.iModelScale), (tent->client->ps.iModelScale));
 
-	CmdMsg(tent-g_entities, va("cp \"Your scale has been reset.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"Your scale has been reset.\""));
 
 	G_LogPrintf("Reset Scale admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 	return;
@@ -5034,7 +5035,7 @@ static void Cmd_QwScale_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SCALE))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -5052,13 +5053,13 @@ static void Cmd_QwScale_f(gentity_t *ent)
 	ent->client->sess.Scaled = qtrue;
 	ent->client->sess.Scale = atoi(scale);
 		}
-	CmdMsg(ent-g_entities, va("cp \"You have been scaled.\""));
+	trap_SendServerCommand(ent-g_entities, va("cp \"You have been scaled.\""));
 	return;
 	}
 
 	if(atoi(scale) > 999 || atoi(scale) < 0)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5Please choose a number between 0 and 999.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Please choose a number between 0 and 999.\n\""));
 		return;
 	}
 
@@ -5072,7 +5073,7 @@ static void Cmd_QwScale_f(gentity_t *ent)
 
 	if(tent->client->sess.adminProtect)
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
 		return;
 	}
 
@@ -5085,7 +5086,7 @@ static void Cmd_QwScale_f(gentity_t *ent)
 	//vert = va("%f", 16 * (tent->client->ps.iModelScale / 100.f));
 	//range = va("%f", 80 * (tent->client->ps.iModelScale / 100.f));
 
-	CmdMsg(tent-g_entities, va("cp \"You have been scaled.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"You have been scaled.\""));
 
 	G_LogPrintf("Scale admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 	return;
@@ -5101,12 +5102,12 @@ static void Cmd_QwBitvalues_f(gentity_t *ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_BITVALUES))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
-	CmdMsg(ent-g_entities, va("print \"^5Here are the bitvalues assigned to each admin rank:\n\""));
-	CmdMsg(ent-g_entities, va("print \"^2Admin 1: %i\nAdmin 2: %i\nAdmin 3 %i\nAdmin 4: %i\nAdmin 5: %i\n\"", openrp_admin1Allow.integer, openrp_admin2Allow.integer, openrp_admin3Allow.integer, openrp_admin4Allow.integer, openrp_admin5Allow.integer));
-	CmdMsg(ent-g_entities, va("print \"^2Admin 6: %i\nAdmin 7: %i\nAdmin 8: %i\nAdmin 9: %i\nAdmin 10:%i\nTemporary Admin:%i\n\"", openrp_admin6Allow.integer, openrp_admin7Allow.integer, openrp_admin8Allow.integer, openrp_admin9Allow.integer, openrp_admin10Allow.integer, openrp_adminTempallow.integer));
+	trap_SendServerCommand(ent-g_entities, va("print \"^5Here are the bitvalues assigned to each admin rank:\n\""));
+	trap_SendServerCommand(ent-g_entities, va("print \"^2Admin 1: %i\nAdmin 2: %i\nAdmin 3 %i\nAdmin 4: %i\nAdmin 5: %i\n\"", openrp_admin1Bitvalues.integer, openrp_admin2Bitvalues.integer, openrp_admin3Bitvalues.integer, openrp_admin4Bitvalues.integer, openrp_admin5Bitvalues.integer));
+	trap_SendServerCommand(ent-g_entities, va("print \"^2Admin 6: %i\nAdmin 7: %i\nAdmin 8: %i\nAdmin 9: %i\nAdmin 10:%i\nTemporary Admin:%i\n\"", openrp_admin6Bitvalues.integer, openrp_admin7Bitvalues.integer, openrp_admin8Bitvalues.integer, openrp_admin9Bitvalues.integer, openrp_admin10Bitvalues.integer, openrp_adminTempBitvalues.integer));
 	return;
 }
 /*
@@ -5127,14 +5128,14 @@ static void Cmd_QwAddEffect_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va( "print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\"" ));
 		return;
 	}
 	
 
 		if ( trap_Argc() != 2 )
          { 
-			 trap_SendServerCommand( ent-g_entities, "print \"^5Command Usage: /qwaddeffect (effect) Example: /qwaddeffect env/small_fire\n\"" ); 
+			trap_SendServerCommand( ent-g_entities, va( "print \"^5Command Usage: /qwaddeffect (effect) Example: /qwaddeffect env/small_fire\n\"" ) ); 
             return; 
          }
 				AddSpawnField("fxFile", effect);
@@ -5151,23 +5152,23 @@ static void Cmd_QwAddEffect_f(gentity_t *ent)
 				//cm - Dom
 				//Effects are now written to a file sharing the name of the map we are on
 				//This file is read at the start of each map load and the effects placed automatically
-				Com_Printf( "^5Saving the effect...\n" );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^5Saving the effect...\n\"" ) );
 				trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
 				Com_sprintf( savePath, sizeof( savePath ), "mp_effects/%s.cfg", mapname.string );
 				len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
 
 				if ( !f )
 				{
-					Com_Printf( "^1Failed to save the effect.\n" );
+					trap_SendServerCommand(ent-g_entities, va(  "^1Failed to save the effect.\n" ));
 					return;
 				}
 
 				//File saved in format: EffectName X Y Z
-				Com_sprintf( buf, sizeof(buf), "addeffect %s %i %i %i\n", effect, (int)ent->client->ps.origin[0], (int)ent->client->ps.origin[1], (int)ent->client->ps.origin[2] - 5);
+				Com_sprintf( buf, sizeof(buf), "qwaddeffect %s %i %i %i\n", effect, (int)ent->client->ps.origin[0], (int)ent->client->ps.origin[1], (int)ent->client->ps.origin[2] - 5);
 
 			    trap_FS_Write( buf, strlen( buf ), f );
 				trap_FS_FCloseFile( f );
-				Com_Printf( "^5Effect saved.\n" );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^5Effect saved.\n\"" ) );
 				G_LogPrintf("Add effect (saved effect) command executed by %s.\n", cmdUserName);
 				return;
 }
@@ -5188,32 +5189,32 @@ static void Cmd_QwClearEffects_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\"" ) );
 		return;
 	}
 
-				//cm - Dom
-				//Effects are now written to a file sharing the name of the map we are on
-				//This file is read at the start of each map load and the effects placed automatically
-				Com_Printf( "^5Clearing all effects...\n" );
-				trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
-				Com_sprintf( savePath, sizeof( savePath ), "mp_effects/%s.cfg", mapname.string );
-				len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
+		//cm - Dom
+		//Effects are now written to a file sharing the name of the map we are on
+		//This file is read at the start of each map load and the effects placed automatically
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Clearing all effects...\n\"" ) );
+		trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
+		Com_sprintf( savePath, sizeof( savePath ), "mp_effects/%s.cfg", mapname.string );
+		len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
 
-				if ( !f )
-				{
-					Com_Printf( "^1Failed to clear all effects.\n" );
-					return;
-				}
+		if ( !f )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Failed to clear all effects.\n\"" ) );
+			return;
+		}
 				
-				//Make the file blank.
-				Com_sprintf( buf, sizeof(buf), "");
+		//Make the file blank.
+		Com_sprintf( buf, sizeof(buf), "");
 
-				trap_FS_Write( buf, strlen( buf ), f );
-				trap_FS_FCloseFile( f );
-				Com_Printf( "^5All effects have been cleared.\n" );
-				G_LogPrintf("Clear effects command executed by %s.\n", cmdUserName);
-				return;
+		trap_FS_Write( buf, strlen( buf ), f );
+		trap_FS_FCloseFile( f );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5All effects have been cleared.\n\"" ) );
+		G_LogPrintf( "Clear effects command executed by %s.\n", cmdUserName );
+		return;
 }
 
 /*
@@ -5230,46 +5231,46 @@ static void Cmd_QwForceTeam_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_FORCETEAM))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\"" ) );
 		return;
 	}
-		trap_Argv(1, cmdTarget, sizeof(cmdTarget)); //The first command argument is the target's name.
+		trap_Argv( 1, cmdTarget, sizeof (cmdTarget ) ); //The first command argument is the target's name.
 
 		trap_Argv( 2, teamname, sizeof( teamname ) ); //The second command argument is the team's name.
 
 	if(trap_Argc() != 3) //If the user doesn't specify both args.
 	{
-		CmdMsg(ent-g_entities, va("print \"^5Command Usage: /qwforceteam (name) (newteam)\n\""));
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Command Usage: /qwforceteam (name) (newteam)\n\"" ) );
 		return;
 	}
 
 		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 		{
-			G_MatchOnePlayer(pids, err, sizeof(err));
-			CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+			G_MatchOnePlayer( pids, err, sizeof( err ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Player or clientid %s does not exist.\n\"", cmdTarget ) );
 			return;
 		}
 
 		tent = &g_entities[pids[0]];
 
 		if ( !Q_stricmp( teamname, "red" ) || !Q_stricmp( teamname, "r" ) ) {
-			SetTeam(tent, "red" );
+			SetTeam( tent, "red" );
 			G_LogPrintf("ForceTeam [RED] admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 		}
 		else if ( !Q_stricmp( teamname, "blue" ) || !Q_stricmp( teamname, "b" ) ) {
-			SetTeam(tent, "blue" );
+			SetTeam( tent, "blue" );
 			G_LogPrintf("ForceTeam [BLUE] admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 		}
-		else if ( !Q_stricmp( teamname, "spectate" ) || !Q_stricmp( teamname, "spectator" )  || !Q_stricmp( teamname, "spec" ) || !Q_stricmp( teamname, "s" )) {
-			SetTeam(tent, "spectator" );
+		else if ( !Q_stricmp( teamname, "spectate" ) || !Q_stricmp( teamname, "spectator" )  || !Q_stricmp( teamname, "spec" ) || !Q_stricmp( teamname, "s" ) ) {
+			SetTeam( tent, "spectator" );
 			G_LogPrintf("ForceTeam [SPECTATOR] admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 		}
 		else if ( !Q_stricmp( teamname, "enter" ) || !Q_stricmp( teamname, "free" ) || !Q_stricmp( teamname, "join" ) || !Q_stricmp( teamname, "j" )
-			 || !Q_stricmp( teamname, "f" )) {
-			SetTeam(tent, "free" );
-			G_LogPrintf("ForceTeam [FREE] admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
+			 || !Q_stricmp( teamname, "f" ) ) {
+			SetTeam( tent, "free" );
+			G_LogPrintf( "ForceTeam [FREE] admin command executed by %s on %s.\n", cmdUserName, cmdTargetName );
 		}
-		CmdMsg(ent-g_entities, va("print \"^5Player %s was forceteamed sucessfully.\n\"", cmdTargetName));
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Player %s was forceteamed sucessfully.\n\"", cmdTargetName ) );
 		return;
 	}
 
@@ -5284,24 +5285,24 @@ static void Cmd_QwIP_f(gentity_t *ent)
 	char err[MAX_STRING_CHARS];
 	gentity_t *tent;
 				
-	if(!G_CheckAdmin(ent, ADMIN_IP))
+	if( !G_CheckAdmin( ent, ADMIN_IP ) )
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 		 
     trap_Argv( 1,  cmdTarget, sizeof(  cmdTarget ) );
 
-	if(trap_Argc() < 2)
+	if( trap_Argc() < 2 )
 	{
-		CmdMsg(ent-g_entities, va("print \"^5Command Usage: /qwip (name)\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /qwip (name)\n\""));
 		return;
 	}
 
 		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 		{
 			G_MatchOnePlayer(pids, err, sizeof(err));
-			CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+			trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 			return;
 		}
 
@@ -5311,7 +5312,7 @@ static void Cmd_QwIP_f(gentity_t *ent)
 			trap_SendServerCommand(ent-g_entities, va("print \"%s ^5does not have an IP, as they are a bot.\n\"", tent->client->pers.netname));
 			return;
 		}
-		CmdMsg(ent-g_entities, va("print \"%s^5's IP is %s\n\"", tent->client->pers.netname,  tent->client->sess.IP));
+		trap_SendServerCommand(ent-g_entities, va("print \"%s^5's IP is %s\n\"", tent->client->pers.netname,  tent->client->sess.IP));
 		return;
 }
 /*
@@ -5325,13 +5326,13 @@ static void Cmd_QwMap_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MAP))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 	else
 	{
 	trap_Argv( 1, map, sizeof( map ) );
-	CmdAll(va("The map is being changed to %s", map));
+	trap_SendServerCommand( -1, va("The map is being changed to %s", map));
 	trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
 	G_LogPrintf("Map changed to %s by %s.\n", map, cmdUserName);
 	return;
@@ -5375,7 +5376,7 @@ static void Cmd_QwWeather_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}	
 		Com_Printf( "^5Changing and saving the weather...\n" );
@@ -5462,7 +5463,7 @@ static void Cmd_QwStatus_f(gentity_t *ent)
 
   	if(!G_CheckAdmin(ent, ADMIN_STATUS))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -5510,7 +5511,7 @@ static void Cmd_QwRename_f(gentity_t *ent)
 
    if(!G_CheckAdmin(ent, ADMIN_RENAME))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -5564,7 +5565,7 @@ static void Cmd_QwSlap_f(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLAP))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 
@@ -5579,7 +5580,7 @@ static void Cmd_QwSlap_f(gentity_t *ent)
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		CmdMsg(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -5587,7 +5588,7 @@ static void Cmd_QwSlap_f(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.admin, tent->client->sess.admin))
 	{
-		CmdMsg(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't perform this command on this player, as that player is\nan admin whose level is equal to or higher than your admin level.\n\""));
 		return;
 	}
 
@@ -5605,8 +5606,8 @@ static void Cmd_QwSlap_f(gentity_t *ent)
 		tent->client->ps.forceDodgeAnim = 0;
 		tent->client->ps.quickerGetup = qfalse;
 		
-		CmdMsg(ent-g_entities, va("cp \"You sucessfully slapped %s.\n\"", cmdTargetName));
-		CmdMsg(tent-g_entities, va("cp \"You have been slapped.\""));
+		trap_SendServerCommand(ent-g_entities, va("cp \"You sucessfully slapped %s.\n\"", cmdTargetName));
+		trap_SendServerCommand(tent-g_entities, va("cp \"You have been slapped.\""));
 
 		G_LogPrintf("Slap admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
 		return;
@@ -5817,7 +5818,7 @@ void ClientCommand( int clientNum ) {
 
 		if(!G_CheckAdmin(ent, ADMIN_GOD))
 	{
-		CmdMsg(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 		else
@@ -5829,7 +5830,7 @@ void ClientCommand( int clientNum ) {
 
 		if(!G_CheckAdmin(ent, ADMIN_NOTARGET))
 	{
-		CmdMsg(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 		else
@@ -5841,7 +5842,7 @@ void ClientCommand( int clientNum ) {
 
 		if(!G_CheckAdmin(ent, ADMIN_NOCLIP))
 	{
-		CmdMsg(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 		else
@@ -5853,7 +5854,7 @@ void ClientCommand( int clientNum ) {
 
 	if(!G_CheckAdmin(ent, ADMIN_NPC))
 	{
-		CmdMsg(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^3You are not allowed to use this command.\nYou may not be a high enough admin level\n or may not be logged into admin.\n\""));
 		return;
 	}
 	else

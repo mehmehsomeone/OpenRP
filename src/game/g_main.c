@@ -218,12 +218,11 @@ vmCvar_t	g_powerDuelEndHealth;
 // DUEL_HEALTH
 vmCvar_t		g_showDuelHealths;
 
-//openrp Cvars Begin Here.
+//OpenRP Admin Cvars Begin Here.
 
-//openrp Admin Cvars Begin Here.
-
+//Admin passwords
 vmCvar_t		openrp_admin1Pass;
-vmCvar_t		openrp_admin2Pass; //I wonder what these do? :P
+vmCvar_t		openrp_admin2Pass; 
 vmCvar_t		openrp_admin3Pass;
 vmCvar_t		openrp_admin4Pass;
 vmCvar_t		openrp_admin5Pass;
@@ -233,35 +232,39 @@ vmCvar_t		openrp_admin8Pass;
 vmCvar_t		openrp_admin9Pass;
 vmCvar_t		openrp_admin10Pass;
 
-vmCvar_t		openrp_warnLevel; //Sets the amount of warnings allowed
+//Sets the amount of warnings someone can receive before they are auto-kicked
+vmCvar_t		openrp_warnLevel; 
 
-vmCvar_t		openrp_motd;		//Sets the MOTD for the server
+//Sets the MOTD for the server
+vmCvar_t		openrp_motd;		
 
-vmCvar_t		openrp_admin1Allow;
-vmCvar_t		openrp_admin2Allow; //Bitvalues for Admins
-vmCvar_t		openrp_admin3Allow;
-vmCvar_t		openrp_admin4Allow;
-vmCvar_t		openrp_admin5Allow;
-vmCvar_t		openrp_admin6Allow;
-vmCvar_t		openrp_admin7Allow;
-vmCvar_t		openrp_admin8Allow;
-vmCvar_t		openrp_admin9Allow;
-vmCvar_t		openrp_admin10Allow;
-vmCvar_t		openrp_adminTempallow;
+//Bitvalues for Admins
+vmCvar_t		openrp_admin1Bitvalues;
+vmCvar_t		openrp_admin2Bitvalues; 
+vmCvar_t		openrp_admin3Bitvalues;
+vmCvar_t		openrp_admin4Bitvalues;
+vmCvar_t		openrp_admin5Bitvalues;
+vmCvar_t		openrp_admin6Bitvalues;
+vmCvar_t		openrp_admin7Bitvalues;
+vmCvar_t		openrp_admin8Bitvalues;
+vmCvar_t		openrp_admin9Bitvalues;
+vmCvar_t		openrp_admin10Bitvalues;
+vmCvar_t		openrp_adminTempBitvalues;
 
-vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
+//Determines whether lower level admins can perform commands on higher level admins
+vmCvar_t		openrp_adminControl;
 
-//openrp Admin Cvars End Here.
+//OpenRP Admin Cvars End Here.
 
+//OpenRP Non-Admin Cvars Begin Here.
 
 //Prevent players from using /kill
 vmCvar_t openrp_playerkill;
 
-//[BlackNames]
-vmCvar_t	g_allowBlackNames;		// Allow clients to use black names
-//[/BlackNames]
+// Allow clients to use black names
+vmCvar_t	g_allowBlackNames; 
 
-//openrp Cvars End Here.
+//OpenRP Non-Admin Cvars End Here.
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -504,8 +507,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_powerDuelStartHealth, "g_powerDuelStartHealth", "150", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_powerDuelEndHealth, "g_powerDuelEndHealth", "90", CVAR_ARCHIVE, 0, qtrue  },
 
+
 //OpenRP Server.cfg Things Begin Here.
-//Hardcoded name, Name used in server.cfg, Value
+	//Hardcoded name	 Name used in server.cfg    Value
 	{ &openrp_admin1Pass, "openrp_admin1Pass", "admin1pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse  },
 	{ &openrp_admin2Pass, "openrp_admin2Pass", "admin2pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
 	{ &openrp_admin3Pass, "openrp_admin3Pass", "admin3pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
@@ -517,18 +521,18 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_admin9Pass, "openrp_admin9Pass", "admin9pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
 	{ &openrp_admin10Pass, "openrp_admin10Pass", "admin10pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse  },
 	{ &openrp_warnLevel, "openrp_warnLevel", "3", CVAR_ARCHIVE, 0, qfalse  },
-	{ &openrp_motd, "openrp_motd", "MOTD", CVAR_ARCHIVE, 0, qfalse  },
-	{ &openrp_admin1Allow, "openrp_admin1Allow", "67108863", 0 , 0, qtrue  },
-	{ &openrp_admin2Allow, "openrp_admin2Allow", "1", 0 , 0, qtrue  },
-	{ &openrp_admin3Allow, "openrp_admin3Allow", "1", 0 , 0, qtrue  },
-	{ &openrp_admin4Allow, "openrp_admin4Allow", "1", 0 , 0, qtrue  },
-	{ &openrp_admin5Allow, "openrp_admin5Allow", "1", 0 , 0, qtrue  },
-	{ &openrp_admin6Allow, "openrp_admin6Allow", "1", 0 , 0, qtrue  },
-	{ &openrp_admin7Allow, "openrp_admin7Allow", "1", 0 , 0, qtrue  },
-	{ &openrp_admin8Allow, "openrp_admin8Allow", "1", 0 , 0, qtrue  },
-	{ &openrp_admin9Allow, "openrp_admin9Allow", "1", 0 , 0, qtrue  },
-	{ &openrp_admin10Allow, "openrp_admin10Allow", "1", 0 , 0, qtrue  },
-	{ &openrp_adminTempallow, "openrp_adminTempallow", "1", 0, 0, qtrue },
+	{ &openrp_motd, "openrp_motd", "Welcome to the server!", CVAR_ARCHIVE, 0, qfalse  },
+	{ &openrp_admin1Bitvalues, "openrp_admin1Bitvalues", "67108863", 0 , 0, qtrue  },
+	{ &openrp_admin2Bitvalues, "openrp_admin2Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin3Bitvalues, "openrp_admin3Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin4Bitvalues, "openrp_admin4Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin5Bitvalues, "openrp_admin5Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin6Bitvalues, "openrp_admin6Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin7Bitvalues, "openrp_admin7Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin8Bitvalues, "openrp_admin8Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin9Bitvalues, "openrp_admin9Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin10Bitvalues, "openrp_admin10Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_adminTempBitvalues, "openrp_adminTempBitvalues", "1", 0, 0, qtrue },
 	{ &openrp_adminControl, "openrp_adminControl", "1", CVAR_ARCHIVE, 0, qtrue  },
 	{ &openrp_playerkill, "openrp_playerkill", "1", 0, 0, qtrue },
 

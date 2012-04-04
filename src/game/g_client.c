@@ -2592,10 +2592,18 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 
 		if ( g_gametype.integer != GT_DUEL || g_gametype.integer == GT_POWERDUEL ) {
 			trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " %s\n\"", client->pers.netname, G_GetStringEdString("MP_SVGAME", "PLENTER")) );
-			trap_SendServerCommand( ent-g_entities, "print \"^5OpenRP SVN\n^5Type /qwinfo into the console for a list of commands.\n\"" );
 		}
 	}
 	G_LogPrintf( "ClientBegin: %i\n", clientNum );
+
+	//OpenRP Beginning Messages Begin Here.
+
+	if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
+	trap_SendServerCommand( ent-g_entities,va( "print \"^5OpenRP SVN\n^5Type /qwinfo into the console for a list of commands.\n\"" ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"%s\n\"", openrp_motd.string ) );
+	}
+
+	//OpenRP Beginning Messages End Here.
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
@@ -3808,7 +3816,7 @@ void ClientSpawn(gentity_t *ent) {
 	trap_ICARUS_FreeEnt( ent );
 	trap_ICARUS_InitEnt( ent );
 
-	//openrp Stuff
+	//OpenRP Class Stuff Begins Here.
 	
 if (g_gametype.integer >= GT_TEAM) {
         ent->client->ps.stats[STAT_WEAPONS] &= ~((1 << WP_SABER) | (1 << WP_STUN_BATON));
@@ -3825,6 +3833,7 @@ if (g_gametype.integer >= GT_TEAM) {
             break;
         }
     }
+	//OpenRP Class Stuff Begins Here.
 }
 
 

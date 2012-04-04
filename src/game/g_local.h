@@ -78,7 +78,7 @@ extern vec3_t gPainPoint;
 
 #define FL_BBRUSH					0x04000000 //I am a breakable brush
 
-//openrp Defines Begin Here.
+//OpenRP Defines Begin Here.
 //Some defines to make things clearer
 #define ADMIN_NO_ADMIN				0 //No Admin Privileges
 #define ADMIN_TEMP					1 //Temporary Admin Level
@@ -93,10 +93,10 @@ extern vec3_t gPainPoint;
 #define ADMIN_9						10 //Admin Level 9
 #define ADMIN_10					11 //Admin Level 10
 
-//openrp Defines End Here.
+//OpenRP Defines End Here.
 
 
-//openrp Bitvalues begin here, each number is x2, beginning at 1.
+//OpenRP Bitvalues begin here, each number is x2, beginning at 1.
 //Flags for Admins
 #define ADMIN_KICK					1 // /qwkick command
 #define ADMIN_BAN					2 // /qwban command
@@ -127,9 +127,9 @@ extern vec3_t gPainPoint;
 #define ADMIN_RENAME				67108864 // /qwrename command
 #define ADMIN_SLAP					134217728 // /qwslap command
 
-//openrp Bitvalues End Here.
+//OpenRP Bitvalues End Here.
 
-//openrp Defines Begin Here
+//OpenRP Defines Begin Here
 //Flags for player states
 #define PLAYER_NORMAL				1 //There are no states affecting this player.
 #define PLAYER_SLEEPING					2 //This player has been put to sleep.
@@ -149,7 +149,7 @@ extern vec3_t gPainPoint;
 #define TRAINING_DUEL				6
 #define POWER_DUEL_INVITE			7
 #define POWER_DUEL					8
-//openrp Defines End Here.
+//OpenRP Defines End Here.
 
 #ifndef FINAL_BUILD
 #define DEBUG_SABER_BOX
@@ -157,15 +157,6 @@ extern vec3_t gPainPoint;
 
 #define	MAX_G_SHARED_BUFFER_SIZE		8192
 extern char gSharedBuffer[MAX_G_SHARED_BUFFER_SIZE];
-
-//Function Defines
-//openrp Defines Begin Here.
-#define CmdAll(Msg) trap_SendServerCommand(-1, Msg)					// Prints or center prints a message to everyone on the server.
-#define CmdMsg(Ent, Msg) trap_SendServerCommand(Ent, Msg)		//Prints or center prints a message to a certain person.
-
-//A little array to hold the last duel outcomes
-char *duels[MAX_CLIENTS];
-//openrp Defines End Here.
 
 // movers are things like doors, plats, buttons, etc
 typedef enum {
@@ -1765,7 +1756,6 @@ extern	vmCvar_t	g_powerDuelEndHealth;
 
 extern vmCvar_t		g_showDuelHealths;
 
-//OpenRP Cvars Begin Here.
 //OpenRP Admin Cvars Begin Here.
 extern vmCvar_t		openrp_admin1Pass;
 extern vmCvar_t		openrp_admin2Pass;
@@ -1782,26 +1772,30 @@ extern vmCvar_t		openrp_warnLevel;
 
 extern vmCvar_t		openrp_motd;
 
-extern vmCvar_t		openrp_admin1Allow;
-extern vmCvar_t		openrp_admin2Allow; //Bitvalues for Admins
-extern vmCvar_t		openrp_admin3Allow;
-extern vmCvar_t		openrp_admin4Allow;
-extern vmCvar_t		openrp_admin5Allow; 
-extern vmCvar_t		openrp_admin6Allow;
-extern vmCvar_t		openrp_admin7Allow;
-extern vmCvar_t		openrp_admin8Allow; 
-extern vmCvar_t		openrp_admin9Allow;
-extern vmCvar_t		openrp_admin10Allow;
-extern vmCvar_t		openrp_adminTempallow;
+//Bitvalues for Admins
+extern vmCvar_t		openrp_admin1Bitvalues;
+extern vmCvar_t		openrp_admin2Bitvalues; 
+extern vmCvar_t		openrp_admin3Bitvalues;
+extern vmCvar_t		openrp_admin4Bitvalues;
+extern vmCvar_t		openrp_admin5Bitvalues; 
+extern vmCvar_t		openrp_admin6Bitvalues;
+extern vmCvar_t		openrp_admin7Bitvalues;
+extern vmCvar_t		openrp_admin8Bitvalues; 
+extern vmCvar_t		openrp_admin9Bitvalues;
+extern vmCvar_t		openrp_admin10Bitvalues;
+extern vmCvar_t		openrp_adminTempBitvalues;
 
-extern vmCvar_t		openrp_adminControl; //Determines whether lower level admins can perform commands on higher level admins
+//Determines whether lower level admins can perform commands on higher level admins
+extern vmCvar_t		openrp_adminControl; 
 
 //OpenRP Admin Cvars End Here.
+
+//OpenRP Non-Admin Cvars Begin Here.
 
 //Prevent players from using /kill
 extern vmCvar_t openrp_playerkill;
 
-//OpenRP Cvars End Here.
+//OpenRP Non-Admin Cvars End Here.
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
