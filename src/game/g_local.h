@@ -510,6 +510,7 @@ typedef struct {
 	int Scale;						//The players new scale
 	qboolean PDChallenged;			//Has the player been challenged to a PowerDuel?
 	int time;						//Misc timer
+	int pids[MAX_CLIENTS];			//Client IDs, used for qwstatus
 	//OpenRP Defines End Here.
 
 } clientSession_t;

@@ -3476,7 +3476,7 @@ static void Cmd_QwRegister_f (gentity_t *ent)
 
 	trap_FS_Write( buf, strlen( buf ), f );
 	trap_FS_FCloseFile( f );
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Registration information saved. You can now login with your information using /qwlogin.\n\"" ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^5Registration information saved.\n\"" ) );
 	G_LogPrintf("%s registered a new account for themselves.\n", cmdUserName);
 
 	return;
@@ -4877,8 +4877,6 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 			& ~(1 << WP_REPEATER) & ~(1 << WP_DEMP2) & ~(1 << WP_FLECHETTE) & ~(1 << WP_ROCKET_LAUNCHER) & ~(1 << WP_THERMAL) & ~(1 << WP_DET_PACK)
 			& ~(1 << WP_BRYAR_OLD) & ~(1 << WP_CONCUSSION) & ~(1 << WP_TRIP_MINE) & ~(1 << WP_BRYAR_PISTOL);
 
-		ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_SABER); //Give them their saber back.
-
 		ent->client->ps.weapon = WP_SABER; //Switch their active weapon to the saber.
 
 		ent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
@@ -4922,7 +4920,7 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 			}
 		}
 
-		tent->client->ps.weapon = WP_MELEE; //Switch their active weapon to melee.
+		tent->client->ps.weapon = WP_BLASTER; //Switch their active weapon to the E-11.
 
 		tent->client->sess.state |= PLAYER_MERCD; //Give them merc flags, which says that they are a merc.
 
@@ -4942,9 +4940,8 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 			& ~(1 << WP_REPEATER) & ~(1 << WP_DEMP2) & ~(1 << WP_FLECHETTE) & ~(1 << WP_ROCKET_LAUNCHER) & ~(1 << WP_THERMAL) & ~(1 << WP_DET_PACK)
 			& ~(1 << WP_BRYAR_OLD) & ~(1 << WP_CONCUSSION) & ~(1 << WP_TRIP_MINE) & ~(1 << WP_BRYAR_PISTOL);
 
-		tent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_SABER); //Give them their saber back.
 
-		tent->client->ps.weapon = WP_MELEE; //Switch their active weapon to melee.
+		tent->client->ps.weapon = WP_SABER; //Switch their active weapon to the saber.
 
 		tent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
 
@@ -5058,6 +5055,7 @@ static void Cmd_QwScale_f(gentity_t *ent)
 	if(ClientNumbersFromString(cmdTarget, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -5438,7 +5436,6 @@ static void Cmd_QwWeather_f(gentity_t *ent)
 			else {
 			Com_sprintf( buf, sizeof(buf), "weather %s\n", weather);
 			}	
-
 			    trap_FS_Write( buf, strlen( buf ), f );
 				trap_FS_FCloseFile( f );
 				Com_Printf( "^5Weather changed and saved. To change it back, use /qwweather clear\n" );
@@ -5459,13 +5456,13 @@ static void Cmd_QwStatus_f(gentity_t *ent)
 		return;
 	}
 
-	trap_SendServerCommand(ent-g_entities, va("print \"\n^5Current clients connected & client status\n\n^5===================================\n\""));
+	trap_SendServerCommand(ent-g_entities, va("print \"^5Current clients connected & their IPs\n===================================\n\""));
    for(i = 0; i < level.maxclients; i++) { 
       if(g_entities[i].client->pers.connected == CON_CONNECTED) { 
-		  trap_SendServerCommand(ent-g_entities, va("print \"^5ID: %i ^5Name: %s IP: %s\"", i, g_entities[i].client->pers.netname,g_entities[i].client->sess.IP));
-   trap_SendServerCommand(ent-g_entities, va("print \"\n^5===================================\n\n\""));
+		  trap_SendServerCommand(ent-g_entities, va("print \"^5ID: %i ^5Name: %s ^5IP: %s\n\"", g_entities[i].client->sess.pids[0], g_entities[i].client->pers.netname, g_entities[i].client->sess.IP));
 	  }
    }
+   	trap_SendServerCommand(ent-g_entities, va("print \"^5===================================\n\""));
    return;
 }
 

@@ -2268,20 +2268,26 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	char		userinfo[MAX_INFO_STRING];
 	gentity_t	*ent;
 	gentity_t	*te;
-	char TmpIP[32] = {0};
+	char TmpIP[32] = {0}; //OpenRP - Used below for IP stuff
+
 
 	ent = &g_entities[ clientNum ];
 
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
-	// check to see if they are on the banned IP list
+//OpenRP - IP Stuff Begins Here
+
+// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");
 	//Store the IP
-	if (!isBot)
+	if (!isBot) {
 		Q_strncpyz(TmpIP, value, sizeof(TmpIP)); // Used later
 	if ( G_FilterPacket( value ) ) {
 		return "Banned";
 	}
+	}
+
+//OpenRP - IP Stuff Ends Here
 
 	if ( !( ent->r.svFlags & SVF_BOT ) && !isBot && g_needpass.integer ) {
 		// check for a password
@@ -2313,18 +2319,17 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	}
 	G_ReadSessionData( client );
 
-if (!isBot)
-{
-	//OpenRP - Commenting out this fix for now - Invalid userinfo is detected after a map restart
-	/*
-	if(!TmpIP[0])
-	{// No IP sent when connecting, probably an unban hack attempt
+//OpenRP - IP Stuff Begins Here
+
+	if (firstTime || level.newSession && !isBot){
+	if(!TmpIP[0]){// No IP sent when connecting, probably an unban hack attempt
 		client->pers.connected = CON_DISCONNECTED;
 		return "Invalid userinfo detected";
 	}
-	*/
 	Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
 }
+
+//OpenRP - IP Stuff Ends Here
 
 if (g_gametype.integer == GT_SIEGE &&
 		(firstTime || level.newSession))
@@ -2391,6 +2396,7 @@ if (g_gametype.integer == GT_SIEGE &&
 void G_WriteClientSessionData( gclient_t *client );
 
 void WP_SetSaber( int entNum, saberInfo_t *sabers, int saberNum, const char *saberName );
+
 
 /*
 ===========
@@ -3845,8 +3851,6 @@ if (g_gametype.integer >= GT_TEAM) {
 if(ent->client->sess.state & PLAYER_MERCD){
 	//Give them every item.
 	ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
-	//Take away their saber
-	ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER);
 	//Give them every weapon.
 	ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
 	| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
