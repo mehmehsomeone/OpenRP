@@ -251,7 +251,7 @@ vmCvar_t		openrp_admin9Bitvalues;
 vmCvar_t		openrp_admin10Bitvalues;
 vmCvar_t		openrp_adminTempBitvalues;
 
-//Determines whether lower level admins can perform commands on higher level admins
+//Determines whether admins can perform admin commands on higher admin levels
 vmCvar_t		openrp_adminControl;
 
 //OpenRP Admin Cvars End Here.
@@ -378,11 +378,11 @@ static cvarTable_t		gameCvarTable[] = {
 
 	{ &g_warmup, "g_warmup", "20", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_doWarmup, "g_doWarmup", "0", 0, 0, qtrue  },
-	{ &g_log, "g_log", "games.log", CVAR_ARCHIVE, 0, qfalse  },
+	{ &g_log, "g_log", "games.log", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_logSync, "g_logSync", "0", CVAR_ARCHIVE, 0, qfalse  },
 
-	{ &g_statLog, "g_statLog", "0", CVAR_ARCHIVE, 0, qfalse },
-	{ &g_statLogFile, "g_statLogFile", "statlog.log", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_statLog, "g_statLog", "1", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_statLogFile, "g_statLogFile", "statlog.log", CVAR_ARCHIVE, 0, qtrue },
 
 	{ &g_password, "g_password", "", CVAR_USERINFO, 0, qfalse  },
 
@@ -509,20 +509,22 @@ static cvarTable_t		gameCvarTable[] = {
 
 
 //OpenRP Server.cfg Things Begin Here.
-	//Hardcoded name	 Name used in server.cfg    Value
-	{ &openrp_admin1Pass, "openrp_admin1Pass", "admin1pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse  },
-	{ &openrp_admin2Pass, "openrp_admin2Pass", "admin2pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
-	{ &openrp_admin3Pass, "openrp_admin3Pass", "admin3pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
-	{ &openrp_admin4Pass, "openrp_admin4Pass", "admin4pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse  },
-	{ &openrp_admin5Pass, "openrp_admin5Pass", "admin5pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
-	{ &openrp_admin6Pass, "openrp_admin6Pass", "admin6pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
-	{ &openrp_admin7Pass, "openrp_admin7Pass", "admin7pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse  },
-	{ &openrp_admin8Pass, "openrp_admin8Pass", "admin8pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
-	{ &openrp_admin9Pass, "openrp_admin9Pass", "admin9pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse },
-	{ &openrp_admin10Pass, "openrp_admin10Pass", "admin10pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qfalse  },
-	{ &openrp_warnLevel, "openrp_warnLevel", "3", CVAR_ARCHIVE, 0, qfalse  },
-	{ &openrp_motd, "openrp_motd", "Welcome to the server!", CVAR_ARCHIVE, 0, qfalse  },
-	{ &openrp_admin1Bitvalues, "openrp_admin1Bitvalues", "67108863", 0 , 0, qtrue  },
+
+	//Hardcoded name  Name used in server.cfg    Value
+	{ &openrp_motd, "openrp_motd", "Welcome to the server!", CVAR_ARCHIVE, 0, qtrue  },
+
+	{ &openrp_admin1Pass, "openrp_admin1Pass", "admin1pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue  },
+	{ &openrp_admin2Pass, "openrp_admin2Pass", "admin2pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue },
+	{ &openrp_admin3Pass, "openrp_admin3Pass", "admin3pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue },
+	{ &openrp_admin4Pass, "openrp_admin4Pass", "admin4pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue  },
+	{ &openrp_admin5Pass, "openrp_admin5Pass", "admin5pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue },
+	{ &openrp_admin6Pass, "openrp_admin6Pass", "admin6pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue },
+	{ &openrp_admin7Pass, "openrp_admin7Pass", "admin7pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue  },
+	{ &openrp_admin8Pass, "openrp_admin8Pass", "admin8pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue },
+	{ &openrp_admin9Pass, "openrp_admin9Pass", "admin9pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue },
+	{ &openrp_admin10Pass, "openrp_admin10Pass", "admin10pass", CVAR_ARCHIVE|CVAR_INTERNAL, 0, qtrue  },
+
+	{ &openrp_admin1Bitvalues, "openrp_admin1Bitvalues", "268435455", 0 , 0, qtrue  },
 	{ &openrp_admin2Bitvalues, "openrp_admin2Bitvalues", "1", 0 , 0, qtrue  },
 	{ &openrp_admin3Bitvalues, "openrp_admin3Bitvalues", "1", 0 , 0, qtrue  },
 	{ &openrp_admin4Bitvalues, "openrp_admin4Bitvalues", "1", 0 , 0, qtrue  },
@@ -533,14 +535,17 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_admin9Bitvalues, "openrp_admin9Bitvalues", "1", 0 , 0, qtrue  },
 	{ &openrp_admin10Bitvalues, "openrp_admin10Bitvalues", "1", 0 , 0, qtrue  },
 	{ &openrp_adminTempBitvalues, "openrp_adminTempBitvalues", "1", 0, 0, qtrue },
-	{ &openrp_adminControl, "openrp_adminControl", "1", CVAR_ARCHIVE, 0, qtrue  },
-	{ &openrp_playerkill, "openrp_playerkill", "1", 0, 0, qtrue },
 
+	{ &openrp_adminControl, "openrp_adminControl", "1", CVAR_ARCHIVE, 0, qtrue  },
+
+	{ &openrp_warnLevel, "openrp_warnLevel", "3", CVAR_ARCHIVE, 0, qtrue  },
 
 	//[BlackNames]
-	//Toggles allowance of black names
 	{ &g_allowBlackNames, "g_allowBlackNames", "1", CVAR_ARCHIVE, 0, qtrue },
 	//[/BlackNames]
+	
+	{ &openrp_playerkill, "openrp_playerkill", "1", 0, 0, qtrue },
+	
 	//OpenRP Server.cfg Things End Here.
 };
 

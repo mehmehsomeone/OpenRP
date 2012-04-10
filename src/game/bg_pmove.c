@@ -7129,7 +7129,9 @@ PM_Weapon
 Generates weapon events and modifes the weapon counter
 ==============
 */
-extern int PM_KickMoveForConditions(void);
+//[MeleeButton]
+//extern int PM_KickMoveForConditions(void);
+//[/MeleeButton]
 static void PM_Weapon( void )
 {
 	int		addTime;
@@ -8012,6 +8014,9 @@ static void PM_Weapon( void )
 	#endif
 #endif
 			}
+//[MeleeButton]
+			//Raz - may aswell remove this then
+			/*
 			else if (pm->debugMelee &&
 				(pm->cmd.buttons & BUTTON_ALT_ATTACK))
 			{ //kicks
@@ -8087,6 +8092,8 @@ static void PM_Weapon( void )
 				pm->ps->weaponTime = 0;
 				return;
 			}
+			*/
+			//[/MeleeButton]
 			else
 			{ //just punch
 				int desTAnim = BOTH_MELEE1;

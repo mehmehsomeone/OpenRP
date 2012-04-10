@@ -2313,18 +2313,22 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	}
 	G_ReadSessionData( client );
 
-	if (g_gametype.integer == GT_SIEGE &&
-		(firstTime || level.newSession))
-
-		if (firstTime && !isBot)
+if (!isBot)
 {
+	//OpenRP - Commenting out this fix for now - Invalid userinfo is detected after a map restart
+	/*
 	if(!TmpIP[0])
 	{// No IP sent when connecting, probably an unban hack attempt
 		client->pers.connected = CON_DISCONNECTED;
 		return "Invalid userinfo detected";
 	}
+	*/
 	Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
 }
+
+if (g_gametype.integer == GT_SIEGE &&
+		(firstTime || level.newSession))
+
 	{ //if this is the first time then auto-assign a desired siege team and show briefing for that team
 		client->sess.siegeDesiredTeam = 0;//PickTeam(ent->s.number);
 		/*
@@ -2599,8 +2603,8 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	//OpenRP Beginning Messages Begin Here.
 
 	if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
-	trap_SendServerCommand( ent-g_entities,va( "print \"^5OpenRP SVN\n^5Type /qwinfo into the console for a list of commands.\n\"" ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"%s\n\"", openrp_motd.string ) );
+		trap_SendServerCommand( ent-g_entities,va( "print \"^5OpenRP SVN\n^5Type /qwinfo into the console for a list of commands.\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "cp \"%s\"", openrp_motd.string ) );
 	}
 
 	//OpenRP Beginning Messages End Here.
@@ -3443,7 +3447,8 @@ void ClientSpawn(gentity_t *ent) {
 		{
 			if (client->ps.fd.forcePowerLevel[FP_SABER_OFFENSE])
 			{
-				client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER );	//these are precached in g_items, ClearRegisteredItems()
+				//OpenRP - Give people with lightsabers melee too
+				client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER ) | (1 << WP_MELEE);	//these are precached in g_items, ClearRegisteredItems()
 			}
 			else
 			{ //if you don't have saber attack rank then you don't get a saber
@@ -3453,11 +3458,14 @@ void ClientSpawn(gentity_t *ent) {
 
 		if (g_gametype.integer != GT_SIEGE)
 		{
+			//OpenRP - Don't give people the bryar pistol by default
+			/*
 			if (!wDisable || !(wDisable & (1 << WP_BRYAR_PISTOL)))
 			{
 				client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_BRYAR_PISTOL );
 			}
-			else if (g_gametype.integer == GT_JEDIMASTER)
+			*/
+			if (g_gametype.integer == GT_JEDIMASTER)
 			{
 				client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_BRYAR_PISTOL );
 			}
@@ -3816,7 +3824,7 @@ void ClientSpawn(gentity_t *ent) {
 	trap_ICARUS_FreeEnt( ent );
 	trap_ICARUS_InitEnt( ent );
 
-	//OpenRP Class Stuff Begins Here.
+	//OpenRP Stuff Begins Here.
 	
 if (g_gametype.integer >= GT_TEAM) {
         ent->client->ps.stats[STAT_WEAPONS] &= ~((1 << WP_SABER) | (1 << WP_STUN_BATON));
@@ -3833,7 +3841,33 @@ if (g_gametype.integer >= GT_TEAM) {
             break;
         }
     }
-	//OpenRP Class Stuff Begins Here.
+
+if(ent->client->sess.state & PLAYER_MERCD){
+	//Give them every item.
+	ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
+	//Take away their saber
+	ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER);
+	//Give them every weapon.
+	ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+	| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
+	| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_TRIP_MINE) | (1 << WP_BRYAR_PISTOL);
+
+		{
+			int num = 999;
+			int	i;
+
+			for ( i = 0 ; i < MAX_WEAPONS ; i++ ) { //Give them max ammo
+				ent->client->ps.ammo[i] = num;
+			}
+		}
+
+		ent->client->ps.weapon = WP_BLASTER; //Switch their active weapon to the E-11.
+}
+
+if(ent->client->sess.state & PLAYER_EMPOWERED){
+		ent->client->ps.eFlags |= EF_BODYPUSH;
+}
+	//OpenRP Stuff Ends Here.
 }
 
 

@@ -79,19 +79,19 @@ extern vec3_t gPainPoint;
 #define FL_BBRUSH					0x04000000 //I am a breakable brush
 
 //OpenRP Defines Begin Here.
-//Some defines to make things clearer
-#define ADMIN_NO_ADMIN				0 //No Admin Privileges
+
+#define ADMIN_1						11 //Admin Level 1
+#define ADMIN_2						10 //Admin Level 2
+#define ADMIN_3						9 //Admin Level 3
+#define ADMIN_4						8 //Admin Level 4
+#define ADMIN_5						7 //Admin Level 5
+#define ADMIN_6						6 //Admin Level 6
+#define ADMIN_7						5 //Admin Level 7
+#define ADMIN_8						4 //Admin Level 8
+#define ADMIN_9						3 //Admin Level 9
+#define ADMIN_10					2 //Admin Level 10
 #define ADMIN_TEMP					1 //Temporary Admin Level
-#define ADMIN_1						2 //Admin Level 1
-#define ADMIN_2						3 //Admin Level 2
-#define ADMIN_3						4 //Admin Level 3
-#define ADMIN_4						5 //Admin Level 4
-#define ADMIN_5						6 //Admin Level 5
-#define ADMIN_6						7 //Admin Level 6
-#define ADMIN_7						8 //Admin Level 7
-#define ADMIN_8						9 //Admin Level 8
-#define ADMIN_9						10 //Admin Level 9
-#define ADMIN_10					11 //Admin Level 10
+#define ADMIN_NO_ADMIN				0 //No Admin Privileges
 
 //OpenRP Defines End Here.
 
@@ -107,7 +107,7 @@ extern vec3_t gPainPoint;
 #define ADMIN_GRANTTEMP				64 // /qwgranttempadmin command
 #define ADMIN_NPC					128 // /npc command
 #define ADMIN_MAP					256 // /map command
-#define ADMIN_GTYPE					512 // /gameType command
+#define ADMIN_XP					512 // XP related commands
 #define ADMIN_PROTECT				1024 // /qwprotect command
 #define ADMIN_ANNOUNCE				2048 // /qwannounce command
 #define ADMIN_WARN					4096 // /qwwarn command
@@ -1785,7 +1785,7 @@ extern vmCvar_t		openrp_admin9Bitvalues;
 extern vmCvar_t		openrp_admin10Bitvalues;
 extern vmCvar_t		openrp_adminTempBitvalues;
 
-//Determines whether lower level admins can perform commands on higher level admins
+//Determines whether admins can perform admin commands on higher admin levels
 extern vmCvar_t		openrp_adminControl; 
 
 //OpenRP Admin Cvars End Here.
