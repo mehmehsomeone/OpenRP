@@ -4241,7 +4241,7 @@ static void Cmd_QwTeleport_f(gentity_t *ent)
 
 		player2->client->ps.eFlags ^= EF_TELEPORT_BIT;
 	}
-	trap_SendServerCommand(ent-g_entities, va("print \"^5You teleported %s to %s.\n\"", player->client->pers.netname, player2->client->pers.netname));
+	trap_SendServerCommand(ent-g_entities, va("print \"^5You teleported %s to %s.\n\"",  player2->client->pers.netname, player->client->pers.netname));
 	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were teleported to %s by an admin.\"", player2->client->pers.netname));
 	G_LogPrintf("Teleport admin command executed by %s. This caused %s to teleport to %s.\n", player->client->pers.netname, player2->client->pers.netname);
 	return;
@@ -4650,23 +4650,23 @@ static void Cmd_QwProtect_f(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
-	if(trap_Argc() < 2) //If no name is given protect the user of the command.
-	{
+	if(trap_Argc() < 2){ //If no name is given protect the user of the command.
 		if((ent->client->ps.eFlags & EF_INVULNERABLE) > 0)
 		{
 			ent->client->ps.eFlags |= EF_INVULNERABLE;
 			ent->client->invulnerableTimer = 0;
-			trap_SendServerCommand(ent-g_entities, va("print \"^5You have been protected.\n\""));
-			G_LogPrintf("Protect admin command executed by %s on themself.\n", cmdUserName);
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You are no longer protected.\n\""));
 		}
 		else
 		{
 			ent->client->ps.eFlags |= EF_INVULNERABLE;
 			ent->client->invulnerableTimer = level.time + Q3_INFINITE;
-			trap_SendServerCommand(ent-g_entities, va("print \"^5You are no longer protected.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You have been protected.\n\""));
+			G_LogPrintf("Protect admin command executed by %s on themself.\n", cmdUserName);
 		}
 		return;
 	}
+		
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -4688,17 +4688,17 @@ static void Cmd_QwProtect_f(gentity_t *ent)
 	{
 		tent->client->ps.eFlags |= EF_INVULNERABLE;
 		tent->client->invulnerableTimer = 0;
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been protected.\""));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer protected.\""));
+		return;
 	}
 	else
 	{
 		tent->client->ps.eFlags |= EF_INVULNERABLE;
 		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer protected.\""));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been protected.\""));
+		G_LogPrintf("Protect admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);	
+		return;
 	}
-
-	G_LogPrintf("Protect admin command executed by %s on %s.\n", cmdUserName, cmdTargetName);
-	return;
 }
 
 
@@ -4844,8 +4844,10 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 	{
 			//Give them every item.
 			ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
+			//Take away saber and melee. We'll give it back in the next line along with the other weapons.
+			ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
 			//Give them every weapon.
-			ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+			ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_SABER) | (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
 			| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
 			| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_TRIP_MINE) | (1 << WP_BRYAR_PISTOL);
 		{
@@ -4877,6 +4879,9 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 			& ~(1 << WP_REPEATER) & ~(1 << WP_DEMP2) & ~(1 << WP_FLECHETTE) & ~(1 << WP_ROCKET_LAUNCHER) & ~(1 << WP_THERMAL) & ~(1 << WP_DET_PACK)
 			& ~(1 << WP_BRYAR_OLD) & ~(1 << WP_CONCUSSION) & ~(1 << WP_TRIP_MINE) & ~(1 << WP_BRYAR_PISTOL);
 
+		//Give them melee and saber. They should already have these but this seems to prevent a bug with them not being switched to the correct active weapon.
+		//ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_SABER); 
+
 		ent->client->ps.weapon = WP_SABER; //Switch their active weapon to the saber.
 
 		ent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
@@ -4906,8 +4911,10 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 	{
 		//Give them every item.
 		tent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
+		//Take away saber and melee. We'll give it back in the next line along with the other weapons.
+		tent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
 		//Give them every weapon.
-		tent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+		tent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_SABER) | (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
 		| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
 		| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_TRIP_MINE) | (1 << WP_BRYAR_PISTOL);
 
@@ -4940,6 +4947,8 @@ static void Cmd_QwMerc_f(gentity_t *ent)
 			& ~(1 << WP_REPEATER) & ~(1 << WP_DEMP2) & ~(1 << WP_FLECHETTE) & ~(1 << WP_ROCKET_LAUNCHER) & ~(1 << WP_THERMAL) & ~(1 << WP_DET_PACK)
 			& ~(1 << WP_BRYAR_OLD) & ~(1 << WP_CONCUSSION) & ~(1 << WP_TRIP_MINE) & ~(1 << WP_BRYAR_PISTOL);
 
+		//Give them melee and saber. They should already have these but this seems to prevent a bug with them not being switched to the correct active weapon.
+		//tent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_SABER); 
 
 		tent->client->ps.weapon = WP_SABER; //Switch their active weapon to the saber.
 

@@ -3830,7 +3830,7 @@ void ClientSpawn(gentity_t *ent) {
 	trap_ICARUS_FreeEnt( ent );
 	trap_ICARUS_InitEnt( ent );
 
-	//OpenRP Stuff Begins Here.
+//OpenRP Stuff Begins Here.
 	
 if (g_gametype.integer >= GT_TEAM) {
         ent->client->ps.stats[STAT_WEAPONS] &= ~((1 << WP_SABER) | (1 << WP_STUN_BATON));
@@ -3851,8 +3851,10 @@ if (g_gametype.integer >= GT_TEAM) {
 if(ent->client->sess.state & PLAYER_MERCD){
 	//Give them every item.
 	ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
+	//Take away saber and melee. We'll give it back in the next line along with the other weapons.
+	ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
 	//Give them every weapon.
-	ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+	ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_SABER) | (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
 	| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
 	| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_TRIP_MINE) | (1 << WP_BRYAR_PISTOL);
 
@@ -3871,7 +3873,9 @@ if(ent->client->sess.state & PLAYER_MERCD){
 if(ent->client->sess.state & PLAYER_EMPOWERED){
 		ent->client->ps.eFlags |= EF_BODYPUSH;
 }
-	//OpenRP Stuff Ends Here.
+
+//OpenRP Stuff Ends Here.
+
 }
 
 
