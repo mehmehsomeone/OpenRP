@@ -31,5 +31,6 @@ Hans Zimmer for the main menu song
 Kavar - Coding, animation, class system concepts
 Nile - Shield mod
 Naythan - Splash screen
+Darth NormaN - Elegance HUD used as the OpenRP HUD (permission given by him to use the HUD and modify it if we wish to)
 
 THIS MODIFICATION IS NOT MADE, DISTRIBUTED, OR SUPPORTED BY ACTIVISION,RAVEN, OR LUCASARTS ENTERTAINMENT COMPANY LLC. ELEMENTS TM & c LUCASARTS ENTERTAINMENT COMPANY LLC AND/OR ITS LICENSORS.

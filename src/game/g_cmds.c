@@ -5378,7 +5378,7 @@ static void Cmd_QwWeather_f(gentity_t *ent)
 		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
 		return;
 	}	
-		Com_Printf( "^5Changing and saving the weather...\n" );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Changing and saving the weather...\n\"" ) );
 		trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
 		Com_sprintf( savePath, sizeof( savePath ), "mp_weather/%s.cfg", mapname.string );
 		len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
@@ -5386,7 +5386,7 @@ static void Cmd_QwWeather_f(gentity_t *ent)
 		
 		if ( !f )
 			{
-				Com_Printf( "^1Failed to change and save the weather.\n" );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1Failed to change and save the weather.\n\"" ) );
 				return;
 			}
 						
@@ -5447,7 +5447,7 @@ static void Cmd_QwWeather_f(gentity_t *ent)
 			}	
 			    trap_FS_Write( buf, strlen( buf ), f );
 				trap_FS_FCloseFile( f );
-				Com_Printf( "^5Weather changed and saved. To change it back, use /qwweather clear\n" );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^5Weather changed and saved. To change it back, use /qwweather clear\n\"" ) );
 				G_LogPrintf("Weather command executed by %s. The weather is now %s.\n", cmdUserName, weather);
 		}
 /*
@@ -5465,7 +5465,7 @@ static void Cmd_QwStatus_f(gentity_t *ent)
 		return;
 	}
 
-	trap_SendServerCommand(ent-g_entities, va("print \"^5Current clients connected & their IPs\n===================================\n\""));
+	trap_SendServerCommand( ent-g_entities, va( "print \"^5Current clients connected & their IPs\n===================================\n\"" ) );
    for(i = 0; i < level.maxclients; i++) { 
       if(g_entities[i].client->pers.connected == CON_CONNECTED) { 
 		  trap_SendServerCommand(ent-g_entities, va("print \"^5ID: %i ^5Name: %s ^5IP: %s\n\"", g_entities[i].client->sess.pids[0], g_entities[i].client->pers.netname, g_entities[i].client->sess.IP));
@@ -5541,7 +5541,6 @@ static void Cmd_QwRename_f(gentity_t *ent)
             return; 
          }
    trap_Argv( 2, newname, sizeof( newname ) );
-	   //rename message goes here
 		G_LogPrintf("Rename admin command executed by %s on %s\n", cmdUserName, g_entities[clientid].client->pers.netname);
 		trap_SendServerCommand(clientid, va("cvar name %s", newname));
 		uwRename(&g_entities[clientid], newname);
