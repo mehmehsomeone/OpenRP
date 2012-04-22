@@ -111,7 +111,7 @@ void Cmd_AccountLogout_F(gentity_t * targetplayer)
 {
 	if(!isLoggedIn(targetplayer))
 	{
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: Not logged in fool.\n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1You are not logged in, so you can't logout.\n\"");
 		return;
 	}
 
@@ -125,7 +125,7 @@ void Cmd_AccountLogout_F(gentity_t * targetplayer)
 	//Character
 	targetplayer->client->sess.characterChosen = qfalse;
 	targetplayer->client->sess.characterID = NULL;
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Success: ^7Your are now logged out\n\"");
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5You have been logged out.\n\"");
 	//Remove all feats
 	for(int k = 0; k < NUM_FEATS-1; k++)
 	{
@@ -175,7 +175,7 @@ void Cmd_AccountCreate_F(gentity_t * targetplayer)
 
 	//Make sure they entered both a user and a password
 	if( trap_Argc() < 3 ){
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"Usage: register <user> <password>\n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Usage: qwregister <user> <password>\n\"");
 		return;
 	}
 	
@@ -191,14 +191,20 @@ void Cmd_AccountCreate_F(gentity_t * targetplayer)
 	std::string DBname = q.get_string(va("SELECT name FROM users WHERE name='%s'",userNameSTR.c_str()));
 	if(!DBname.empty())
 	{
-		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va("print \"^1User %s has already been used\n\"",DBname.c_str()));
+		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va("print \"^1Error: Username %s is already in use.\n\"",DBname.c_str()));
 		return;
 	}
 	//Create the account
 	q.execute(va("INSERT INTO users(name,password) VALUES('%s','%s')",userNameSTR.c_str(),userPassword));
-	//Tell the user the account has been created
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Success: ^7Account created. You may now login\n\"");
-	
+
+	//Log them in automatically
+	int userID = q.get_num(va("SELECT ID FROM users WHERE name='%s'",userNameSTR.c_str()));
+	targetplayer->client->sess.userID = userID;
+	targetplayer->client->sess.loggedinAccount = qtrue;
+	LoadUser(targetplayer);
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^5Account was successfully created! You are now logged in as %s.\n\"", userNameSTR.c_str()));
+	//Update the ui
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va("lui_login"));
 	
 	return;
 }
@@ -266,13 +272,13 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	//Make sure they're logged in
 	if(!isLoggedIn(targetplayer))
 	{
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: ^7You must be logged in to ^3create ^7a character\n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in to create a character.\n\"");
 		return;
 	}
 
 	//Make sure they entered a character
 	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"Usage: createCharacter <name>\n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Usage: /qwcreateCharacter <name>\n\"");
 		return;
 	}
 
@@ -293,7 +299,7 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	}*/
 	//Create character
 	q.execute(va("INSERT INTO characters(userID,name) VALUES('%i','%s')",targetplayer->client->sess.userID,charNameSTR.c_str()));
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Success: ^7Character created. You may select this character\n\"");
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^5Character successfully created. You may select this character using /qwcharacter %s\n\"", charName ) );
 	return;
 }
 
@@ -320,13 +326,13 @@ void Cmd_SelectCharacter_F(gentity_t * targetplayer)
 	//Make sure they're logged in
 	if(!isLoggedIn(targetplayer))
 	{
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: ^7You must be logged in to select a character\n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in to select a character.\n\"");
 		return;
 	}
 
 	//Make sure they entered a character
 	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"Usage: character <name>\n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Usage: /qwcharacter <name>\n\"");
 		return;
 	}
 
@@ -341,7 +347,7 @@ void Cmd_SelectCharacter_F(gentity_t * targetplayer)
 	int charID = q.get_num(va("SELECT ID FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str()));
 	if(charID == 0)
 	{
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: Character does not exist\n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: Character does not exist.\n\"");
 		return;
 	}
 	
@@ -350,7 +356,7 @@ void Cmd_SelectCharacter_F(gentity_t * targetplayer)
 	targetplayer->client->sess.characterID = charID;
 	SetTeam(targetplayer,"f");
 	LoadCharacter(targetplayer);
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va("print \"^1Success: ^7Your character is selected as: %s!\n\"",charName));
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va("print \"^5Your character is selected as: %s!\n\"",charName));
 	targetplayer->flags &= ~FL_GODMODE;
 	targetplayer->client->ps.stats[STAT_HEALTH] = targetplayer->health = -999;
 	player_die (targetplayer, targetplayer, targetplayer, 100000, MOD_SUICIDE);
