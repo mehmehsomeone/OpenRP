@@ -1,0 +1,915 @@
+//-----------------------------------
+// Feat Selection
+//-----------------------------------
+//
+{
+	{
+	menuDef 
+	{
+		name						"ingame_playerfeats"
+		visible						1
+		fullscreen					0
+//		outOfBoundsClick									// this closes the window if it gets a click out of the rectangle
+		rect						120 40 510 400
+		focusColor					0 0.4 0.8 1								// Focus color for text and items
+		style						1
+		border						1
+		descX						383
+		descY						422
+		descScale					1
+		descColor					0 0.4 0.8 1
+		descAlignment				ITEM_ALIGN_CENTER		
+		onOpen  
+		{ 
+			uiScript setForce "none"
+		}
+		onClose 
+		{ 
+			uiScript setForce "none"
+		//	open			ingame_player 
+		}
+		onEsc
+		{
+			close ingame_playerfeats ;
+		}
+//------------------------------------------------------------------------------------------------
+// Feats
+//------------------------------------------------------------------------------------------------
+	// Feats Title
+		itemDef
+		{
+			name 				featstitle
+			style				WINDOW_STYLE_FILLED
+			text				"Choose your feats"
+			rect				1 1 510 25
+			textalign			ITEM_ALIGN_CENTER		
+			textalignx			255
+			textaligny			0
+			outlinecolor		1 .5 .5 .5
+			backcolor			0 0 0 1
+			font				3
+			textscale			1
+			forecolor			1 1 1 1
+			border				0
+			bordercolor			0 0 0 0
+			visible				1 
+		}
+		
+		itemDef
+		{
+			name				descbackground
+			style				WINDOW_STYLE_FILLED
+			rect				1 380 510 20
+			backcolor			0 0 0 1
+			forecolor			1 1 1 1
+			border				0
+			visible				1
+		}
+		
+		// Force points remaining
+		itemDef 
+		{
+			name				siderank
+			group				"playersettingforcegroup"
+			style				WINDOW_STYLE_EMPTY	
+			text				@MENUS_POINTS_REMAINING
+			ownerdraw			UI_FORCE_POINTS
+			rect				10 45 0 0
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			0
+			textaligny			0
+			font				2
+			textscale			0.7
+			forecolor			1 1 1 1
+			outlinecolor		1 .5 .5 .5
+			backcolor			0 0 0 0
+			border				0
+			bordercolor			0 0 0 0
+			visible				1 
+			decoration
+		}
+		//Feat Selection
+		itemDef 
+		{
+			name				forceranktitle
+			group				"playersettingforcegroup"
+			style				0	
+			text				"Standard Feat Selection"
+			rect				20 75 0 0
+			textalign			ITEM_ALIGN_LEFT		
+			textalignx			0
+			textaligny			0
+			outlinecolor		1 .5 .5 .5
+			backcolor			0.3 0.3 0.3 1
+			font				4
+			textscale		   	1 
+			forecolor			0 0.8 0.4 1
+			border				0
+			bordercolor			0 0 0 0
+			visible				1 
+			decoration
+		}
+
+		itemDef 
+		{
+			name				forceranktitle2
+			group				"playersettingforcegroup"
+			style				0	
+			text				@MENUS_1_2_3
+			rect				35 75 0 0
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			115
+			textaligny			0
+			outlinecolor		1 .5 .5 .5
+			backcolor			0.3 0.3 0.3 1
+			font				4
+			textscale		    1
+			forecolor			0 0.8 0.4 1
+			border				0
+			bordercolor			0 0 0 0
+			visible				1 
+			decoration
+		}
+		
+		// blasters title
+		itemDef 
+		{
+			name					setft_blasters
+			group					feats
+			style					0	
+			text					"Blasters"
+			rect					20 90 110 15   // 0 +15 0 0 for all feats
+			textalign				ITEM_ALIGN_LEFT												
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+		// blasters assign	
+		itemDef 
+		{
+			name					setft_blasters
+			group					feats
+			style					0	
+			ownerdraw				UI_FORCE_RANK_FEAT_BLASTERS
+			rect					35 90 175 15
+			textalign				ITEM_ALIGN_LEFT		
+			textalignx				115
+			textaligny				-5
+			textscale				.25        
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of Pistol and E11 Blaster"
+			visible					1 
+			action 
+			{ 
+				play			"sound/interface/button1.wav" ;
+			}
+
+			mouseenter 
+			{ 
+				setitemcolor	setsk_pistol forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_pistol forecolor .2 1 .2 1
+			}
+		}
+		// Rifles title
+		itemDef 
+		{
+			name					setft_rifles
+			group					feats
+			style					0	
+			text					"Rifles"
+			rect					20 105 110 15
+			textalign				ITEM_ALIGN_LEFT												
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+	
+		// rifles assign
+		itemDef 
+		{
+			name					setft_rifles
+			group					feats
+			style					0	
+			ownerdraw				UI_FORCE_RANK_FEAT_RIFLES
+			rect					35 105 175 15
+			textalign				ITEM_ALIGN_LEFT		
+			textalignx				115
+			textaligny				-5
+			textscale				.25        
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of Tusken Rifle and Disruptor"
+			visible					1 
+			action 
+			{ 
+				play			"sound/interface/button1.wav" ;
+			}
+
+			mouseenter 
+			{ 
+				setitemcolor	setsk_blaster forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_blaster forecolor .2 1 .2 1
+			}
+		}
+		
+		//Heavy Weapons Title
+		itemDef
+		{
+			name					setft_heavy_weapons
+			group					feats
+			style					0
+			text					"Heavy Weapons"
+			rect					20 120 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Heavy Weapons Assign
+		itemDef
+		{
+			name					setft_heavy_weapons
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_HEAVY_WEAPONS
+			rect					35 120 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of Repeater and T-21 Rifle"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_heavy_weapons forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_heavy_weapons forecolor .2 1 .2 1
+			}
+		}
+			
+		//Specialist Weapons Title
+		itemDef
+		{
+			name					setft_specialist_weapons
+			group					feats
+			style					0
+			text					"Specialist Weapons"
+			rect					20 135 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Specialist Weapons Assign
+		itemDef
+		{
+			name					setft_specialist_weapons
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_SPECIALIST_WEAPONS
+			rect					35 135 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of Bowcaster"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_specialist_weapons forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_specialist_weapons forecolor .2 1 .2 1
+			}
+		}
+
+		//Demolition Title
+		itemDef
+		{
+			name					setft_demolition
+			group					feats
+			style					0
+			text					"Demolition"
+			rect					20 150 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Demolition Assign
+		itemDef
+		{
+			name					setft_demolition
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_DEMOLITION
+			rect					35 150 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of the Rocket Launcher and Detonation Packs"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_demolition forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_demolition forecolor .2 1 .2 1
+			}
+		}
+
+		//Explosives Title
+		itemDef
+		{
+			name					setft_explosives
+			group					feats
+			style					0
+			text					"Explosives"
+			rect					20 165 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Explosives Assign
+		itemDef
+		{
+			name					setft_explosives
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_EXPLOSIVES
+			rect					35 165 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of all Grenade types"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_explosives forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_explosives forecolor .2 1 .2 1
+			}
+		}
+
+		//Engineering Title
+		itemDef
+		{
+			name					setft_engineering
+			group					feats
+			style					0
+			text					"Engineering"
+			rect					20 180 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Engineering Assign
+		itemDef
+		{
+			name					setft_engineering
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_ENGINEERING
+			rect					35 180 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of Forcefields, Seeker Droids, and Sentries"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_engineering forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_engineering forecolor .2 1 .2 1
+			}
+		}
+		
+		//Optics(Sight) Title
+		itemDef
+		{
+			name					setft_sight
+			group					feats
+			style					0
+			text					"Optics"
+			rect					20 195 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Optics(Sight) Assign
+		itemDef
+		{
+			name					setft_sight
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_SIGHT
+			rect					35 195 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of Optics"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_sight forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_sight forecolor .2 1 .2 1
+			}
+		}
+		
+		//Bacta Title
+		itemDef
+		{
+			name					setft_bacta
+			group					feats
+			style					0
+			text					"Bacta"
+			rect					20 210 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Bacta Assign
+		itemDef
+		{
+			name					setft_bacta
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_BACTA
+			rect					35 210 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of Bacta"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_bacta forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_bacta forecolor .2 1 .2 1
+			}
+		}
+
+		//Flamethrower Title
+		itemDef
+		{
+			name					setft_flamethrower
+			group					feats
+			style					0
+			text					"Flamethrower"
+			rect					20 225 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Flamethrower Assign
+		itemDef
+		{
+			name					setft_flamethrower
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_FLAMETHROWER
+			rect					35 225 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of the Flamethrower"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_flamethrower forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_flamethrower forecolor .2 1 .2 1
+			}
+		}
+		
+		//Jetpack Title
+		itemDef
+		{
+			name					setft_jetpack
+			group					feats
+			style					0
+			text					"Jetpack"
+			rect					20 240 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Jetpack Assign
+		itemDef
+		{
+			name					setft_jetpack
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_JETPACK
+			rect					35 240 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of the Jetpack"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_jetpack forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_jetpack forecolor .2 1 .2 1
+			}
+		}
+		
+		//Cloak Title
+		itemDef
+		{
+			name					setft_cloak
+			group					feats
+			style					0
+			text					"Cloak Generator"
+			rect					20 255 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Cloak Assign
+		itemDef
+		{
+			name					setft_cloak
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_CLOAK
+			rect					35 255 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Allows use of a Cloaking Generator"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_cloak forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_cloak forecolor .2 1 .2 1
+			}
+		}
+
+		//Shields Title
+		itemDef
+		{
+			name					setft_shields
+			group					feats
+			style					0
+			text					"Shields"
+			rect					20 270 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Shield Assign
+		itemDef
+		{
+			name					setft_shields
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_SHIELDS
+			rect					35 270 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Grants greater Shield strength"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_shields forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_shields forecolor .2 1 .2 1
+			}
+		}
+		//Energy Title
+		itemDef
+		{
+			name					setft_energy
+			group					feats
+			style					0
+			text					"Energy Weapons"
+			rect					20 285 110 15
+			textalight				ITEM_ALIGN_LEFT
+			textalignx				0
+			textaligny				0
+			font					4
+			textscale				1
+			forecolor				.2 1 .2 1
+			outlinecolor			1 .5 .5 .5
+			backcolor				0 0 0 0
+			border					0
+			bordercolor				0 0 0 0
+			visible					1 
+			decoration
+		}
+
+		//Energy Assign
+		itemDef
+		{
+			name					setft_energy
+			group					feats
+			style					0
+			ownerdraw				UI_FORCE_RANK_FEAT_ENERGY
+			rect					35 285 175 15
+			textalign				ITEM_ALIGN_LEFT
+			textalignx				115
+			textaligny				-5
+			textscale				.25
+			forecolor				.2 1 .2 1
+			backcolor				0 0 0 0
+			forecolor				1 0.2 0.2 1
+			border					0
+			bordercolor				0 0 0 0
+			descText				"Grants usage of Concussion and DEMP2"
+			visible					1
+			action
+			{
+				play				"sound/interface/button1.wav" ;
+			}
+			
+			mouseenter 
+			{ 
+				setitemcolor	setsk_energy forecolor .7 1 2. 1
+			}
+			mouseexit 
+			{ 
+				setitemcolor	setsk_energy forecolor .2 1 .2 1
+			}
+		}
+
+		}

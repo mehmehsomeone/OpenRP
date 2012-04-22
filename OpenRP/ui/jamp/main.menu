@@ -1,0 +1,284 @@
+//----------------------------------------------------------------------------------------------
+//
+//	MULTIPLAYER - MAIN MENU
+//
+//	Opening menu. Called when game is first started.
+//
+//----------------------------------------------------------------------------------------------
+{
+	assetGlobalDef 
+	{
+		font					"ergoec" 18			// font
+		smallFont				"aurabesh" 18			// font
+		bigFont					"anewhope" 20			// font	
+		small2Font				"arialnb" 	14	
+		cursor					"ojp/menu/cursor"			// cursor	
+		gradientBar				"ui/assets/gradientbar2.tga"	// gradient bar
+		itemFocusSound				"sound/interface/menuroam.wav"	// sound for item getting focus (via keyboard or mouse )	
+
+		fadeClamp				1.0				// sets the fadeup alpha
+		fadeCycle				1				// how often fade happens in milliseconds
+		fadeAmount				0.1				// amount to adjust alpha per cycle
+		
+		moveRollSound				"sound/player/roll1"
+		moveJumpSound				"sound/weapons/force/jump"
+
+		shadowColor				0.1 0.1 0.1 0.25		// shadow color
+		focuscolor				0 0 1 1
+		precacheSound
+		{
+			"sound/interface/choose_color.wav" ;
+			"sound/interface/choose_head.wav" ;
+			"sound/interface/choose_torso.wav" ;
+			"sound/interface/choose_saber.wav" ;
+			"sound/interface/choose_hilt.wav" ;
+			"sound/interface/choose_blade.wav" ;
+			"sound/interface/transition.wav"  ;
+			"sound/interface/esc.wav" ;
+			"sound/interface/sub_select.wav" ;
+		}
+	}
+							   
+	menuDef 
+	{
+		name					"main"
+		fullScreen				1				
+		rect					0 0 640 480					// Size and position of the menu
+		visible					1						// Visible on open
+		focusColor				1 1 1 1					// Focus color for text and items
+		descX					374
+		descY					452
+		descScale				0.7
+		descColor				0.1 0.7 1 0.9
+		descAlignment				ITEM_ALIGN_CENTER		
+
+		onOpen 
+		{
+			exec				"music music/mp/Legacymodtheme.mp3" ;
+		}
+									
+		onESC 
+		{ 
+			play				"sound/interface/pickup_battery.mp3" 
+			close				all 
+			open				quitMenu 
+		}	
+		onClose
+		{ 
+		}
+		
+//----------------------------------------------------------------------------------------------
+//	MENU BACKGROUND
+//----------------------------------------------------------------------------------------------
+		itemDef 
+		{
+			name				mainbackground
+			style				WINDOW_STYLE_SHADER
+			rect				0 0 640 480
+			background			"gfx/menus/background"
+			forecolor			1 1 1 1
+			visible				1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				overlay
+			style				WINDOW_STYLE_SHADER
+			rect				0 0 640 480
+			background			"gfx/menus/overlay"
+			forecolor			1 1 1 1
+			visible				1
+			decoration
+		}
+
+//----------------------------------------------------------------------------------------------
+//	TOP MENU BUTTONS
+//----------------------------------------------------------------------------------------------
+		itemDef 
+		{
+			name				playbutton
+			group				none
+			style				WINDOW_STYLE_EMPTY
+			type				ITEM_TYPE_BUTTON
+			rect				50 155 100 25 
+			text				@MENUS_PLAY					
+			descText			"Play the Legacy Mod"
+			font				4
+			textscale			1
+			textaligny			0
+			textalignx			50
+			textalign			ITEM_ALIGN_CENTER
+			textstyle			0
+			forecolor			0.7 0.7 0.7 1
+			visible				1
+
+			mouseEnter 
+			{ 
+				show			button_glow 
+				setitemrect		button_glow	50 150 100 25
+			}
+			mouseExit 
+			{ 
+				hide			button_glow 
+			}	  	  
+			action 
+			{ 			
+				play			"sound/interface/legacy.mp3" ; 
+				close			all ; 
+				open			multiplayermenu 
+			}
+		}
+
+
+		// Big button "CONTROLS"
+		itemDef 
+		{
+			name				controlsbutton
+			group				none
+			text				@MENUS_CONTROLS
+			descText			"Configure your game controls"
+			type				ITEM_TYPE_BUTTON
+			style				WINDOW_STYLE_EMPTY
+			rect				50 215 100 25  
+			font				4
+			textscale			1
+			textaligny			0
+			textalignx			50
+			textalign			ITEM_ALIGN_CENTER
+			textstyle			0
+			forecolor			0.7 0.7 0.7 1
+			visible				1
+			 
+			mouseEnter 
+			{ 
+				show			button_glow 
+				setitemrect		button_glow	50 210 100 25
+			}
+			mouseExit 
+			{ 
+				hide			button_glow 
+			}	  	  
+			action 
+			{
+				play			"sound/interface/legacy.mp3" ; 
+				close			all ; 
+				open			controlsMenu ;
+			}
+		}
+
+		// Big button "SETUP"
+		itemDef 
+		{
+			name				setupbutton
+			group				none
+			text				@MENUS_SETUP
+			descText			"Configure your game settings"
+			type				ITEM_TYPE_BUTTON
+			style				WINDOW_STYLE_EMPTY
+			rect				50 275 100 25  
+			font				4
+			textscale			1
+			textaligny			0
+			textalignx			50
+			textalign			ITEM_ALIGN_CENTER
+			textstyle			0
+			forecolor			0.7 0.7 0.7 1
+			visible				1
+			 
+			mouseEnter 
+			{ 
+				show			button_glow 
+				setitemrect		button_glow	50 270 100 25
+			}
+			mouseExit 
+			{ 
+				hide			button_glow 
+			}	  	  
+			action 
+			{
+				play			"sound/interface/legacy.mp3" ; 
+				close			all ; 
+				open			setup_menu
+			}
+		}
+
+//----------------------------------------------------------------------------------------------
+//	OTHER MAIN MENU BUTTONS
+//----------------------------------------------------------------------------------------------
+
+		// Credits hidden button
+		itemDef 
+		{
+			name				creditsarea
+			group				othermain
+			text				@CREDITS
+			descText			@MENUS_SHOW_GAME_CREDITS
+			type				ITEM_TYPE_BUTTON
+			style				WINDOW_STYLE_EMPTY
+			rect				340 385 310 80
+			font				1
+			backcolor			0 0 0 0
+			forecolor			1 1 1 1
+			visible				1
+
+			mouseEnter
+			{
+			}		
+			mouseExit
+			{
+			}		
+			action 
+			{ 
+				play			"sound/weapons/saber/Legacy.mp3" ; 	
+				close			all ; 
+				open			creditsMenu 
+			}
+		}
+
+		itemDef 
+		{
+			name				exitgamebutton
+			group				none
+			text				@MENUS_EXIT
+			descText			"Exit Legacy Mod"
+			type				ITEM_TYPE_BUTTON
+			style				WINDOW_STYLE_EMPTY
+			rect				50 335 100 25  
+			font				4
+			textscale			1
+			textaligny			0
+			textalignx			50
+			textalign			ITEM_ALIGN_CENTER
+			textstyle			0
+			forecolor			0.7 0.7 0.7 1
+			visible				1
+
+			mouseEnter 
+			{ 
+				show			button_glow 
+				setitemrect		button_glow	50 330 100 25
+			}
+			mouseExit 
+			{ 
+				hide			button_glow 
+			}	  	  
+			action 
+			{ 
+				play			"sound/weapons/saber/saberoff.mp3"; 
+				close			all ; 
+				open			quitMenu 
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
