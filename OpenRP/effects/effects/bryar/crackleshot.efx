@@ -1,0 +1,56 @@
+repeatDelay				300
+
+Line
+{
+	life				15
+
+	origin				20 0 0
+
+	origin2				-100 0 0
+
+	rgb
+	{
+		start			1 0 0
+		end				1 0 0
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+	}
+
+	size
+	{
+		start			6 9.5
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Filler
+
+	life				15
+
+	origin				-8 0 0
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	size
+	{
+		start			4.6 8.8
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

@@ -1,0 +1,40 @@
+repeatDelay				300
+
+Cylinder
+{
+	count				2
+
+	life				1700 2000
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				0.9922 0.1098 0.007843
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4
+	}
+
+	size
+	{
+		start			2
+		end				5
+		parm			56 55
+		flags			nonlinear
+	}
+
+	size2
+	{
+		start			5
+		end				10
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/shockwave
+	]
+}

@@ -1,1 +1,2 @@
-jamp +set fs_game "OpenRP"
+cd ..
+jamp +set fs_game OpenRP

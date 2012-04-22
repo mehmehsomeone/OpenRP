@@ -1,0 +1,311 @@
+repeatDelay				300
+
+Line
+{
+	life				150 200
+
+	origin2				12 -10 -10 18 10 10
+
+	alpha
+	{
+		start			0.45 1
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			0.25 0.5
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+		gfx/misc/spark2
+	]
+}
+
+Tail
+{
+	count				6 5
+
+	life				300 400
+
+	intensity			0.25 0.4
+
+	velocity			120 -120 -120 250 120 120
+
+	gravity				-450 -550
+
+	size
+	{
+		start			0.3 0.45
+	}
+
+	length
+	{
+		start			4 10
+		end				0.1 1
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	count				0
+
+	life				300 400
+
+	intensity			0.25 0.4
+
+	velocity			25 -15 -15 50 5 15
+
+	gravity				-450 -550
+
+	size
+	{
+		start			0.4 0.5
+		end				0.8 0.5
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				15 17
+
+	life				1000 1500
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			7 -10 -10 15 10 10
+
+	gravity				80 20
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 1 1 0 0 0
+		parm			5000
+		flags			nonlinear
+	}
+
+	alpha
+	{
+		start			0.38 0.3
+		end				0.1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		end				17 25
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke
+	]
+}
+
+OrientedParticle
+{
+	name				glowinitial
+
+	count				5
+
+	life				700 800
+
+	radius				2
+
+	height				20 200
+
+	rgb
+	{
+		start			0.6392 1 0.5843
+		end				0.1922 0.6431 0
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1 7
+		end				11 12
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteflare
+	]
+}
+
+Decal
+{
+	life				700 800
+
+	size
+	{
+		start			6.5 8.5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+		gfx/damage/burnmark4
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/bryar/hit_wall.wav
+	]
+}
+
+Particle
+{
+	spawnFlags			rgbComponentInterpolation
+
+	count				4 8
+
+	life				900 1100
+
+	rotation			-180 180
+
+	rotationDelta		10 6
+
+	velocity			7 -10 -10 15 10 10
+
+	gravity				80 20
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0.2
+		flags			linear
+	}
+
+	size
+	{
+		end				14
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+OrientedParticle
+{
+	name				explosionwave
+
+	count				5
+
+	life				700 800
+
+	radius				2
+
+	rgb
+	{
+		start			0.6392 1 0.5843 0.1922 0.6431 0
+		end				0.1922 0.6431 0 0.6392 1 0.5843
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1 7
+		end				10 12
+		parm			1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/eplosion_wave
+	]
+}
+
+OrientedParticle
+{
+	name				rivetmark
+
+	count				5
+
+	life				800 1000
+
+	delay				24 34
+
+	radius				2
+
+	rgb
+	{
+		start			0.1922 0.6431 0 0.6392 1 0.5843
+		end				0.1922 0.6431 0
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			4 9
+		end				11 12
+	}
+
+	shaders
+	[
+		gfx/effects/meltMark
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	rgb
+	{
+		start			0.1765 0.9686 0.03529 1 1 1
+	}
+}

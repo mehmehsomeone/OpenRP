@@ -1,0 +1,31 @@
+repeatDelay				300
+
+OrientedParticle
+{
+	count				0
+
+	life				300 400
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		end				0
+		parm			50
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			8
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/damage/saberburnmark
+	]
+}

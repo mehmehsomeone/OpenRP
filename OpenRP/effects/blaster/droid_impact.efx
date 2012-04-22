@@ -1,0 +1,33 @@
+repeatDelay				300
+
+Particle
+{
+	flags				useAlpha
+
+	count				3 4
+
+	life				800 1200
+
+	origin				2 -3 -3 2 3 3
+
+	gravity				32 0
+
+	alpha
+	{
+		end				0
+		parm			60 75
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			2 6
+		end				6 10
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}

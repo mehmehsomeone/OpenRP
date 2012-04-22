@@ -1,0 +1,9 @@
+repeatDelay				300
+
+FxRunner
+{
+	playfx
+	[
+		force/lightning
+	]
+}

@@ -1,0 +1,119 @@
+repeatDelay				300
+
+Particle
+{
+	name				chunksparks
+
+	count				8 12
+
+	life				800 1200
+
+	intensity			0.3 0.5
+
+	origin				4 -3 -3 3 2 3
+
+	velocity			40 -48 -48 100 48 48
+
+	gravity				-100 -300
+
+	rgb
+	{
+		start			1 0.4 0 1 1 0.2
+		end				1 0.4 0
+		flags			linear
+	}
+
+	size
+	{
+		start			0.4 0
+		end				0
+		parm			80 90
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Light
+{
+	life				300 200
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843
+	}
+}
+
+FxRunner
+{
+	name				fxhit
+
+	count				2 1
+
+	playfx
+	[
+		explosions/redhit
+	]
+}
+
+FxRunner
+{
+	name				smoke
+
+	playfx
+	[
+		smoke/fleshhitsmoke
+	]
+}
+
+Light
+{
+	rgb
+	{
+		start			1 0 0 1 1 1
+	}
+}
+
+FxRunner
+{
+	name				sparks
+
+	playfx
+	[
+		sparks/hit_sparkviolent
+	]
+}
+
+Particle
+{
+	spawnFlags			rgbComponentInterpolation
+
+	count				2 1
+
+	life				300
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	alpha
+	{
+		start			0.6 0.4
+	}
+
+	size
+	{
+		end				18 20
+		parm			55
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}

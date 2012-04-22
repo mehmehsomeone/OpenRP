@@ -1,0 +1,46 @@
+repeatDelay				300
+
+Line
+{
+	flags				useAlpha
+
+	life				300
+
+	origin				100 0 0
+
+	origin2				-36 0 0
+
+	size
+	{
+		start			8
+	}
+
+	shaders
+	[
+		gfx/effects/bryar_blob
+	]
+}
+
+Line
+{
+	life				300
+
+	origin				120 0 0
+
+	origin2				-36 0 0
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	size
+	{
+		start			15
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

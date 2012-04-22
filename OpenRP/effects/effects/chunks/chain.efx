@@ -1,0 +1,191 @@
+repeatDelay				1566
+
+Particle
+{
+	flags				usePhysics useAlpha
+
+	spawnFlags			absoluteVel rgbComponentInterpolation
+
+	count				6
+
+	life				1200 1500
+
+	bounce				0.15 0.25
+
+	origin				0 0 0 100 0 0
+
+	rotation			0 360
+
+	rotationDelta		-90 90
+
+	velocity			-150 -150 0 150 150 0
+
+	gravity				-600 -800
+
+	rgb
+	{
+		start			0.7059 0.7059 0.7059 1 1 1
+	}
+
+	alpha
+	{
+		end				0
+		parm			90
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			12
+	}
+
+	shaders
+	[
+		gfx/chunks/chain1
+		gfx/chunks/chain2
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 0
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			absoluteVel rgbComponentInterpolation
+
+	count				6
+
+	life				1200 1500
+
+	bounce				0.15 0.25
+
+	origin				100 0 0 200 0 0
+
+	rotation			0 360
+
+	rotationDelta		-90 90
+
+	velocity			-150 -150 0 150 150 0
+
+	gravity				-600 -800
+
+	rgb
+	{
+		start			0.7059 0.7059 0.7059 1 1 1
+	}
+
+	alpha
+	{
+		end				0
+		parm			90
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			12
+	}
+
+	shaders
+	[
+		gfx/chunks/chain1
+		gfx/chunks/chain2
+	]
+}
+
+Particle
+{
+	name				Copy of Copy of Unnamed Particl
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			absoluteVel rgbComponentInterpolation
+
+	count				6
+
+	life				1200 1500
+
+	bounce				0.15 0.25
+
+	origin				200 0 0 300 0 0
+
+	rotation			0 360
+
+	rotationDelta		-90 90
+
+	velocity			-150 -150 0 150 150 0
+
+	gravity				-600 -800
+
+	rgb
+	{
+		start			0.7059 0.7059 0.7059 1 1 1
+	}
+
+	alpha
+	{
+		end				0
+		parm			90
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			12
+	}
+
+	shaders
+	[
+		gfx/chunks/chain1
+		gfx/chunks/chain2
+	]
+}
+
+Particle
+{
+	name				Copy of Copy of Copy of Unnamed
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			absoluteVel rgbComponentInterpolation
+
+	count				6
+
+	life				1200 1500
+
+	bounce				0.15 0.25
+
+	origin				300 0 0 400 0 0
+
+	rotation			0 360
+
+	rotationDelta		-90 90
+
+	velocity			-150 -150 0 150 150 0
+
+	gravity				-600 -800
+
+	rgb
+	{
+		start			0.7059 0.7059 0.7059 1 1 1
+	}
+
+	alpha
+	{
+		end				0
+		parm			90
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			12
+	}
+
+	shaders
+	[
+		gfx/chunks/chain1
+		gfx/chunks/chain2
+	]
+}

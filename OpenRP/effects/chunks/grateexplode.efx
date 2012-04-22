@@ -1,0 +1,176 @@
+repeatDelay				300
+
+Particle
+{
+	flags				usePhysics useAlpha
+
+	count				1 2
+
+	life				1200 1600
+
+	bounce				0.2 0.3
+
+	origin				10 0 0 -10 0 0
+
+	rotation			180 360
+
+	rotationDelta		34 13
+
+	velocity			80 -60 -60 240 60 60
+
+	gravity				-400 -500
+
+	alpha
+	{
+		end				0
+		parm			80 85
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			10
+	}
+
+	shaders
+	[
+		gfx/chunks/grate1
+		gfx/chunks/grate2
+	]
+}
+
+Particle
+{
+	count				2
+
+	life				500 800
+
+	origin				-2 -2 -2 2 2 2
+
+	rotation			0 360
+
+	rotationDelta		-4 4
+
+	velocity			-4 -4 -4 4 4 4
+
+	gravity				0 10
+
+	alpha
+	{
+		start			0.5 0.6
+		end				0
+		parm			50
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			4
+		end				12 20
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Emitter
+{
+	flags				useModel usePhysics
+
+	count				3
+
+	life				1000 1200
+
+	bounce				0.2 0.3
+
+	origin				-2 -2 -2 2 2 2
+
+	angle				0 0 0 360 360 0
+
+	angleDelta			-20 -200 24 200 20 120
+
+	velocity			0 -100 -100 260 100 100
+
+	gravity				-400 -600
+
+	size
+	{
+		start			0.3 0.5
+	}
+
+	models
+	[
+		models/chunks/metal/metal1_1.md3
+		models/chunks/metal/metal1_2.md3
+		models/chunks/metal/metal1_3.md3
+		models/chunks/metal/metal1_4.md3
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 1
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				350 450
+
+	origin				-2 -2 -2 2 2 2
+
+	rotation			0 360
+
+	rotationDelta		-40 4
+
+	velocity			-4 -4 -4 4 4 4
+
+	gravity				0 10
+
+	rgb
+	{
+		start			0.4235 0.4235 0.4235 1 1 1
+	}
+
+	alpha
+	{
+		start			0.5 0.6
+		end				0
+		parm			40
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			10 12
+		end				28 42
+		parm			20 30
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/misc/dotfill_a
+	]
+}
+
+FxRunner
+{
+	spawnFlags			orgOnSphere
+
+	count				3 1
+
+	delay				0 130
+
+	radius				15 19
+
+	height				15 19
+
+	playfx
+	[
+		sparks/upwardssparks
+	]
+}

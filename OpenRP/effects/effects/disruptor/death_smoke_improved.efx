@@ -1,0 +1,104 @@
+repeatDelay				4139
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				3 2
+
+	life				1500 1300
+
+	delay				0 100
+
+	radius				4 3
+
+	height				5
+
+	rotation			349 360
+
+	velocity			20 20 20 -20 -20 -20
+
+	gravity				-20 2
+
+	rgb
+	{
+		flags			linear wave
+	}
+
+	alpha
+	{
+		end				0
+		parm			60
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			3 5
+		end				15 16
+		parm			74 35
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				fleshparts
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				30
+
+	life				750 1000
+
+	delay				0 100
+
+	origin				-15 -6 -6 15 6 6
+
+	rotation			180 360
+
+	rotationDelta		360 0
+
+	velocity			-63 -37 -52 58 38 27
+
+	acceleration		-5 -5 -5 5 5 5
+
+	gravity				-200 60
+
+	rgb
+	{
+		start			1 0.4 0 0.9961 0.9804 0.3216
+		end				0.502 0 0 0.9922 0.1098 0.007843
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			0.4 0.3
+		end				2 0.6
+		parm			4 0
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/embers
+	]
+}

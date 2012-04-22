@@ -1,0 +1,32 @@
+// Large dust effect, should be called about once every 100ms
+
+Particle
+{
+	count	8	10
+	life	500	600
+	delay	0	50
+
+	origin	-300 -180 -180	-100 180 180
+	vel		700 -12 -12		1400 12 12
+	gravity	-48	-120
+
+	rotationDelta	-4	4
+
+	size
+	{
+		start 	48.0	72.0
+	}
+
+	alpha
+	{
+		start	0.0
+		end 	0.1	0.35
+		parm	3.5	3.8
+		flags	wave
+	}
+
+	shader
+	[
+		gfx/misc/dust
+	]
+}

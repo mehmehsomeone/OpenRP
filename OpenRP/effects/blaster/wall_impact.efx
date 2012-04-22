@@ -1,0 +1,299 @@
+repeatDelay				250
+
+Tail
+{
+	name				sparks
+
+	flags				usePhysics
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				13 15
+
+	life				100 200
+
+	bounce				0.25 0.4
+
+	radius				3
+
+	height				3
+
+	velocity			100 -76 -90 169 110 114
+
+	acceleration		9 9 5 4 3 4
+
+	gravity				-250 -550
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			0.3 0.45
+	}
+
+	length
+	{
+		start			3 6
+		end				0.4
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Decal
+{
+	name				wallmark
+
+	life				700 800
+
+	size
+	{
+		start			6.5 8.5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	name				BOOM
+
+	sounds
+	[
+		sound/weapons/bryar/hit_wall.wav
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	rgb
+	{
+		start			1 0 0 1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			2 1
+	}
+}
+
+FxRunner
+{
+	name				redstuff
+
+	delay				100
+
+	playfx
+	[
+		explosions/e-11hit
+	]
+}
+
+Tail
+{
+	name				startsparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				0
+
+	life				70 100
+
+	bounce				0.25 0.4
+
+	velocity			120 -120 -120 -80 120 134
+
+	acceleration		9 9 5 4 3 4
+
+	gravity				-250
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			0.3 0.45
+	}
+
+	length
+	{
+		start			9
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+FxRunner
+{
+	name				detailsmokebig
+
+	count				0
+
+	delay				120
+
+	playfx
+	[
+		smoke/detailsmokebig
+	]
+}
+
+Tail
+{
+	name				Copy of sparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				3 2
+
+	life				500
+
+	bounce				0.25 0.4
+
+	velocity			100 -76 -90 169 110 114
+
+	acceleration		9 9 5 4 3 4
+
+	gravity				-250 -550
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			0.3 0.45
+	}
+
+	length
+	{
+		start			8 5
+		end				0.6 0.8
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+FxRunner
+{
+	name				detailsmokesmall
+
+	count				1 0
+
+	playfx
+	[
+		smoke/detailsmoke2
+	]
+}
+
+OrientedParticle
+{
+	name				glowflat
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				2 1
+
+	life				1900 1800
+
+	delay				350
+
+	rgb
+	{
+		start			1 0 0 0.9765 0 0
+	}
+
+	alpha
+	{
+		start			0.7
+		end				0
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			2
+		end				2.8 2.7
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+OrientedParticle
+{
+	name				emberflat
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				2 9
+
+	life				1900 1700
+
+	delay				300 250
+
+	rotation			4
+
+	rgb
+	{
+		start			1 0.502 0
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4 3
+		end				5 4
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/embers
+	]
+}
+
+FxRunner
+{
+	name				detailsmokelast
+
+	playfx
+	[
+		smoke/detailsmoke3
+	]
+}

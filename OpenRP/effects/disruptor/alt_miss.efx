@@ -1,0 +1,123 @@
+repeatDelay				300
+
+Cylinder
+{
+	count				5 8
+
+	life				1000 800
+
+	rgb
+	{
+		start			1 0.3 0.1
+	}
+
+	alpha
+	{
+		start			0.4
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			2
+		end				4
+		parm			1
+		flags			linear wave
+	}
+
+	size2
+	{
+		start			3
+		end				7
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/shockwave
+	]
+}
+
+Cylinder
+{
+	name				bigring
+
+	count				7 8
+
+	life				700 300
+
+	rgb
+	{
+		start			1 0.302 0.102 1 1 1
+		flags			wave
+	}
+
+	alpha
+	{
+		start			0.3
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		end				18
+		parm			1
+		flags			wave
+	}
+
+	size2
+	{
+		start			18
+		end				36 38
+		parm			1
+		flags			linear nonlinear
+	}
+
+	length
+	{
+		end				14 10
+		parm			1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/shockwave
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		disruptor/wall_impact
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		disruptor/hitfire
+	]
+}
+
+Sound
+{
+	delay				350 500
+
+	sounds
+	[
+		sound/effects/fireburst.mp3
+	]
+}
+
+Light
+{
+	rgb
+	{
+		start			1 0 0 1 1 0
+	}
+}

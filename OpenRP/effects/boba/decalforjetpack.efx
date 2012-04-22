@@ -1,0 +1,14 @@
+repeatDelay				300
+
+Decal
+{
+	size
+	{
+		start			20 1
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+	]
+}

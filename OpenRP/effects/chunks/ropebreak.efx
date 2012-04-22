@@ -1,0 +1,94 @@
+Particle
+{
+	name				OrangeGlow
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				3
+
+	life				700 2000
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			0 -5 -5 15 5 5
+
+	gravity				-10 10
+
+	rgb
+	{
+		start			0.9843 0.9294 0.8078 1 1 1
+	}
+
+	alpha
+	{
+		end				0
+		parm			70 80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			1 2
+		end				8 10
+		parm			30 50
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}
+
+Particle
+{
+	name				Dust
+
+	flags				useAlpha
+
+	spawnFlags			cheapOrgCalc rgbComponentInterpolation
+
+	count				6
+
+	life				900 1400
+
+	origin				0 0 -6 0 0 6
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			100 -10 -10 150 10 10
+
+	acceleration		-90 0 0 -100 0 0
+
+	gravity				-80 -230
+
+	rgb
+	{
+		start			0.2745 0.1961 0.1412 0.7608 0.4667 0.1961
+	}
+
+	alpha
+	{
+		end				0
+		parm			70
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			2 4
+		parm			50 60
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/dotfill_a
+	]
+}

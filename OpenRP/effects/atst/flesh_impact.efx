@@ -1,0 +1,116 @@
+repeatDelay				300
+
+Particle
+{
+	count				7 15
+
+	life				800 1200
+
+	intensity			0.3 0.5
+
+	origin				2 -3 -3 2 3 3
+
+	velocity			40 -48 -48 100 48 48
+
+	gravity				-100 -300
+
+	rgb
+	{
+		start			1 0.4 0 1 1 0.2
+		end				1 0.4 0
+		flags			linear
+	}
+
+	size
+	{
+		start			0.8 2
+		end				0
+		parm			80 90
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	flags				useAlpha
+
+	count				3 4
+
+	life				800 1200
+
+	origin				2 -3 -3 2 3 3
+
+	velocity			15 -12 -12 20 12 12
+
+	gravity				32 80
+
+	alpha
+	{
+		end				0
+		parm			60 75
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			6 12
+		end				10 20
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	count				2 3
+
+	life				800 1200
+
+	origin				4 -6 -6 4 6 6
+
+	velocity			15 -12 -12 20 12 12
+
+	gravity				12 32
+
+	rgb
+	{
+		start			0.5 0 0
+	}
+
+	alpha
+	{
+		start			0.5 0.7
+		end				0
+		parm			80 90
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			4 8
+		end				10 16
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		env/med_explode2
+	]
+}

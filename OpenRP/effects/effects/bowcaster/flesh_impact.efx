@@ -1,0 +1,156 @@
+repeatDelay				300
+
+Particle
+{
+	count				8 12
+
+	life				800 1200
+
+	intensity			0.3 0.5
+
+	origin				4 -3 -3 3 2 3
+
+	velocity			40 -48 -48 100 48 48
+
+	gravity				-100 -300
+
+	rgb
+	{
+		start			1 0.4 0 1 1 0.2
+		end				1 0.4 0
+		flags			linear
+	}
+
+	size
+	{
+		start			0.4 0
+		end				0
+		parm			80 90
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				hitexplosion
+
+	flags				useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel absoluteAccel rgbComponentInterpolation
+
+	life				250
+
+	rgb
+	{
+		start			0.1922 0.6431 0 0.6392 1 0.5843
+		end				0.6392 1 0.5843 0.1922 0.6431 0
+		flags			linear nonlinear
+	}
+
+	alpha
+	{
+		end				0
+		parm			60 75
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			1 2
+		end				9
+		flags			random linear
+	}
+
+	shaders
+	[
+		gfx/misc/exp01_2
+	]
+}
+
+Light
+{
+	life				300 200
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843
+	}
+}
+
+Particle
+{
+	name				Copy of hitexplosion
+
+	flags				useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel absoluteAccel rgbComponentInterpolation
+
+	life				250
+
+	rotation			25
+
+	rotationDelta		25
+
+	rgb
+	{
+		start			0.6392 1 0.5843 0.1922 0.6431 0
+		end				0.1922 0.6431 0 0.6392 1 0.5843
+		flags			linear nonlinear
+	}
+
+	alpha
+	{
+		end				0
+		parm			60 75
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			1 2
+		end				9
+		flags			random linear
+	}
+
+	shaders
+	[
+		gfx/misc/exp01_2
+	]
+}
+
+Electricity
+{
+	flags				useModel usePhysics
+
+	count				7 5
+
+	life				300
+
+	bounce				5
+
+	origin2				20 20 20 -25 -25 -25
+
+	rgb
+	{
+		start			0.1922 0.6431 0
+		end				0.1922 0.6431 0
+		flags			linear wave
+	}
+
+	size
+	{
+		start			0.35 0.6
+		end				0.4 0.3
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/blueLine
+	]
+}

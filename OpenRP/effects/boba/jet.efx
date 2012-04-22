@@ -1,0 +1,299 @@
+repeatDelay				300
+
+Particle
+{
+	name				fire
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				0
+
+	life				25
+
+	origin				-6 0 0
+
+	rotation			-180 180
+
+	rotationDelta		-50 50
+
+	velocity			0 0 0 -40 0 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 1 1
+	}
+
+	alpha
+	{
+		start			0.4 0.7
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1.5 3
+		end				6 8
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/fire2
+		gfx/effects/fire3
+		gfx/effects/fire4
+	]
+}
+
+Tail
+{
+	flags				usePhysics impactFx useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				3
+
+	life				200 100
+
+	origin				-6 0 0
+
+	velocity			-1 0 0
+
+	rgb
+	{
+		start			0.7059 0.6863 0.3608 1 0.8392 0.1843
+		end				0.2353 0.2353 0.2353 0 0 0
+		parm			20
+		flags			clamp
+	}
+
+	alpha
+	{
+		start			0.7 0.9
+		end				0.2
+		flags			linear
+	}
+
+	size
+	{
+		start			2 10
+		end				18 25
+		flags			linear
+	}
+
+	length
+	{
+		start			-38 -40
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+
+	impactfx
+	[
+		boba/decalforjetpack
+	]
+}
+
+Particle
+{
+	spawnFlags			rgbComponentInterpolation
+
+	count				0
+
+	life				50 60
+
+	delay				1 0
+
+	origin				-9 0 0
+
+	rgb
+	{
+		start			1 1 0
+		end				0.9529 0.6588 0.04706
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.3 0.2
+	}
+
+	size
+	{
+		start			13 11
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+Particle
+{
+	name				exhaustsmoke2
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				2
+
+	life				300
+
+	cullrange			400
+
+	origin				-9 0 0
+
+	radius				3
+
+	height				3
+
+	rotation			-180 180
+
+	rotationDelta		-20 20
+
+	velocity			-10 -10 -10 -80 10 10
+
+	gravity				-25 10
+
+	rgb
+	{
+		start			0 0 0 1 0.9843 0.9412
+		end				0.4706 0.4706 0.4706
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7 0.6
+		end				0.1
+		flags			linear
+	}
+
+	size
+	{
+		start			2
+		end				12 11
+		parm			6 1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	name				fireglo
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				0
+
+	life				15
+
+	origin				-9 0 0
+
+	rotation			-180 180
+
+	rotationDelta		-50 50
+
+	velocity			0 0 0 -40 0 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 1 1
+	}
+
+	alpha
+	{
+		start			0.2 0.4
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1.5 3
+		end				6 8
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	origin				0 0 -40 0 0 -599
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.502 0 1 1 1
+		flags			nonlinear
+	}
+}
+
+Particle
+{
+	name				exhaustsmoke1
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				6
+
+	origin				-9 0 0
+
+	radius				3
+
+	height				6 7
+
+	rotation			-180 180
+
+	rotationDelta		-20 20
+
+	velocity			-10 -10 -10 -80 10 10
+
+	gravity				-25 10
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412 0.4706 0.4706 0.4706
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7 0.6
+		end				0.1
+		flags			linear
+	}
+
+	size
+	{
+		start			2
+		end				8 6
+		parm			1
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}

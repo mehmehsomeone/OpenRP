@@ -1,0 +1,104 @@
+repeatDelay				300
+
+Particle
+{
+	name				blacksmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				45 30
+
+	life				800
+
+	delay				0 450
+
+	radius				5
+
+	height				5
+
+	rotation			0 360
+
+	velocity			25 25 0 -25 -25 0
+
+	gravity				20
+
+	rgb
+	{
+		start			0 0 0
+		end				0 0 0
+		flags			nonlinear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1 3
+		end				14 17
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke
+	]
+}
+
+Particle
+{
+	name				whitesmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				0
+
+	life				700 988
+
+	delay				0 100
+
+	radius				4
+
+	rotation			0 360
+
+	velocity			0 0 0 9 0 0
+
+	acceleration		-20 -20 -20 20 20 20
+
+	gravity				20
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412 1 1 1
+		flags			nonlinear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1 3
+		end				15
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke02
+	]
+}

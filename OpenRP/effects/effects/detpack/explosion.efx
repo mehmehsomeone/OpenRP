@@ -1,0 +1,208 @@
+repeatDelay				300
+
+CameraShake
+{
+	name				Shake
+
+	flags				usePhysics
+
+	life				500 800
+
+	bounce				2 4
+
+	radius				200 300
+}
+
+Sound
+{
+	name				Boom
+
+	sounds
+	[
+		sound/movers/objects/object_destroy7.mp3
+	]
+}
+
+Decal
+{
+	name				explosiondecal
+
+	count				2 1
+
+	life				1400 800
+
+	size
+	{
+		start			135 360
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+		gfx/damage/burnmark4
+	]
+}
+
+FxRunner
+{
+	name				chunks
+
+	count				5 4
+
+	delay				75 86
+
+	playfx
+	[
+		chunks/chunks4
+	]
+}
+
+FxRunner
+{
+	name				smokepuff
+
+	count				0
+
+	playfx
+	[
+		smoke/smokepuffbig
+	]
+}
+
+FxRunner
+{
+	name				sparks
+
+	count				1 0
+
+	playfx
+	[
+		sparks/smallsparkexplosion3
+	]
+}
+
+Flash
+{
+	name				flash
+
+	life				200
+
+	delay				200
+
+	alpha
+	{
+		start			0.6 0.8
+		end				0.1 0.3
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			200
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlash
+	]
+}
+
+FxRunner
+{
+	name				lingeringsmoke
+
+	count				2
+
+	delay				200 300
+
+	playfx
+	[
+		smoke/lingeringsmokesmall
+	]
+}
+
+Particle
+{
+	spawnFlags			rgbComponentInterpolation
+
+	life				400 300
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	alpha
+	{
+		start			0.4 0.3
+	}
+
+	size
+	{
+		end				355
+		parm			1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		chunks/chunks4up
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		smoke/bestsmok
+	]
+}
+
+FxRunner
+{
+	name				lingeringsmoke
+
+	playfx
+	[
+		smoke/lingeringsmoke
+	]
+}
+
+Particle
+{
+	name				backblow
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				400 300
+
+	rgb
+	{
+		start			1 0.502 0 1 0 0
+	}
+
+	alpha
+	{
+		start			0.7 0.4
+	}
+
+	size
+	{
+		end				400
+		parm			22
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}

@@ -1,0 +1,103 @@
+repeatDelay				300
+
+Particle
+{
+	name				fleshparts
+
+	flags				deathFx
+
+	spawnFlags			orgOnCylinder
+
+	count				5 4
+
+	life				500
+
+	intensity			0.3 0.5
+
+	origin				4 -3 -3 3 2 3
+
+	acceleration		120 120 120 -120 -120 -120
+
+	gravity				200
+
+	rgb
+	{
+		start			1 0.4 0 1 1 0.2
+		end				1 0.4 0
+		flags			linear
+	}
+
+	size
+	{
+		start			0.4 1
+		end				0
+		parm			80 90
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+
+	deathfx
+	[
+		env/death_smokeparticles
+	]
+}
+
+Particle
+{
+	flags				useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel absoluteAccel
+
+	count				0
+
+	life				0
+
+	alpha
+	{
+		end				0
+		parm			60 75
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			1 2
+		end				3 5
+		flags			linear
+	}
+}
+
+FxRunner
+{
+	count				0
+}
+
+FxRunner
+{
+	playfx
+	[
+		sparks/hit_spark
+		volumetric/flesh_smoke
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	life				400 500
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.9922 0.1098 0.007843
+	}
+
+	size
+	{
+		start			12 9
+	}
+}

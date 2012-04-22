@@ -1,0 +1,246 @@
+repeatDelay				250
+
+Tail
+{
+	name				sparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				13 15
+
+	life				100 200
+
+	bounce				0.25 0.4
+
+	velocity			100 -76 -90 169 110 114
+
+	acceleration		9 9 5 4 3 4
+
+	gravity				-250 -550
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			0.3 0.45
+	}
+
+	length
+	{
+		start			3 6
+		end				0.4
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Decal
+{
+	name				wallmark
+
+	life				700 800
+
+	size
+	{
+		start			6.5 8.5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	name				BOOM
+
+	sounds
+	[
+		sound/weapons/bryar/hit_wall.wav
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	rgb
+	{
+		start			1 0 0 1 0.9843 0.9412
+	}
+}
+
+FxRunner
+{
+	name				redstuff
+
+	playfx
+	[
+		explosions/e-11hit
+	]
+}
+
+Tail
+{
+	name				startsparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				23 27
+
+	life				70 100
+
+	bounce				0.25 0.4
+
+	velocity			120 -96 -120 190 140 134
+
+	acceleration		9 9 5 4 3 4
+
+	gravity				-250 -550
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			0.3 0.45
+	}
+
+	length
+	{
+		start			9
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+FxRunner
+{
+	name				detailsmokebig
+
+	delay				70 80
+
+	playfx
+	[
+		smoke/detailsmokebig
+	]
+}
+
+Tail
+{
+	name				Copy of sparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				2
+
+	life				400 500
+
+	bounce				0.25 0.4
+
+	velocity			100 -76 -90 169 110 114
+
+	acceleration		9 9 5 4 3 4
+
+	gravity				-250 -550
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			0.3 0.45
+	}
+
+	length
+	{
+		start			3 7
+		end				0.1 1
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Tail
+{
+	name				redsparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				33
+
+	bounce				0.25 0.4
+
+	velocity			150 -96 -100 150 120 124
+
+	acceleration		9 9 5 4 3 4
+
+	gravity				-250 -550
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	alpha
+	{
+		start			0.5 0.4
+	}
+
+	size
+	{
+		start			1 1.45
+		flags			linear nonlinear
+	}
+
+	length
+	{
+		start			4 6
+		end				4.4
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+FxRunner
+{
+	name				detailsmokesmall
+
+	playfx
+	[
+		smoke/detailsmoke2
+	]
+}

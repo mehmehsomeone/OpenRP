@@ -1,0 +1,176 @@
+repeatDelay				250
+
+Tail
+{
+	name				sparks
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				9 8
+
+	life				100
+
+	intensity			0.25 0.4
+
+	radius				2
+
+	height				1
+
+	velocity			320 -460 -470 300 470 470
+
+	gravity				5
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			0.3 0.4
+	}
+
+	length
+	{
+		start			16 15
+		end				3
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				8 9
+
+	life				2200 1800
+
+	radius				2
+
+	height				2
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			2 -4 -2 3 2 2
+
+	gravity				6 7
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 1 1 0 0 0
+		parm			5000
+		flags			nonlinear
+	}
+
+	alpha
+	{
+		start			0.7 0.6
+		end				0.1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		end				7 13
+		parm			37 0
+		flags			clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke
+	]
+}
+
+Decal
+{
+	life				700 800
+
+	size
+	{
+		start			8 10
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+		gfx/damage/burnmark4
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/bowcaster/hit_wall.mp3
+	]
+}
+
+FxRunner
+{
+	name				explowookiehit
+
+	playfx
+	[
+		explosions/wookiehit
+	]
+}
+
+FxRunner
+{
+	name				detailsmoke
+
+	count				1 0
+
+	playfx
+	[
+		smoke/detailsmokebig
+	]
+}
+
+FxRunner
+{
+	name				explosmoke
+
+	delay				300
+
+	playfx
+	[
+		smoke/hitexplodesmoke
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		env/bow_explode
+	]
+}
+
+FxRunner
+{
+	name				Lingeringsmoke
+
+	delay				400
+
+	playfx
+	[
+		smoke/detailsmoke4
+	]
+}

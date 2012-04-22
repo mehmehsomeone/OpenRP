@@ -1,0 +1,68 @@
+repeatDelay				300
+
+Emitter
+{
+	flags				expensivePhysics useModel useBBox usePhysics impactFx useAlpha emitFx
+
+	spawnFlags			absoluteVel orgOnSphere
+
+	count				3 4
+
+	life				300
+
+	bounce				2
+
+	min					-1 -1 -1
+
+	max					1 1 1
+
+	origin				0 -6 -6 0 6 6
+
+	radius				25
+
+	height				25
+
+	angle				55 35 555 360 360 360
+
+	angleDelta			-50 -50 -20 50 50 20
+
+	velocity			85 130 400 -85 -130 0
+
+	gravity				-200 0
+
+	density				4
+
+	variance			100
+
+	alpha
+	{
+		end				0
+		parm			90
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			0.4 0.8
+	}
+
+	models
+	[
+		models/chunks/crate/crate1_1.md3
+		models/chunks/crate/crate1_2.md3
+		models/chunks/crate/crate1_3.md3
+		models/chunks/generic/chunks_1.md3
+		models/chunks/rock/rock1_1.md3
+	]
+
+	impactfx
+	[
+		soundefx/metalbounce
+		soundefx/rockbounce
+	]
+
+	emitfx
+	[
+		emitter/explosion
+	]
+}
