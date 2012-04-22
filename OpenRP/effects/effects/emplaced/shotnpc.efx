@@ -1,0 +1,61 @@
+// Simple emplaced gun effect
+
+Line
+{
+	origin	100 0 0
+	origin2	-100 0 0
+	flags	useAlpha
+
+	width
+	{
+		start 	3.0
+	}
+
+	shader
+	[
+		gfx/effects/bryar_blob
+	]
+}
+
+// glow
+Line
+{
+	origin	100 0 0
+	origin2	-100 0 0
+
+	width
+	{
+		start 	5.0
+	}
+
+	rgb
+	{
+		start	0.8 0.7 0.0 	1.0 0.7 0.2
+	}
+
+	shader
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+// dunno, this looks dumb, but I'm trying to get a bit more beef around the effect and maybe make it not look so much like a dumb line
+particle
+{
+	origin	-0 0 0
+
+	size
+	{
+		start 	4.0	4.8
+	}
+
+	rgb
+	{
+		start	0.8 0.7 0.0 	1.0 0.7 0.2
+	}
+
+	shader
+	[
+		gfx/effects/whiteGlow
+	]
+}

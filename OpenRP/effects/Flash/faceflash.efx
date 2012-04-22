@@ -1,0 +1,83 @@
+repeatDelay				250
+
+Flash
+{
+	name				starscreen
+
+	flags				setShaderTime useAlpha
+
+	count				5 6
+
+	life				4000 5000
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		start			1 0.8
+		end				0.3 0.2
+		parm			1
+		flags			wave
+	}
+
+	size
+	{
+		start			0.5
+		end				5 4
+		parm			12 20
+		flags			random linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/hyper_stars
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/effects/green_lightning1.mp3
+	]
+}
+
+Flash
+{
+	name				Copy of whiteflash
+
+	flags				setShaderTime useAlpha
+
+	count				3 8
+
+	life				3000 4000
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		start			1 0.8
+		end				0.3 0.2
+		parm			1
+		flags			wave
+	}
+
+	size
+	{
+		start			0.5
+		end				5 4
+		parm			5
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlash
+	]
+}

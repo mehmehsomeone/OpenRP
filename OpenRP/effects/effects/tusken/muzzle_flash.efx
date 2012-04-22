@@ -1,0 +1,183 @@
+repeatDelay				300
+
+Line
+{
+	spawnFlags			rgbComponentInterpolation
+
+	life				100 10
+
+	origin2				24 0 0 30 0 0
+
+	rgb
+	{
+		start			0 0 1
+	}
+
+	alpha
+	{
+		start			0.8 0.9
+		end				0.35
+		flags			linear
+	}
+
+	size
+	{
+		start			4.75 6.25
+		end				4
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/flamejet
+	]
+}
+
+Particle
+{
+	name				flare
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				6
+
+	life				75 150
+
+	origin				5 -1 -1 5 1 1
+
+	rotation			0 360
+
+	rotationDelta		-6 6
+
+	rgb
+	{
+		start			0 0 1 1 1 1
+	}
+
+	alpha
+	{
+		start			0.8
+		end				0.2
+		flags			linear
+	}
+
+	size
+	{
+		start			2 5
+		end				10 20
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/flare1
+	]
+}
+
+Particle
+{
+	name				smoke
+
+	count				10
+
+	life				550 1100
+
+	delay				0 350
+
+	origin				5 0 0
+
+	rotation			0 360
+
+	velocity			0 -3 -3 10 3 3
+
+	gravity				1 60
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			0.5 1
+		end				2 3
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Light
+{
+	life				200
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412 0 0 1
+	}
+
+	size
+	{
+		start			100 125
+	}
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/concussion/alt_fire.mp3
+	]
+}
+
+CameraShake
+{
+	intensity			0.3 0.4
+
+	radius				60
+}
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	count				10
+
+	life				550 1100
+
+	delay				0 350
+
+	origin				5 0 0
+
+	rotation			0 360
+
+	velocity			0 -3 -3 10 3 3
+
+	gravity				1 60
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			2
+		end				3 5
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+	]
+}

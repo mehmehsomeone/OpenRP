@@ -1,0 +1,92 @@
+// 
+
+// glow
+Line
+{
+	spawnflags	org2fromTrace
+
+	size
+	{
+		start	1.5	2.5
+	}
+
+	rgb
+	{
+		start 0.0 0.03 0.1
+	}
+
+	shaders
+	[
+		gfx/misc/whiteLine2
+	]
+}
+
+// hotter core
+Line
+{
+	spawnflags	org2fromTrace traceImpactFx
+
+	size
+	{
+		start	0.15	0.3
+	}
+
+	rgb
+	{
+		start 0.03 0.05 0.08
+	}
+
+	impactFx
+	[
+		tripMine/laserImpactGlow
+	]
+
+	shaders
+	[
+		gfx/misc/whiteLine2
+	]
+}
+
+// blue glow
+Particle
+{
+	size
+	{
+		start	1.0	1.5
+	}
+	
+	rgb
+	{
+		start 0.0	0.1	0.5	
+	}
+
+	rotation	0 360
+
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+// whiter core
+Particle
+{
+	size
+	{
+		start	0.5	0.8
+	}
+	
+	alpha
+	{
+		start 0.1	0.4
+	}
+
+	rotation	0 360
+
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}

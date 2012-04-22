@@ -1,0 +1,43 @@
+// laser beam impact fx
+
+OrientedParticle
+{
+	size
+	{
+		start	1.0	1.5
+	}
+	
+	rgb
+	{
+		start 0.0	0.2	0.6	
+	}
+
+	rotation	0 360
+
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+OrientedParticle
+{
+	size
+	{
+		start	0.5	0.8
+	}
+	
+	alpha
+	{
+		start 0.1 0.4
+	}
+
+	rotation	0 360
+
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}

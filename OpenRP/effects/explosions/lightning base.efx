@@ -1,0 +1,158 @@
+repeatDelay				250
+
+Particle
+{
+	name				glow
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				15 7
+
+	life				66
+
+	radius				5
+
+	height				5
+
+	rotation			180 0
+
+	acceleration		25 25 25 -25 -50 -50
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.502 0 0.502 0 0 1
+		end				1 1 1 0.6471 0.01961 0.9804
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.5 0.2
+		end				0.1
+		parm			1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4 5
+		end				94 80
+		parm			1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Copy of glow
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				3
+
+	life				80
+
+	radius				4 3
+
+	height				4
+
+	rotation			25
+
+	rotationDelta		25
+
+	acceleration		25 25 25 -25 -50 -50
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0 0 1
+		end				0.502 0 0.502 0.6471 0.01961 0.9804
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.6 0.5
+		end				0.1
+		parm			1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4 5
+		end				5
+		parm			1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/caustic1
+		gfx/effects/cloakedShader
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				lightningflash
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				2 1
+
+	life				66
+
+	radius				3 2
+
+	height				2
+
+	rotation			180 0
+
+	acceleration		25 25 25 -25 -50 -50
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 1 1 0 0 1
+		end				0.502 0 0.502 0.6471 0.01961 0.9804
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.3 0.4
+		end				0.1
+		parm			1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4 5
+		end				90
+		parm			3 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/lightningFlash
+	]
+}

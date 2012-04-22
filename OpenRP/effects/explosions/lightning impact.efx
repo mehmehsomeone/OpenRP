@@ -1,0 +1,39 @@
+repeatDelay				250
+
+Electricity
+{
+	flags				useModel usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				1 0
+
+	life				200
+
+	bounce				14
+
+	origin2				5 20 20 0 -20 -20
+
+	rgb
+	{
+		start			0 0 1 0.502 0 0.502
+		parm			70 0
+		flags			random linear wave
+	}
+
+	alpha
+	{
+		start			1 0.8
+	}
+
+	size
+	{
+		start			2
+		flags			random linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/blueLine
+	]
+}

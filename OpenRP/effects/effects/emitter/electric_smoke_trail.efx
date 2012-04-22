@@ -1,0 +1,103 @@
+repeatDelay				300
+
+Particle
+{
+	flags				useAlpha
+
+	life				600 800
+
+	velocity			2 0 0
+
+	alpha
+	{
+		start			0.3 0.8
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1.5 5
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	spawnFlags			rgbComponentInterpolation
+
+	count				3 2
+
+	life				300 100
+
+	velocity			2 0 0
+
+	rgb
+	{
+		start			0 0 1 0.502 0 0.502
+		flags			random
+	}
+
+	alpha
+	{
+		start			0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1.5 3
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Electricity
+{
+	flags				useModel usePhysics
+
+	spawnFlags			org2isOffset orgOnSphere rgbComponentInterpolation
+
+	life				100
+
+	bounce				6 3
+
+	origin2				8 15 14 -11 -16 -14
+
+	radius				3 2
+
+	height				2
+
+	rgb
+	{
+		start			0.502 0 0.502
+		end				0.651 0.7922 0.9412 1 1 1
+		parm			1
+		flags			random linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+	}
+
+	size
+	{
+		end				2
+		parm			1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/blueLine
+	]
+}

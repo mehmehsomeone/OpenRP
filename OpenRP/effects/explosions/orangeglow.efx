@@ -1,0 +1,55 @@
+repeatDelay				300
+
+Particle
+{
+	name				OrangeGlow2
+
+	spawnFlags			orgOnCylinder
+
+	count				2
+
+	life				3100 2500
+
+	delay				0 150
+
+	origin				0 -20 -20 5 20 20
+
+	radius				2 3
+
+	height				3 2
+
+	rotation			-180 180
+
+	rotationDelta		-1 1
+
+	velocity			5 -5 -5 10 5 5
+
+	rgb
+	{
+		start			1 0.9725 0.6235 1 0.8353 0.4902
+		end				0.502 0 0 0.9451 0.4078 0.01176
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.5 0.4
+		end				0
+		parm			70 85
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			85
+		end				175 166
+		parm			0 1
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+		gfx/misc/steam2
+	]
+}

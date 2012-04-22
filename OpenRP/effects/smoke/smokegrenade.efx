@@ -1,0 +1,1029 @@
+repeatDelay				300
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				5
+
+	life				1.8e+004 1.7e+004
+
+	delay				600 800
+
+	origin				10 -35 -35 20 35 35
+
+	radius				25
+
+	height				25
+
+	rotation			0 1
+
+	rotationDelta		1 0
+
+	acceleration		1 1 1 1 -1 -1
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.4863 0.4863 0.4863
+		end				1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			20
+		end				750
+		parm			23
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke01
+	]
+}
+
+Particle
+{
+	name				Copy of sidewaysmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				5
+
+	life				1.3e+004
+
+	delay				1400 1500
+
+	origin				10 -35 -35 20 35 35
+
+	radius				65
+
+	height				65
+
+	rotation			0 1
+
+	rotationDelta		-2 2
+
+	acceleration		4 3 3 3 -4 -2
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		parm			2 4
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			20
+		end				500
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke01
+	]
+}
+
+Particle
+{
+	name				startpuff
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				800 900
+
+	delay				190 200
+
+	radius				20
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		75 2 2 75 -2 -2
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.4863 0.4863 0.4863
+		end				0.4863 0.4863 0.4863 1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				23 22
+		parm			2 1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				startpuffshroom
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				23 30
+
+	life				1200 1100
+
+	delay				50 30
+
+	origin				75 0 0
+
+	radius				15
+
+	height				25
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		100 2 2 100 -2 -2
+
+	rgb
+	{
+		start			0.4863 0.4863 0.4863
+		end				0.4863 0.4863 0.4863
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				41 39
+		parm			1 0
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				startpuff2
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				28 30
+
+	life				800 900
+
+	delay				190 200
+
+	origin				25 0 0 50 0 0
+
+	radius				15
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		75 2 2 75 -2 -2
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.4863 0.4863 0.4863
+		end				0.4863 0.4863 0.4863 1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				22 24
+		parm			1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				startpuffbangshroom
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				70 65
+
+	life				1200 1100
+
+	delay				350 200
+
+	origin				75 0 0
+
+	radius				75
+
+	height				25
+
+	rotation			180 125
+
+	rotationDelta		-10 10
+
+	acceleration		25 2 2 25 -2 -2
+
+	rgb
+	{
+		start			0.4863 0.4863 0.4863
+		end				0.4863 0.4863 0.4863
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.9
+		end				0.2 0.1
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				30
+		parm			4
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				startpuff3
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				800 900
+
+	delay				190 200
+
+	origin				75 0 0 100 0 0
+
+	height				30
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		75 2 2 -75 -2 -2
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				0.4863 0.4863 0.4863
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				25 23
+		parm			2
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	name				startpuff4
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				23 30
+
+	life				800 900
+
+	delay				300 320
+
+	origin				125 0 0 150 0 0
+
+	height				30
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		75 2 2 -77 -2 -2
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				0.4863 0.4863 0.4863
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				22 23
+		parm			2
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				startpuff5
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				800 900
+
+	delay				290 320
+
+	origin				125 0 0 150 0 0
+
+	height				30
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		100 2 2 -98 -2 -2
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				0.4863 0.4863 0.4863
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				20
+		parm			2
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				startpuffbangshroomwave
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				35 24
+
+	life				1200 2000
+
+	delay				344 454
+
+	origin				75 0 0
+
+	radius				75
+
+	height				25
+
+	rotation			180 125
+
+	rotationDelta		-10 10
+
+	acceleration		25 2 2 25 -2 -2
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.4863 0.4863 0.4863
+		end				1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		start			0.8 0.9
+		end				0.4 0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				150 1000
+		parm			1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+	]
+}
+
+Particle
+{
+	name				base-shakey
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				1100
+
+	delay				250 400
+
+	radius				20
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		220 2 2 200 -2 -2
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.8 0.7
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				35
+		parm			3 1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+	]
+}
+
+Particle
+{
+	name				startpufffast
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				800 900
+
+	delay				190 200
+
+	radius				20
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		175 5 7 175 -6 -8
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.4863 0.4863 0.4863
+		end				0.4863 0.4863 0.4863 1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				20
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				startpufffaster
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				700 600
+
+	delay				190 200
+
+	radius				20
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		250 5 7 250 -6 -8
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.4863 0.4863 0.4863
+		end				0.4863 0.4863 0.4863 1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.1
+		parm			40 50
+		flags			linear clamp
+	}
+
+	size
+	{
+		end				20
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke2
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/effects/air_burst.mp3
+	]
+}
+
+Particle
+{
+	name				Copy of base2
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				1100 1200
+
+	delay				500 690
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		220 2 2 200 -2 -2
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.8 0.7
+		end				0.2 0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				40
+		parm			2
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+	]
+}
+
+Particle
+{
+	name				Copy of Copy of base2
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				1100 1200
+
+	delay				400 550
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		220 2 2 200 -2 -2
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.8 0.7
+		end				0.2 0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				35
+		parm			2
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+	]
+}
+
+Particle
+{
+	name				Copy of Copy of Copy of base2
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				1100 1200
+
+	delay				660 700
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		220 2 2 200 -2 -2
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.8 0.7
+		end				0.2 0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				30 35
+		parm			2
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+	]
+}
+
+Particle
+{
+	name				topsmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				20 30
+
+	life				1000
+
+	delay				400 500
+
+	origin				190 0 0
+
+	radius				75
+
+	height				75
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		2 2 2 2 -2 -2
+
+	rgb
+	{
+		start			0.4863 0.4863 0.4863
+		end				0.4863 0.4863 0.4863
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			20
+		end				100
+		parm			3 4
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				Copy of topsmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				20
+
+	life				1000
+
+	delay				500 600
+
+	origin				190 0 0
+
+	radius				100
+
+	height				75
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		2 2 2 2 -2 -2
+
+	rgb
+	{
+		start			0.4863 0.4863 0.4863
+		end				0.4863 0.4863 0.4863
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.6 0.3
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			20
+		end				100
+		parm			2
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	name				Copy of startpufffaster
+
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				20 30
+
+	life				700 600
+
+	delay				790 800
+
+	radius				20
+
+	rotation			0 125
+
+	rotationDelta		-10 10
+
+	acceleration		250 5 7 250 -6 -8
+
+	gravity				-100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.4863 0.4863 0.4863
+		end				1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.1
+		parm			40 50
+		flags			linear clamp
+	}
+
+	size
+	{
+		end				16
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke01
+	]
+}

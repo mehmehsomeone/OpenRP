@@ -1,0 +1,124 @@
+Particle
+{
+	name				LingeringSmoke2
+
+	flags				useAlpha
+
+	spawnFlags			absoluteVel rgbComponentInterpolation affectedByWind
+
+	count				50
+
+	life				2000 4000
+
+	delay				500 5500
+
+	origin				0 -15 -15 10 15 15
+
+	wind				20 80
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			0 0 20 0 0 80
+
+	acceleration		-4 -4 -10 4 4 60
+
+	gravity				-25 25
+
+	rgb
+	{
+		start			0.5843 0.5843 0.5843 0.2667 0.2667 0.2667
+		end				0.502 0.502 0.502
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			10 20
+		end				80 160
+		parm			0 1
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	name				LingeringSmoke
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				4 5
+
+	life				2000 4000
+
+	delay				0 150
+
+	origin				0 -25 -25 20 25 25
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			0 -20 -20 10 20 20
+
+	acceleration		-4 -8 -8 4 8 8
+
+	gravity				-25 25
+
+	rgb
+	{
+		start			0.5843 0.5843 0.5843 0.2667 0.2667 0.2667
+		end				0.502 0.502 0.502
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			15 20
+		end				80 160
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Decal
+{
+	count				1 2
+
+	rotation			0 360
+
+	size
+	{
+		start			60 90
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+		gfx/damage/burnmark4
+	]
+}

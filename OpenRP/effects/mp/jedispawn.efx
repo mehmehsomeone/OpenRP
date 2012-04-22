@@ -1,0 +1,72 @@
+Line
+{
+	spawnFlags			org2fromTrace
+
+	life				500
+
+	rgb
+	{
+		start			0.65 1 0.95
+	}
+
+	size
+	{
+		start			12
+		end				8
+		parm			8
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/whiteLine2
+	]
+}
+
+Line
+{
+	spawnFlags			org2fromTrace
+
+	life				500
+
+	origin				-20 0 0
+
+	rgb
+	{
+		start			0 1 0.7 0 1 0.5
+	}
+
+	alpha
+	{
+		start			0.4 0.6
+	}
+
+	size
+	{
+		start			40
+		end				35
+		parm			8
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/whiteLine2
+	]
+}
+
+Emitter
+{
+	flags				expensivePhysics usePhysics impactKills emitFx
+
+	life				8000
+
+	velocity			3000 0 0
+
+	density				100
+
+	emitfx
+	[
+		env/beam_lights
+	]
+}

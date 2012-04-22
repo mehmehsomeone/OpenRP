@@ -1,0 +1,57 @@
+repeatDelay				250
+
+Particle
+{
+	name				lastingsmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				24 26
+
+	life				3700
+
+	delay				390 290
+
+	radius				5 4
+
+	height				2
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			1 1 1
+
+	gravity				1
+
+	rgb
+	{
+		start			0 0 0 1 0.9843 0.9412
+		end				0.7529 0.7529 0.7529 0 0 0
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.6 0.3
+		end				0
+		parm			1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			2
+		end				15 26
+		parm			35
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}

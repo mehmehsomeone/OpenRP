@@ -1,0 +1,30 @@
+repeatDelay				300
+
+Particle
+{
+	flags				useAlpha
+
+	life				100
+
+	rotation			-180 180
+
+	rotationDelta		-90 90
+
+	alpha
+	{
+		end				0.3
+	}
+
+	size
+	{
+		start			20
+		end				22
+		parm			10
+		flags			wave
+	}
+
+	shaders
+	[
+		sun2
+	]
+}

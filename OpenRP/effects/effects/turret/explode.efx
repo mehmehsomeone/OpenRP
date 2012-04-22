@@ -1,0 +1,355 @@
+repeatDelay				300
+
+Particle
+{
+	name				LingeringSmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				16 12
+
+	life				1500 2000
+
+	delay				500 1200
+
+	radius				2 3
+
+	height				0
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			3 -5 5 3 5 5
+
+	acceleration		-4 -7 -7 9 7 7
+
+	gravity				2 20
+
+	rgb
+	{
+		start			0.1725 0.1725 0.1725 0.549 0.549 0.549
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0
+		parm			50 60
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			1 2
+		end				6 8
+		parm			30 50
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+	]
+}
+
+Light
+{
+	name				Flash
+
+	life				100
+
+	alpha
+	{
+		end				0
+		flags			random linear
+	}
+
+	size
+	{
+		start			412
+		end				100
+		flags			linear
+	}
+}
+
+CameraShake
+{
+	name				Shake
+
+	flags				usePhysics
+
+	life				500 800
+
+	bounce				2 3
+
+	radius				300
+}
+
+Sound
+{
+	name				Boom
+
+	count				0
+
+	sounds
+	[
+		sound/weapons/thermal/explode.wav
+	]
+}
+
+Particle
+{
+	name				explosion_cloud
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				2
+
+	life				400 600
+
+	origin				0 -10 -10 5 10 10
+
+	rotation			0 360
+
+	rotationDelta		-8 8
+
+	velocity			10 -25 -25 35 25 25
+
+	alpha
+	{
+		start			0.6 0.7
+		end				0
+		parm			50
+		flags			linear
+	}
+
+	size
+	{
+		start			5 15
+		end				54 76
+		parm			20 40
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/exp/explosion3
+		gfx/misc/exp02_2
+	]
+}
+
+Tail
+{
+	count				0
+
+	life				300 500
+
+	origin				5 -10 -10 15 10 10
+
+	velocity			340 -420 -420 500 420 420
+
+	gravity				-600 -700
+
+	rgb
+	{
+		start			1 0.7 0.5 1 1 0.5
+	}
+
+	size
+	{
+		start			1 2
+		end				0.6 0.7
+		flags			linear
+	}
+
+	length
+	{
+		start			25 30
+		parm			20 50
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				0
+
+	life				1500 2000
+
+	bounce				0.3 0.5
+
+	origin				0 -10 -10 10 10 10
+
+	velocity			250 -450 -450 450 450 450
+
+	gravity				-450 -650
+
+	rgb
+	{
+		start			1 0.7 0.5 1 1 1
+	}
+
+	alpha
+	{
+		end				0
+		parm			80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			0.7 3.5
+		end				0.2 0.5
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Decal
+{
+	life				1500 2500
+
+	rotation			-180 180
+
+	size
+	{
+		start			55 57
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+	]
+}
+
+Particle
+{
+	name				Copy of explosion_cloud
+
+	flags				setShaderTime useAlpha
+
+	count				0
+
+	life				1200 1300
+
+	origin				0 -10 -10 15 10 10
+
+	rotation			0 360
+
+	rotationDelta		-4 4
+
+	velocity			0 -15 -15 5 15 15
+
+	gravity				0 10
+
+	alpha
+	{
+		start			0.7 0.8
+		end				0.1 0
+		parm			50
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			5 10
+		end				25 45
+		parm			25 40
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/exp/explosion1
+		gfx/exp/slower_rocket_explosion
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		emplaced/explode
+	]
+}
+
+FxRunner
+{
+	name				chunks
+
+	count				3 2
+
+	playfx
+	[
+		chunks/metalexplode
+	]
+}
+
+Particle
+{
+	name				Copy of LingeringSmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				14 16
+
+	life				1500 2000
+
+	delay				1000 1800
+
+	radius				2 3
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			3 -5 5 3 5 5
+
+	acceleration		-4 -7 -7 9 7 7
+
+	gravity				2 20
+
+	rgb
+	{
+		start			0.1725 0.1725 0.1725 0.549 0.549 0.549
+	}
+
+	alpha
+	{
+		start			0.4 0.6
+		end				0
+		parm			50 60
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			1 2
+		end				6 8
+		parm			30 50
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+	]
+}

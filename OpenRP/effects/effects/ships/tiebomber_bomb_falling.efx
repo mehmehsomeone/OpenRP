@@ -1,0 +1,72 @@
+repeatDelay				300
+
+Particle
+{
+	spawnFlags			evenDistribution rgbComponentInterpolation
+
+	count				25
+
+	life				500
+
+	delay				0 500
+
+	rotation			0 360
+
+	velocity			100 0 200
+
+	acceleration		0 0 -100
+
+	rgb
+	{
+		start			0.02353 0 0.4667 0.03922 0 0.749
+		end				0.3098 0.549 1 0.2902 0.1686 1
+		flags			random
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			16
+		end				3
+		parm			5
+		flags			linear
+	}
+
+	shaders
+	[
+		sun2
+	]
+}
+
+Particle
+{
+	flags				useAlpha
+
+	life				500
+
+	rotation			-180 180
+
+	rotationDelta		-90 90
+
+	alpha
+	{
+		end				0.3
+		flags			linear
+	}
+
+	size
+	{
+		start			20
+		end				30
+	}
+
+	shaders
+	[
+		sun2
+	]
+}

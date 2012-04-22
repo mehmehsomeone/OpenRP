@@ -1,0 +1,221 @@
+repeatDelay				250
+
+Particle
+{
+	name				steam
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				7
+
+	life				1500 1700
+
+	delay				0 500
+
+	radius				1
+
+	height				1
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			10 -5 -5 4 5 0
+
+	gravity				13 5
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.1
+		end				0
+		parm			1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		end				14 11
+		parm			85 15
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke02
+	]
+}
+
+Particle
+{
+	name				alpha
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				13 8
+
+	life				1500 1700
+
+	delay				600 870
+
+	radius				2 1
+
+	height				1
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			10 -4 -4 0 4 4
+
+	gravity				13 5
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.1 0.2
+		end				0
+		parm			1
+		flags			linear wave
+	}
+
+	size
+	{
+		end				11
+		parm			33 3
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke02
+	]
+}
+
+Particle
+{
+	name				bigsmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				10 8
+
+	life				1500 1700
+
+	delay				100 1480
+
+	radius				2 1
+
+	height				2 1
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			4 -4 -6 4 3 4
+
+	gravity				13 5
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529 0.6275 0.6275 0.6431
+		end				0.7529 0.7529 0.7529 1 0.9843 0.9412
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2
+		end				0
+		flags			linear wave
+	}
+
+	size
+	{
+		end				9 8
+		parm			85 15
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke01
+		gfx/effects/bp_smoke02
+	]
+}
+
+Particle
+{
+	name				secondbigsmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				10
+
+	life				1500 1700
+
+	delay				1500 2000
+
+	radius				2 1
+
+	height				2 1
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			4 -4 -6 4 3 4
+
+	gravity				13 5
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529 0.6275 0.6275 0.6431
+		end				0.7529 0.7529 0.7529 1 0.9843 0.9412
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2
+		end				0
+		flags			linear wave
+	}
+
+	size
+	{
+		end				6 15
+		parm			85 15
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke01
+		gfx/effects/bp_smoke02
+	]
+}

@@ -1,0 +1,52 @@
+repeatDelay				300
+
+Particle
+{
+	name				OrangeGlow2
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	life				2100 2000
+
+	origin				0 -20 -20 5 20 20
+
+	radius				14 12
+
+	height				15 16
+
+	rotation			-180 180
+
+	rotationDelta		-1 1
+
+	velocity			5 -5 -5 10 5 5
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 0.8353 0.4902
+		end				0.502 0 0 0.9451 0.4078 0.01176
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.6 0.7
+		end				0
+		parm			70 85
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			85
+		end				75
+		parm			30 40
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/misc/steam2
+	]
+}

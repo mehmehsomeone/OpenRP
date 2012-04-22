@@ -1,0 +1,141 @@
+Tail
+{
+	spawnFlags			evenDistribution rgbComponentInterpolation
+
+	count				2 4
+
+	life				200 400
+
+	delay				0 50
+
+	origin				0 8 0 0 12 32
+
+	velocity			2 2 2 10 10 10
+
+	gravity				-2 -1
+
+	rgb
+	{
+		start			0.7686 0.9373 1
+	}
+
+	alpha
+	{
+		start			0.2 0.4
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			3 5
+		end				7 10
+		parm			50 80
+		flags			linear clamp
+	}
+
+	length
+	{
+		start			-8 -4
+		end				-80 -40
+		parm			30 50
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/water_splash
+	]
+}
+
+Tail
+{
+	name				Copy of Unnamed Tail 0
+
+	spawnFlags			evenDistribution
+
+	count				2 4
+
+	life				200 400
+
+	delay				0 50
+
+	origin				0 -12 0 0 -8 32
+
+	velocity			2 -10 2 10 -2 10
+
+	gravity				-2 -1
+
+	rgb
+	{
+		start			0.7686 0.9373 1
+	}
+
+	alpha
+	{
+		start			0.2 0.4
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			3 5
+		end				7 10
+		parm			50 80
+		flags			linear clamp
+	}
+
+	length
+	{
+		start			-8 -4
+		end				-80 -40
+		parm			30 50
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/water_splash
+	]
+}
+
+Particle
+{
+	count				10
+
+	life				400 600
+
+	velocity			100 -80 -80 175 80 80
+
+	gravity				-250 -300
+
+	alpha
+	{
+		end				0
+		parm			50
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			0.3 1
+	}
+
+	shaders
+	[
+		gfx/misc/steam2
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/player/bodyfall_water1.mp3
+		sound/player/bodyfall_water2.mp3
+		sound/player/bodyfall_water3.mp3
+	]
+}

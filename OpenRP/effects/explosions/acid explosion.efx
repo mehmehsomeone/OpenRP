@@ -1,0 +1,52 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				40
+
+	life				100
+
+	delay				0 300
+
+	radius				2
+
+	height				3
+
+	acceleration		-100 550 455 100 -650 -800
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0 0.502 0 0.1765 0.9686 0.03529
+		end				0.1765 0.9686 0.03529
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			5 8
+		end				15 11
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}

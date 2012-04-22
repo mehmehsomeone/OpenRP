@@ -1,0 +1,30 @@
+repeatDelay				300
+
+FxRunner
+{
+	count				1 2
+
+	delay				0 100
+
+	playfx
+	[
+		volumetric/black_smoke
+		volumetric/smoke
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/eweb/eweb_hitplayer.mp3
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		eweb/wall_impact
+	]
+}

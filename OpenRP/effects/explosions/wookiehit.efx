@@ -1,0 +1,162 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere rgbComponentInterpolation
+
+	count				18 21
+
+	life				100
+
+	delay				0 300
+
+	radius				3
+
+	height				3
+
+	acceleration		25 45 45 -25 -45 -40
+
+	gravity				200 -10
+
+	rgb
+	{
+		start			0 1 0
+		end				0 0.502 0 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			2 3
+		end				2
+		parm			55
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				whitecore
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution rgbComponentInterpolation
+
+	count				55
+
+	life				200
+
+	radius				1
+
+	height				1
+
+	rotation			22 -20
+
+	rotationDelta		60 800
+
+	acceleration		25 25 23 -25 -45 -40
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0 0.502 0 1 0.9843 0.9412
+		end				0 1 0 0.1765 0.9686 0.03529
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			0 6
+		end				30 25
+		parm			1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/flare1
+	]
+}
+
+Particle
+{
+	name				smokey
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere rgbComponentInterpolation
+
+	count				10 8
+
+	life				100
+
+	delay				0 300
+
+	origin				0 0 -5 0 0 0
+
+	radius				3
+
+	height				3
+
+	rotation			460 -180
+
+	rotationDelta		360 -200
+
+	acceleration		15 45 45 -25 -45 -40
+
+	gravity				300 -10
+
+	rgb
+	{
+		start			0 0.502 0
+		end				0.1765 0.9686 0.03529 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			2 3
+		end				16 19
+		parm			0 3
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

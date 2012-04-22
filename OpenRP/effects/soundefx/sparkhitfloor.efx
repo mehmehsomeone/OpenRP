@@ -1,0 +1,13 @@
+repeatDelay				300
+
+Sound
+{
+	name				sparkfloor
+
+	sounds
+	[
+		sound/ambience/spark1.wav
+		sound/ambience/spark2.wav
+		sound/ambience/spark3.wav
+	]
+}

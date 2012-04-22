@@ -1,0 +1,302 @@
+repeatDelay				300
+
+Particle
+{
+	name				explosion_cloud
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				6
+
+	life				500 1000
+
+	origin				0 -5 -5 5 5 5
+
+	rotation			0 360
+
+	rotationDelta		-8 8
+
+	velocity			5 -15 -15 40 15 15
+
+	rgb
+	{
+		start			0.4863 0.4863 0.4863 0.4706 0.4706 0.4706
+	}
+
+	alpha
+	{
+		start			0.7 0.8
+		end				0
+		parm			50
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			5
+		end				35 50
+		parm			15 30
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/misc/exp01_1
+		gfx/misc/exp02_2
+	]
+}
+
+Particle
+{
+	name				LingeringSmoke
+
+	count				2
+
+	life				1000 1750
+
+	delay				50 200
+
+	cullrange			500
+
+	origin				0 -25 -25 20 25 25
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			0 -10 -10 10 10 10
+
+	acceleration		-4 -8 -8 4 8 8
+
+	gravity				0 15
+
+	rgb
+	{
+		start			0.9882 0.9098 0.7882 1 1 0.8078
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			5 8
+		end				30 40
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Light
+{
+	name				Flash
+
+	life				300
+
+	rgb
+	{
+		start			1 1 0.549 1 1 0.06275
+	}
+
+	alpha
+	{
+		end				0
+		flags			random linear
+	}
+
+	size
+	{
+		start			150
+		end				20
+		flags			linear
+	}
+}
+
+Particle
+{
+	name				Dust
+
+	flags				useAlpha
+
+	spawnFlags			evenDistribution rgbComponentInterpolation
+
+	count				4
+
+	life				900 1400
+
+	delay				250 500
+
+	cullrange			1000
+
+	origin				0 -15 -15 5 15 15
+
+	rotation			-180 180
+
+	rotationDelta		-2 2
+
+	velocity			20 -20 -20 40 20 20
+
+	acceleration		-5 -5 -5 5 5 5
+
+	gravity				-50 -30
+
+	rgb
+	{
+		start			1 1 1 0.9451 0.4078 0.01176
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 70
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			1 6
+		end				20 30
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}
+
+CameraShake
+{
+	name				Shake
+
+	flags				usePhysics
+
+	life				500 800
+
+	bounce				1 2
+
+	radius				100 150
+}
+
+Sound
+{
+	name				Boom
+
+	sounds
+	[
+		sound/weapons/thermal/explode.wav
+	]
+}
+
+Decal
+{
+	size
+	{
+		start			25.5 29
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark4
+	]
+}
+
+Tail
+{
+	spawnFlags			cheapOrgCalc orgOnSphere axisFromSphere rgbComponentInterpolation
+
+	count				8
+
+	life				300 500
+
+	cullrange			500
+
+	origin				0 0 10
+
+	radius				18
+
+	velocity			150 0 0 250 0 0
+
+	rgb
+	{
+		start			1 1 0.549 0.9882 0.7255 0.1804
+	}
+
+	alpha
+	{
+		start			0.5 0.3
+		end				0
+		parm			50 60
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		end				0.5
+		flags			linear
+	}
+
+	length
+	{
+		start			20 35
+		end				0
+		parm			70 80
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+Particle
+{
+	name				Copy of explosion_cloud
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				450
+
+	origin				0 -5 -5 5 5 5
+
+	rotation			0 360
+
+	rotationDelta		-8 8
+
+	velocity			5 -15 -15 40 15 15
+
+	rgb
+	{
+		start			0.9529 0.6588 0.04706 0.9294 0.6 0.1529
+	}
+
+	alpha
+	{
+		start			0.5
+		end				0
+		parm			10
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		end				150
+		parm			30
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}

@@ -1,0 +1,169 @@
+repeatDelay				300
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				8 7
+
+	life				700 1200
+
+	rotation			-180 0
+
+	rotationDelta		-10 0
+
+	velocity			7 -3 -7 15 4 4
+
+	gravity				15 20
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 1 1 0 0 0
+		parm			5000
+	}
+
+	alpha
+	{
+		start			0.2 0.5
+		end				0
+		parm			1 0
+		flags			linear wave
+	}
+
+	size
+	{
+		start			3 10
+		end				18 20
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Decal
+{
+	life				700 800
+
+	size
+	{
+		start			6.5 8.5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/demp2/hitwall.mp3
+	]
+}
+
+FxRunner
+{
+	name				blue
+
+	playfx
+	[
+		explosions/cloneriflehit
+	]
+}
+
+Particle
+{
+	name				fastsmoke
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				6 3
+
+	life				500 400
+
+	delay				30 150
+
+	rotation			-180 180
+
+	rotationDelta		10 6
+
+	velocity			19 -6 -7 18 5 4
+
+	gravity				29 0
+
+	rgb
+	{
+		flags			linear nonlinear
+	}
+
+	alpha
+	{
+		start			0.3
+		end				0.1 0
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		end				6 5
+		parm			2
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+FxRunner
+{
+	name				whitecore
+
+	playfx
+	[
+		explosions/whitecorehitblue
+	]
+}
+
+FxRunner
+{
+	name				detailsmoke
+
+	count				2 1
+
+	playfx
+	[
+		smoke/detailsmoke
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		sparks/bluehitsparkswall
+	]
+}
+
+FxRunner
+{
+	name				detailsmokebig
+
+	playfx
+	[
+		smoke/detailsmokemedium
+	]
+}

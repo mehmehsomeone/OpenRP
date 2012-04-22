@@ -1,0 +1,152 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel evenDistribution rgbComponentInterpolation
+
+	count				5
+
+	life				200
+
+	delay				0 300
+
+	radius				75
+
+	height				50
+
+	acceleration		25 25 23 -25 -35 -35
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0 0
+		end				1 0 0 0.9882 0.502 0.01176
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.8 0.9
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				12 20
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				whtiecoe
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel evenDistribution rgbComponentInterpolation
+
+	count				5
+
+	life				200 100
+
+	delay				0 300
+
+	radius				75
+
+	acceleration		25 25 23 -25 -35 -35
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.8 0.9
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			2
+		end				1 2
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				smokey
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				5
+
+	life				200
+
+	delay				0 300
+
+	radius				3
+
+	height				3
+
+	acceleration		25 25 23 -25 -35 -35
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0 0
+		end				1 0 0 0.9882 0.502 0.01176
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.8 0.9
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				12 20
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}

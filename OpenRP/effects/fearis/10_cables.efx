@@ -1,0 +1,194 @@
+repeatDelay				142
+
+Light
+{
+	name				flash1
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				75
+
+	rgb
+	{
+		start			0.7569 0.7569 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				90
+		flags			linear
+	}
+}
+
+Light
+{
+	name				flash2
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				125
+
+	delay				100
+
+	rgb
+	{
+		start			0.9098 0.9098 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				50
+		flags			linear
+	}
+}
+
+Electricity
+{
+	name				lightnings
+
+	flags				useModel useBBox usePhysics
+
+	spawnFlags			org2fromTrace
+
+	count				2
+
+	life				1000
+
+	bounce				3
+
+	origin				0 0 -8
+
+	origin2				0 0 420
+
+	rgb
+	{
+		start			0.9098 0.9098 1 0.9608 0.9608 0.9608
+	}
+
+	size
+	{
+		start			3
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/blueLine
+	]
+}
+
+Light
+{
+	name				flash1
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				75
+
+	delay				200
+
+	rgb
+	{
+		start			0.7569 0.7569 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				90
+		flags			linear
+	}
+}
+
+Light
+{
+	name				flash1
+
+	spawnFlags			rgbComponentInterpolation
+
+	delay				250
+
+	rgb
+	{
+		start			0.7569 0.7569 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				90
+		flags			linear
+	}
+}
+
+Sound
+{
+	name				sound
+
+	delay				20 0
+
+	sounds
+	[
+		sound/fearis/elec.wav
+	]
+}
+
+Light
+{
+	name				flash1_delayed1
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				75
+
+	delay				2000
+
+	rgb
+	{
+		start			0.7569 0.7569 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				90
+		flags			linear
+	}
+}
+
+Light
+{
+	name				flash1_delayed1
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				75
+
+	delay				2100
+
+	rgb
+	{
+		start			0.7569 0.7569 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				90
+		flags			linear
+	}
+}
+
+Sound
+{
+	name				sound_delay1
+
+	delay				2050
+
+	sounds
+	[
+		sound/fearis/ef_spark2.mp3
+	]
+}

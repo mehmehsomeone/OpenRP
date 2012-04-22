@@ -1,0 +1,48 @@
+repeatDelay				600
+
+Particle
+{
+	name				13_steam
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				1 1
+
+	life				1500
+
+	cullrange			700
+
+	rotation			0 120
+
+	rotationDelta		-4 4
+
+	velocity			-5 -5 -5 50 0 0
+
+	rgb
+	{
+		start			0.2196 0.2196 0.2196 0.251 0.251 0.251
+		end				0.502 0.502 0.502 0.2196 0.2196 0.2196
+	}
+
+	alpha
+	{
+		start			0.3
+		end			0.4
+		parm			80 90
+		flags			linear
+	}
+
+	size
+	{
+		start			50 55
+		end				60 65
+		flags			linear
+	}
+
+	shaders
+	[
+		effects/alpha_smoke2
+	]
+}

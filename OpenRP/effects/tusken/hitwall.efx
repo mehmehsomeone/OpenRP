@@ -1,0 +1,42 @@
+repeatDelay				300
+
+FxRunner
+{
+	name				smoke
+
+	playfx
+	[
+		smoke/fleshhitsmokebig
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	life				300 400
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843
+		flags			random nonlinear
+	}
+}
+
+FxRunner
+{
+	playfx
+	[
+		sparks/hit_spark_blue
+	]
+}
+
+FxRunner
+{
+	count				2 1
+
+	playfx
+	[
+		sparks/bluesparks
+	]
+}

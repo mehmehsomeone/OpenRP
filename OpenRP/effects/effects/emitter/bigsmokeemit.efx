@@ -1,0 +1,107 @@
+repeatDelay				250
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				7
+
+	life				700 800
+
+	radius				5
+
+	height				5
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			28 28 -43 -37 -20 33
+
+	gravity				13 5
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.3
+		end				0.1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4 3
+		end				35
+		parm			4 15
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				boomsmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				8 7
+
+	life				1000 800
+
+	radius				6 4
+
+	height				5
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			30 -25 25 30 30 -30
+
+	gravity				13 5
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529 1 0.9843 0.9412
+		end				0.7529 0.7529 0.7529 0 0 0
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.6 0.3
+		end				0.1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4
+		end				35 39
+		parm			4 15
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}

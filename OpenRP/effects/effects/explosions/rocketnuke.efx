@@ -1,0 +1,158 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution
+
+	count				75
+
+	life				1000
+
+	delay				0 300
+
+	origin				0 0 800 0 0 0
+
+	radius				250 0
+
+	height				700 0
+
+	acceleration		250 250 235 -250 -450 -400
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843
+		end				0.9529 0.6588 0.04706 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				450 350
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Copy of Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution
+
+	count				75
+
+	life				1200 1500
+
+	delay				0 100
+
+	origin				0 0 250 0 0 0
+
+	radius				300
+
+	height				100
+
+	acceleration		250 500 350 -250 -500 -450
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843
+		end				0.9529 0.6588 0.04706 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				450 350
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+Particle
+{
+	name				Copy of Copy of Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				75
+
+	life				1500
+
+	delay				0 100
+
+	origin				0 0 350 0 0 0
+
+	radius				400
+
+	acceleration		2500 250 235 0 0 0
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843
+		end				0.9529 0.6588 0.04706 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				450 350
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}

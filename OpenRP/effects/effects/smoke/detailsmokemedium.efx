@@ -1,0 +1,232 @@
+repeatDelay				250
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				18 20
+
+	life				1800
+
+	delay				0 570
+
+	radius				4 5
+
+	height				5
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			6 7 -10 0 -10 8
+
+	gravity				13 5
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529 1 0.9843 0.9412
+		end				0 0 0
+		parm			5000
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.3
+		end				0
+		parm			1 0
+		flags			linear wave
+	}
+
+	size
+	{
+		start			5
+		end				13 12
+		parm			4 15
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+		gfx/misc/black_smoke2
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	rgb
+	{
+		start			1 0 0 1 0.9843 0.9412
+	}
+}
+
+Particle
+{
+	name				boomsmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				10
+
+	life				1500 1800
+
+	radius				6 4
+
+	height				5
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			7 -4 -6 4 3 4
+
+	gravity				13 5
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529 1 0.9843 0.9412
+		end				0 0 0
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.8 0.3
+		end				0
+		parm			1 0
+		flags			linear wave
+	}
+
+	size
+	{
+		start			2 3
+		end				12 10
+		parm			7
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}
+
+Particle
+{
+	name				steam
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				20 16
+
+	life				2100 2300
+
+	delay				0 270
+
+	radius				3 2
+
+	height				3 2
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			14 14 -14 0 -14 14
+
+	acceleration		14 0 0 0 0 0
+
+	gravity				13 5
+
+	rgb
+	{
+		start			0.6275 0.6275 0.6431 0.7529 0.7529 0.7529
+		end				0 0 0
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.3
+		end				0 0.1
+		parm			1 0
+		flags			linear wave
+	}
+
+	size
+	{
+		start			2 6
+		end				10
+		parm			4 15
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				blackboom
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				9
+
+	life				1500 1800
+
+	radius				6 4
+
+	height				4 3
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			7 -4 -6 4 3 4
+
+	gravity				13 5
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529 1 0.9843 0.9412
+		end				0 0 0
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.8 0.3
+		end				0
+		parm			1 0
+		flags			linear wave
+	}
+
+	size
+	{
+		start			2 3
+		end				10 12
+		parm			7
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}

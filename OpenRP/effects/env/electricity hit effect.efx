@@ -1,0 +1,37 @@
+repeatDelay				300
+
+Electricity
+{
+	flags				useModel useBBox usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				1 0
+
+	life				400 500
+
+	delay				0 340
+
+	bounce				3 8
+
+	origin2				30 30 30 -30 -30 -30
+
+	rgb
+	{
+		start			0 0 1 0.502 0 0.502
+		end				1 0.9843 0.9412 1 1 1
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			0.7 1
+		end				0.6 0.5
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/blueLine
+	]
+}

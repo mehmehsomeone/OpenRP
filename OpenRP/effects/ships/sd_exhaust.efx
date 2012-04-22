@@ -1,0 +1,36 @@
+repeatDelay				439
+
+Particle
+{
+	spawnFlags			rgbComponentInterpolation
+
+	count				2
+
+	life				800
+
+	rgb
+	{
+		start			0.502 0.9255 1
+		end				0.502 0.9255 1
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.5 0.25
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1500
+		end				1700
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/sd_glow
+	]
+}

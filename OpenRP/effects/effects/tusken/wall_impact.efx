@@ -1,0 +1,48 @@
+repeatDelay				300
+
+FxRunner
+{
+	name				smoke
+
+	playfx
+	[
+		smoke/fleshhitsmokebig
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	life				300 400
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843
+		flags			random nonlinear
+	}
+}
+
+FxRunner
+{
+	playfx
+	[
+		sparks/radiusspark
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/effects/wall_smash.mp3
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		explosions/tuskenblow
+	]
+}

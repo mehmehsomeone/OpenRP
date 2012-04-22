@@ -1,0 +1,55 @@
+repeatDelay				50
+
+Particle
+{
+	flags				usePhysics impactKills impactFx useAlpha
+
+	spawnFlags			evenDistribution
+
+	count				7
+
+	life				150 200
+
+	delay				0 50
+
+	rotation			15 30
+
+	rotationDelta		-5 5
+
+	velocity			-100 0 0 -250 0 0
+
+	acceleration		60 0 0 100 0 0
+
+	rgb
+	{
+		start			1 1 1 0.502 0.502 0
+		end				1 1 1 0.502 0.502 0
+		parm			25 35
+		flags			clamp
+	}
+
+	alpha
+	{
+		start			0 0.1
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			9 12
+		end				2 5
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+	]
+
+	impactfx
+	[
+		env/thruster_spray
+	]
+}

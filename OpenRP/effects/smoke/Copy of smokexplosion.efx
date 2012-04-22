@@ -1,0 +1,57 @@
+repeatDelay				300
+
+Particle
+{
+	name				splode
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				25 23
+
+	life				1100 1200
+
+	origin				10 -35 -35 20 35 35
+
+	radius				40
+
+	height				110
+
+	rotation			-29 27
+
+	rotationDelta		-10 10
+
+	acceleration		20 20 10 20 -20 -10
+
+	gravity				-205 0
+
+	rgb
+	{
+		start			0.5137 0.5137 0.5137
+		end				0 0 0 1 0.9843 0.9412
+		flags			linear clamp
+	}
+
+	alpha
+	{
+		start			0.7 0.8
+		end				0.1
+		parm			20 30
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			5
+		end				300
+		parm			1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke
+	]
+}

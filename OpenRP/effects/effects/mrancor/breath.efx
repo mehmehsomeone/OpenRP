@@ -1,0 +1,205 @@
+repeatDelay				280
+
+Particle
+{
+	name				lightpuff
+
+	count				20 23
+
+	life				800 1000
+
+	delay				0 300
+
+	origin				25 0 -10
+
+	rotation			0 360
+
+	rotationDelta		20 -20
+
+	velocity			0 0 -600 0 0 -200
+
+	acceleration		-15 -15 -75 15 15 -40
+
+	gravity				50 200
+
+	rgb
+	{
+		start			0 1 0.251 1 1 0
+		end				0 0.6078 0.1529 1 0.7255 0
+		parm			1
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			20 25
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			20 30
+		end				140 200
+		parm			30 40
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/snowpuff2
+	]
+}
+
+Particle
+{
+	name				darkpuff
+
+	flags				useAlpha
+
+	count				20 25
+
+	life				800 1000
+
+	delay				0 300
+
+	origin				25 0 -10
+
+	rotation			0 360
+
+	rotationDelta		20 -20
+
+	velocity			0 0 -600 0 0 -200
+
+	acceleration		-15 -15 -200 15 15 -150
+
+	gravity				0 100
+
+	rgb
+	{
+		start			0 1 0.251 1 1 0
+		end				0 0.6078 0.1529 1 0.7255 0
+		parm			1
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0.7 0.3
+		parm			20 25
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			15 20
+		end				200 140
+		parm			30 40
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/puffdark
+	]
+}
+
+Particle
+{
+	name				base
+
+	count				3 5
+
+	life				300 500
+
+	delay				0 200
+
+	origin				25 0 -10
+
+	rotation			0 360
+
+	rotationDelta		100 -100
+
+	velocity			0 0 -75 0 0 -50
+
+	rgb
+	{
+		start			0 1 0.251 1 0.7255 0
+		end				1 1 0 0 0.6078 0.1529
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.8 0.7
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			60 80
+		end				10 15
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/snowpuff2
+	]
+}
+
+Particle
+{
+	name				sparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				3 5
+
+	life				1000 800
+
+	delay				0 100
+
+	bounce				0.7 0.3
+
+	origin				-40 -40 0 40 40 0
+
+	rotation			0 360
+
+	rotationDelta		100 -100
+
+	velocity			-30 -30 -400 30 30 -100
+
+	acceleration		-50 -50 -200 50 50 -150
+
+	gravity				-400 -200
+
+	rgb
+	{
+		start			0 1 0.251 1 0.7255 0
+		end				1 1 0 0 0.6078 0.1529
+		parm			20 15
+		flags			random wave
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			26 32
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}

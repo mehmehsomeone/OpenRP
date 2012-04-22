@@ -1,0 +1,455 @@
+repeatDelay				300
+
+Light
+{
+	name				Flash
+
+	life				1000 2500
+
+	alpha
+	{
+		end				0
+		flags			random linear
+	}
+
+	size
+	{
+		start			120
+		end				10
+		flags			linear
+	}
+}
+
+CameraShake
+{
+	name				Shake
+
+	flags				usePhysics
+
+	life				500 800
+
+	bounce				2 4
+
+	radius				300 400
+}
+
+Particle
+{
+	name				explosion01
+
+	count				2 3
+
+	life				500 700
+
+	origin				-200 -20 -20 200 20 20
+
+	rotation			0 360
+
+	rotationDelta		-1 1
+
+	velocity			5 -5 -5 10 5 5
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843 0.9882 0.502 0.01176
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			80 120
+		end				200 225
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/exp01_1
+		gfx/misc/exp01_2
+	]
+}
+
+Particle
+{
+	name				Orangesplosion
+
+	flags				setShaderTime
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				60
+
+	life				700 900
+
+	delay				400 800
+
+	origin				700 -8 -8 900 8 8
+
+	radius				200
+
+	height				200
+
+	rotation			0 360
+
+	rotationDelta		-1 1
+
+	velocity			5 -20 -20 10 20 20
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.9529 0.6588 0.04706
+		end				0.9529 0.6588 0.04706 0.9922 0.1098 0.007843
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			60 75
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			100 300
+		end				450 500
+		parm			31 50
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/exp/explosion1
+		gfx/exp/rocket_explosion
+	]
+}
+
+Particle
+{
+	name				Lingeringplosion
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				4 5
+
+	life				1000
+
+	delay				300 0
+
+	origin				600 0 0
+
+	rotation			-180 180
+
+	rotationDelta		-1 1
+
+	velocity			5 -5 -5 10 5 5
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843 1 0.8353 0.4902
+		end				0.9529 0.6588 0.04706 0.9451 0.4078 0.01176
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			70 85
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			400
+		parm			40
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+		gfx/misc/steam2
+	]
+}
+
+Particle
+{
+	name				Dust
+
+	flags				useAlpha
+
+	spawnFlags			evenDistribution rgbComponentInterpolation
+
+	count				0
+
+	life				900 1400
+
+	delay				350 500
+
+	origin				10 -80 -80 160 80 80
+
+	rotation			-180 180
+
+	rotationDelta		-8 8
+
+	velocity			20 -40 -40 40 40 40
+
+	acceleration		-5 -5 -5 5 5 5
+
+	gravity				-50 -30
+
+	rgb
+	{
+		start			0.9451 0.6549 0.4392 0.9882 0.7255 0.1804
+	}
+
+	alpha
+	{
+		end				0
+		parm			60 75
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			10 40
+		end				190 240
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/dotfill_a
+	]
+}
+
+Cylinder
+{
+	name				mushroomcontrast
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				5
+
+	life				1400
+
+	origin				5 0 0
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			30
+		end				700
+		parm			40
+		flags			linear
+	}
+
+	size2
+	{
+		start			120
+		end				500
+		parm			40
+		flags			linear nonlinear
+	}
+
+	length
+	{
+		start			14
+		end				250
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/shockwave
+	]
+}
+
+Cylinder
+{
+	name				mushroomstem
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				7
+
+	life				1000
+
+	delay				100
+
+	origin				5 0 0
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843 1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			60
+		end				600
+		parm			80
+		flags			nonlinear
+	}
+
+	size2
+	{
+		start			120
+		end				400
+		parm			80
+		flags			linear wave
+	}
+
+	length
+	{
+		start			12
+		end				700
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/shockwave
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/tie_fighter/tieexplode.wav
+	]
+}
+
+Cylinder
+{
+	name				mushroomcircle
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				5
+
+	life				1000
+
+	delay				0 100
+
+	origin				200 0 0
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843 1 1 1
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			300
+		end				1000
+		parm			40
+		flags			linear
+	}
+
+	size2
+	{
+		start			120
+		end				500
+		parm			40
+		flags			linear nonlinear
+	}
+
+	length
+	{
+		start			14
+		end				28
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/shockwave
+	]
+}
+
+Particle
+{
+	name				Copy of Orangesplosion
+
+	flags				setShaderTime
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				60
+
+	life				800 900
+
+	delay				400 800
+
+	origin				300 -8 -8 300 8 8
+
+	radius				30 20
+
+	height				1000 10
+
+	rotation			0 360
+
+	rotationDelta		-1 1
+
+	velocity			5 -20 -20 10 20 20
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 1 0
+		end				0.9882 0.502 0.01176 0.9922 0.1098 0.007843
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			60 75
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			100 300
+		end				200 300
+		parm			31 50
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/exp/explosion1
+		gfx/exp/rocket_explosion
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		explosions/nuke
+	]
+}

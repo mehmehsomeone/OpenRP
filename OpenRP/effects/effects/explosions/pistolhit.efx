@@ -1,0 +1,204 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere rgbComponentInterpolation
+
+	count				13 14
+
+	life				60 70
+
+	delay				0 300
+
+	radius				2
+
+	height				2
+
+	acceleration		25 25 23 -25 -45 -40
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0 0
+		end				1 0 0
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			2
+		end				4 5
+		parm			45 40
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				whitecore
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution rgbComponentInterpolation
+
+	count				13 14
+
+	life				100 70
+
+	delay				0 300
+
+	radius				0.3
+
+	height				0.3
+
+	acceleration		25 25 23 -25 -45 -40
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0.502 0 1 0.9843 0.9412
+		end				1 0 0
+		parm			15 0
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.6 0.4
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			1 2
+		end				3 4
+		parm			1
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				smokey
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel evenDistribution rgbComponentInterpolation
+
+	count				4 3
+
+	life				100 200
+
+	delay				0 300
+
+	radius				2
+
+	height				2
+
+	acceleration		25 25 23 -25 -45 -40
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0 0
+		end				1 0 0
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.6 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			2 3
+		end				10 13
+		parm			1
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Copy of smokey
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder rgbComponentInterpolation
+
+	count				3 2
+
+	life				200
+
+	radius				3
+
+	height				2
+
+	acceleration		25 25 23 -25 -45 -40
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0 0
+		end				1 0 0
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.6 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			2 3
+		end				4 1
+		parm			1
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

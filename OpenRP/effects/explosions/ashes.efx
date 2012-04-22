@@ -1,0 +1,175 @@
+repeatDelay				4139
+
+Particle
+{
+	name				fleshparts
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				300
+
+	life				3700 3000
+
+	delay				300
+
+	origin				-150 -60 -60 150 60 60
+
+	radius				85
+
+	height				85
+
+	rotation			180 360
+
+	rotationDelta		360 0
+
+	velocity			85 -37 -52 85 38 27
+
+	acceleration		-5 -5 -5 5 5 5
+
+	gravity				-20 60
+
+	rgb
+	{
+		start			1 0.4 0 1 1 0
+		end				0.502 0 0 0.9922 0.1098 0.007843
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			0.4 0.3
+		end				5.5 4.7
+		parm			4 0
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/embers
+	]
+}
+
+Particle
+{
+	name				greyash
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				200
+
+	life				2600
+
+	delay				300
+
+	origin				-150 -60 -60 150 60 60
+
+	radius				99
+
+	height				99
+
+	rotation			180 360
+
+	rotationDelta		360 0
+
+	velocity			86 -37 -52 86 38 27
+
+	acceleration		-5 -5 -5 5 5 5
+
+	gravity				-200 60
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529 0 0 0
+		end				0.7529 0.7529 0.7529
+		flags			linear wave
+	}
+
+	alpha
+	{
+		end				0
+		parm			80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			0.4 0.3
+		end				3
+		parm			4 0
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/embers
+	]
+}
+
+Particle
+{
+	name				Copy of greyash
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				200
+
+	life				2600
+
+	delay				300
+
+	origin				-150 -60 -60 150 60 60
+
+	radius				99
+
+	height				99
+
+	rotation			180 360
+
+	rotationDelta		360 0
+
+	velocity			85 -37 -52 85 38 27
+
+	acceleration		-5 -5 -5 5 5 5
+
+	gravity				-200 60
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529 0 0 0
+		end				0.7529 0.7529 0.7529
+		flags			linear wave
+	}
+
+	alpha
+	{
+		end				0
+		parm			80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			0.4 0.3
+		end				5 4
+		parm			4 0
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}

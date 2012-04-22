@@ -1,0 +1,34 @@
+Decal
+{
+	cullrange			1000
+
+	size
+	{
+		start			3.5 5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	cullrange			800
+
+	sounds
+	[
+		sound/weapons/flechette/ricochet1.wav
+		sound/weapons/flechette/ricochet2.wav
+	]
+}
+
+ForceFeedback
+{
+	forces
+	[
+		fffx/weapons/flechette/ricochet1
+		fffx/weapons/flechette/ricochet2
+	]
+}

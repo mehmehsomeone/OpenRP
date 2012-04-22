@@ -1,0 +1,243 @@
+Particle
+{
+	flags				impactKills
+
+	count				1 3
+
+	life				2500
+
+	radius				500
+
+	height				250
+
+	rotationDelta		200
+
+	rgb
+	{
+		start			0.2275 0.2275 0.2275 0.7059 0.1451 0.1451
+		end				0.8431 0.5569 0.1765 1 0 0
+		parm			1 4
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.8 1
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		end				750
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/gcircle
+	]
+}
+
+CameraShake
+{
+	life				1500
+
+	delay				500 1000
+
+	radius				1500
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/thermal/explode.mp3
+	]
+}
+
+Decal
+{
+	delay				250
+
+	size
+	{
+		start			150 350
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+		gfx/damage/burnmark4
+	]
+}
+
+OrientedParticle
+{
+	spawnFlags			axisFromSphere
+
+	life				2500
+
+	radius				1000
+
+	rgb
+	{
+		start			0.7059 0.1451 0.1451 0.502 0 0
+		end				0.3373 0.1216 0.1216 0 0 0
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		end				750
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/gcircle
+	]
+}
+
+Particle
+{
+	life				2500
+
+	rgb
+	{
+		start			0.7059 0.1451 0.1451 0.502 0 0
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		end				350
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+Particle
+{
+	life				500
+
+	rgb
+	{
+		start			0.502 0 0 0.7059 0.1451 0.1451
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		end				1000
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spikeb
+	]
+}
+
+Particle
+{
+	flags				usePhysics
+
+	life				1000
+
+	rgb
+	{
+		start			1 0 0
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			750
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/gcircle
+	]
+}
+
+OrientedParticle
+{
+	flags				usePhysics
+
+	life				1000
+
+	rgb
+	{
+		start			1 0 0
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			750
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/gcircle
+	]
+}
+
+FxRunner
+{
+	delay				200
+
+	playfx
+	[
+		thermal/thermalsmoke
+	]
+}
+
+FxRunner
+{
+	count				1
+
+	playfx
+	[
+		thermal/thermalchunks
+		thermal/thermalsparks
+	]
+}

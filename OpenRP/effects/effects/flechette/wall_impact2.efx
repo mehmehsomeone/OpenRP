@@ -1,0 +1,166 @@
+repeatDelay				250
+
+Tail
+{
+	name				sparks
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				2
+
+	life				300 400
+
+	intensity			0.25 0.4
+
+	velocity			120 -120 -120 250 120 120
+
+	gravity				-450 -550
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	size
+	{
+		start			0.3 0.45
+	}
+
+	length
+	{
+		start			4 10
+		end				0.1 1
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+OrientedParticle
+{
+	name				hitglow
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				6 5
+
+	life				700 800
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.9922 0.1098 0.007843
+		end				0.9922 0.1098 0.007843 1 0 0
+		flags			linear clamp
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			4.7 5
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Decal
+{
+	life				700 800
+
+	size
+	{
+		start			6.5 8.5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/bryar/hit_wall.wav
+	]
+}
+
+Line
+{
+	name				hitexplodeftails
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				2 3
+
+	life				300
+
+	delay				25 0
+
+	origin2				6 19 14 19 -20 -11
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843
+		end				0.9922 0.1098 0.007843
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.6 0.4
+	}
+
+	size
+	{
+		start			8
+		end				0 1
+		parm			3 6
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/ftail
+		gfx/effects/ftail1
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		flechette/t-21
+	]
+}
+
+FxRunner
+{
+	name				smoke
+
+	count				2
+
+	playfx
+	[
+		smoke/detailsmokebigviolent
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		explosions/t-21hitsecondary
+	]
+}

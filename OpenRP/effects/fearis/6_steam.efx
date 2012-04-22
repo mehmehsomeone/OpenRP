@@ -1,0 +1,59 @@
+repeatDelay				600
+
+Particle
+{
+	name				6_steam
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				1 2
+
+	life				700 750
+
+	delay				0 100
+
+	rotation			0 180
+
+	rotationDelta		-4 4
+
+	origin				-30 0 -30 30 0 30
+
+	velocity			250 -5 -5 300 0 0
+
+	rgb
+	{
+		start			0.7137 0.8863 0.9451 0.4588 0.5725 0.8353
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0.5
+		parm			50 60
+		flags			linear clamp
+	}
+
+	size
+	{
+		start			45 50
+		end				70 80
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam2
+	]
+}
+
+Sound
+{
+	name				steam
+
+	sounds
+	[
+		sound/fearis/steam4.wav
+	]
+}

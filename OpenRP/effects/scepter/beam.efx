@@ -1,0 +1,142 @@
+repeatDelay				50
+
+Particle
+{
+	spawnFlags			rgbComponentInterpolation
+
+	origin				0 -35 0 0 -25 0
+
+	rgb
+	{
+		start			1 0.6118 0.4235 1 0.302 0
+	}
+
+	size
+	{
+		start			30
+		end				20
+		flags			random linear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+Line
+{
+	name				Copy of Copy of Unnamed Line 0
+
+	spawnFlags			rgbComponentInterpolation
+
+	origin2				0 -512 0 0 -490 0
+
+	rgb
+	{
+		start			1 0.9373 0.502
+	}
+
+	alpha
+	{
+		start			0.9
+		end				0.5
+		flags			random
+	}
+
+	size
+	{
+		start			8 16
+	}
+
+	shaders
+	[
+		gfx/effects/sabers/orange_line
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 0
+
+	spawnFlags			evenDistribution
+
+	count				3
+
+	delay				0 50
+
+	origin				0 -10 0 0 -40 0
+
+	velocity			0 -80 0 0 -380 0
+
+	rgb
+	{
+		start			1 0.6118 0.4235 1 0.302 0
+	}
+
+	alpha
+	{
+		flags			random
+	}
+
+	size
+	{
+		start			20
+		end				8
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+Line
+{
+	name				Copy of Copy of Copy of Unnamed
+
+	origin2				0 -516 0 0 -496 0
+
+	size
+	{
+		start			4
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/effects/sabers/orange_line
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 0
+
+	spawnFlags			rgbComponentInterpolation
+
+	origin				0 -45 0 0 -25 0
+
+	rgb
+	{
+		start			0.502 0 0.01176 0.502 0 0.2235
+	}
+
+	alpha
+	{
+		start			0.25
+	}
+
+	size
+	{
+		start			80 90
+		end				60
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}

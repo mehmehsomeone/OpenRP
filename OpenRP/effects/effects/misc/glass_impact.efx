@@ -1,0 +1,43 @@
+repeatDelay				300
+
+Sound
+{
+	sounds
+	[
+		sound/effects/glass_tumble.wav
+		sound/effects/glass_tumble2.wav
+		sound/effects/glass_tumble3.wav
+	]
+}
+
+Particle
+{
+	count				12
+
+	life				3000
+
+	intensity			0.1 0.3
+
+	velocity			100 -110 -110 200 110 110
+
+	gravity				-500 -550
+
+	alpha
+	{
+		start			0.2
+		end				0
+		parm			90
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			1 3
+	}
+
+	shaders
+	[
+		gfx/misc/smallGlassChunk1
+		gfx/misc/smallGlassChunk2
+	]
+}

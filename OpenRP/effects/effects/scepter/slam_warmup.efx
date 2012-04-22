@@ -1,0 +1,169 @@
+repeatDelay				300
+
+Line
+{
+	flags				depthHack
+
+	life				1500
+
+	origin2				0 -42 0
+
+	rgb
+	{
+		start			0.2745 0 1
+	}
+
+	alpha
+	{
+		start			0
+		end				0.8
+		flags			linear
+	}
+
+	size
+	{
+		start			4
+		end				6
+		parm			14 15
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/bryarSideFlash
+	]
+}
+
+Particle
+{
+	flags				depthHack
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				1500
+
+	origin				0 -8 0
+
+	rotation			0 360
+
+	rotationDelta		60
+
+	rgb
+	{
+		start			0.5608 0.349 1 0.6157 0.2353 1
+		end				0.7216 0.702 1
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0
+		flags			linear
+	}
+
+	size
+	{
+		start			18
+		end				8
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/misc/lightningFlash
+	]
+}
+
+Light
+{
+	flags				depthHack
+
+	life				1500
+
+	rgb
+	{
+		start			0.502 0.9255 1 0.01176 0.6706 0.9882
+		flags			random linear
+	}
+
+	size
+	{
+		start			100 150
+		flags			random linear
+	}
+}
+
+Line
+{
+	name				Copy of Unnamed Line 0
+
+	flags				depthHack
+
+	life				1500
+
+	origin2				0 -80 0
+
+	rgb
+	{
+		start			0.4235 0.3255 1
+	}
+
+	alpha
+	{
+		start			0
+		end				0.8
+		flags			linear
+	}
+
+	size
+	{
+		start			-4
+		end				-6
+		parm			19
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/bryarSideFlash
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 1
+
+	flags				depthHack
+
+	life				1500
+
+	origin				0 -14 0
+
+	rotation			0 360
+
+	rotationDelta		60
+
+	rgb
+	{
+		start			0 0 1
+	}
+
+	alpha
+	{
+		start			0
+		end				0.4
+		flags			linear
+	}
+
+	size
+	{
+		start			40
+		end				8
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/misc/flare
+	]
+}
