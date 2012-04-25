@@ -26,6 +26,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent );
 void Cmd_SVGrantAdmin_F();
 void Cmd_RemoveAdmin_F( gentity_t * ent);
 void Cmd_SVRemoveAdmin_F();
+void Cmd_SetClass_F();
 void Cmd_GetNPC_F( gentity_t *ent );
 //--Feat Functions--
 void AddFeat(int charID, int featID, int level);
