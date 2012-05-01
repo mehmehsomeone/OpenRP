@@ -827,28 +827,42 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char accountName[MAX_TOKEN_CHARS];
+	short int adminLevel;
+	char temp[33];
 
 	if(ent->client->sess.openrpIsAdmin == qfalse)
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"You are not allowed to use this command.\n\"");
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1You are not allowed to use this command.\n\"");
 		return;
 	}
 	if( trap_Argc() < 2 ){
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"Usage: GrantAdmin <accountname>\n\"");
 		return;
 	}
+
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
+	trap_Argv( 2, temp, MAX_STRING_CHARS );
+
+	adminLevel = atoi( temp );
 	
-	int valid = q.get_num(va("SELECT * FROM users WHERE name='%s'",accountName));
-	if(!valid)
+	if ( !adminLevel == 1 || 2 || 3 || 4 || 5 || 6 || 7 || 8 || 9 || 10 )
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"This user does not exist\n\"");
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"The admin level must be a number from 1-10.\n\"" );
 		return;
 	}
 
-	q.execute(va("UPDATE users set admin='1' WHERE name='%s'",accountName));
+	int valid = q.get_num( va( "SELECT * FROM users WHERE name='%s'", accountName ) );
+	if( !valid )
+	{
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"This user does not exist\n\"" );
+		return;
+	}
 
-	trap_SendServerCommand( ent->client->ps.clientNum, "print \"Admin granted\n\"");
+	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountName ) );
+
+	q.execute( va( "UPDATE users set adminlevel='%d' WHERE name='%s'", adminLevel, accountName ) );
+
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Admin level %d granted to %s.\n\"", adminLevel, accountName ) );
 	return;
 }
 
@@ -857,23 +871,37 @@ void Cmd_SVGrantAdmin_F()
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char accountName[MAX_TOKEN_CHARS];
+	short int adminLevel;
+	char temp[33];
 
 	if( trap_Argc() < 2 ){
-		G_Printf("Usage: GrantAdmin <accountname>\n");
+		G_Printf("Usage: GrantAdmin <accountname> <adminlevel1-10>\n");
 		return;
 	}
+
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
+	trap_Argv( 2, temp, MAX_STRING_CHARS );
+
+	adminLevel = atoi( temp );
+	
+	if (!adminLevel == 1 || 2 || 3 || 4 || 5 || 6 || 7 || 8 || 9 || 10)
+	{
+		G_Printf( "The admin level must be a number from 1-10.\n" );
+		return;
+	}
 	
 	int valid = q.get_num(va("SELECT * FROM users WHERE name='%s'",accountName));
 	if(!valid)
 	{
-		G_Printf("This user does not exist\n");
+		G_Printf("This user does not exist.\n");
 		return;
 	}
 
-	q.execute(va("UPDATE users set admin='1' WHERE name='%s'",accountName));
+	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountName ) );
 
-	G_Printf("Admin granted\n");
+	q.execute( va( "UPDATE users set adminlevel='%d' WHERE name='%s'", adminLevel, accountName ) );
+
+	G_Printf( "Admin level %d granted to %s.\n", adminLevel, accountName );
 	return;
 }
 
@@ -885,7 +913,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 
 	if(ent->client->sess.openrpIsAdmin == qfalse)
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"You are not allowed to use this command.\n\"");
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1You are not allowed to use this command.\n\"");
 		return;
 	}
 	if( trap_Argc() < 2 ){

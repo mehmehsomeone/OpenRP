@@ -39,7 +39,7 @@ M_Cmd_Status_f - MJN
 */
 void M_Cmd_Status_f( gentity_t * ent)
 {
-	int i;
+	short int i;
 	int clientNum;
 	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
 		if (ent->client->sess.openrpIsAdmin ){
