@@ -10,7 +10,6 @@ void LoadSkills(gentity_t * targetplayer);
 void LoadForcePowers(gentity_t * targetplayer);
 void LoadFeats(gentity_t * targetplayer);
 void LoadAttributes(gentity_t * targetplayer);
-void SaveAttributes(gentity_t * targetplayer);
 //--Ingame commands--
 void Cmd_AccountLogin_F(gentity_t * targetplayer);
 void Cmd_AccountLogout_F(gentity_t * targetplayer);
@@ -20,14 +19,13 @@ void Cmd_SelectCharacter_F(gentity_t * targetplayer);
 void Cmd_CreateCharacter_F(gentity_t * targetplayer);
 void Cmd_AddFeat_F(gentity_t * targetplayer);
 void Cmd_ListFeats_F(gentity_t * targetplayer);
-void Cmd_Grenade_F(gentity_t * targetplayer);
 void Cmd_CharacterInfo_F(gentity_t * targetplayer);
 void Cmd_GrantAdmin_F( gentity_t * ent );
 void Cmd_SVGrantAdmin_F();
 void Cmd_RemoveAdmin_F( gentity_t * ent);
 void Cmd_SVRemoveAdmin_F();
-void Cmd_SetClass_F();
 void Cmd_GetNPC_F( gentity_t *ent );
+void Cmd_GiveXP_F( gentity_t * targetplayer );
 //--Feat Functions--
 void AddFeat(int charID, int featID, int level);
 void InsertFeat(int charID, int featID);

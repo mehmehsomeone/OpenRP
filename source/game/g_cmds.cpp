@@ -2820,7 +2820,7 @@ void Cmd_SetViewpos_f( gentity_t *ent ) {
 		return;
 	}
 	if ( trap_Argc() != 5 ) {
-		trap_SendServerCommand( ent-g_entities, va("print \"usage: setviewpos x y z yaw\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"^5Command Usage: setviewpos x y z yaw\n\""));
 		return;
 	}
 
@@ -4010,6 +4010,10 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp (cmd, "qwremoveadmin") == 0) {
 		Cmd_RemoveAdmin_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "qwgivexp") == 0) {
+		Cmd_GiveXP_F (ent);
 		return;
 	}
 	/*

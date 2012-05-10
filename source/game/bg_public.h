@@ -21,6 +21,7 @@
 
 //[ClientPlugInDetect]
 #define CURRENT_OJPENHANCED_CLIENTVERSION		"OpenRP Client v1.0"
+#define CURRENT_OJPENHANCED_SERVERVERSION		"OpenRP Server v1.0"
 //[/ClientPlugInDetect]
 
 #define	STEPSIZE		18

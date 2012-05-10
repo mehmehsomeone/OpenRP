@@ -677,7 +677,7 @@ int M_HandlePassThroughFuncs(gentity_t * ent, char * cmd)
 					// Check if any paramaters have been give. If not then print the usage:
 					if( trap_Argc() < passthroughfuncs[i].NumOfArgs ){
 
-						trap_SendServerCommand( ent->client->ps.clientNum, va("print \"Usage: %s %s\n\"", passthroughfuncs[i].clientcommand, passthroughfuncs[i].usage) );
+						trap_SendServerCommand( ent->client->ps.clientNum, va("print \"^5Command Usage: %s %s\n\"", passthroughfuncs[i].clientcommand, passthroughfuncs[i].usage) );
 						return 0;
 					}
 					else {

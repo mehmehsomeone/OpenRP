@@ -22,13 +22,13 @@ M_Svcmd_Info_f - MJN
 */
 void M_Svcmd_Info_f( void )
 {
-	G_Printf("^4%s ^7by ^4%s\n\n", GAMEVERSION, AUTHOR);
-	G_Printf("^1Rcon Commands^7:\n");
-	G_Printf("status, minfo, mkick, msilence, munsilence, msleep, mrename, mshowmotd, ");
-	G_Printf("mpsay, mkickban, mbanrange, mtele, morigin, mnextmap, mslap, addip, removeip, listip, ");
-	G_Printf("mwhois, mforceteam, mallowvote, mdenyvote, mlockteam, munlockteam, mgametype, mnpcaccess, ");
-	G_Printf("mrandteams, madminaccess, mdenyadminaccess, mvstr, mempower, munempower, ");
-	G_Printf("mterminator, munterminator, mprotect, munprotect, mnotarget, mtimescale, mwarn, mforgive\n");
+	G_Printf("%s ^7by %s\n\n", CURRENT_OJPENHANCED_SERVERVERSION, AUTHOR);
+	G_Printf("Rcon Commands:\n");
+	G_Printf("status, qwinfo, qwkick, qwsilence, qwunsilence, qwsleep, qwrename, qwshowmotd, ");
+	G_Printf("qwpsay, qwkickban, qwbanrange, qwtele, qworigin, qwnextmap, qwslap, addip, removeip, listip, ");
+	G_Printf("qwwhois, qwforceteam, qwallowvote, qwdenyvote, qwlockteam, qwunlockteam, qwgametype, qwnpcaccess, ");
+	G_Printf("qwrandteams, qwadminaccess, qwdenyadminaccess, qwvstr, qwempower, qwunempower, ");
+	G_Printf("qwterminator, qwunterminator, qwprotect, qwunprotect, qwnotarget, qwtimescale, qwwarn, qwforgive\n");
 }
 /*
 =================
@@ -1178,7 +1178,7 @@ void M_Cmd_Ignore_f( gentity_t *ent )
 	qboolean ignore;
 
 	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( ent-g_entities, "print \"Usage: ignore <playerid>\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^5Command Usage: ignore <playerid>\n\"");
 		return;
 	}
 
@@ -1270,7 +1270,7 @@ void M_Cmd_ASay_f ( gentity_t * ent )
 	int j;
 
 	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( ent-g_entities, va("print \"Usage: amsay <message>\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"^5Command Usage: amsay <message>\n\""));
 		return;
 	}
 

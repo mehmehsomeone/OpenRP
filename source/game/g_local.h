@@ -836,11 +836,8 @@ typedef struct {
 	qboolean    loggedinAccount;    // Logged into a player Account
 	int			userID;     // Account ID
 	qboolean    characterChosen;    // Character chosen
-	int			characterID;	// Character Name
-	int			modelScale; // model scale
-	int			XP; //XP
-	int			level; //Level
-	int			playerClass; //Player Class
+	int			characterID;	// Character ID
+	int			modelScale; // Model Scale
 	qboolean	openrpIsAdmin;		// MJN - Logged in Admin.
 	unsigned char ip[4];			// MJN - For SavedIPs
 	int	 chatIgnoreClients[2];		// MJN - Clients which are ignoring this client. [0] = (0-31)  [1] = (32-63)
