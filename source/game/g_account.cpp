@@ -321,8 +321,9 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	std::string charModelSTR = charModel;
 
 	char temp[MAX_STRING_CHARS];
+	int modelScale;
 	trap_Argv( 3, temp, MAX_STRING_CHARS );
-	targetplayer->client->sess.modelScale = atoi(temp);
+	modelScale = atoi(temp);
 
 	//Check if the character exists
 	Query q(db);
@@ -330,12 +331,7 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	std::string DBname = q.get_string(va("SELECT name FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str()));
 
 	//Create character
-	q.execute( va( "INSERT INTO characters(userID,name) VALUES('%i','%s')", targetplayer->client->sess.userID, charNameSTR.c_str() ) );
-	q.execute( va( "UPDATE characters set model='%s' WHERE ID='%i'", charModelSTR.c_str(), targetplayer->client->sess.characterID ) );
-	q.execute( va( "UPDATE characters set modelscale='%i' WHERE ID='%i'", targetplayer->client->sess.modelScale, targetplayer->client->sess.characterID ) );
-	q.execute( va( "UPDATE characters set level='1' WHERE ID='%i'", targetplayer->client->sess.characterID ) );
-	q.execute( va( "UPDATE characters set xp='0' WHERE ID='%i'", targetplayer->client->sess.characterID ) );
-	q.execute( va( "UPDATE characters set playerclass='0' WHERE ID='%i'", targetplayer->client->sess.characterID ) );
+	q.execute( va( "INSERT INTO characters(userID,name,model,modelscale,level,xp,playerclass) VALUES('%i','%s','%s','%i','1','0,'0')", targetplayer->client->sess.userID, charNameSTR.c_str(), charModelSTR.c_str(), modelScale ) );
 
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Sucess: Character created.\n\"" ) );
 
