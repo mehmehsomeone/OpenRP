@@ -22,7 +22,7 @@ M_Svcmd_Info_f - MJN
 */
 void M_Svcmd_Info_f( void )
 {
-	G_Printf("%s ^7by %s\n\n", CURRENT_OJPENHANCED_SERVERVERSION, AUTHOR);
+	G_Printf("%s ^7by %s\n\n", OPENRP_SERVERVERSION, AUTHOR);
 	G_Printf("Rcon Commands:\n");
 	G_Printf("status, qwinfo, qwkick, qwsilence, qwunsilence, qwsleep, qwrename, qwshowmotd, ");
 	G_Printf("qwpsay, qwkickban, qwbanrange, qwtele, qworigin, qwnextmap, qwslap, addip, removeip, listip, ");

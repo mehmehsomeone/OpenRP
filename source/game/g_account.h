@@ -10,6 +10,7 @@ void LoadSkills(gentity_t * targetplayer);
 void LoadForcePowers(gentity_t * targetplayer);
 void LoadFeats(gentity_t * targetplayer);
 void LoadAttributes(gentity_t * targetplayer);
+void LevelCheck( gentity_t * targetplayer );
 //--Ingame commands--
 void Cmd_AccountLogin_F(gentity_t * targetplayer);
 void Cmd_AccountLogout_F(gentity_t * targetplayer);

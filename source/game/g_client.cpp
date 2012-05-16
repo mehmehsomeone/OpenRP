@@ -2879,7 +2879,7 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	}
 	else
 	{//send this client the MOTD for clients aren't running OJP or just not the right version.
-TextWrapCenterPrint( va("^1You are missing the OpenRP client, or have an outdated client version. Please download %s from http://code.google.com/p/openrp/ \nIf you have a client version greater than %s and you are seeing this, then this server has an old server version, and must update.",CURRENT_OJPENHANCED_CLIENTVERSION,CURRENT_OJPENHANCED_CLIENTVERSION), motd);
+TextWrapCenterPrint( va("^1You are missing the OpenRP client, or have an outdated version. Please download %s from http://code.google.com/p/openrp/ \nIf you have a version greater than %s and you are seeing this, then this server has an old server version and must update.", OPENRP_CLIENTVERSION, OPENRP_CLIENTVERSION), motd);
 	}
 
 	trap_SendServerCommand( clientNum, va("cp \"%s\n\"", motd ) );

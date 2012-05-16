@@ -303,13 +303,11 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	}
 
 	//Make sure they entered a character
-	if( trap_Argc() < 2 ){
+	if( trap_Argc() != 4 ){
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Command Usage: /qwcreateCharacter <name> <model> <modelscale>\n\"");
 		return;
 	}
 
-	char userinfo[MAX_INFO_STRING];
-	trap_GetUserinfo( targetplayer->client->ps.clientNum, userinfo, MAX_INFO_STRING );
 
 	//Get the character name
 	char charName[MAX_STRING_CHARS];
@@ -331,7 +329,7 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	std::string DBname = q.get_string(va("SELECT name FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str()));
 
 	//Create character
-	q.execute( va( "INSERT INTO characters(userID,name,model,modelscale,level,xp,playerclass) VALUES('%i','%s','%s','%i','1','0,'0')", targetplayer->client->sess.userID, charNameSTR.c_str(), charModelSTR.c_str(), modelScale ) );
+	q.execute( va( "INSERT INTO characters(userID,name,model,modelscale,level,xp,playerclass) VALUES('%i','%s','%s','%i','%i','%i','%i')", targetplayer->client->sess.userID, charNameSTR.c_str(), charModelSTR.c_str(), modelScale, 1, 0, 0 ) );
 
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Sucess: Character created.\n\"" ) );
 
@@ -361,13 +359,13 @@ void Cmd_SelectCharacter_F(gentity_t * targetplayer)
 	//Make sure they're logged in
 	if(!isLoggedIn(targetplayer))
 	{
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in to select a character.\n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: ^7You must be logged in to select a character\n\"");
 		return;
 	}
 
 	//Make sure they entered a character
 	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Command Usage: /qwcharacter <name>\n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"Usage: qwcharacter <name>\n\"");
 		return;
 	}
 
@@ -382,20 +380,16 @@ void Cmd_SelectCharacter_F(gentity_t * targetplayer)
 	int charID = q.get_num(va("SELECT ID FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str()));
 	if(charID == 0)
 	{
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: Character does not exist\n\"");
 		return;
 	}
-	
+
 	//Update that we have a character selected
 	targetplayer->client->sess.characterChosen = qtrue;
 	targetplayer->client->sess.characterID = charID;
-
 	SetTeam(targetplayer,"f");
-
 	LoadCharacter(targetplayer);
-
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va("print \"^5Your character is selected as: %s.\n\"",charName));
-
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va("print \"^1Success: ^7Your character is selected as: %s!\n\"",charName));
 	targetplayer->flags &= ~FL_GODMODE;
 	targetplayer->client->ps.stats[STAT_HEALTH] = targetplayer->health = -999;
 	player_die (targetplayer, targetplayer, targetplayer, 100000, MOD_SUICIDE);
@@ -418,7 +412,7 @@ void LoadCharacter(gentity_t * targetplayer)
 	LoadSkills(targetplayer);
 	LoadForcePowers(targetplayer);
 	LoadFeats(targetplayer);
-	LoadAttributes(targetplayer);
+	//LoadAttributes(targetplayer);
 
 	
 	//Create new power string
@@ -760,7 +754,7 @@ void Cmd_CharacterInfo_F(gentity_t * targetplayer)
 		//ModelScale
 		int charModelScale = q.get_num( va( "SELECT modelscale FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
 		//Level
-		int charLevel = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
+		int charLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
 		//XP
 		int charXP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
 		//PlayerClass
@@ -1101,10 +1095,6 @@ void LoadAttributes(gentity_t * targetplayer)
 	char userinfo[MAX_INFO_STRING];
 	trap_GetUserinfo( targetplayer->client->ps.clientNum, userinfo, MAX_INFO_STRING );
 
-
-	//Name
-	std::string name = q.get_string(va("SELECT name FROM characters WHERE ID='%i'",targetplayer->client->sess.characterID));
-
     //Model
 	std::string model = q.get_string(va("SELECT model FROM characters WHERE ID='%i'",targetplayer->client->sess.characterID));
 	Info_SetValueForKey( userinfo, "model", model.c_str() );
@@ -1115,15 +1105,6 @@ void LoadAttributes(gentity_t * targetplayer)
 	int modelScale = q.get_num(va("SELECT modelscale FROM characters WHERE ID='%i'",targetplayer->client->sess.characterID));
 	targetplayer->client->ps.iModelScale= modelScale;
 	targetplayer->client->sess.modelScale= modelScale;
-
-	//XP
-	int XP = q.get_num(va("SELECT xp FROM characters WHERE ID='%i'",targetplayer->client->sess.characterID));
-
-	//Level
-	int level = q.get_num(va("SELECT level FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID));
-
-	//Player Class
-	int playerClass = q.get_num(va("SELECT playerclass FROM characters WHERE ID='%s'", targetplayer->client->sess.characterID));
 
 	return;
 }
@@ -1144,7 +1125,7 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 	int changedXP;
 
 	
-	if(targetplayer->client->sess.openrpIsAdmin == qfalse)
+	if (targetplayer->client->sess.openrpIsAdmin == qfalse)
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"");
 		return;
@@ -1185,7 +1166,55 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 
 	q.execute( va( "UPDATE characters set xp='%i' WHERE ID='%i'", newXPTotal, targetplayer->client->sess.characterID ) );
 
+	LevelCheck(targetplayer);
+
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: XP has been given to that character.\n\"" ) );
 
+	return;
+}
+
+/*
+=================
+
+Level Check
+
+=====
+*/
+void LevelCheck(gentity_t * targetplayer)
+{
+	if ( ( targetplayer->client->sess.loggedinAccount ) && ( targetplayer->client->sess.characterChosen ) )
+	{
+		Database db(DATABASE_PATH);
+		Query q(db);
+
+		//Get their character's XP
+		int XP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
+		//Get their character's current level
+		int level = q.get_num(va("SELECT level FROM characters WHERE ID='%i'",targetplayer->client->sess.characterID));
+
+		if ( XP >= 20 && XP < 40 && ( level != 2 ) )
+		{
+			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 2, targetplayer->client->sess.characterID ) );
+			trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Level up! You are now level 2!\n\"" ) );
+		}
+
+		if ( XP >= 40 && XP < 70 && ( level != 3 ) )
+		{
+			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 3, targetplayer->client->sess.characterID ) );
+			trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Level up! You leveled up to level 3!\n\"" ) );
+		}
+
+		if ( XP >= 70 && XP < 110 && ( level != 4 ) )
+		{
+			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 4, targetplayer->client->sess.characterID ) );
+			trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Level up! You leveled up to level 4!\n\"" ) );
+		}
+
+		if ( XP >= 110 && XP < 160 && ( level != 5 ) )
+		{
+			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 5, targetplayer->client->sess.characterID ) );
+			trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Level up! You leveled up to level 5!\n^5You've hit the level cap!\n\"" ) );
+		}
+	}
 	return;
 }

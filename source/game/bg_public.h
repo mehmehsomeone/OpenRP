@@ -20,8 +20,9 @@
 #define	GAME_VERSION		"basejka-1"
 
 //[ClientPlugInDetect]
-#define CURRENT_OJPENHANCED_CLIENTVERSION		"OpenRP-Client-v1.0"
-#define CURRENT_OJPENHANCED_SERVERVERSION		"OpenRP-Server-v1.0"
+#define OPENRP_CLIENTVERSION		"OpenRP 1.0"
+#define OPENRP_SERVERVERSION		"OpenRP 1.0"
+#define CURRENT_OJPENHANCED_CLIENTVERSION		"OJP Enhanced v1.3 OpenRP 1.0"
 //[/ClientPlugInDetect]
 
 #define	STEPSIZE		18
