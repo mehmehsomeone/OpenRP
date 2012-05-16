@@ -913,12 +913,12 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	}
 
 	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: GrantAdmin <accountname>\n\"");
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: qwGrantAdmin <accountname>\n\"");
 		return;
 	}
 
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
-	trap_Argv( 2, temp, MAX_STRING_CHARS );
+	/*trap_Argv( 2, temp, MAX_STRING_CHARS );
 
 	adminLevel = atoi( temp );
 	
@@ -927,7 +927,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"The admin level must be a number from 1-10.\n\"" );
 		return;
 	}
-
+	*/
 	int valid = q.get_num( va( "SELECT * FROM users WHERE name='%s'", accountName ) );
 	if( !valid )
 	{
@@ -937,9 +937,10 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 
 	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountName ) );
 
-	q.execute( va( "UPDATE users set adminlevel='%d' WHERE name='%s'", adminLevel, accountName ) );
+	//q.execute( va( "UPDATE users set adminlevel='%d' WHERE name='%s'", adminLevel, accountName ) );
 
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Admin level %d granted to %s.\n\"", adminLevel, accountName ) );
+	//trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Admin level %d granted to %s.\n\"", adminLevel, accountName ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Admin granted to %s.\n\"", accountName ) );
 	return;
 }
 
@@ -971,7 +972,7 @@ void Cmd_SVGrantAdmin_F()
 	}
 
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
-	trap_Argv( 2, temp, MAX_STRING_CHARS );
+	/*trap_Argv( 2, temp, MAX_STRING_CHARS );
 
 	adminLevel = atoi( temp );
 	
@@ -980,7 +981,7 @@ void Cmd_SVGrantAdmin_F()
 		G_Printf( "The admin level must be a number from 1-10.\n" );
 		return;
 	}
-	
+	*/
 	int valid = q.get_num(va("SELECT * FROM users WHERE name='%s'",accountName));
 	if(!valid)
 	{
@@ -990,9 +991,10 @@ void Cmd_SVGrantAdmin_F()
 
 	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountName ) );
 
-	q.execute( va( "UPDATE users set adminlevel='%d' WHERE name='%s'", adminLevel, accountName ) );
+	//q.execute( va( "UPDATE users set adminlevel='%d' WHERE name='%s'", adminLevel, accountName ) );
 
-	G_Printf( "Admin level %d granted to %s.\n", adminLevel, accountName );
+	//G_Printf( "Admin level %d granted to %s.\n", adminLevel, accountName );
+	G_Printf( "Admin granted to %s.\n", accountName );
 	return;
 }
 
@@ -1152,7 +1154,9 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 
 	//Check if the character exists
 	std::transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
-	int charID = q.get_num( va( "SELECT ID FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str() ) );
+	//int charID = q.get_num( va( "SELECT ID FROM characters WHERE userID='%i' AND name='%s'", targetplayer->client->sess.userID, charNameSTR.c_str() ) );
+
+	int charID = q.get_num( va( "SELECT ID FROM characters WHERE name='%s'", charNameSTR.c_str() ) );
 
 	if(charID == 0)
 	{
