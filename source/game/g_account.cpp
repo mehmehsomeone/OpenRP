@@ -903,8 +903,8 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	}
 
 	char accountName[MAX_TOKEN_CHARS];
-	short int adminLevel;
-	char temp[33];
+	//short int adminLevel;
+	//char temp[33];
 
 	if(ent->client->sess.openrpIsAdmin == qfalse)
 	{
@@ -928,7 +928,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 		return;
 	}
 	*/
-	int valid = q.get_num( va( "SELECT * FROM users WHERE name='%s'", accountName ) );
+	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountName ) );
 	if( !valid )
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"This user does not exist\n\"" );
@@ -982,7 +982,7 @@ void Cmd_SVGrantAdmin_F()
 		return;
 	}
 	*/
-	int valid = q.get_num(va("SELECT * FROM users WHERE name='%s'",accountName));
+	int valid = q.get_num(va("SELECT ID FROM users WHERE name='%s'",accountName));
 	if(!valid)
 	{
 		G_Printf("This user does not exist.\n");
@@ -1030,7 +1030,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 	}
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
 	
-	int valid = q.get_num(va("SELECT * FROM users WHERE name='%s'",accountName));
+	int valid = q.get_num(va("SELECT ID FROM users WHERE name='%s'",accountName));
 	if(!valid)
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"This user does not exist\n\"");
@@ -1069,7 +1069,7 @@ void Cmd_SVRemoveAdmin_F()
 	}
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
 	
-	int valid = q.get_num(va("SELECT * FROM users WHERE name='%s'",accountName));
+	int valid = q.get_num(va("SELECT ID FROM users WHERE name='%s'",accountName));
 	if(!valid)
 	{
 		G_Printf("This user does not exist\n");
@@ -1164,15 +1164,15 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 		return;
 	}
 
-	int currentXP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'",targetplayer->client->sess.characterID ) );
+	int currentXP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", charID ) );
 
 	int newXPTotal = currentXP + changedXP;
 
-	q.execute( va( "UPDATE characters set xp='%i' WHERE ID='%i'", newXPTotal, targetplayer->client->sess.characterID ) );
+	q.execute( va( "UPDATE characters set xp='%i' WHERE ID='%i'", newXPTotal, charID ) );
 
-	LevelCheck(targetplayer);
+	LevelCheck(charID);
 
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: XP has been given to that character.\n\"" ) );
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: XP has been given to character %s.\n\"", charNameSTR.c_str() ) );
 
 	return;
 }
@@ -1184,41 +1184,38 @@ Level Check
 
 =====
 */
-void LevelCheck(gentity_t * targetplayer)
+void LevelCheck(int charID)
 {
-	if ( ( targetplayer->client->sess.loggedinAccount ) && ( targetplayer->client->sess.characterChosen ) )
-	{
 		Database db(DATABASE_PATH);
 		Query q(db);
 
 		//Get their character's XP
-		int XP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
+		int XP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", charID ) );
 		//Get their character's current level
-		int level = q.get_num(va("SELECT level FROM characters WHERE ID='%i'",targetplayer->client->sess.characterID));
+		int level = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
 
 		if ( XP >= 20 && XP < 40 && ( level != 2 ) )
 		{
-			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 2, targetplayer->client->sess.characterID ) );
-			trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Level up! You are now level 2!\n\"" ) );
+			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 2, charID ) );
+		//	trap_SendServerCommand( charID, va( "print \"^2Level up! You are now level 2!\n\"" ) );
 		}
 
 		if ( XP >= 40 && XP < 70 && ( level != 3 ) )
 		{
-			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 3, targetplayer->client->sess.characterID ) );
-			trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Level up! You leveled up to level 3!\n\"" ) );
+			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 3, charID ) );
+		//	trap_SendServerCommand( charID, va( "print \"^2Level up! You leveled up to level 3!\n\"" ) );
 		}
 
 		if ( XP >= 70 && XP < 110 && ( level != 4 ) )
 		{
-			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 4, targetplayer->client->sess.characterID ) );
-			trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Level up! You leveled up to level 4!\n\"" ) );
+			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 4, charID ) );
+		//	trap_SendServerCommand( charID, va( "print \"^2Level up! You leveled up to level 4!\n\"" ) );
 		}
 
 		if ( XP >= 110 && XP < 160 && ( level != 5 ) )
 		{
-			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 5, targetplayer->client->sess.characterID ) );
-			trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Level up! You leveled up to level 5!\n^5You've hit the level cap!\n\"" ) );
+			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", 5, charID ) );
+		//	trap_SendServerCommand( charID, va( "print \"^2Level up! You leveled up to level 5!\n^5You've hit the level cap!\n\"" ) );
 		}
-	}
 	return;
 }
