@@ -213,7 +213,7 @@ void Cmd_AccountCreate_F(gentity_t * targetplayer)
 		return;
 	}
 	//Create the account
-	q.execute(va("INSERT INTO users(name,password,currentClientID) VALUES('%s','%s')", userNameSTR.c_str(), userPassword, targetplayer->client->ps.clientNum ) );
+	q.execute(va("INSERT INTO users(name,password,currentClientID) VALUES('%s','%s','%i')", userNameSTR.c_str(), userPassword, targetplayer->client->ps.clientNum ) );
 
 	//Log them in automatically
 	int userID = q.get_num(va("SELECT ID FROM users WHERE name='%s'",userNameSTR.c_str()));
@@ -1196,7 +1196,7 @@ void LevelCheck(int charID)
 		//Get their userID
 		int userID = q.get_num( va( "SELECT userID FROM characters WHERE ID='%i'", charID ) );
 		//Get their clientID so we can send them level up messages
-		int clientID = q.get_num( va( "SELECT curClientID FROM users WHERE ID='%i'", userID ) );
+		int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
 
 		if ( XP >= 20 && XP < 40 && ( level != 2 ) )
 		{
