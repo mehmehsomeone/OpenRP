@@ -20,8 +20,8 @@
 #define	GAME_VERSION		"basejka-1"
 
 //[ClientPlugInDetect]
-#define OPENRP_CLIENTVERSION		"OpenRP 1.0"
-#define OPENRP_SERVERVERSION		"OpenRP 1.0"
+#define OPENRP_CLIENTVERSION		"OpenRP Client 1.0"
+#define OPENRP_SERVERVERSION		"OpenRP Server 1.0"
 #define CURRENT_OJPENHANCED_CLIENTVERSION		"OJP Enhanced v1.3 OpenRP 1.0"
 //[/ClientPlugInDetect]
 

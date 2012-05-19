@@ -995,7 +995,7 @@ void M_Cmd_ModInfo_f (gentity_t * ent)
 	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
 
 		if( ent->client->sess.openrpIsAdmin ){
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4%s ^7by ^4%s\n\n ^4%s Access^7:\n\"", GAMEVERSION, AUTHOR, g_mRankName.string) );
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4%s ^7by ^4%s\n\n ^4%s Access^7:\n\"", OPENRP_CLIENTVERSION, AUTHOR, g_mRankName.string) );
 			for( i = 0; i < numPassThroughElements; i++ ){
 					trap_SendServerCommand( ent->client->ps.clientNum, va("print \"%s \"\n\n", passthroughfuncs[i].clientcommand ) );
 			}
