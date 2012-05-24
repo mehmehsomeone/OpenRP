@@ -101,6 +101,9 @@ void Cmd_AccountLogin_F( gentity_t * targetplayer )
 	q.execute( va( "UPDATE users set currentClientID='%i' WHERE name='%s'", targetplayer->client->ps.clientNum, userName ) ); 
 	//Update the ui
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "lui_login" ) );
+
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "character" ) );
+
 	return;
 }
 
@@ -226,7 +229,9 @@ void Cmd_AccountCreate_F(gentity_t * targetplayer)
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^5Account was successfully created! You are now logged in as %s.\n\"", userNameSTR.c_str()));
 
 	//Update the ui
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va("lui_login"));
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "lui_login" ) );
+	
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "character" ) );
 	
 	return;
 }
