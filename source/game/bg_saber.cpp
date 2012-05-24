@@ -5049,6 +5049,7 @@ weapChecks:
 //Add Fatigue to a player
 void BG_AddFatigue( playerState_t * ps, int Fatigue)
 {
+	/*
 	//For now, all saber attacks cost one FP.
 	if(ps->fd.forcePower > Fatigue)
 	{
@@ -5063,6 +5064,7 @@ void BG_AddFatigue( playerState_t * ps, int Fatigue)
 	{//Pop the Fatigued flag
 		ps->userInt3 |= ( 1 << FLAG_FATIGUED );
 	}
+	*/
 }
 
 

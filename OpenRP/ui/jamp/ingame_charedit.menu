@@ -1,11 +1,10 @@
 k//----------------------------------------------------------------------------------------------
-// Euka UI Plugin
-// By Nicolas "Scooper" Roblin, modified by Phred.
+//OpenRP Character Menu - based on the Euka UI Plugin By Nicolas "Scooper" Roblin, modified by Phred.
 //----------------------------------------------------------------------------------------------
 {	
 	menuDef 
 	{
-		name					"ingame_login"
+		name					"ingame_character"
 		visible				0
 		fullscreen				0
 		outOfBoundsClick			// this closes the window if it gets a click out of the rectangle
@@ -67,7 +66,7 @@ k//-----------------------------------------------------------------------------
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
 			type				4
-			text				"Account Login"			
+			text				"Character"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90
 			textaligny			2    
@@ -80,7 +79,7 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				login_button
+			name				select_button
 			group				none
 			style				WINDOW_STYLE_SHADER
 			rect				18 104 59 32
@@ -92,12 +91,12 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				login
+			name				select
 			group				main
 			rect				25 110 40 20	
 			type				ITEM_TYPE_BUTTON
-			text				"Login"
-			descText			"Press to Login"
+			text				"Select"
+			descText			"Press to Select Character"
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			4
 			textaligny			-2    
@@ -108,22 +107,22 @@ k//-----------------------------------------------------------------------------
 			action
 			{
 				play "sound/interface/button1.wav" 
-				uiScript "accountLogin"
-				close "ingame_login"
+				uiScript "characterSelect"
+				close "ingame_character"
 			}
 			mouseenter 
 			{ 
-				show			login_button
+				show			select_button
 			}
 			mouseexit 
 			{ 
-				hide			login_button
+				hide			select_button
 			}
 		}
 
 		itemDef 
 		{
-			name				newaccount_button
+			name				create_button
 			group				none
 			style				WINDOW_STYLE_SHADER
 			rect				12 129 120 32
@@ -135,12 +134,12 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				newaccount
+			name				create
 			group				main
 			rect				25 135 90 20	
 			type				ITEM_TYPE_BUTTON
-			text				"Create Account"
-			descText			"Registers a new account"
+			text				"Create Character"
+			descText			"Create a New Character"
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			4
 			textaligny			-2
@@ -151,8 +150,8 @@ k//-----------------------------------------------------------------------------
 			action
 			{
 				play 			"sound/interface/button1.wav" 
-				uiScript "accountCreate"
-				close "ingame_login"
+				uiScript "characterCreate"
+				close "ingame_character"
 			}
 			mouseenter 
 			{ 
@@ -164,12 +163,28 @@ k//-----------------------------------------------------------------------------
 			}
 			
 		}
+		
+		itemDef 
+		{
+			name				nameText
+			group				main
+			text				"**Force Side #s are 1 (Light) 2 (Dark) 3 (Non-Force). Leave blank if just selecting a character."
+			style				WINDOW_STYLE_EMPTY
+			rect				20 15 0 0
+			textalign			ITEM_ALIGN_LEFT		
+			textalignx			4
+			textaligny			12
+			font				4
+			textscale			1
+			forecolor			.549 .854 1 1
+			decoration
+		}
 
 		itemDef 
 		{
-			name				usernameText
+			name				nameText
 			group				main
-			text				"Username:"
+			text				"Name:"
 			style				WINDOW_STYLE_EMPTY
 			rect				20 35 0 0
 			textalign			ITEM_ALIGN_LEFT		
@@ -183,16 +198,16 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				username
+			name				name
 			group				main
 			style				1
-			descText			"Input Username"
+			descText			"Input Name"
 			text				@MENUS_BLANK_1
 			maxchars			16
 			font				2
 			textscale			.8
 			type				ITEM_TYPE_EDITFIELD
-			cvar				"ui_account_username"
+			cvar				"ui_character_name"
 			rect				90 43 140 25
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			0
@@ -206,9 +221,9 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				passwordText
+			name				forceSideNumberText
 			group				main
-			text				"Password:"
+			text				"Force Side #:"
 			style				WINDOW_STYLE_EMPTY
 			rect				20 65 0 0
 			textalign			ITEM_ALIGN_LEFT		
@@ -222,16 +237,16 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				password
+			name				forceSideNumber
 			group				main
 			style				1
-			descText			"Input Password"
+			descText			"Input Force Side #"
 			text				@MENUS_BLANK_1
 			maxchars			16
 			font				2
 			textscale			.8
 			type				ITEM_TYPE_EDITFIELD
-			cvar				"ui_account_password"
+			cvar				"ui_character_forceSideNumber"
 			rect				90 73 140 25
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			0

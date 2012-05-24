@@ -386,6 +386,8 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand ("lui");
 	trap_AddCommand ("lui_login");
 	trap_AddCommand ("lui_logout");
+	//OpenRP - Character menus
+	trap_AddCommand ("character");
 	trap_AddCommand ("forcechanged");
 	trap_AddCommand ("sv_invnext");
 	trap_AddCommand ("sv_invprev");

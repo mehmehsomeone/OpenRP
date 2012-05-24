@@ -4016,6 +4016,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_GiveXP_F (ent);
 		return;
 	}
+	if (Q_stricmp (cmd, "qwsetclass") == 0) {
+		Cmd_SetClass_F (ent);
+		return;
+	}
 	/*
 	if (Q_stricmp (cmd, "addFeat") == 0) {
 		Cmd_AddFeat_F (ent);

@@ -1375,6 +1375,7 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 		//[/DualPistols]
 
 		//[WeapAccuracy]
+		/*
 		//bump accuracy based on MP level.
 		if(ent && ent->client)
 		{
@@ -1416,6 +1417,7 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 					G_AddMercBalance(ent, Q_irand(1, 2));// 1 was not enough
 			}
 		}
+		*/
 		//[/WeapAccuracy]
 
 		if(ent->client && ent->client->ps.ammo[weaponData[ent->s.weapon].ammoIndex] == 0)
