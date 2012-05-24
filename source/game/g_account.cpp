@@ -1142,7 +1142,8 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 		return;
 	}
 
-	if( trap_Argc() < 2 ){
+	if( trap_Argc() < 2 )
+	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Command Usage: qwGrantXP <characterName> <XP>\n\"" );
 		return;
 	}
@@ -1174,12 +1175,12 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 
 	int currentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
 
-	std::string playerClassSTR = q.get_string( va( "SELECT model FROM characters WHERE ID='%i'", charID ) );
+	std::string playerClassSTR = q.get_string( va( "SELECT playerclass FROM characters WHERE ID='%i'", charID ) );
 
 	if ( playerClassSTR.c_str() == "none" && currentLevel == 5 )
 	{
-		trap_SendServerCommand( clientID, va( "print \"^1Error: You would have received %i XP, but you haven't picked a Specialized class yet.\n\"" ) );
-		trap_SendServerCommand( clientID, "print \"^1Please pick a Specialized class using qwSetClass to receive XP continue leveling as normal.\n\"" );
+		trap_SendServerCommand( clientID, va( "print \"^1Error: You would have received %i XP, but you haven't picked a Specialized class yet.\n\"", changedXP ) );
+		trap_SendServerCommand( clientID, "print \"^1Please pick a Specialized class using qwSetClass to receive XP and continue leveling as normal.\n\"" );
 		return;
 	}
 
@@ -1212,22 +1213,22 @@ void LevelCheck(int charID)
 
 	int nextLevel, i, neededXP;
 
-	int currentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
-
-	int currentXP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", charID ) );
-
 	//Get their userID
 	int userID = q.get_num( va( "SELECT userID FROM characters WHERE ID='%i'", charID ) );
 	//Get their clientID so we can send them level up messages
 	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
 
-	nextLevel = currentLevel + 1;
-
-	neededXP = nextLevel + (nextLevel*20);
-
 
 	for ( i=0; i <= 35; ++i )
 	{
+		int currentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
+
+		int currentXP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", charID ) );
+		
+		nextLevel = currentLevel + 1;
+
+		neededXP = nextLevel + (nextLevel*20);
+
 		if ( currentLevel == 35 )
 		{
 			trap_SendServerCommand( clientID, "print \"^3You are the highest level! Therefore, the XP you receive won’t be of any use to you.\n\"" );
@@ -1237,7 +1238,16 @@ void LevelCheck(int charID)
 		if ( currentXP > neededXP )
 		{
 			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", nextLevel, charID ) );
-			trap_SendServerCommand( clientID, va( "print \"^3Level up! You are now level %i.\n\"", currentLevel ) );
+
+			int newCurrentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
+
+			trap_SendServerCommand( clientID, va( "print \"^3Level up! You are now level %i.\n\"", newCurrentLevel ) );
+
+			//If they've just reached level 5, tell them to pick a specialized class
+			if ( newCurrentLevel == 5 )
+			{
+				trap_SendServerCommand( clientID, "print \"^5Please pick a specialized class using /qwSetClass in order to continue receiving XP properly.\n\"" );
+			}
 		}
 		
 		else
@@ -1245,11 +1255,6 @@ void LevelCheck(int charID)
 			return;
 		}
 
-		//If they've just reached level 5, tell them to pick a specialized class
-		if ( currentLevel == 5 )
-		{
-			trap_SendServerCommand( clientID, "print \"^5Please pick a specialized class using /qwSetClass in order to continue receiving XP properly.\n\"" );
-		}
 	}
 	return;
 }
@@ -1257,7 +1262,7 @@ void LevelCheck(int charID)
 /*
 =================
 
-Give XP
+Set Class
 
 =====
 */
