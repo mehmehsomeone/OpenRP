@@ -330,11 +330,10 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	std::transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
 	std::string DBname = q.get_string(va("SELECT name FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str()));
 
-	std::string charModelSTR = "";
 	std::string charPlayerClassSTR = "none";
 
 	//Create character
-	q.execute( va( "INSERT INTO characters(userID,name,modelscale,level,xp,playerclass,forcesidenumber) VALUES('%i','%s','%s','%i','%i','%i','%s','%i')", targetplayer->client->sess.userID, charNameSTR.c_str(), charModelSTR.c_str(), 100, 1, 0, charPlayerClassSTR.c_str(), forceSideNumber ) );
+	q.execute( va( "INSERT INTO characters(userID,name,modelscale,level,xp,playerclass,forcesidenumber) VALUES('%i','%s','%i','%i','%i','%s','%i')", targetplayer->client->sess.userID, charNameSTR.c_str(), 100, 1, 0, charPlayerClassSTR.c_str(), forceSideNumber ) );
 
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Sucess: Character created.\n\"" ) );
 
