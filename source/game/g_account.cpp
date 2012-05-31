@@ -744,11 +744,11 @@ void Cmd_CharacterInfo_F(gentity_t * targetplayer)
 		Database db(DATABASE_PATH);
 		Query q(db);
 
-	if (!db.Connected())
-	{
-		G_Printf("Database not connected, %s\n",DATABASE_PATH);
-		return;
-	}
+		if (!db.Connected())
+		{
+			G_Printf("Database not connected, %s\n",DATABASE_PATH);
+			return;
+		}
 
 		//Get their character info from the database
 		//Name
@@ -765,7 +765,7 @@ void Cmd_CharacterInfo_F(gentity_t * targetplayer)
 		std::string charPlayerClassSTR = q.get_string( va( "SELECT playerclass FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
 
 		//Print the info to their console
-		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va( "print \"^5Character Info:\nName: %s\nModel: %s\nModel Scale: %d\nLevel: %d\nXP: %d\nPlayer Class: %s\n\"", charNameSTR.c_str(), charModelSTR.c_str(), charModelScale, charLevel, charXP, charPlayerClassSTR.c_str() ) );
+		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va( "print \"^5Character Info:\nName: %s\nModel: %s\nModel Scale: %d\nLevel: %d/35\nXP: %d\nPlayer Class: %s\n\"", charNameSTR.c_str(), charModelSTR.c_str(), charModelScale, charLevel, charXP, charPlayerClassSTR.c_str() ) );
 		return;
 	}
 	else
@@ -1127,6 +1127,8 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 	Database db(DATABASE_PATH);
 	Query q(db);
 
+	gentity_t * soundtarget;
+
 	char charName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
 	int changedXP;
 	
@@ -1173,16 +1175,11 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 	//Get their clientID so we can send them XP messages
 	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
 
+	soundtarget = &g_entities[clientID];
+
 	int currentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
 
 	std::string playerClassSTR = q.get_string( va( "SELECT playerclass FROM characters WHERE ID='%i'", charID ) );
-
-	if ( playerClassSTR.c_str() == "none" && currentLevel == 5 )
-	{
-		trap_SendServerCommand( clientID, va( "print \"^1Error: You would have received %i XP, but you haven't picked a Specialized class yet.\n\"", changedXP ) );
-		trap_SendServerCommand( clientID, "print \"^1Please pick a Specialized class using qwSetClass to receive XP and continue leveling as normal.\n\"" );
-		return;
-	}
 
 	int currentXP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", charID ) );
 
@@ -1190,7 +1187,20 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 
 	q.execute( va( "UPDATE characters set xp='%i' WHERE ID='%i'", newXPTotal, charID ) );
 
-	trap_SendServerCommand( clientID, va( "print \"^2You received %i XP! You now have %i XP.\n\"", changedXP, newXPTotal ) );
+
+	if ( currentLevel == 35 )
+	{
+		trap_SendServerCommand( clientID, va( "print \"^2You received %i XP! You now have %i XP.\n^3You are the highest level, so XP won't level you up more!\n\"", changedXP, newXPTotal ) );
+		trap_SendServerCommand( clientID, va( "cp \"^2You received %i XP! You now have %i XP.\n^3You are the highest level, so XP won't level you up more!\n\"", changedXP, newXPTotal ) );
+		return;
+	}
+
+	else
+	{
+		trap_SendServerCommand( clientID, va( "print \"^2You received %i XP! You now have %i XP.\n\"", changedXP, newXPTotal ) );
+		trap_SendServerCommand( clientID, va( "cp \"^2You received %i XP! You now have %i XP.\n\"", changedXP, newXPTotal ) );
+		//G_Sound( soundtarget, CHAN_AUTO, G_SoundIndex( "sound/success.wav" ) );
+	}
 
 	LevelCheck(charID);
 
@@ -1223,31 +1233,24 @@ void LevelCheck(int charID)
 	{
 		int currentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
 
+		if ( currentLevel == 35 )
+		{
+			return;
+		}
+
 		int currentXP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", charID ) );
 		
 		nextLevel = currentLevel + 1;
 
 		neededXP = nextLevel + (nextLevel*20);
 
-		if ( currentLevel == 35 )
-		{
-			trap_SendServerCommand( clientID, "print \"^3You are the highest level! Therefore, the XP you receive won’t be of any use to you.\n\"" );
-			return;
-		}
-
 		if ( currentXP > neededXP )
 		{
 			q.execute( va( "UPDATE characters set level='%i' WHERE ID='%i'", nextLevel, charID ) );
 
-			int newCurrentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
-
-			trap_SendServerCommand( clientID, va( "print \"^3Level up! You are now level %i.\n\"", newCurrentLevel ) );
-
-			//If they've just reached level 5, tell them to pick a specialized class
-			if ( newCurrentLevel == 5 )
-			{
-				trap_SendServerCommand( clientID, "print \"^5Please pick a specialized class using /qwSetClass in order to continue receiving XP properly.\n\"" );
-			}
+			//It uses nextLevel because their old level is still stored in currentLevel
+			trap_SendServerCommand( clientID, va( "print \"^3Level up! You are now level %i.\n\"", nextLevel ) );
+			trap_SendServerCommand( clientID, va( "cp \"^3Level up! You are now level %i.\n\"", nextLevel ) );
 		}
 		
 		else
@@ -1273,7 +1276,7 @@ void Cmd_SetClass_F(gentity_t * targetplayer)
 		Database db(DATABASE_PATH);
 		Query q(db);
 
-		char newClassName[MAX_STRING_CHARS];
+		char className[MAX_STRING_CHARS];
 
 		if ( !db.Connected() )
 		{
@@ -1287,18 +1290,18 @@ void Cmd_SetClass_F(gentity_t * targetplayer)
 			return;
 		}
 
-		trap_Argv( 1, newClassName, MAX_STRING_CHARS );
-		std::string newClassNameSTR = newClassName;
+		trap_Argv( 1, className, MAX_STRING_CHARS );
+		std::string classNameSTR = className;
 
 		std::string currentPlayerClassSTR = q.get_string( va( "SELECT playerclass FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
 		int currentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
 
-		if ( ( currentPlayerClassSTR == "none" ) && ( currentLevel == 5 ) && ( newClassNameSTR == "a" || "a" || "a" ) )
+		if ( ( currentPlayerClassSTR == "none" ) && ( currentLevel == 5 ) )
 		{
 			return;	
 		}
 
-		else if ( ( currentPlayerClassSTR == "a" ) && ( currentLevel == 5 ) && ( newClassNameSTR == "a" || "a" || "a" ))
+		else
 		{
 			return;
 		}
