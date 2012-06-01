@@ -33,5 +33,6 @@ Nile - Shield mod
 Naythan - Splash screen
 Darth NormaN - Elegance HUD used as the OpenRP HUD (permission given by him to use the HUD and modify it if we wish to)
 Legacy Mods - The Legacy OJP base that OpenRP is based on
+CameronMusic - Some sounds used such as the error and notification sounds
 
 THIS MODIFICATION IS NOT MADE, DISTRIBUTED, OR SUPPORTED BY ACTIVISION,RAVEN, OR LUCASARTS ENTERTAINMENT COMPANY LLC. ELEMENTS TM & c LUCASARTS ENTERTAINMENT COMPANY LLC AND/OR ITS LICENSORS.
