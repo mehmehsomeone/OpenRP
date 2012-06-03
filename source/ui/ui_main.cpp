@@ -6814,11 +6814,11 @@ static void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "characterCreate") == 0)
 		{
 			char charName[256];
-			char forceSideNumber[256];
+			char forceSensitive[256];
 
 			trap_Cvar_VariableStringBuffer("ui_character_name", charName, sizeof( charName ) );
-			trap_Cvar_VariableStringBuffer("ui_character_forceSideNumber", forceSideNumber, sizeof( forceSideNumber ) );
-			trap_Cmd_ExecuteText(EXEC_APPEND, va( "qwcreatecharacter %s %s\n", charName, forceSideNumber ) );
+			trap_Cvar_VariableStringBuffer("ui_character_forceSideNumber", forceSensitive, sizeof( forceSensitive ) );
+			trap_Cmd_ExecuteText(EXEC_APPEND, va( "qwcreatecharacter %s %s\n", charName, forceSensitive ) );
 		}
 		else if (Q_stricmp(name, "saber_color") == 0) 
 		{
@@ -10811,7 +10811,6 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 		  return;
 		case UIMENU_CHARACTER:
 			trap_Key_SetCatcher( KEYCATCH_UI );
-			UI_BuildPlayerList();
 			Menus_CloseAll();
 			Menus_ActivateByName("ingame_character");
 		//[/CoOp]

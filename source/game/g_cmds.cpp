@@ -4016,8 +4016,24 @@ void ClientCommand( int clientNum ) {
 		Cmd_GiveXP_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwsetclass") == 0) {
-		Cmd_SetClass_F (ent);
+	if (Q_stricmp (cmd, "qwgivecredits") == 0) {
+		Cmd_GiveCredits_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "qwcreatefaction") == 0) {
+		Cmd_CreateFaction_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "qwsetfaction") == 0) {
+		Cmd_SetFaction_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "qwsetfactionrank") == 0) {
+		Cmd_SetFactionRank_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "qwfaction") == 0) {
+		Cmd_Faction_F (ent);
 		return;
 	}
 	/*
