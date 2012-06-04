@@ -268,11 +268,11 @@ void Cmd_ListCharacters_F(gentity_t * targetplayer)
 	Query q(db);
 	q.get_result(va("SELECT ID, name FROM characters WHERE userID='%i'",targetplayer->client->sess.userID));
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Characters:\n\"");
-	while (q.fetch_row())
+	while  (q.fetch_row() )
 	{
 		int ID = q.getval();
 		std::string name = q.getstr();
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, va("print \"^3ID: ^7%i ^3Name: ^7%s\n\"",ID,name.c_str()));
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va("print \"^3ID: ^7%i ^3Name: ^7%s\n\"", ID, name.c_str() ) );
 	}
 	q.free_result();
 
@@ -292,6 +292,7 @@ Creates a new character and binds it to a useraccount
 void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 {
 	Database db(DATABASE_PATH);
+	Query q(db);
 
 	if (!db.Connected())
 	{
@@ -299,8 +300,8 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 		return;
 	}
 
-	int forceSensitive;
-	char charName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
+	int forceSensitive, factionID;
+	char charName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS], temp2[MAX_STRING_CHARS];
 
 	//Make sure they're logged in
 	if( !isLoggedIn( targetplayer ) )
@@ -309,13 +310,12 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 		return;
 	}
 
-	//Make sure they entered a name and force side number
-	if( trap_Argc() < 2 )
+	//Make sure they entered a name, FS, and FactionID
+	if( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Command Usage: /qwcreateCharacter <name> <forceSensitive>\nFor sensitive,  1 = Force Sensitive, 0 = Not Force Sensitive n\"");
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Command Usage: /qwcreateCharacter <name> <forceSensitive> <factionID>\nFor Force Sensitive,  1 = Force Sensitive, 0 = Not Force Sensitive\nType /qwListFactions to see faction IDs. If you don't want to be in one, use 0 for the ID.\n\"");
 		return;
 	}
-
 
 	//Get the character name
 	trap_Argv( 1, charName, MAX_STRING_CHARS );
@@ -324,18 +324,48 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
 	forceSensitive = atoi( temp );
 
-	//Check if the character exists
-	Query q(db);
-	std::transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
-	std::string DBname = q.get_string( va( "SELECT name FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str() ) );
+	trap_Argv( 3, temp2, MAX_STRING_CHARS );
+	factionID = atoi( temp );
 
-	//Create character
-	q.execute( va( "INSERT INTO characters(userID,name,modelscale,level,xp,faction,factionrank,forcesensitive) VALUES('%i','%s','%i','%i','%i','none','none','%i')", targetplayer->client->sess.userID, charNameSTR.c_str(), 100, 1, 0, forceSensitive ) );
+	if ( factionID == 0 )
+	{
+		//Check if the character exists
+		Query q(db);
+		std::transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
+		std::string DBname = q.get_string( va( "SELECT name FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str() ) );
 
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Sucess: Character created.\n\"" ) );
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "cp \"^2Sucess: Character created.\n\"" ) );
+		//Create character
+		q.execute( va( "INSERT INTO characters(userID,name,modelscale,level,xp,faction,factionrank,forcesensitive) VALUES('%i','%s','%i','%i','%i','none','none','%i')", targetplayer->client->sess.userID, charNameSTR.c_str(), 100, 1, 0, forceSensitive ) );
 
-	return;
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Sucess: Character created.\n\"" ) );
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "cp \"^2Sucess: Character created.\n\"" ) );
+
+		return;
+	}
+
+	else
+	{
+		std::string factionNameSTR = q.get_string( va( "SELECT name FROM factions WHERE ID='%i'", factionID ) );
+
+		if( !factionNameSTR.c_str() )
+		{
+			trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: Faction does not exist\n\"");
+			return;
+		}
+
+		//Check if the character exists
+		Query q(db);
+		std::transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
+		std::string DBname = q.get_string( va( "SELECT name FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str() ) );
+
+		//Create character
+		q.execute( va( "INSERT INTO characters(userID,name,modelscale,level,xp,faction,factionrank,forcesensitive) VALUES('%i','%s','%i','%i','%i','%s','Member','%i')", targetplayer->client->sess.userID, charNameSTR.c_str(), 100, 1, 0, factionNameSTR.c_str(), forceSensitive ) );
+
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Sucess: Character created.\n\"" ) );
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "cp \"^2Sucess: Character created.\n\"" ) );
+
+		return;
+	}
 }
 
 /*
@@ -888,8 +918,8 @@ void SaveCharacter(gentity_t * targetplayer)
       q.execute(va("UPDATE characters set skills='%s' WHERE ID='%i'",skillString.c_str(),targetplayer->client->sess.characterID));
       //Update force in database
       q.execute(va("UPDATE characters set force='%s' WHERE ID='%i'",forceString.c_str(),targetplayer->client->sess.characterID));
-
-        return;
+	  
+	  return;
 }
 
 /*
@@ -1372,7 +1402,8 @@ void Cmd_CreateFaction_F(gentity_t * targetplayer)
 	std::string currentFactionSTR = q.get_string( va( "SELECT faction FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
 	std::string characterNameSTR = q.get_string( va( "SELECT name FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
 
-	char factionName[MAX_STRING_CHARS];
+	char factionName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
+	int forceRestrictions;
 
 	if ( currentFactionSTR.c_str() != "none" )
 	{
@@ -1380,10 +1411,25 @@ void Cmd_CreateFaction_F(gentity_t * targetplayer)
 		return;
 	}
 
+	if( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Command Usage: qwCreateFaction <factionName> <forceRestrictions>\nForce Restrictions: 0 - Only non FS people can join, 1 - Only Force Sensitive people can join, 2 - Anyone can join.\n\"" );
+		return;
+	}
+
 	trap_Argv( 1, factionName, MAX_STRING_CHARS );
 	std::string factionNameSTR = factionName;
+
+	trap_Argv( 2, temp, MAX_STRING_CHARS );
+	forceRestrictions = atoi( temp );
+
+	if ( forceRestrictions != 0 || 1 || 2 )
+	{
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: Force Restrictions must be 0, 1, or 2.\n\"" );
+		return;
+	}
 	
-	q.execute(va("INSERT INTO factions(name,leader,credits) VALUES('%s','%s', '%i')", factionNameSTR.c_str(), characterNameSTR.c_str(), 10000 ) );
+	q.execute(va("INSERT INTO factions(name,leader,credits,forcerestrictions) VALUES('%s','%s', '%i')", factionNameSTR.c_str(), characterNameSTR.c_str(), 10000, forceRestrictions ) );
 
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /qwSetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
 
@@ -1444,7 +1490,65 @@ void Cmd_SetFaction_F( gentity_t * targetplayer )
 	trap_SendServerCommand( clientID, va( "print \"^2You have been put in the %s faction! Type /qwFaction to view info about it.\n\"", factionNameSTR.c_str() ) );
 	trap_SendServerCommand( clientID, va( "cp \"^2You have been put in the %s faction! Type /qwFaction to view info about it.\n\"", factionNameSTR.c_str() ) );
 
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Character %s has been put in faction %s.\nUse /qwSetFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Character %s has been put in the faction %s.\nUse /qwSetFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
+
+	return;
+}
+
+/*
+=================
+
+Kick Faction
+
+=====
+*/
+void Cmd_KickFaction_F( gentity_t * targetplayer )
+{
+	if ( targetplayer->client->sess.openrpIsAdmin == qfalse )
+	{
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"" );
+		return;
+	}
+
+	Database db(DATABASE_PATH);
+	Query q(db);
+
+	if ( !db.Connected() )
+	{
+		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		return;
+	}
+
+	char charName[MAX_STRING_CHARS];
+
+	trap_Argv( 1, charName, MAX_STRING_CHARS );
+	std::string charNameSTR = charName;
+
+	//Check if the character exists
+	std::transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
+
+	int charID = q.get_num( va( "SELECT ID FROM characters WHERE name='%s'", charNameSTR.c_str() ) );
+
+	if(charID == 0)
+	{
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+		return;
+	}
+
+	//Get their userID
+	int userID = q.get_num( va( "SELECT userID FROM characters WHERE ID='%i'", charID ) );
+	//Get their clientID so we can send them messages
+	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
+
+	std::string charCurrentFactionSTR = q.get_string( va( "SELECT faction FROM characters WHERE ID='%i'", charID ) );
+
+	q.execute( va( "UPDATE characters set faction='none' WHERE ID='%i'", charID ) );
+	q.execute( va( "UPDATE characters set factionrank='none' WHERE ID='%i'", charID ) );
+
+	trap_SendServerCommand( clientID, va( "print \"^1You have been removed from the %s faction.\n\"", charCurrentFactionSTR.c_str() ) );
+	trap_SendServerCommand( clientID, va( "cp \"^1You have been removed from the %s faction.\n\"", charCurrentFactionSTR.c_str() ) );
+
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Character %s has been removed from the faction %s.\n\"", charNameSTR.c_str(), charCurrentFactionSTR.c_str() ) );
 
 	return;
 }
@@ -1535,6 +1639,12 @@ void Cmd_Faction_F( gentity_t * targetplayer )
 		//Get their faction info from the database
 		//Name
 		std::string factionNameSTR = q.get_string( va( "SELECT faction FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
+
+		if ( factionNameSTR.c_str() == "none" )
+		{
+			trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not in a faction.\n\"" );
+			return;
+		}
 		//Leader
 		std::string factionLeaderSTR = q.get_string( va( "SELECT leader FROM factions WHERE name='%s'", factionNameSTR.c_str() ) );
 		//Credits
@@ -1552,4 +1662,39 @@ void Cmd_Faction_F( gentity_t * targetplayer )
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to view your faction's info.\n\"" );
 		return;
 	}
+}
+
+/*
+=================
+
+Cmd_ListFactions_F
+
+Ingame Command : qwFactions
+List all of the factions
+
+=================
+*/
+void Cmd_ListFactions_F(gentity_t * targetplayer)
+{
+	StderrLog log;
+	Database db(DATABASE_PATH, &log);
+
+	if (!db.Connected())
+	{
+		G_Printf("Database not connected, %s\n",DATABASE_PATH);
+		return;
+	}
+
+	Query q(db);
+	q.get_result( va( "SELECT ID, name FROM factions", targetplayer->client->sess.userID ) );
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^5Factions:\n\"");
+	while  (q.fetch_row() )
+	{
+		int ID = q.getval();
+		std::string name = q.getstr();
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va("print \"^3ID: ^7%i ^3Name: ^7%s\n\"", ID, name.c_str() ) );
+	}
+	q.free_result();
+
+	return;
 }

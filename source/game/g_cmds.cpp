@@ -4028,12 +4028,20 @@ void ClientCommand( int clientNum ) {
 		Cmd_SetFaction_F (ent);
 		return;
 	}
+	if (Q_stricmp (cmd, "qwkickfaction") == 0) {
+		Cmd_KickFaction_F (ent);
+		return;
+	}
 	if (Q_stricmp (cmd, "qwsetfactionrank") == 0) {
 		Cmd_SetFactionRank_F (ent);
 		return;
 	}
 	if (Q_stricmp (cmd, "qwfaction") == 0) {
 		Cmd_Faction_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "qwlistfactions") == 0) {
+		Cmd_ListFactions_F (ent);
 		return;
 	}
 	/*
