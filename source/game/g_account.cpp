@@ -12,19 +12,20 @@
 //====Account Functions====//
 
 void Cmd_GetNPC_F( gentity_t *ent ) {
-
+	//This dictates that you are not logged in.
 	if(!isLoggedIn(ent))
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You are not logged in.\n\"");
 		return;
 	}
-
+	//You are not allowed access to spawn NPC's.
 	if( M_isNPCAccess(ent) ) {
 				ent->client->pers.hasCheatAccess = qfalse;
-				trap_SendServerCommand( ent->client->ps.clientNum, va ("print \"^5NPC Spawn Access ^1Removed.\n\"" ));
+				trap_SendServerCommand( ent->client->ps.clientNum, va ("pot ant \"^5NPC Spawn Access ^1Removed.\n\"" ));
 				G_LogPrintf( "deniedNPCaccess: %s\n", ent->client->pers.netname );
 			}
 			else{
+				// You are now allowed to spawn NPC's.
 				ent->client->pers.hasCheatAccess = qtrue;
 				trap_SendServerCommand( ent->client->ps.clientNum, va ("print \"^5NPC Spawn Access ^2Granted.\n\"" ));
 				G_LogPrintf( "NPCaccess: %s\n", ent->client->pers.netname );
@@ -45,7 +46,7 @@ Account Login
 void Cmd_AccountLogin_F( gentity_t * targetplayer )
 {
 	Database db(DATABASE_PATH);
-
+	//The database is not connected. Please do so.
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
@@ -78,6 +79,7 @@ void Cmd_AccountLogin_F( gentity_t * targetplayer )
 	std::string DBname = q.get_string(va("SELECT name FROM users WHERE name='%s'",userNameSTR.c_str()));
 	if(DBname.empty())
 	{
+		//The username does not exist, thus, the error does.
 		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va( "print \"^1Error: Username %s does not exist.\n\"", userName ) );
 		return;
 	}
@@ -86,6 +88,7 @@ void Cmd_AccountLogin_F( gentity_t * targetplayer )
 	std::string DBpassword = q.get_string(va("SELECT password FROM users WHERE name='%s'",userNameSTR.c_str()));
 	if(DBpassword.empty() || strcmp(DBpassword.c_str(),userPassword) != 0 )
 	{
+		//Just as there is an incorrect password (and an error), does it tell you.
 		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va("print \"^1Error: Incorrect password. \n\"",DBpassword.c_str()));
 		return;
 	}
@@ -96,7 +99,7 @@ void Cmd_AccountLogin_F( gentity_t * targetplayer )
 	targetplayer->client->sess.loggedinAccount = qtrue;
 
 	LoadUser(targetplayer);
-
+	//You are now logged in as <username>. Congratulations, you can type.
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: You are now logged in as %s!\n\"", userName ) );
 	q.execute( va( "UPDATE users set currentClientID='%i' WHERE name='%s'", targetplayer->client->ps.clientNum, userName ) ); 
 	//Update the ui
@@ -122,6 +125,7 @@ void Cmd_AccountLogout_F(gentity_t * targetplayer)
 {
 	if(!isLoggedIn(targetplayer))
 	{
+		//You can't logout if you haven't logged in, noob.
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not logged in, so you can't logout.\n\"");
 		return;
 	}
@@ -137,7 +141,7 @@ void Cmd_AccountLogout_F(gentity_t * targetplayer)
 	//Deselect Character
 	targetplayer->client->sess.characterChosen = qfalse;
 	targetplayer->client->sess.characterID = NULL;
-
+	//Congratulations, you can type! Oh, and you've been logged out. Later.
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^2Success: You have been logged out.\n\"");
 
 	//Remove all feats
@@ -184,7 +188,7 @@ Account Creation
 void Cmd_AccountCreate_F(gentity_t * targetplayer)
 {
 	Database db(DATABASE_PATH);
-	
+	//The database is not connected. Please do so. This is the database. Look at the corresponding lines below and what they entail. That's what this section is for.
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
@@ -251,7 +255,7 @@ void Cmd_ListCharacters_F(gentity_t * targetplayer)
 {
 	StderrLog log;
 	Database db(DATABASE_PATH, &log);
-
+	//The database is not connected. Please do so. This is the database. Look at the corresponding lines below and what they entail. That's what this section is for.
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
@@ -294,6 +298,7 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	Database db(DATABASE_PATH);
 	Query q(db);
 
+	//The database is not connected. Please do so. This is the database. Look at the corresponding lines below and what they entail. That's what this section is for.
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
@@ -381,7 +386,7 @@ Loads the character data and executes the keys effects
 void Cmd_SelectCharacter_F(gentity_t * targetplayer)
 {
 	Database db(DATABASE_PATH);
-
+	//The database is not connected. Please do so. This is the database. Look at the corresponding lines below and what they entail. That's what this section is for.
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
@@ -486,7 +491,7 @@ Loads the character feats
 void LoadFeats(gentity_t * targetplayer)
 {
 	Database db(DATABASE_PATH);
-
+	//The database is not connected. Please do so. This is the database. Look at the corresponding lines below and what they entail. That's what this section is for.
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
@@ -517,7 +522,7 @@ Loads the character skills
 void LoadSkills(gentity_t * targetplayer)
 {
 	Database db(DATABASE_PATH);
-
+	//The database is not connected. Please do so. This is the database. Look at the corresponding lines below and what they entail. That's what this section is for.
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
@@ -548,7 +553,7 @@ Loads the character force powers
 void LoadForcePowers(gentity_t * targetplayer)
 {
 	Database db(DATABASE_PATH);
-
+	//The database is not connected. Please do so. This is the database. Look at the corresponding lines below and what they entail. That's what this section is for.
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
