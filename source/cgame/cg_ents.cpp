@@ -323,9 +323,10 @@ static void CG_EntityEffects( centity_t *cent ) {
 		}
 	}
 
-
-	// constant light glow
-	if ( cent->currentState.constantLight ) {
+	//[OpenRP - Dynamic Light Bugfix - Thanks to Raz0r]
+	// constant light glow 
+	if ( cent->currentState.constantLight && cent->currentState.eType != ET_PLAYER && cent->currentState.eType != ET_BODY ) {
+	//[/OpenRP - Dynamic Light Bugfix - Thanks to Raz0r]
 		int		cl;
 		int		i, r, g, b;
 
@@ -3228,6 +3229,14 @@ void CG_AdjustPositionForMover( const vec3_t in, int moverNum, int fromTime, int
 	centity_t	*cent;
 	vec3_t	oldOrigin, origin, deltaOrigin;
 	vec3_t	oldAngles, angles, deltaAngles;
+
+	//[OpenRP - Don't bother if we're a spectator - Thanks to Raz0r]
+	if ( cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_SPECTATOR )
+	{
+		VectorCopy( in, out );
+		return;
+	}
+	//[/OpenRP - Don't bother if we're a spectator - Thanks to Raz0r]
 
 	if ( moverNum <= 0 || moverNum >= ENTITYNUM_MAX_NORMAL ) {
 		VectorCopy( in, out );

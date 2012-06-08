@@ -24,11 +24,11 @@ void M_Svcmd_Info_f( void )
 {
 	G_Printf("%s ^7by %s\n\n", OPENRP_SERVERVERSION, AUTHOR);
 	G_Printf("Rcon Commands:\n");
-	G_Printf("status, qwinfo, qwkick, qwsilence, qwunsilence, qwsleep, qwrename, qwshowmotd, ");
-	G_Printf("qwpsay, qwkickban, qwbanrange, qwtele, qworigin, qwnextmap, qwslap, addip, removeip, listip, ");
-	G_Printf("qwwhois, qwforceteam, qwallowvote, qwdenyvote, qwlockteam, qwunlockteam, qwgametype, qwnpcaccess, ");
-	G_Printf("qwrandteams, qwadminaccess, qwdenyadminaccess, qwvstr, qwempower, qwunempower, ");
-	G_Printf("qwterminator, qwunterminator, qwprotect, qwunprotect, qwnotarget, qwtimescale, qwwarn, qwforgive\n");
+	G_Printf("status, minfo, mkick, msilence, munsilence, msleep, mrename, mshowmotd, ");
+	G_Printf("mpsay, mkickban, mbanrange, mtele, morigin, mnextmap, mslap, addip, removeip, listip, ");
+	G_Printf("mwhois, mforceteam, mallowvote, mdenyvote, mlockteam, munlockteam, mgametype, mnpcaccess, ");
+	G_Printf("mrandteams, madminaccess, mdenyadminaccess, mvstr, mempower, munempower, ");
+	G_Printf("mterminator, munterminator, mprotect, munprotect, mnotarget, mtimescale, mwarn, mforgive\n");
 }
 /*
 =================
@@ -990,7 +990,7 @@ void M_Cmd_ModInfo_f (gentity_t * ent)
 {
 	int i, j, k;
 
-	char infoall[] = {"^4Client Commands^7:\n qwlogin, qwlogout, qwhelp, qwstatus, qwwhois, qwadmin <message>, qwignore\n"};
+	char infoall[] = {"^4Client Commands^7:\n login, logout, mhelp, mstatus, mwhois, madmin <message>, mignore\n"};
 
 	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
 
@@ -1006,7 +1006,7 @@ void M_Cmd_ModInfo_f (gentity_t * ent)
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"\n%s\n\"", infoall ));
 		}
 		else{
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"\n^4%s ^7by ^4%s\n\"", GAMEVERSION, AUTHOR ) );
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"\n^4OpenRP %s ^7by ^4%s\n\"", OPENRP_CLIENTVERSION, AUTHOR ) );
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"\n%s\n\"", infoall ));
 		}
 		// Show allowed Emotes
@@ -1034,7 +1034,7 @@ void M_Cmd_ModHelp_f (gentity_t * ent)
 
 	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
 		if( ent->client->sess.openrpIsAdmin ){
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4%s ^7by ^4%s\n\n ^4%s Command Help^7:\n\"", GAMEVERSION, AUTHOR, g_mRankName.string ) );	
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4OpenRP %s ^7by ^4%s\n\n ^4%s Command Help^7:\n\"", OPENRP_SERVERVERSION, AUTHOR, g_mRankName.string ) );	
 				for( i = 0; i < numPassThroughElements; i++ ){
 						trap_SendServerCommand( ent->client->ps.clientNum, va("print \"%s - %s\n\"", passthroughfuncs[i].clientcommand, passthroughfuncs[i].helpinfo ) );
 				}

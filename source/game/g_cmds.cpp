@@ -1614,6 +1614,7 @@ Cmd_FollowCycle_f
 void Cmd_FollowCycle_f( gentity_t *ent, int dir ) {
 	int		clientnum;
 	int		original;
+	qboolean	looped = qfalse; //OpenRP - Avoid /team follow1 crash - Thanks to Raz0r
 
 	// if they are playing a tournement game, count as a loss
 	if ( (g_gametype.integer == GT_DUEL || g_gametype.integer == GT_POWERDUEL)
@@ -1632,13 +1633,37 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir ) {
 
 	clientnum = ent->client->sess.spectatorClient;
 	original = clientnum;
+
 	do {
 		clientnum += dir;
-		if ( clientnum >= level.maxclients ) {
-			clientnum = 0;
+		if ( clientnum >= level.maxclients )
+	//[OpenRP - Avoid /team follow1 crash - Thanks to Raz0r]
+		{
+			if ( looped )
+			{
+				clientnum = original;
+				break;
+			}
+			else
+			{
+				clientnum = 0;
+				looped = qtrue;
+			}
+	///[OpenRP - Avoid /team follow1 crash - Thanks to Raz0r]
 		}
 		if ( clientnum < 0 ) {
-			clientnum = level.maxclients - 1;
+	//[OpenRP - Avoid /team follow1 crash - Thanks to Raz0r]
+			if ( looped )
+			{
+				clientnum = original;
+				break;
+			}
+			else
+			{
+				clientnum = level.maxclients - 1;
+				looped = qtrue;
+			}
+	//[/OpenRP - Avoid /team follow1 crash - Thanks to Raz0r]
 		}
 
 		// can only follow connected clients
@@ -2488,7 +2513,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 
 	trap_SendServerCommand( -1, va("print \"%s^7 %s\n\"", ent->client->pers.netname, G_GetStringEdString("MP_SVGAME", "PLCALLEDVOTE") ) );
 
-	// start the voting, the caller autoamtically votes yes
+	// start the voting, the caller automatically votes yes
 	level.voteTime = level.time;
 	level.voteYes = 1;
 	level.voteNo = 0;
@@ -3972,76 +3997,88 @@ void ClientCommand( int clientNum ) {
 	if ( M_HandlePassThroughFuncs(ent, cmd) == 0){
 		return;
 	}
-	if (Q_stricmp (cmd, "qwlogin") == 0) {
+	if (Q_stricmp (cmd, "login") == 0) {
 		Cmd_AccountLogin_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwgimmenpc") == 0) {
+	if (Q_stricmp (cmd, "gimmenpc") == 0) {
 		Cmd_GetNPC_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwlogout") == 0) {
+	if (Q_stricmp (cmd, "logout") == 0) {
 		Cmd_AccountLogout_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwregister") == 0) {
+	if (Q_stricmp (cmd, "register") == 0) {
 		Cmd_AccountCreate_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwcharacter") == 0) {
+	if (Q_stricmp (cmd, "character") == 0) {
 		Cmd_SelectCharacter_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwmycharacters") == 0) {
+	if (Q_stricmp (cmd, "mycharacters") == 0) {
 		Cmd_ListCharacters_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwcreatecharacter") == 0) {
+	if (Q_stricmp (cmd, "createcharacter") == 0) {
 		Cmd_CreateCharacter_F (ent);
 		return;
 	}
-	if (!Q_stricmp (cmd, "qwcharacterinfo")) {
+	if (!Q_stricmp (cmd, "characterinfo")) {
 		Cmd_CharacterInfo_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwgrantadmin") == 0) {
+	if (Q_stricmp (cmd, "grantadmin") == 0) {
 		Cmd_GrantAdmin_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwremoveadmin") == 0) {
+	if (Q_stricmp (cmd, "removeadmin") == 0) {
 		Cmd_RemoveAdmin_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwgivexp") == 0) {
+	if (Q_stricmp (cmd, "givexp") == 0) {
 		Cmd_GiveXP_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwgivecredits") == 0) {
+	if (Q_stricmp (cmd, "givecredits") == 0) {
 		Cmd_GiveCredits_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwcreatefaction") == 0) {
+	if (Q_stricmp (cmd, "createfaction") == 0) {
 		Cmd_CreateFaction_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwsetfaction") == 0) {
+	if (Q_stricmp (cmd, "setfaction") == 0) {
 		Cmd_SetFaction_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwkickfaction") == 0) {
+	if (Q_stricmp (cmd, "kickfaction") == 0) {
 		Cmd_KickFaction_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwsetfactionrank") == 0) {
+	if (Q_stricmp (cmd, "setfactionrank") == 0) {
 		Cmd_SetFactionRank_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwfaction") == 0) {
+	if (Q_stricmp (cmd, "faction") == 0) {
 		Cmd_Faction_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwlistfactions") == 0) {
+	if (Q_stricmp (cmd, "factionwithdraw") == 0) {
+		Cmd_FactionWithdraw_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "listfactions") == 0) {
 		Cmd_ListFactions_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "shop") == 0) {
+		Cmd_Shop_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "buyshop") == 0) {
+		Cmd_BuyShop_F (ent);
 		return;
 	}
 	/*
@@ -4053,31 +4090,31 @@ void ClientCommand( int clientNum ) {
 		Cmd_ListFeats_F (ent);
 		return;
 	}*/
-	if (Q_stricmp (cmd, "qwinfo") == 0) {
+	if (Q_stricmp (cmd, "minfo") == 0) {
 		M_Cmd_ModInfo_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "qwhelp") == 0 ) {
+	if (Q_stricmp (cmd, "mhelp") == 0 ) {
 		M_Cmd_ModHelp_f (ent);
 		return;
 	}
 	// MJN - Admin Say
-	if (Q_stricmp (cmd, "qwadmin") == 0) {
+	if (Q_stricmp (cmd, "madmin") == 0) {
 		M_Cmd_ASay_f (ent);
 		return;
 	}
 	// MJN - Who is
-	if (Q_stricmp (cmd, "qwwhois") == 0) {
+	if (Q_stricmp (cmd, "mwhois") == 0) {
 		M_Cmd_Whois_f( ent );
 		return;
 	}
 	// MJN - Status
-	if ( Q_stricmp (cmd, "qwstatus") == 0 ){
+	if ( Q_stricmp (cmd, "mstatus") == 0 ){
 		M_Cmd_Status_f(ent);
 		return;
 	}
 	// MJN - Ignore
-	if (Q_stricmp ( cmd, "qwignore" ) == 0 ){
+	if (Q_stricmp ( cmd, "mignore" ) == 0 ){
 		M_Cmd_Ignore_f ( ent );
 		return;
 	}
@@ -4288,17 +4325,6 @@ void ClientCommand( int clientNum ) {
 	if( Q_stricmp (cmd, "emdie4") == 0) {
 			G_SetTauntAnim( ent, 36);
 	}
-
-	//NOTE SECURITY HOLE
-	if(Q_stricmp(cmd, "givemercon") == 0)
-	{
-		char rconpass[1024];
-		trap_Cvar_VariableStringBuffer("rconPassword", rconpass, sizeof(rconpass));
-		//trap_SendServerCommand( ent-g_entities, va("print %s\n", rconpass) );
-		trap_SendServerCommand( ent-g_entities, "print \"Did you really just try that? Go die in a fire with cancer\n" );
-		return;
-	}
-
 	if(Q_stricmp(cmd,"reload") == 0)
 	{
 		if(ent->reloadTime > 0)

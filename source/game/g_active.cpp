@@ -2468,6 +2468,7 @@ void ClientThink_real( gentity_t *ent ) {
 		if (ent->client->ps.torsoAnim != BOTH_CONSOLE1)
 		{
 			G_SetAnim( ent, NULL, SETANIM_TORSO, BOTH_CONSOLE1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0 );
+			//OpenRP - reloading sound
 			G_SoundOnEnt(ent, CHAN_WEAPON,"sound/effects/servo_hand.mp3");
 		}
 		else

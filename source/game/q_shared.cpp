@@ -1449,15 +1449,16 @@ Some characters are illegal in info strings because they
 can mess up the server's parsing
 ==================
 */
+//[OpenRP - BadChars Fix - Thanks to Raz0r]
+static const char badChars[] = { '\n', '\r', '\"', ';' };
 qboolean Info_Validate( const char *s ) {
-	if ( strchr( s, '\"' ) ) {
-		return qfalse;
-	}
-	if ( strchr( s, ';' ) ) {
-		return qfalse;
-	}
+	int i = 0;
+	for (i=0; i<sizeof(badChars); i++)
+		if ( strchr( s, badChars[i] ) )
+			return qfalse;
 	return qtrue;
 }
+//[/OpenRP - BadChars Fix - Thanks to Raz0r]
 
 /*
 ==================

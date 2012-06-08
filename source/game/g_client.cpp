@@ -2362,7 +2362,7 @@ void ClientUserinfoChanged( int clientNum ) {
 	{
 		client->pers.ojpClientPlugIn = qfalse;
 	}
-	else if(!strcmp(CURRENT_OJPENHANCED_CLIENTVERSION, s))
+	else if(!strcmp(OPENRP_CLIENTVERSION, s))
 	{
 		client->pers.ojpClientPlugIn = qtrue;
 	}
@@ -2874,12 +2874,12 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	{//send this client the MOTD for clients using the right version of OpenRP.
 		TextWrapCenterPrint(ojp_clientMOTD.string, motd);
 		if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		trap_SendServerCommand( ent-g_entities,va( "print \"^5OpenRP SVN\n^5Type /qwinfo into the console for a list of commands.\n\"" ) );
+		trap_SendServerCommand( ent-g_entities,va( "print \"^5OpenRP %s\n^5Type /minfo into the console for a list of commands.\n\"", OPENRP_CLIENTVERSION ) );
 		}
 	}
 	else
 	{//send this client the MOTD for clients aren't running OJP or just not the right version.
-TextWrapCenterPrint( va("^1You are missing the OpenRP client, or have an outdated version. Please download %s from http://code.google.com/p/openrp/ \nIf you have a version greater than %s and you are seeing this, then this server has an old server version and must update.", OPENRP_CLIENTVERSION, OPENRP_CLIENTVERSION), motd);
+TextWrapCenterPrint( va("^1You are missing the OpenRP client, have an outdated version, or this server is outdated and needs to update.\nDownload OpenRP: http://code.google.com/p/openrp/ \n", OPENRP_CLIENTVERSION), motd);
 	}
 
 	trap_SendServerCommand( clientNum, va("cp \"%s\n\"", motd ) );

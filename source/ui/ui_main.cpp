@@ -4875,9 +4875,13 @@ static void UI_Update(const char *name) {
 		return;
 	}
 
- 	if (Q_stricmp(name, "ui_SetName") == 0) {
-		trap_Cvar_Set( "name", UI_Cvar_VariableString("ui_Name"));
- 	} else if (Q_stricmp(name, "ui_setRate") == 0) {
+	if ( !Q_stricmp( name, "ui_SetName" ) )
+	{
+		char buf[36] = { 0 };
+		Q_strncpyz( buf, UI_Cvar_VariableString( "ui_Name" ), sizeof( buf ) );
+		trap_Cvar_Set( "name", buf );
+ 	}
+	else if (Q_stricmp(name, "ui_setRate") == 0) {
 		float rate = trap_Cvar_VariableValue("rate");
 		if (rate >= 5000) {
 			trap_Cvar_Set("cl_maxpackets", "30");
@@ -4890,9 +4894,11 @@ static void UI_Update(const char *name) {
 			trap_Cvar_Set("cl_packetdup", "1");		// favor lower bandwidth
 		}
  	} 
-	else if (Q_stricmp(name, "ui_GetName") == 0) 
+	else if ( !Q_stricmp( name, "ui_GetName" ) ) 
 	{
-		trap_Cvar_Set( "ui_Name", UI_Cvar_VariableString("name"));
+		char buf[36] = { 0 };
+		Q_strncpyz( buf, UI_Cvar_VariableString( "name" ), sizeof( buf ) );
+		trap_Cvar_Set( "ui_Name", buf );
 	}
 	else if (Q_stricmp(name, "ui_r_colorbits") == 0) 
 	{
@@ -10577,7 +10583,11 @@ void _UI_Init( qboolean inGameLoad ) {
 		UI_LoadMenus(menuSet, qtrue);
 	}
 	
-	trap_Cvar_Register(NULL, "ui_name", UI_Cvar_VariableString("name"), CVAR_INTERNAL );	//get this now, jic the menus change again trying to setName before getName
+	{
+		char buf[36] = { 0 };
+		Q_strncpyz( buf, UI_Cvar_VariableString( "name" ), sizeof( buf ) );
+		trap_Cvar_Register( NULL, "ui_Name", buf, CVAR_INTERNAL );
+	}
 
 	Menus_CloseAll();
 

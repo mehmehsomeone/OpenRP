@@ -5655,6 +5655,40 @@ Sets mins, maxs, and pm->ps->viewheight
 //[KnockdownSys]
 qboolean PM_GettingUpFromKnockDown( float standheight, float crouchheight );
 //[/KnockdownSys]
+
+//[OpenRP - Jump-crouch Fix - Thanks to Xycaleth]
+static qboolean PM_CanStand ( void )
+{
+    qboolean canStand = qtrue;
+    float x, y;
+    trace_t trace;
+
+    const vec3_t lineMins = { -5.0f, -5.0f, -2.5f };
+    const vec3_t lineMaxs = { 5.0f, 5.0f, 0.0f };
+
+    for ( x = pm->mins[0] + 5.0f; canStand && x <= (pm->maxs[0] - 5.0f); x += 10.0f )
+    {
+        for ( y = pm->mins[1] + 5.0f; y <= (pm->maxs[1] - 5.0f); y += 10.0f )
+        {
+            vec3_t start = { x, y, pm->maxs[2] };
+            vec3_t end = { x, y, pm->ps->standheight };
+
+            VectorAdd (start, pm->ps->origin, start);
+            VectorAdd (end, pm->ps->origin, end);
+
+            pm->trace (&trace, start, lineMins, lineMaxs, end, pm->ps->clientNum, pm->tracemask);
+		    if ( trace.allsolid || trace.fraction < 1.0f )
+		    {
+			    canStand = qfalse;
+			    break;
+		    }
+        }
+    }
+	
+    return canStand;
+}
+//[/OpenRP - Jump-crouch Fix - Thanks to Xycaleth]
+
 static void PM_CheckDuck (void)
 {
 	trace_t	trace;
@@ -5746,16 +5780,16 @@ static void PM_CheckDuck (void)
 		}
 		else if (pm->ps->pm_flags & PMF_ROLLING)
 		{
-			// try to stand up
-			pm->maxs[2] = pm->ps->standheight;//DEFAULT_MAXS_2;
-			pm->trace (&trace, pm->ps->origin, pm->mins, pm->maxs, pm->ps->origin, pm->ps->clientNum, pm->tracemask );
-			if (!trace.allsolid)
-			//[DodgeSys]
-			{
+			//[OpenRP - Jump-crouch Fix - Thanks to Xycaleth]
+            if ( PM_CanStand() )
+            {
+                pm->maxs[2] = pm->ps->standheight;
+				//[DodgeSys]
 				pm->ps->userInt3 &= ~(1 << FLAG_DODGEROLL);
-				pm->ps->pm_flags &= ~PMF_ROLLING;
-		}
-			//[/DodgeSys]
+				//[/DodgeSys]
+                pm->ps->pm_flags &= ~PMF_ROLLING;
+            }
+			//[/OpenRP - Jump-crouch Fix - Thanks to Xycaleth]
 		}
 		//[KnockdownSys]
 		else if ( PM_GettingUpFromKnockDown( pm->ps->standheight, pm->ps->crouchheight ) )
@@ -5788,11 +5822,11 @@ static void PM_CheckDuck (void)
 		{	// stand up if possible 
 			if (pm->ps->pm_flags & PMF_DUCKED)
 			{
-				// try to stand up
-				pm->maxs[2] = pm->ps->standheight;//DEFAULT_MAXS_2;
-				pm->trace (&trace, pm->ps->origin, pm->mins, pm->maxs, pm->ps->origin, pm->ps->clientNum, pm->tracemask );
-				if (!trace.allsolid)
-					pm->ps->pm_flags &= ~PMF_DUCKED;
+                if ( PM_CanStand() )
+	            {
+		            pm->maxs[2] = pm->ps->standheight;
+		            pm->ps->pm_flags &= ~PMF_DUCKED;
+	            }
 			}
 		}
 	}

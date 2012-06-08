@@ -1554,9 +1554,9 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	//[/RGBSabers]
 
 	//[ClientPlugInDetect]
-	//set it so that the bots are assumed to have the OpenRP client plugin
-	//this should be CURRENT_OJPENHANCED_CLIENTVERSION
-	Info_SetValueForKey( userinfo, "ojp_clientplugin", CURRENT_OJPENHANCED_CLIENTVERSION );
+	//set it so that the bots are assumed to have the client plugin
+	//this should be OPENRP_CLIENTVERSION
+	Info_SetValueForKey( userinfo, "ojp_clientplugin", OPENRP_CLIENTVERSION );
 	//[/ClientPlugInDetect]
 
 	// have the server allocate a client slot

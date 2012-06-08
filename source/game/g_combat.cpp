@@ -6529,6 +6529,11 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 			continue;
 		}
 
+		//[OpenRP - Infinite loop fix - Thanks to Raz0r]
+		if(ent->health <= 0)
+			continue;
+		//[/OpenRP - Infinite loop fix - Thanks to Raz0r]
+
 		points = damage * ( 1.0 - dist / radius );
 
 		//[DodgeSys]

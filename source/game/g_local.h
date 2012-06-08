@@ -29,7 +29,7 @@ void CancelReload(gentity_t *ent);
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
-#define	GAMEVERSION	CURRENT_OJPENHANCED_CLIENTVERSION
+#define	GAMEVERSION	OPENRP_CLIENTVERSION
 
 #define BODY_QUEUE_SIZE		8
 

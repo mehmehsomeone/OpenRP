@@ -33,7 +33,10 @@ void Cmd_SetFaction_F( gentity_t * targetplayer );
 void Cmd_KickFaction_F( gentity_t * targetplayer );
 void Cmd_SetFactionRank_F( gentity_t * targetplayer );
 void Cmd_Faction_F( gentity_t * targetplayer );
+void Cmd_FactionWithdraw_F( gentity_t * targetplayer );
 void Cmd_ListFactions_F( gentity_t * targetplayer );
+void Cmd_Shop_F( gentity_t * targetplayer );
+void Cmd_BuyShop_F( gentity_t * targetplayer );
 //--Feat Functions--
 void AddFeat(int charID, int featID, int level);
 void InsertFeat(int charID, int featID);

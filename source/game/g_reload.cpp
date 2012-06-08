@@ -203,10 +203,10 @@ void SetupReload(gentity_t *ent)
 	ent->reloadTime = level.time + reloadTime;
 	ent->client->ps.zoomMode = 0;
 
-	ent->client->isHacking = ent->client->ps.clientNum;
+	//ent->client->isHacking = ent->client->ps.clientNum;
 	//ent->client->isHacking = -100;
-	ent->client->ps.hackingTime = level.time + reloadTime;
-	ent->client->ps.hackingBaseTime = reloadTime;
+	//ent->client->ps.hackingTime = level.time + reloadTime;
+	//ent->client->ps.hackingBaseTime = reloadTime;
 }
 
 void Reload(gentity_t *ent)
@@ -323,7 +323,7 @@ void CancelReload(gentity_t *ent)
 {
 	ent->reloadTime = -1;
 	ent->reloadCooldown = level.time + 3000;
-	ent->client->isHacking = 0;
+	//ent->client->isHacking = 0;
 	ent->client->ps.weaponTime = 0;
 	ent->client->ps.torsoTimer = 0;
 }

@@ -1128,7 +1128,7 @@ Ghoul2 Insert End
 	//[ClientPlugInDetect]
 	//this cvar is a dummy cvar used to determine if the client has the OpenRP clientside dlls or not.
 	//This value needs to be the same as CURRENT_OJPENHANCED_CLIENTVERSION!!!!
-	{ &ojp_clientplugin, "ojp_clientplugin", CURRENT_OJPENHANCED_CLIENTVERSION, CVAR_USERINFO | CVAR_ROM },
+	{ &ojp_clientplugin, "ojp_clientplugin", OPENRP_CLIENTVERSION, CVAR_USERINFO | CVAR_ROM },
 	//[/ClientPlugInDetect]
 
 	//[VisualWeapons]
@@ -3728,8 +3728,12 @@ void CG_CreateModelFromSpawnEnt(cgSpawnEnt_t *ent)
 	VectorCopy(ent->origin, RefEnt->origin);
 	VectorCopy(ent->origin, RefEnt->lightingOrigin);
 
-	VectorScaleVector(mins, ent->scale, mins);
-	VectorScaleVector(maxs, ent->scale, maxs);
+	//[OpenRP - Invalid Model Bounds Fix - Thanks to Didz]
+	//VectorScaleVector(mins, ent->scale, mins);
+	//VectorScaleVector(maxs, ent->scale, maxs);
+	VectorScaleVector(mins, RefEnt->modelScale, mins);
+	VectorScaleVector(maxs, RefEnt->modelScale, maxs);
+	//[/OpenRP - Invalid Model Bounds Fix - Thanks to Didz]
 	*radius = Distance(mins, maxs);
 	*zOff = ent->zoffset;
 
