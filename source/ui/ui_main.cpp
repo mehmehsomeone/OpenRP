@@ -6798,7 +6798,7 @@ static void UI_RunMenuScript(char **args)
 			char password[256];
 			trap_Cvar_VariableStringBuffer("ui_account_username",username,sizeof(username));
 			trap_Cvar_VariableStringBuffer("ui_account_password",password,sizeof(password));
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("qwlogin %s %s\n", username, password ) );
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("login %s %s\n", username, password ) );
 		}
 		else if (Q_stricmp(name, "accountCreate") == 0)
 		{
@@ -6806,7 +6806,7 @@ static void UI_RunMenuScript(char **args)
 			char password[256];
 			trap_Cvar_VariableStringBuffer("ui_account_username",username,sizeof(username));
 			trap_Cvar_VariableStringBuffer("ui_account_password",password,sizeof(password));
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("qwregister %s %s\n", username, password ) );
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("register %s %s\n", username, password ) );
 		}
 		//[/Account System]
 		//OpenRP - Character menus
@@ -6815,7 +6815,7 @@ static void UI_RunMenuScript(char **args)
 			char charName[256];
 
 			trap_Cvar_VariableStringBuffer("ui_character_name", charName, sizeof( charName ) );
-			trap_Cmd_ExecuteText(EXEC_APPEND, va( "qwcharacter %s", charName ) );
+			trap_Cmd_ExecuteText(EXEC_APPEND, va( "character %s", charName ) );
 		}
 		else if (Q_stricmp(name, "characterCreate") == 0)
 		{
@@ -6824,7 +6824,7 @@ static void UI_RunMenuScript(char **args)
 
 			trap_Cvar_VariableStringBuffer("ui_character_name", charName, sizeof( charName ) );
 			trap_Cvar_VariableStringBuffer("ui_character_forceSideNumber", forceSensitive, sizeof( forceSensitive ) );
-			trap_Cmd_ExecuteText(EXEC_APPEND, va( "qwcreatecharacter %s %s\n", charName, forceSensitive ) );
+			trap_Cmd_ExecuteText(EXEC_APPEND, va( "createcharacter %s %s\n", charName, forceSensitive ) );
 		}
 		else if (Q_stricmp(name, "saber_color") == 0) 
 		{

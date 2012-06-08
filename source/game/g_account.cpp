@@ -1503,7 +1503,7 @@ void Cmd_SetFaction_F( gentity_t * targetplayer )
 	trap_SendServerCommand( clientID, va( "print \"^2You have been put in the %s faction! Type /Faction to view info about it.\n\"", factionNameSTR.c_str() ) );
 	trap_SendServerCommand( clientID, va( "cp \"^2You have been put in the %s faction! Type /Faction to view info about it.\n\"", factionNameSTR.c_str() ) );
 
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Character %s has been put in the faction %s.\nUse /qwSetFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
+	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Character %s has been put in the faction %s.\nUse /SetFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
 
 	return;
 }
