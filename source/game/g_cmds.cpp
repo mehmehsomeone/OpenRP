@@ -4045,6 +4045,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_GiveCredits_F (ent);
 		return;
 	}
+	if (Q_stricmp (cmd, "gencredits") == 0) {
+		Cmd_GenerateCredits_F (ent);
+		return;
+	}
 	if (Q_stricmp (cmd, "createfaction") == 0) {
 		Cmd_CreateFaction_F (ent);
 		return;
@@ -4069,6 +4073,14 @@ void ClientCommand( int clientNum ) {
 		Cmd_FactionWithdraw_F (ent);
 		return;
 	}
+	if (Q_stricmp (cmd, "factiondeposit") == 0) {
+		Cmd_FactionDeposit_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "factiongen") == 0) {
+		Cmd_FactionGenerate_F (ent);
+		return;
+	}
 	if (Q_stricmp (cmd, "listfactions") == 0) {
 		Cmd_ListFactions_F (ent);
 		return;
@@ -4079,6 +4091,10 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp (cmd, "buyshop") == 0) {
 		Cmd_BuyShop_F (ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "inventory") == 0) {
+		Cmd_Inventory_F (ent);
 		return;
 	}
 	/*

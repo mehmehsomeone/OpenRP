@@ -11,6 +11,23 @@ void LoadForcePowers(gentity_t * targetplayer);
 void LoadFeats(gentity_t * targetplayer);
 void LoadAttributes(gentity_t * targetplayer );
 void LevelCheck( int charID );
+void CheckInventory( gentity_t * targetplayer );
+//--Feat Functions--
+void AddFeat(int charID, int featID, int level);
+void InsertFeat(int charID, int featID);
+qboolean HasFeat(int charid, int featID);
+qboolean HasForcePower(int charid, int power);
+qboolean HasSkill(int charid, int skill);
+//--Skill functions--
+void GrantSkill(int charID, int skill);
+void UpdateSkill(int charid, int skill, int level);
+//--Force powers--
+void GrantFP(int charID, int forcepower);
+void UpdateFP(int charid, int forcepower, int level);
+//--Misc Functions--
+qboolean isLoggedIn(gentity_t* targetplayer);
+qboolean isInCharacter(gentity_t* targetplayer);
+int GetForceLevel(int level);
 //--Ingame commands--
 void Cmd_AccountLogin_F(gentity_t * targetplayer);
 void Cmd_AccountLogout_F(gentity_t * targetplayer);
@@ -28,31 +45,19 @@ void Cmd_SVRemoveAdmin_F();
 void Cmd_GetNPC_F( gentity_t *ent );
 void Cmd_GiveXP_F( gentity_t * targetplayer );
 void Cmd_GiveCredits_F( gentity_t * targetplayer );
+void Cmd_GenerateCredits_F( gentity_t * targetplayer );
 void Cmd_CreateFaction_F( gentity_t * targetplayer );
 void Cmd_SetFaction_F( gentity_t * targetplayer );
 void Cmd_KickFaction_F( gentity_t * targetplayer );
 void Cmd_SetFactionRank_F( gentity_t * targetplayer );
 void Cmd_Faction_F( gentity_t * targetplayer );
 void Cmd_FactionWithdraw_F( gentity_t * targetplayer );
+void Cmd_FactionDeposit_F( gentity_t * targetplayer );
+void Cmd_FactionGenerate_F( gentity_t * targetplayer );
 void Cmd_ListFactions_F( gentity_t * targetplayer );
 void Cmd_Shop_F( gentity_t * targetplayer );
 void Cmd_BuyShop_F( gentity_t * targetplayer );
-//--Feat Functions--
-void AddFeat(int charID, int featID, int level);
-void InsertFeat(int charID, int featID);
-qboolean HasFeat(int charid, int featID);
-qboolean HasForcePower(int charid, int power);
-qboolean HasSkill(int charid, int skill);
-//--Skill functions--
-void GrantSkill(int charID, int skill);
-void UpdateSkill(int charid, int skill, int level);
-//--Force powers--
-void GrantFP(int charID, int forcepower);
-void UpdateFP(int charid, int forcepower, int level);
-//--Misc Functions--
-qboolean isLoggedIn(gentity_t* targetplayer);
-qboolean isInCharacter(gentity_t* targetplayer);
-int GetForceLevel(int level);
+void Cmd_Inventory_F( gentity_t * targetplayer );
 
 /*
 #define NUM_FEATS 76

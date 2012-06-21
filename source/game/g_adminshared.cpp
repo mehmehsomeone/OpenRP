@@ -558,7 +558,7 @@ Returns the rank name for the client connected.
 */
 char *M_GetPlayerRank(gentity_t *ent)
 {
-	if (ent->client->sess.openrpIsAdmin)
+	if (ent->client->sess.isAdmin)
 		return g_mRankName.string;
 	else
 		return "";
@@ -665,15 +665,15 @@ int M_HandlePassThroughFuncs(gentity_t * ent, char * cmd)
 			}
 
 			// First check for user access:
-			if( !ent->client->sess.openrpIsAdmin ){
-				trap_Cvar_VariableStringBuffer( "g_mNotopenrpIsAdmin", NotAdminString, sizeof(NotAdminString) );
+			if( !ent->client->sess.isAdmin ){
+				trap_Cvar_VariableStringBuffer( "g_mNotisAdmin", NotAdminString, sizeof(NotAdminString) );
 				M_StringEscapeToEnters( NotAdminString, NotAdminWithNewLines, sizeof(NotAdminString) );
 				trap_SendServerCommand( ent->client->ps.clientNum, va ( "print \"%s\"", NotAdminWithNewLines ) );
 				return 0;
 			}
 			
 
-			if (ent->client->sess.openrpIsAdmin){
+			if (ent->client->sess.isAdmin){
 					// Check if any paramaters have been give. If not then print the usage:
 					if( trap_Argc() < passthroughfuncs[i].NumOfArgs ){
 
@@ -1145,8 +1145,8 @@ Clears any possible flags that were set and not reset.
 void M_ClearAdminFlags(gentity_t * ent)
 {
 	// MJN - Clear admin flag.
-	if ( ent->client->sess.openrpIsAdmin ){
-		ent->client->sess.openrpIsAdmin = qfalse;
+	if ( ent->client->sess.isAdmin ){
+		ent->client->sess.isAdmin = qfalse;
 	}
 	// MJN - Clear protect flag.
 	if ( M_isProtected(ent) ){

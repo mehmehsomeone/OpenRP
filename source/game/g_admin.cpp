@@ -42,7 +42,7 @@ void M_Cmd_Status_f( gentity_t * ent)
 	short int i;
 	int clientNum;
 	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
-		if (ent->client->sess.openrpIsAdmin ){
+		if (ent->client->sess.isAdmin ){
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Number of clients: %i\n\"", level.numConnectedClients ) );
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"MaxClients: %i\n\"", level.maxclients ) );
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Client ID%10cIP%10cPlayer Name%10cHealth/Armor%10cWarnings\n\"", ' ', ' ', ' ', ' ') );
@@ -65,7 +65,7 @@ void M_Cmd_Status_f( gentity_t * ent)
 	}
 	else{
 		clientNum = ent->client->sess.spectatorClient;
-		if ((ent->client->sess.openrpIsAdmin ) && ent->client->sess.spectatorClient){
+		if ((ent->client->sess.isAdmin ) && ent->client->sess.spectatorClient){
 			trap_SendServerCommand( clientNum, va( "print \"Number of clients: %i\n\"", level.numConnectedClients ) );
 			trap_SendServerCommand( clientNum, va( "print \"MaxClients: %i\n\"", level.maxclients ) );
 			trap_SendServerCommand( clientNum, va( "print \"Client ID%10cIP%10cPlayer Name%10cHealth/Armor%10cWarnings\n\"", ' ', ' ', ' ', ' ') );
@@ -598,8 +598,8 @@ void M_Cmd_Whois_f ( gentity_t * ent )
 			switch (g_mWhois.integer){
 
 				case 1:	// Admins can see who is logged in only.
-						if(ent->client->sess.openrpIsAdmin ){ 
-							if(other->client->pers.connected && other->client->sess.openrpIsAdmin){
+						if(ent->client->sess.isAdmin ){ 
+							if(other->client->pers.connected && other->client->sess.isAdmin){
 								trap_SendServerCommand( ent-g_entities, va("print \"^3%s ^7: ^7%s\n\"", g_mRankName.string, other->client->pers.netname));
 							}
 						}
@@ -610,7 +610,7 @@ void M_Cmd_Whois_f ( gentity_t * ent )
 						break;
 
 				case 2:	// Just show me who is logged in.
-						if(other->client->pers.connected && other->client->sess.openrpIsAdmin){
+						if(other->client->pers.connected && other->client->sess.isAdmin){
 							trap_SendServerCommand( ent-g_entities, va("print \"^3%s ^7: ^7%s\n\"", g_mRankName.string, other->client->pers.netname));
 						}
 						break;
@@ -994,7 +994,7 @@ void M_Cmd_ModInfo_f (gentity_t * ent)
 
 	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
 
-		if( ent->client->sess.openrpIsAdmin ){
+		if( ent->client->sess.isAdmin ){
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4%s ^7by ^4%s\n\n ^4%s Access^7:\n\"", OPENRP_CLIENTVERSION, AUTHOR, g_mRankName.string) );
 			for( i = 0; i < numPassThroughElements; i++ ){
 					trap_SendServerCommand( ent->client->ps.clientNum, va("print \"%s \"\n\n", passthroughfuncs[i].clientcommand ) );
@@ -1002,7 +1002,7 @@ void M_Cmd_ModInfo_f (gentity_t * ent)
 		}
 
 		// Everyone:
-		if( ent->client->sess.openrpIsAdmin ){
+		if( ent->client->sess.isAdmin ){
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"\n%s\n\"", infoall ));
 		}
 		else{
@@ -1033,7 +1033,7 @@ void M_Cmd_ModHelp_f (gentity_t * ent)
 	char HelpString[MAX_TOKEN_CHARS];
 
 	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
-		if( ent->client->sess.openrpIsAdmin ){
+		if( ent->client->sess.isAdmin ){
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4OpenRP %s ^7by ^4%s\n\n ^4%s Command Help^7:\n\"", OPENRP_SERVERVERSION, AUTHOR, g_mRankName.string ) );	
 				for( i = 0; i < numPassThroughElements; i++ ){
 						trap_SendServerCommand( ent->client->ps.clientNum, va("print \"%s - %s\n\"", passthroughfuncs[i].clientcommand, passthroughfuncs[i].helpinfo ) );
@@ -1064,9 +1064,9 @@ void M_Cmd_AdminGun_f ( gentity_t * ent, char * cmd )
 	trace_t tr;
 	vec3_t forward, fwdOrg;
 
-	if ( g_mAdminGun.integer ){
+	//if ( g_mAdminGun.integer ){
 
-		if( ent->client->sess.openrpIsAdmin ){
+		if( ent->client->sess.isAdmin ){
 				
 			AngleVectors( ent->client->ps.viewangles, forward, NULL, NULL );
 			
@@ -1158,11 +1158,13 @@ void M_Cmd_AdminGun_f ( gentity_t * ent, char * cmd )
 			trap_SendServerCommand( ent->client->ps.clientNum, va("print \"You don't have access to admin commands.\n\""));
 			return;
 		}
+	/*
 	}
 	else{
 		trap_SendServerCommand( ent->client->ps.clientNum, va("print \"AdminGun system has been disabled.\n\""));
 		return;
 	}
+	*/
 }
 /*
 =================
@@ -1286,8 +1288,8 @@ void M_Cmd_ASay_f ( gentity_t * ent )
 	for (j = 0; j < level.maxclients; j++) {
 		other = &g_entities[j];
 		
-		if( other->client && (other->client->sess.openrpIsAdmin)){
-			if ( g_mRankDisplay.integer && (ent->client->sess.openrpIsAdmin)){
+		if( other->client && (other->client->sess.isAdmin)){
+			if ( g_mRankDisplay.integer && (ent->client->sess.isAdmin)){
 				trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c(%s)%c%c%c%s\"", "tchat", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, M_GetPlayerRank(ent), ':', Q_COLOR_ESCAPE, M_SetConsoleTextColor(textcolor, g_mASayColor.integer)/*COLOR_CYAN*/, message ));
 			}
 			else{

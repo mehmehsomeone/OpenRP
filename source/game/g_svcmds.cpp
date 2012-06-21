@@ -564,6 +564,16 @@ qboolean	ConsoleCommand( void ) {
 		return qtrue;
 	}
 
+	if (Q_stricmp (cmd, "grantadmin") == 0) {
+		Cmd_SVGrantAdmin_F();
+		return qtrue;
+	}
+
+	if (Q_stricmp (cmd, "removeadmin") == 0) {
+		Cmd_SVRemoveAdmin_F();
+		return qtrue;
+	}
+
 	//[AdminSys]
 	//added bigsay command to be able to print things to the center of the screen as the server admin.
 	if (Q_stricmp (cmd, "centersay") == 0)

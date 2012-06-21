@@ -98,7 +98,7 @@ void G_WriteClientSessionData( gclient_t *client ) {
 		//[Account System]
 		client->sess.userID,
 		client->sess.loggedinAccount,
-		client->sess.openrpIsAdmin
+		client->sess.isAdmin
 		//[/Account System]
 		);
 
@@ -152,7 +152,7 @@ void G_ReadSessionData( gclient_t *client ) {
 		//[Account System]
 		&client->sess.userID,
 		&client->sess.loggedinAccount,
-		&client->sess.openrpIsAdmin
+		&client->sess.isAdmin
 		//[/Account System]
 		);
 
@@ -358,7 +358,7 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot, qbool
 			//[Account System]
 			&client->sess.userID,
 			&client->sess.loggedinAccount,
-			&client->sess.openrpIsAdmin
+			&client->sess.isAdmin
 			//[/Account System]
 			);
 	}
