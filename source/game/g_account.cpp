@@ -69,7 +69,7 @@ void Cmd_AccountLogin_F( gentity_t * targetplayer )
 	}
 
 	//Check if we're already logged in 
-	if( isLoggedIn(targetplayer) )
+	if( isLoggedIn( targetplayer ) )
 	{
 		trap_SendServerCommand ( targetplayer->client->ps.clientNum, "print \"^5Already logged in!\n\"" );
 		trap_SendServerCommand ( targetplayer->client->ps.clientNum, "cp \"^5Already logged in!\n\"" );
@@ -802,8 +802,41 @@ void Cmd_SelectCharacter_F(gentity_t * targetplayer)
 
 	return;
 }
+/*
+=================
 
+Cmd_AccountInfo_F
 
+Displays Account Information
+
+Command: accountInfo
+=====
+*/
+void Cmd_AccountInfo_F(gentity_t * targetplayer)
+{
+		if( !targetplayer->client->sess.loggedinAccount )
+		{
+			trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in, in order to view your account info.\n\"" );
+			trap_SendServerCommand( targetplayer->client->ps.clientNum, "cp \"^1Error: You must be logged in, in order to view your account info.\n\"" );
+			return;
+		}
+		
+		Database db(DATABASE_PATH);
+		Query q(db);
+
+		if (!db.Connected())
+		{
+			G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+			return;
+		}
+
+		string accountNameSTR = q.get_string( va( "SELECT name FROM users where ID='%i'", targetplayer->client->sess.userID ) );
+
+		int clientID = q.get_num( va( "SELECT currentclientid FROM users where ID='%i'", targetplayer->client->sess.userID ) );
+
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), targetplayer->client->sess.userID, clientID));
+		return;
+}
 
 /*
 =================
@@ -1546,7 +1579,7 @@ void Cmd_CreateFaction_F(gentity_t * targetplayer)
 	char factionName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
 	int forceRestrictions;
 
-	if ( currentFactionSTR.c_str() != "none" )
+	if ( currentFactionSTR != "none" )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^1Error you must leave the %s faction first before creating one.\n\"", currentFactionSTR.c_str() ) );
 		return;

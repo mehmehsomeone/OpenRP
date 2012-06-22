@@ -4025,6 +4025,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_CreateCharacter_F (ent);
 		return;
 	}
+	if (!Q_stricmp (cmd, "accountinfo")) {
+		Cmd_AccountInfo_F (ent);
+		return;
+	}
 	if (!Q_stricmp (cmd, "characterinfo")) {
 		Cmd_CharacterInfo_F (ent);
 		return;

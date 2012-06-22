@@ -33,6 +33,7 @@ void Cmd_AccountLogin_F(gentity_t * targetplayer);
 void Cmd_AccountLogout_F(gentity_t * targetplayer);
 void Cmd_ListCharacters_F(gentity_t * targetplayer);
 void Cmd_AccountCreate_F(gentity_t * targetplayer);
+void Cmd_AccountInfo_F(gentity_t * targetplayer);
 void Cmd_SelectCharacter_F(gentity_t * targetplayer);
 void Cmd_CreateCharacter_F(gentity_t * targetplayer);
 void Cmd_AddFeat_F(gentity_t * targetplayer);
