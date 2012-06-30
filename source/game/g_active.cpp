@@ -1889,7 +1889,7 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 	}
 	
 	// MJN - Check Sleeping
-	if( M_isSleeping(ent) ){
+	if( ent->client->sess.state & PLAYER_SLEEPING ){
 		return;
 	}
 

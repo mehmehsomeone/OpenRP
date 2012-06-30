@@ -366,6 +366,25 @@ extern vmCvar_t		ojp_truebalance;//[TrueBalance]
 
 extern vmCvar_t ojp_modelscaleEnabled;//[Modelscale]
 
+//[OpenRP Admin]
+extern vmCvar_t		openrp_warnLevel; 
+
+//Bitvalues for Admins
+extern vmCvar_t		openrp_admin1Bitvalues;
+extern vmCvar_t		openrp_admin2Bitvalues; 
+extern vmCvar_t		openrp_admin3Bitvalues;
+extern vmCvar_t		openrp_admin4Bitvalues;
+extern vmCvar_t		openrp_admin5Bitvalues;
+extern vmCvar_t		openrp_admin6Bitvalues;
+extern vmCvar_t		openrp_admin7Bitvalues;
+extern vmCvar_t		openrp_admin8Bitvalues;
+extern vmCvar_t		openrp_admin9Bitvalues;
+extern vmCvar_t		openrp_admin10Bitvalues;
+
+//Determines whether admins can perform admin commands on higher admin levels
+extern vmCvar_t		openrp_adminControl;
+//[/OpenRP Admin]
+
 // movers are things like doors, plats, buttons, etc
 typedef enum {
 	MOVER_POS1,
@@ -845,6 +864,7 @@ typedef struct {
 	int Scale;						//The players new scale
 	int warnLevel;					//The current amount of warnings the player has
 	char IP[16];					//The players IP Address is stored here
+	qboolean Scaled;
 	int pids[MAX_CLIENTS];			//Client IDs
 
 } clientSession_t;

@@ -39,6 +39,8 @@ void Cmd_TeamVote_f( gentity_t *ent );
 extern vmCvar_t bot_wp_edit;
 //[/HolocronFiles]
 
+char	*ConcatArgs( int start );
+
 /*
 ==================
 DeathmatchScoreboardMessage
@@ -3991,12 +3993,6 @@ void ClientCommand( int clientNum ) {
  
 		return;
 	}
-
-	// MJN - Commands:
-	
-	if ( M_HandlePassThroughFuncs(ent, cmd) == 0){
-		return;
-	}
 	if (Q_stricmp (cmd, "login") == 0) {
 		Cmd_AccountLogin_F (ent);
 		return;
@@ -4155,10 +4151,6 @@ void ClientCommand( int clientNum ) {
 	}
 	if(Q_stricmp(cmd, "amprotect") == 0) {
 		Cmd_amProtect_f (ent);
-		return;
-	}
-	if(Q_stricmp(cmd, "amgranttemp") == 0) {
-		Cmd_amGrantTempAdmin_f (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amempower") == 0) {

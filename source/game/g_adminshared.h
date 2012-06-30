@@ -48,3 +48,6 @@
 #define PLAYER_MUTED					4 //This player has been muted.
 #define PLAYER_EMPOWERED				8 //This player is empowered.
 #define PLAYER_MERCD					16 //This player is mercd.
+
+void M_HolsterThoseSabers(gentity_t *ent);
+qboolean M_isNPCAccess(gentity_t *ent);

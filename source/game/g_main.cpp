@@ -561,7 +561,6 @@ vmCvar_t	g_autoKickTKSpammers;
 vmCvar_t	g_autoBanTKSpammers;
 //[/AdminCommands]
 
-
 #ifdef DEBUG_SABER_BOX
 vmCvar_t	g_saberDebugBox;
 #endif
@@ -678,6 +677,25 @@ vmCvar_t		ojp_ffaRespawnTimer;
 vmCvar_t		ojp_truebalance;//[TrueBalance]
 
 vmCvar_t	ojp_modelscaleEnabled;//[ModelScale]
+
+//[OpenRP Admin]
+vmCvar_t		openrp_warnLevel; 
+
+//Bitvalues for Admins
+vmCvar_t		openrp_admin1Bitvalues;
+vmCvar_t		openrp_admin2Bitvalues; 
+vmCvar_t		openrp_admin3Bitvalues;
+vmCvar_t		openrp_admin4Bitvalues;
+vmCvar_t		openrp_admin5Bitvalues;
+vmCvar_t		openrp_admin6Bitvalues;
+vmCvar_t		openrp_admin7Bitvalues;
+vmCvar_t		openrp_admin8Bitvalues;
+vmCvar_t		openrp_admin9Bitvalues;
+vmCvar_t		openrp_admin10Bitvalues;
+
+//Determines whether admins can perform admin commands on higher admin levels
+vmCvar_t		openrp_adminControl;
+//[/OpenRP Admin]
 
 //CVARS
 
@@ -1121,6 +1139,24 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_mPSayMode, "g_mPSayMode", "3", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_mAllowEmotes, "g_mAllowEmotes", "4", CVAR_ARCHIVE, 0, qtrue },
 
+	//[OpenRP Admin]
+	{ &openrp_warnLevel, "openrp_warnLevel", "3", CVAR_ARCHIVE, 0, qtrue  },
+
+	{ &openrp_admin1Bitvalues, "openrp_admin1Bitvalues", "268435455", 0 , 0, qtrue  },
+	{ &openrp_admin2Bitvalues, "openrp_admin2Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin3Bitvalues, "openrp_admin3Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin4Bitvalues, "openrp_admin4Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin5Bitvalues, "openrp_admin5Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin6Bitvalues, "openrp_admin6Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin7Bitvalues, "openrp_admin7Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin8Bitvalues, "openrp_admin8Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin9Bitvalues, "openrp_admin9Bitvalues", "1", 0 , 0, qtrue  },
+	{ &openrp_admin10Bitvalues, "openrp_admin10Bitvalues", "1", 0 , 0, qtrue  },
+
+	{ &openrp_adminControl, "openrp_adminControl", "1", CVAR_ARCHIVE, 0, qtrue  },
+
+	
+	//[/OpenRP Admin]
 
 };
 
