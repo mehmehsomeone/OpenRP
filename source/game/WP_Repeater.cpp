@@ -1,15 +1,15 @@
 #include "g_weapons.h"
 
-const float REPEATER_SPREAD = 1.8f; //1.4f
+const float REPEATER_SPREAD = 1.5f; //1.4f
 const int	REPEATER_DAMAGE = 45; //45
-const int	REPEATER_VELOCITY = 4000; //3500
+const int	REPEATER_VELOCITY = 4500; //3500
 
 const int REPEATER_ALT_SIZE = 3; //3
 const int REPEATER_ALT_DAMAGE = 80; //45
 const int REPEATER_ALT_SPLASH_DAMAGE = 45; //45
 const int REPEATER_ALT_SPLASH_RADIUS = 128; //128
 const int REPEATER_ALT_SPLASH_RAD_SIEGE = 128; //80
-const int REPEATER_ALT_VELOCITY = 900; //900
+const int REPEATER_ALT_VELOCITY = 1500; //900
 
 void WP_RepeaterMainFire( gentity_t *ent )
 {
@@ -34,7 +34,7 @@ void WP_RepeaterMainFire( gentity_t *ent )
 	missile->clipmask = MASK_SHOT | CONTENTS_LIGHTSABER;
 
 	// we don't want it to bounce forever
-	missile->bounceCount = 8;
+	missile->bounceCount = 0;
 }
 
 void WP_RepeaterAltFire( gentity_t *ent )

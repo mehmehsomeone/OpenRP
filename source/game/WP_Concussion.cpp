@@ -1,15 +1,15 @@
 #include "g_weapons.h"
 
 
-const int CONC_VELOCITY = 3000;
+const int CONC_VELOCITY = 5000;
 const int CONC_DAMAGE = 75; //150
 const int CONC_NPC_DAMAGE_EASY = 40;
 const int CONC_NPC_DAMAGE_NORMAL = 80;
 const int CONC_NPC_DAMAGE_HARD = 100;
-const int CONC_SPLASH_DAMAGE = 40;
+const int CONC_SPLASH_DAMAGE = 50;
 const int CONC_SPLASH_RADIUS = 200;
 
-const int CONC_ALT_DAMAGE = 25;
+const int CONC_ALT_DAMAGE = 100;
 const int CONC_ALT_NPC_DAMAGE_EASY = 20;
 const int CONC_ALT_NPC_DAMAGE_MEDIUM = 35;
 const int CONC_ALT_NPC_DAMAGE_HARD = 50;

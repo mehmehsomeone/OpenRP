@@ -1,7 +1,7 @@
 #include "g_weapons.h"
 
-const float BRYAR_SPREAD = 0.5f;
-const int BRYAR_PISTOL_VEL = 3800;
+const float BRYAR_SPREAD = 0.2f;
+const int BRYAR_PISTOL_VEL = 4000;
 const int BRYAR_PISTOL_DAMAGE = 80;
 const float BRYAR_CHARGE_UNIT	= 300.0f;
 const float BRYAR_ALT_SIZE = 1.0f;

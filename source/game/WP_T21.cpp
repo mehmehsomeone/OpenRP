@@ -2,13 +2,13 @@
 
 // Golan Arms Flechette
 //---------
-const int FLECHETTE_SHOTS = 5;
-const float FLECHETTE_SPREAD = 6.5f;
-const int FLECHETTE_DAMAGE = 60;
-const int FLECHETTE_VELOCITY = 3800;
+const int FLECHETTE_SHOTS = 8;
+const float FLECHETTE_SPREAD = 5.0f;
+const int FLECHETTE_DAMAGE = 30;
+const int FLECHETTE_VELOCITY = 4600;
 const int FLECHETTE_ALT_VELOCITY = 4800;
 const int FLECHETTE_SIZE = 1;
-const int FLECHETTE_ALT_DAMAGE = 30; //80
+const int FLECHETTE_ALT_DAMAGE = 50; //80
 
 void WP_T21MainFire( gentity_t *ent, vec3_t dir )
 {

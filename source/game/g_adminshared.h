@@ -1,15 +1,14 @@
-#define ADMIN_1						11 //Admin Level 1
-#define ADMIN_2						10 //Admin Level 2
-#define ADMIN_3						9 //Admin Level 3
-#define ADMIN_4						8 //Admin Level 4
-#define ADMIN_5						7 //Admin Level 5
-#define ADMIN_6						6 //Admin Level 6
-#define ADMIN_7						5 //Admin Level 7
-#define ADMIN_8						4 //Admin Level 8
-#define ADMIN_9						3 //Admin Level 9
-#define ADMIN_10					2 //Admin Level 10
-#define ADMIN_TEMP					1 //Temporary Admin Level
-#define ADMIN_NO_ADMIN				0 //No Admin Privileges
+#define ADMIN_1						10 //Admin Level 1
+#define ADMIN_2						9  //Admin Level 2
+#define ADMIN_3						8  //Admin Level 3
+#define ADMIN_4						7  //Admin Level 4
+#define ADMIN_5						6  //Admin Level 5
+#define ADMIN_6						5  //Admin Level 6
+#define ADMIN_7						4  //Admin Level 7
+#define ADMIN_8						3  //Admin Level 8
+#define ADMIN_9						2  //Admin Level 9
+#define ADMIN_10					1  //Admin Level 10
+#define ADMIN_NO_ADMIN				0  //No Admin Privileges
 
 //OpenRP Bitvalues begin here, each number is x2, beginning at 1.
 #define ADMIN_KICK					1 // /amkick command
@@ -18,7 +17,7 @@
 #define ADMIN_KILL					8 // /amkill command
 #define ADMIN_SLEEP					16 // /amsleep command
 #define ADMIN_MUTE					32 // /ammute command
-#define ADMIN_GRANTTEMP				64 // /amgranttempadmin command
+#define ADMIN_SLAP					64 // /amslap command
 #define ADMIN_NPC					128 // /npc command
 #define ADMIN_MAP					256 // /map command
 #define ADMIN_XP					512 // XP related commands
@@ -39,7 +38,7 @@
 #define ADMIN_WEATHER				16777216 // /amweather command
 #define ADMIN_STATUS				33554432 // /amstatus command
 #define ADMIN_RENAME				67108864 // /amrename command
-#define ADMIN_SLAP					134217728 // /amslap command
+
 
 //OpenRP Bitvalues End Here.
 
