@@ -106,11 +106,9 @@ void Cmd_AccountLogin_F( gentity_t * targetplayer )
 	targetplayer->client->sess.userID = userID;
 	targetplayer->client->sess.loggedinAccount = qtrue;
 
-	LoadUser(targetplayer);
 	//You are now logged in as <username>. Congratulations, you can type.
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "cp \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
-	q.execute( va( "UPDATE users set currentClientID='%i' WHERE name='%s'", targetplayer->client->ps.clientNum, userName ) ); 
 	//Update the ui
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "lui_login" ) );
 
@@ -259,15 +257,13 @@ void Cmd_AccountCreate_F(gentity_t * targetplayer)
 	}
 
 	//Create the account
-	q.execute(va("INSERT INTO users(name,password,currentClientID) VALUES('%s','%s','%i')", userNameSTR.c_str(), userPassword, targetplayer->client->ps.clientNum ) );
+	q.execute(va("INSERT INTO users(name,password,currentClientID) VALUES('%s','%s','NULL')", userNameSTR.c_str(), userPassword ) );
 
 	//Log them in automatically
 	int userID = q.get_num(va("SELECT ID FROM users WHERE name='%s'",userNameSTR.c_str()));
 
 	targetplayer->client->sess.userID = userID;
 	targetplayer->client->sess.loggedinAccount = qtrue;
-
-	LoadUser( targetplayer );
 
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\n\"", userNameSTR.c_str() ) );
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "cp \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\n\"", userNameSTR.c_str() ) );
@@ -689,18 +685,22 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 	string factionNoneSTR = temp2;
 	factionID = atoi( temp2 );
 
-	/*
-	if ( forceSensitive != 0 || forceSensitive != 1 )
+	switch ( forceSensitive )
 	{
+	case 0:
+		forceSensitive = 0;
+		break;
+	case 1:
+		forceSensitive = 1;
+		break;
+	default:
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: Force Sensitive must be either 1 or 0.\n\"" );
 		return;
 	}
-	*/
 
 	if ( !Q_stricmp( temp2, "none" ) || !Q_stricmp( temp2, "None" ) )
 	{
 		//Check if the character exists
-		Query q(db);
 		transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
 		string DBname = q.get_string( va( "SELECT name FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str() ) );
 
@@ -724,7 +724,6 @@ void Cmd_CreateCharacter_F(gentity_t * targetplayer)
 		}
 
 		//Check if the character exists
-		Query q(db);
 		transform( charNameSTR.begin(), charNameSTR.end(), charNameSTR.begin(), ::tolower );
 		string DBname = q.get_string( va( "SELECT name FROM characters WHERE userID='%i' AND name='%s'",targetplayer->client->sess.userID,charNameSTR.c_str() ) );
 
@@ -830,11 +829,12 @@ void Cmd_AccountInfo_F(gentity_t * targetplayer)
 			return;
 		}
 
-		string accountNameSTR = q.get_string( va( "SELECT name FROM users where ID='%i'", targetplayer->client->sess.userID ) );
+		string accountNameSTR = q.get_string( va( "SELECT name FROM users WHERE ID='%i'", targetplayer->client->sess.userID ) );
 
-		int clientID = q.get_num( va( "SELECT currentclientid FROM users where ID='%i'", targetplayer->client->sess.userID ) );
+		int clientID = q.get_num( va( "SELECT currentclientid FROM users WHERE ID='%i'", targetplayer->client->sess.userID ) );
 
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), targetplayer->client->sess.userID, clientID));
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), targetplayer->client->sess.userID, clientID ) );
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "cp \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), targetplayer->client->sess.userID, clientID ) );
 		return;
 }
 
@@ -850,7 +850,7 @@ Command: characterInfo
 */
 void Cmd_CharacterInfo_F(gentity_t * targetplayer)
 {
-		if( ( !targetplayer->client->sess.loggedinAccount ) && ( !targetplayer->client->sess.characterChosen ) )
+		if( ( !targetplayer->client->sess.loggedinAccount ) || ( !targetplayer->client->sess.characterChosen ) )
 		{
 			trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to view your character's info.\n\"" );
 			trap_SendServerCommand( targetplayer->client->ps.clientNum, "cp \"^1Error: You must be logged in and have a character selected in order to view your character's info.\n\"" );
@@ -889,8 +889,8 @@ void Cmd_CharacterInfo_F(gentity_t * targetplayer)
 		//string charModelSTR = q.get_string( va( "SELECT model FROM characters WHERE ID='%i'", targetplayer->client->sess.characterID ) );
 	
 		//Show them the info.
-		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va( "print \"^5Character Info:\nName: %s\nForce Sensitive: %i\nFaction: %s\nFaction Rank: %s\nLevel: %i/35\nXP: %i\nCredits: %i\n\"", charNameSTR.c_str(), forceSensitive, charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, charCredits ) );
-		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va( "cp \"^5Character Info:\nName: %s\nForce Sensitive: %i\nFaction: %s\nFaction Rank: %s\nLevel: %i/35\nXP: %i\nCredits: %i\n\"", charNameSTR.c_str(), forceSensitive, charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, charCredits ) );
+		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va( "print \"^5Character Info:\nName: %s\nForce Sensitive: %i\nFaction: %s\nFaction Rank: %s\nLevel: %i/50\nXP: %i\nCredits: %i\n\"", charNameSTR.c_str(), forceSensitive, charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, charCredits ) );
+		trap_SendServerCommand ( targetplayer->client->ps.clientNum, va( "cp \"^5Character Info:\nName: %s\nForce Sensitive: %i\nFaction: %s\nFaction Rank: %s\nLevel: %i/50\nXP: %i/\nCredits: %i\n\"", charNameSTR.c_str(), forceSensitive, charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, charCredits ) );
 		return;
 }
 
@@ -929,21 +929,23 @@ qboolean isInCharacter(gentity_t* targetplayer){
 /*
 =================
 
-LoadUser
+CheckAdmin
 
-Loads the user properties
+Checks if the user is an admin
 
 =====
 */
-void LoadUser(gentity_t * targetplayer){
+void CheckAdmin(gentity_t * targetplayer){
 	Database db(DATABASE_PATH);
 	Query q(db);
 	
 	int userID = targetplayer->client->sess.userID;
 
 	//Checks if the user is admin
-	int isAdmin = q.get_num(va("SELECT admin FROM users WHERE ID='%i'",userID));
-	if(isAdmin)
+	int isAdmin = q.get_num( va( "SELECT admin FROM users WHERE ID='%i'", userID ) );
+	//Check their adminlevel
+	int adminLevel = q.get_num( va( "SELECT adminlevel FROM users WHERE ID='%i'", userID ) );
+	if( isAdmin )
 	{//We're giving them admin if they are
 		targetplayer->client->sess.isAdmin = qtrue;
 	}
@@ -1030,6 +1032,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	//short int adminLevel;
 	//char temp[33];
 
+	CheckAdmin( ent );
 	if(ent->client->sess.isAdmin == qfalse)
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"" );
@@ -1045,6 +1048,8 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	}
 
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
+	string accountNameSTR = accountName;
+	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
 	/*trap_Argv( 2, temp, MAX_STRING_CHARS );
 
 	adminLevel = atoi( temp );
@@ -1055,19 +1060,19 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 		return;
 	}
 	*/
-	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountName ) );
+	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountNameSTR.c_str() ) );
 	if( !valid )
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"This user does not exist\n\"" );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Account %s does not exist\n\"", accountNameSTR.c_str() ) );
 		return;
 	}
 
-	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountName ) );
+	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountNameSTR.c_str() ) );
 
 	//q.execute( va( "UPDATE users set adminlevel='%i' WHERE name='%s'", adminLevel, accountName ) );
 
 	//trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Admin level %i granted to %s.\n\"", adminLevel, accountName ) );
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Admin granted to %s.\n\"", accountName ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Admin granted to %s.\n\"", accountNameSTR.c_str() ) );
 	return;
 }
 
@@ -1094,11 +1099,13 @@ void Cmd_SVGrantAdmin_F()
 	//char temp[33];
 
 	if( trap_Argc() < 2 ){
-		G_Printf( "Usage: GrantAdmin <accountName> <adminLevel>\n" );
+		G_Printf( "Usage: GrantAdmin <accountName>\n" );
 		return;
 	}
 
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
+	string accountNameSTR = accountName;
+	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
 	/*trap_Argv( 2, temp, MAX_STRING_CHARS );
 
 	adminLevel = atoi( temp );
@@ -1109,19 +1116,19 @@ void Cmd_SVGrantAdmin_F()
 		return;
 	}
 	*/
-	int valid = q.get_num(va("SELECT ID FROM users WHERE name='%s'",accountName));
+	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountNameSTR.c_str() ) );
 	if(!valid)
 	{
-		G_Printf("This user does not exist.\n");
+		G_Printf( "Account %s does not exist\n\"", accountNameSTR.c_str() );
 		return;
 	}
 
-	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountName ) );
+	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountNameSTR.c_str() ) );
 
 	//q.execute( va( "UPDATE users set adminlevel='%i' WHERE name='%s'", adminLevel, accountName ) );
 
 	//G_Printf( "Admin level %i granted to %s.\n", adminLevel, accountName );
-	G_Printf( "Admin granted to %s.\n", accountName );
+	G_Printf( "Admin granted to account %s.\n", accountNameSTR.c_str() );
 	return;
 }
 
@@ -1145,6 +1152,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 
 	char accountName[MAX_TOKEN_CHARS];
 
+	CheckAdmin( ent );
 	if(ent->client->sess.isAdmin == qfalse)
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1You are not allowed to use this command.\n\"");
@@ -1156,17 +1164,19 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 		return;
 	}
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
+	string accountNameSTR = accountName;
+	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
 	
-	int valid = q.get_num(va("SELECT ID FROM users WHERE name='%s'",accountName));
-	if(!valid)
+	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountNameSTR.c_str() ) );
+	if( !valid )
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"This user does not exist\n\"");
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Account %s does not exist\n\"", accountNameSTR.c_str() ) );
 		return;
 	}
 
-	q.execute(va("UPDATE users set admin='0' WHERE name='%s'",accountName));
+	q.execute( va( "UPDATE users set admin='0' WHERE name='%s'", accountNameSTR.c_str() ) );
 
-	trap_SendServerCommand( ent->client->ps.clientNum, "print \"Admin removed\n\"");
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Admin removed from account %s\n\"", accountNameSTR.c_str() ) );
 	return;
 }
 
@@ -1184,28 +1194,30 @@ void Cmd_SVRemoveAdmin_F()
 
 	if (!db.Connected())
 	{
-		G_Printf("Database not connected, %s\n",DATABASE_PATH);
+		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
 		return;
 	}
 
 	char accountName[MAX_TOKEN_CHARS];
 
 	if( trap_Argc() < 2 ){
-		G_Printf("Usage: RemoveAdmin <accountname>\n");
+		G_Printf( "Usage: RemoveAdmin <accountname>\n" );
 		return;
 	}
 	trap_Argv( 1, accountName, MAX_STRING_CHARS );
-	
-	int valid = q.get_num(va("SELECT ID FROM users WHERE name='%s'",accountName));
-	if(!valid)
+	string accountNameSTR = accountName;
+	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
+
+	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountNameSTR.c_str() ) );
+	if( !valid )
 	{
-		G_Printf("This user does not exist\n");
+		G_Printf( "Account %s does not exist\n\"", accountNameSTR.c_str() );
 		return;
 	}
 
-	q.execute(va("UPDATE users set admin='0' WHERE name='%s'",accountName));
+	q.execute( va( "UPDATE users set admin='0' WHERE name='%s'", accountNameSTR.c_str() ) );
 
-	G_Printf("Admin removed\n");
+	G_Printf( "Admin removed from account %s.\n", accountNameSTR.c_str() );
 	return;
 }
 
@@ -1258,14 +1270,14 @@ void LevelCheck(int charID)
 	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
 
 
-	for ( i=0; i <= 35; ++i )
+	for ( i=0; i <= 50; ++i )
 	{
 		int currentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
 		int currentXP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", charID ) );
 		
 		nextLevel = currentLevel + 1;
 
-		neededXP = nextLevel + ( nextLevel * 20 );
+		neededXP = nextLevel^2 * 2;
 
 		if ( currentXP > neededXP )
 		{
@@ -1305,6 +1317,7 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 	char charName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
 	int changedXP;
 	
+	CheckAdmin( targetplayer );
 	if (targetplayer->client->sess.isAdmin == qfalse)
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"");
@@ -1356,7 +1369,7 @@ void Cmd_GiveXP_F(gentity_t * targetplayer)
 
 	switch( currentLevel )
 	{
-		case 35:
+		case 50:
 			trap_SendServerCommand( clientID, va( "print \"^2You received %i XP! You now have %i XP.\n^3You are the highest level, so XP won't level you up more!\n\"", changedXP, newXPTotal ) );
 			trap_SendServerCommand( clientID, va( "cp \"^2You received %i XP! You now have %i XP.\n^3You are the highest level, so XP won't level you up more!\n\"", changedXP, newXPTotal ) );
 			break;
@@ -1392,7 +1405,7 @@ void Cmd_GiveCredits_F(gentity_t * targetplayer)
 		return;
 	}
 
-	if( ( !targetplayer->client->sess.loggedinAccount ) && ( !targetplayer->client->sess.characterChosen ) )
+	if( ( !targetplayer->client->sess.loggedinAccount ) || ( !targetplayer->client->sess.characterChosen ) )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 	}
@@ -1413,7 +1426,7 @@ void Cmd_GiveCredits_F(gentity_t * targetplayer)
 
 	//Credits Added or removed.
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
-	changedCredits = atoi(temp);
+	changedCredits = atoi( temp );
 
 	//Check if the character exists
 	transform( recipientCharNameSTR.begin(), recipientCharNameSTR.end(), recipientCharNameSTR.begin(), ::tolower );
@@ -1472,6 +1485,7 @@ Generate Credits
 */
 void Cmd_GenerateCredits_F(gentity_t * targetplayer)
 {
+	CheckAdmin( targetplayer );
 	if (targetplayer->client->sess.isAdmin == qfalse)
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"" );
@@ -1506,7 +1520,7 @@ void Cmd_GenerateCredits_F(gentity_t * targetplayer)
 
 	//Credits Added or removed.
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
-	changedCredits = atoi(temp);
+	changedCredits = atoi( temp );
 
 	//Check if the character exists
 	transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
@@ -1552,6 +1566,7 @@ Create Faction
 */
 void Cmd_CreateFaction_F(gentity_t * targetplayer)
 {
+	CheckAdmin( targetplayer );
 	if( targetplayer->client->sess.isAdmin == qfalse )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"" );
@@ -1597,16 +1612,24 @@ void Cmd_CreateFaction_F(gentity_t * targetplayer)
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
 	forceRestrictions = atoi( temp );
 
-	if ( forceRestrictions != 0 || 1 || 2 )
+	switch( forceRestrictions )
 	{
+	case 0:
+		q.execute(va("INSERT INTO factions(name,leader,credits,forcerestrictions) VALUES('%s','%s', '0')", factionNameSTR.c_str(), characterNameSTR.c_str(), 10000 ) );
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
+		break;
+	case 1:
+		q.execute(va("INSERT INTO factions(name,leader,credits,forcerestrictions) VALUES('%s','%s', '1')", factionNameSTR.c_str(), characterNameSTR.c_str(), 10000 ) );
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
+		break;
+	case 2:
+		q.execute(va("INSERT INTO factions(name,leader,credits,forcerestrictions) VALUES('%s','%s', '2')", factionNameSTR.c_str(), characterNameSTR.c_str(), 10000 ) );
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
+		break;
+	default:
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: Force Restrictions must be 0, 1, or 2.\n\"" );
-		return;
+		break;
 	}
-	
-	q.execute(va("INSERT INTO factions(name,leader,credits,forcerestrictions) VALUES('%s','%s', '%i')", factionNameSTR.c_str(), characterNameSTR.c_str(), 10000, forceRestrictions ) );
-
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
-
 	return;
 }
 
@@ -1619,6 +1642,7 @@ Set Faction
 */
 void Cmd_SetFaction_F( gentity_t * targetplayer )
 {
+	CheckAdmin( targetplayer );
 	if ( targetplayer->client->sess.isAdmin == qfalse )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"" );
@@ -1678,6 +1702,7 @@ Kick Faction
 */
 void Cmd_KickFaction_F( gentity_t * targetplayer )
 {
+	CheckAdmin( targetplayer );
 	if ( targetplayer->client->sess.isAdmin == qfalse )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"" );
@@ -1736,6 +1761,7 @@ Set Faction Rank
 */
 void Cmd_SetFactionRank_F( gentity_t * targetplayer )
 {
+	CheckAdmin( targetplayer );
 	if ( targetplayer->client->sess.isAdmin == qfalse )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"" );
@@ -1808,7 +1834,7 @@ void Cmd_Faction_F( gentity_t * targetplayer )
 		return;
 	}
 
-	if( ( !targetplayer->client->sess.loggedinAccount ) && ( !targetplayer->client->sess.characterChosen ) )
+	if( ( !targetplayer->client->sess.loggedinAccount ) || ( !targetplayer->client->sess.characterChosen ) )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 	}
@@ -1858,7 +1884,7 @@ void Cmd_FactionWithdraw_F( gentity_t * targetplayer )
 		return;
 	}
 
-	if( ( !targetplayer->client->sess.loggedinAccount ) && ( !targetplayer->client->sess.characterChosen ) )
+	if( ( !targetplayer->client->sess.loggedinAccount ) || ( !targetplayer->client->sess.characterChosen ) )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 	}
@@ -1931,7 +1957,7 @@ void Cmd_FactionDeposit_F( gentity_t * targetplayer )
 		return;
 	}
 
-	if( ( !targetplayer->client->sess.loggedinAccount ) && ( !targetplayer->client->sess.characterChosen ) )
+	if( ( !targetplayer->client->sess.loggedinAccount ) || ( !targetplayer->client->sess.characterChosen ) )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 	}
@@ -1984,6 +2010,7 @@ Faction Generate
 */
 void Cmd_FactionGenerate_F(gentity_t * targetplayer)
 {
+	CheckAdmin( targetplayer );
 	if (targetplayer->client->sess.isAdmin == qfalse)
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You are not allowed to use this command.\n\"" );
@@ -2095,7 +2122,7 @@ void Cmd_Shop_F( gentity_t * targetplayer )
 		return;
 	}
 
-	if( ( !targetplayer->client->sess.loggedinAccount ) && ( !targetplayer->client->sess.characterChosen ) )
+	if( ( !targetplayer->client->sess.loggedinAccount ) || ( !targetplayer->client->sess.characterChosen ) )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 	}
@@ -2129,7 +2156,7 @@ void Cmd_BuyShop_F( gentity_t * targetplayer )
 		return;
 	}
 
-	if( ( !targetplayer->client->sess.loggedinAccount ) && ( !targetplayer->client->sess.characterChosen ) )
+	if( ( !targetplayer->client->sess.loggedinAccount ) || ( !targetplayer->client->sess.characterChosen ) )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 	}
@@ -2161,7 +2188,7 @@ void Cmd_BuyShop_F( gentity_t * targetplayer )
 
 	else
 	{
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: This item is not a valid shop item.\n\"" );
+		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: This item is not a valid item.\n\"" );
 		return;
 	}
 
@@ -2205,6 +2232,11 @@ void Cmd_BuyShop_F( gentity_t * targetplayer )
 	}
 }
 
+void CheckInventory( gentity_t * targetplayer )
+{
+	return;
+}
+
 /*
 =================
 
@@ -2226,7 +2258,7 @@ void Cmd_Inventory_F( gentity_t * targetplayer )
 		return;
 	}
 
-	if( ( !targetplayer->client->sess.loggedinAccount ) && ( !targetplayer->client->sess.characterChosen ) )
+	if( ( !targetplayer->client->sess.loggedinAccount ) || ( !targetplayer->client->sess.characterChosen ) )
 	{
 		trap_SendServerCommand( targetplayer->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 		return;
@@ -2237,7 +2269,3 @@ void Cmd_Inventory_F( gentity_t * targetplayer )
 	return;
 }
 
-void CheckInventory( gentity_t * targetplayer )
-{
-	return;
-}

@@ -1815,7 +1815,7 @@ static void CG_RegisterSounds( void ) {
 	//PRECACHE ALL MUSIC HERE (don't need to precache normally because it's streamed off the disk)
 	if (cg_buildScript.integer)
 	{
-		trap_S_StartBackgroundTrack( "music/mp/duel.mp3", "music/mp/duel.mp3", qfalse );
+		//trap_S_StartBackgroundTrack( "music/mp/duel.mp3", "music/mp/duel.mp3", qfalse );
 	}
 
 	cg.loadLCARSStage = 1;

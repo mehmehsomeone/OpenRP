@@ -2012,10 +2012,12 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 				CG_CenterPrint( CG_GetStringEdString("MP_SVGAME", "BEGIN_DUEL"), 120, GIANTCHAR_WIDTH*2 );				
 				trap_S_StartLocalSound( cgs.media.countFightSound, CHAN_ANNOUNCER );
 			}
+			/*
 			else
 			{
 				trap_S_StartBackgroundTrack( "music/mp/duel.mp3", "music/mp/duel.mp3", qfalse );
 			}
+			*/
 		}
 		else
 		{ //ending the duel

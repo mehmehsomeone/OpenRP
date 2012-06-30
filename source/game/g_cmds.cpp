@@ -4110,122 +4110,107 @@ void ClientCommand( int clientNum ) {
 		Cmd_ListFeats_F (ent);
 		return;
 	}*/
-	if (Q_stricmp (cmd, "minfo") == 0) {
-		M_Cmd_ModInfo_f (ent);
+	if (Q_stricmp(cmd, "amlistadmins") == 0) {
+		Cmd_amListAdmins_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "mhelp") == 0 ) {
-		M_Cmd_ModHelp_f (ent);
+	if (Q_stricmp(cmd, "amkick") == 0) {
+		Cmd_amKick_f (ent);
 		return;
 	}
-	// MJN - Admin Say
-	if (Q_stricmp (cmd, "madmin") == 0) {
-		M_Cmd_ASay_f (ent);
+	if (Q_stricmp(cmd, "amban") == 0) {
+		Cmd_amBan_f (ent);
 		return;
 	}
-	// MJN - Who is
-	if (Q_stricmp (cmd, "mwhois") == 0) {
-		M_Cmd_Whois_f( ent );
+/*	if(Q_stricmp(cmd, "amwarn") == 0) {
+		Cmd_amWarn_f (ent);
 		return;
 	}
-	// MJN - Status
-	if ( Q_stricmp (cmd, "mstatus") == 0 ){
-		M_Cmd_Status_f(ent);
+*/
+	if (Q_stricmp(cmd, "amtele") == 0) {
+		Cmd_amTeleport_f (ent);
 		return;
 	}
-	// MJN - Ignore
-	if (Q_stricmp ( cmd, "mignore" ) == 0 ){
-		M_Cmd_Ignore_f ( ent );
+/*	if(Q_stricmp(cmd, "amslay") == 0) {
+		Cmd_amSlay_f (ent);
 		return;
 	}
-	/*
-	if (Q_stricmp (cmd, "amlogin") == 0 && g_mAllowAdminLogin.integer) {
-		M_Cmd_Login_f (ent);
+*/
+
+	if(Q_stricmp(cmd, "ammute") == 0) {
+		Cmd_amMute_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "amlogout") == 0 && g_mAllowAdminLogin.integer) {
-		M_Cmd_Logout_f (ent);
+	if(Q_stricmp(cmd, "amunmute") == 0) {
+		Cmd_amUnMute_f (ent);
 		return;
 	}
-	*/
-	if (Q_stricmp (cmd, "sleepgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amsleep") == 0) {
+		Cmd_amSleep_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "wakegun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amunsleep") == 0) {
+		Cmd_amUnsleep_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "empowergun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amprotect") == 0) {
+		Cmd_amProtect_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "unempowergun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amgranttemp") == 0) {
+		Cmd_amGrantTempAdmin_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "protectgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amempower") == 0) {
+		Cmd_amEmpower_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "unprotectgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "ambitvalues") == 0) {
+		Cmd_amBitvalues_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "terminatorgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "ammerc") == 0) {
+		Cmd_amMerc_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "unterminatorgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amannounce") == 0) {
+		Cmd_amAnnounce_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "slapgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "ameffect") == 0) {
+		Cmd_amEffect_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "origingun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amcleareffects") == 0) {
+		Cmd_amClearEffects_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "allowvotegun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amforceteam") == 0) {
+		Cmd_amForceTeam_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "denyvotegun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amip") == 0) {
+		Cmd_amIP_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "statusgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amstatus") == 0) {
+		Cmd_amStatus_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "showmotdgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amweather") == 0) {
+		Cmd_amWeather_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "npcgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "ammap") == 0) {
+		Cmd_amMap_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "notargetgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if(Q_stricmp(cmd, "amrename") == 0) {
+		Cmd_amRename_f (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "kickgun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
-		return;
-	}
-	if (Q_stricmp (cmd, "kickbangun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
-		return;
-	}
-	if (Q_stricmp (cmd, "warngun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
-		return;
-	}
-	if (Q_stricmp (cmd, "forgivegun") == 0){
-			M_Cmd_AdminGun_f(ent, cmd);
+	if (Q_stricmp(cmd, "amslap") == 0) {
+		Cmd_amSlap_f (ent);
 		return;
 	}
 	if( Q_stricmp (cmd, "emsit") == 0) {

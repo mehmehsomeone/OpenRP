@@ -1,1952 +1,1948 @@
-// Copyright (C) 2003 - 2007 - Michael J. Nohai
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of agreement written in the JAE Mod Source.doc.
-// See JKA Game Source License.htm for legal information with Raven Software.
-// Use this code at your own risk.
 #include "g_local.h"
-#include "g_admin.h"
+#include "g_account.h"
+#include "string.h"
+#include <stdlib.h>
+#include <algorithm>
+#include "sqlite3/sqlite3.h"
+#include "sqlite3/libsqlitewrapped.h"
+#include "q_shared.h"
 #include "g_adminshared.h"
-#include "g_emote.h"
-#include "g_cvars.h"
-
-//CVARS
-
 
 /*
-=================
-
-M_Svcmd_Info_f - MJN
-
-=================
+================
+G_CompareStrings
+================
 */
-void M_Svcmd_Info_f( void )
-{
-	G_Printf("%s ^7by %s\n\n", OPENRP_SERVERVERSION, AUTHOR);
-	G_Printf("Rcon Commands:\n");
-	G_Printf("status, minfo, mkick, msilence, munsilence, msleep, mrename, mshowmotd, ");
-	G_Printf("mpsay, mkickban, mbanrange, mtele, morigin, mnextmap, mslap, addip, removeip, listip, ");
-	G_Printf("mwhois, mforceteam, mallowvote, mdenyvote, mlockteam, munlockteam, mgametype, mnpcaccess, ");
-	G_Printf("mrandteams, madminaccess, mdenyadminaccess, mvstr, mempower, munempower, ");
-	G_Printf("mterminator, munterminator, mprotect, munprotect, mnotarget, mtimescale, mwarn, mforgive\n");
-}
-/*
-=================
-
-M_Cmd_Status_f - MJN
-
-=================
-*/
-void M_Cmd_Status_f( gentity_t * ent)
-{
-	short int i;
-	int clientNum;
-	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
-		if (ent->client->sess.isAdmin ){
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Number of clients: %i\n\"", level.numConnectedClients ) );
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"MaxClients: %i\n\"", level.maxclients ) );
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Client ID%10cIP%10cPlayer Name%10cHealth/Armor%10cWarnings\n\"", ' ', ' ', ' ', ' ') );
-		
-			
-			for( i = 0; i < level.maxclients; i++ ){
-				if( g_entities[i].client->pers.connected ){
-
-					trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"%i%10c^7%i.%i.%i.%i%10c^7%s%10c^7<^1%i^7/^2%i^7>%10c^7%i\n\"", 
-						i, ' ', g_entities[i].client->sess.IPstring[0], g_entities[i].client->sess.IPstring[1], g_entities[i].client->sess.IPstring[2], g_entities[i].client->sess.IPstring[3], 
-						' ', g_entities[i].client->pers.netname, ' ', g_entities[i].client->ps.stats[STAT_HEALTH], g_entities[i].client->ps.stats[STAT_ARMOR], ' ', g_entities[i].client->sess.warnLevel));
-				}
-			}
-			return;
-		}
-		else{
-			trap_SendServerCommand( ent-g_entities, va( "print \"You are not logged in as an admin.\n\"" ) );
-			return;
-		}
-	}
-	else{
-		clientNum = ent->client->sess.spectatorClient;
-		if ((ent->client->sess.isAdmin ) && ent->client->sess.spectatorClient){
-			trap_SendServerCommand( clientNum, va( "print \"Number of clients: %i\n\"", level.numConnectedClients ) );
-			trap_SendServerCommand( clientNum, va( "print \"MaxClients: %i\n\"", level.maxclients ) );
-			trap_SendServerCommand( clientNum, va( "print \"Client ID%10cIP%10cPlayer Name%10cHealth/Armor%10cWarnings\n\"", ' ', ' ', ' ', ' ') );
-			
-			for( i = 0; i < level.maxclients; i++ ){
-				if( g_entities[i].client->pers.connected ){
-
-					trap_SendServerCommand( clientNum, va( "print \"%i%10c^7%i.%i.%i.%i%10c^7%s%10c^7<^1%i^7/^2%i^7>%10c^7%i\n\"", 
-						i, ' ', g_entities[i].client->sess.IPstring[0], g_entities[i].client->sess.IPstring[1], g_entities[i].client->sess.IPstring[2], g_entities[i].client->sess.IPstring[3], 
-						' ', g_entities[i].client->pers.netname, ' ', g_entities[i].client->ps.stats[STAT_HEALTH], g_entities[i].client->ps.stats[STAT_ARMOR], ' ', g_entities[i].client->sess.warnLevel));
-				}
-			}
-			return;
-		}
-		else{
-			trap_SendServerCommand( clientNum, va( "print \"You are not logged in as an admin.\n\"" ) );
-			return;
-		}
-	}
-}
-
-/*
-=================
-
-M_Svcmd_Kick_f - MJN
-
-=================
-*/
-void M_Svcmd_Kick_f( gentity_t * targetplayer )
+qboolean G_CompareStrings(char string1[256], char string2[256])
 {
 
-	char name[MAX_STRING_CHARS];
-	char message[MAX_STRING_CHARS];
-	int clientid;
-
-	trap_Argv( 1, name, sizeof( name ) );
-	M_StringEscapeToEnters( ConcatArgs(2), message, MAX_STRING_CHARS );
-
-	clientid = M_G_ClientNumberFromName( name );
-
-	if( clientid != -1 ){
-
-		// MJN - NEW!!! Check if person is following someone, if so, get them to normal spectator
-		if ( targetplayer->client->sess.spectatorState == SPECTATOR_FOLLOW ) {
-			StopFollowing( targetplayer );
-		}
-		
-		// This sends message to player and then kicks them, returns reason to the server.
-		trap_SendConsoleCommand( EXEC_APPEND, va( "clientkick %d", clientid ));
-		if ( message[0] != 0 ){
-			trap_SendServerCommand( -1, va("print \"^7(^3Reason^7: ^1%s^7)\"", message ) );
-		}
-		G_LogPrintf("kick: %s was kicked from the server.\n", targetplayer->client->pers.netname);
-	}
-	else{
-		G_Printf("No user found to kick with that name.\n");
-		return;
-	}
-}
-/*
-=================
-
-M_Svcmd_KickBan_f - MJN
-
-=================
-*/
-void M_Svcmd_KickBan_f ( gentity_t * targetplayer )
-{
-	gclient_t * client;
-	char name[MAX_STRING_CHARS];
-	char message[MAX_STRING_CHARS];
-	int clientid;
-	
-	client = targetplayer->client;
-
-	trap_Argv( 1, name, sizeof( name ) );
-	M_StringEscapeToEnters( ConcatArgs(2), message, MAX_STRING_CHARS );
-
-	clientid = M_G_ClientNumberFromName( name );
-
-	if( clientid != -1 ){
-		
-		if( client->sess.IPstring[0] == 0 ){
-			G_Printf( "Couldn't retrieve IP Address for player %s\n", targetplayer->client->pers.netname );
-			return;
-		}
-
-		if( client->pers.localClient ){
-			G_Printf( "Can't kickban host player\n" );
-			return;
-		}
-		// MJN - NEW!!! Check if person is following someone, if so, get them to normal spectator
-		if ( targetplayer->client->sess.spectatorState == SPECTATOR_FOLLOW ) {
-			StopFollowing( targetplayer );
-		}
-		// Add ip to banlist and then kick the player:
-		trap_SendConsoleCommand( EXEC_APPEND, va( "AddIP %i.%i.%i.%i", client->sess.IPstring[0], client->sess.IPstring[1], 
-			client->sess.IPstring[2], client->sess.IPstring[3] ) );
-		
-		// MJN - Prints ip banned!
-		G_Printf( va( "IP: %i.%i.%i.%i banned\n", client->sess.IPstring[0], client->sess.IPstring[1], 
-			client->sess.IPstring[2], client->sess.IPstring[3]));
-		
-		// This sends message and then kicks player.
-		trap_SendConsoleCommand( EXEC_NOW, va( "clientkick %d", clientid ) );
-		if ( message[0] != 0 ){
-			trap_SendServerCommand( -1, va("print \"^7(^3Reason^7: ^1%s^7)\n\"", message ) );
-		}
-		G_LogPrintf("kickban: IP: %i.%i.%i.%i was banned for user %s.\n", client->sess.IPstring[0], client->sess.IPstring[1], 
-			client->sess.IPstring[2], client->sess.IPstring[3], targetplayer->client->pers.netname);
-	}
-	else{
-		G_Printf("No user found to kickban with that name.\n");
-		return;
-	}
-}
-/*
-=================
-
-M_Svcmd_BanRange_f - MJN
-
-=================
-*/
-void M_Svcmd_BanRange_f ( gentity_t * targetplayer )
-{
-	gclient_t * client;
-	char name[MAX_STRING_CHARS];
-	char range[10];
-	char message[MAX_STRING_CHARS];
-	int clientid;
-	
-	client = targetplayer->client;
-
-	trap_Argv( 1, name, sizeof( name ) );
-	trap_Argv( 2, range, sizeof( range ) );
-	M_StringEscapeToEnters( ConcatArgs(3), message, MAX_STRING_CHARS );
-
-	clientid = M_G_ClientNumberFromName( name );
-
-	if( clientid != -1 ){
-		
-		if( client->sess.IPstring[0] == 0 ){
-			G_Printf( "Couldn't retrieve IP Address for player %s\n", targetplayer->client->pers.netname );
-			return;
-		}
-
-		if( client->pers.localClient ){
-			G_Printf( "Can't kickban host player\n" );
-			return;
-		}
-
-		// MJN - NEW!!! Check if person is following someone, if so, get them to normal spectator
-		if ( targetplayer->client->sess.spectatorState == SPECTATOR_FOLLOW ) {
-			StopFollowing( targetplayer );
-		}
-		if ( !Q_stricmp( range, "light" ) || !Q_stricmp( range, "l" ) ) {
-			
-			// Add ip to banlist and then kick the player:
-			trap_SendConsoleCommand( EXEC_APPEND, va( "AddIP %i.%i.%i.0", client->sess.IPstring[0], client->sess.IPstring[1], client->sess.IPstring[2] ) );
-		
-			// MJN - Prints ip mask banned!
-			G_Printf( va( "IP Range: %i.%i.%i.0 banned!\n", client->sess.IPstring[0], client->sess.IPstring[1], client->sess.IPstring[2] ));
-			G_LogPrintf("kickban: IP: %i.%i.%i.0 was banned for user %s.\n", client->sess.IPstring[0], client->sess.IPstring[1], 
-				client->sess.IPstring[2], targetplayer->client->pers.netname);
-		}
-		else if ( !Q_stricmp( range, "medium" ) || !Q_stricmp( range, "m" ) ){
-			
-			// Add ip to banlist and then kick the player:
-			trap_SendConsoleCommand( EXEC_APPEND, va( "AddIP %i.%i.0.0", client->sess.IPstring[0], client->sess.IPstring[1] ) );
-		
-			// MJN - Prints ip mask banned!
-			G_Printf( va( "IP Range: %i.%i.0.0 banned!\n", client->sess.IPstring[0], client->sess.IPstring[1]));
-			G_LogPrintf("kickban: IP: %i.%i.0.0 was banned for user %s.\n", client->sess.IPstring[0], client->sess.IPstring[1], 
-				targetplayer->client->pers.netname);
-		}
-		else if ( !Q_stricmp( range, "heavy" ) || !Q_stricmp( range, "h" ) ){
-			
-			// Add ip to banlist and then kick the player:
-			trap_SendConsoleCommand( EXEC_APPEND, va( "AddIP %i.0.0.0", client->sess.IPstring[0] ) );
-		
-			// MJN - Prints ip mask banned!
-			G_Printf( va( "IP Range: %i.0.0.0 banned!\n", client->sess.IPstring[0]));
-			G_LogPrintf("kickban: IP: %i.0.0.0 was banned for user %s.\n", client->sess.IPstring[0], targetplayer->client->pers.netname);
-		}
-		else{
-			// MJN - Default to Medium as FailSafe.
-			// Add ip to banlist and then kick the player:
-			trap_SendConsoleCommand( EXEC_APPEND, va( "AddIP %i.%i.0.0", client->sess.IPstring[0], client->sess.IPstring[1] ) );
-		
-			// MJN - Prints ip mask banned!
-			G_Printf( va( "IP Range: %i.%i.0.0 banned!\n", client->sess.IPstring[0], client->sess.IPstring[1]));
-			G_LogPrintf("kickban: IP: %i.%i.0.0 was banned for user %s.\n", client->sess.IPstring[0], client->sess.IPstring[1], 
-				targetplayer->client->pers.netname);
-		}
-
-		// This sends message and then kicks player.
-		trap_SendConsoleCommand( EXEC_NOW, va( "clientkick %d", clientid ) );
-		if ( message[0] != 0 ){
-			trap_SendServerCommand( -1, va("print \"^7(^3Reason^7: ^1%s^7)\n\"", message ) );
-		}
-	}
-	else{
-		G_Printf("No user found to kickban with that name.\n");
-		return;
-	}
-}
-/*
-===================
-
-M_Svcmd_Silence_f
-
-===================
-*/
-void M_Svcmd_Silence_f( gentity_t * targetplayer )
-{
-	char mode[10];
-		
-	trap_Argv( 2, mode, sizeof( mode ) );
-
-	if ( !Q_stricmp( mode, "global" ) || !Q_stricmp( mode, "gm" ) ) {
-		if(M_isPrivateChatOnly(targetplayer)){
-			targetplayer->client->pers.pmchat = qfalse;
-		}
-		targetplayer->client->pers.silenced = qtrue;
-		G_LogPrintf( "silence: All chat for %s disabled.\n", targetplayer->client->pers.netname );
-	}
-	if ( !Q_stricmp( mode, "private" ) || !Q_stricmp( mode, "pm" ) ) {
-		if(M_isSilenced(targetplayer)){
-			targetplayer->client->pers.silenced = qfalse;
-		}
-		targetplayer->client->pers.pmchat = qtrue;
-		G_LogPrintf( "silence: %s can chat in private mode only.\n", targetplayer->client->pers.netname );
-	}
-	trap_Cvar_VariableStringBuffer( "g_mMessageSilenceTarget", targetString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageSilenceBroadcast", broadcastString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageSilenceEveryone", everyoneString, MAX_TOKEN_CHARS);
-}
-/*
-===================
-
-M_Svcmd_UnSilence_f
-
-===================
-*/
-void M_Svcmd_UnSilence_f( gentity_t * targetplayer )
-{
-	char mode[10];
-
-		trap_Argv( 2, mode, sizeof( mode ) );
-
-		if ( !Q_stricmp( mode, "global" ) || !Q_stricmp( mode, "gm" ) ) {
-			targetplayer->client->pers.silenced = qfalse;
-			G_LogPrintf( "unsilence: All chat for %s enabled.\n", targetplayer->client->pers.netname );
-		}
-		if ( !Q_stricmp( mode, "private" ) || !Q_stricmp( mode, "pm" ) ) {
-			targetplayer->client->pers.pmchat = qfalse;
-			G_LogPrintf( "unsilence: %s can now chat in other modes.\n", targetplayer->client->pers.netname );
-		}
-		trap_Cvar_VariableStringBuffer( "g_mMessageUnSilenceTarget", targetString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageUnSilenceBroadcast", broadcastString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageUnSilenceEveryone", everyoneString, MAX_TOKEN_CHARS);
-}
-/*
-=================
-
-M_Svcmd_Sleep_f - MJN
-
-=================
-*/
-void M_Svcmd_Sleep_f( gentity_t * targetplayer )
-{
-	
-	if ( targetplayer->health <= 0 ){
-		return;
-	}
-	
-	if( targetplayer->client->ps.powerups[PW_BLUEFLAG] || targetplayer->client->ps.powerups[PW_REDFLAG]  
-		|| targetplayer->client->ps.powerups[PW_NEUTRALFLAG] ){
-		G_Printf( "Client is currently holding a flag.\n" );
-		return;
-	}
-
-	// MJN - are they in an emote?  Then unemote them :P
-	if (InEmote(targetplayer->client->emote_num ) || 
-		InSpecialEmote(targetplayer->client->emote_num )){
-		G_SetTauntAnim(targetplayer, targetplayer->client->emote_num);
-	}
-
-	if( !M_isSleeping(targetplayer) ){
-		if (!AllForceDisabled( g_forcePowerDisable.integer )){
-			targetplayer->client->ps.forceRestricted = qtrue; // MJN - for disabling force
-		}
-		trap_Cvar_VariableStringBuffer( "g_mMessageSleepTarget", targetString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageSleepBroadcast", broadcastString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageSleepEveryone", everyoneString, MAX_TOKEN_CHARS);
-		targetplayer->flags ^= FL_GODMODE; // MJN - make invincible
-		targetplayer->client->pers.zShowTime = level.time + 4000;
-		targetplayer->client->pers.sleeping = qtrue; // MJN - is sleeping
-		G_LogPrintf( "sleep: %s\n", targetplayer->client->pers.netname );
-	}
-	else{
-		G_Printf( "Client is already asleep.\n" );
-		return;
-	}
-}
-/*
-=================
-
-M_Svcmd_Wake_f - MJN
-
-=================
-*/
-void M_Svcmd_Wake_f( gentity_t * targetplayer )
-{
-	
-	if ( targetplayer->health <= 0 ){
-		return;
-	}
-			
-	if( M_isSleeping(targetplayer) ){
-		if (!AllForceDisabled( g_forcePowerDisable.integer )){
-			targetplayer->client->ps.forceRestricted = qfalse; // MJN - no longer force
-		}
-		trap_Cvar_VariableStringBuffer( "g_mMessageWakeTarget", targetString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageWakeBroadcast", broadcastString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageWakeEveryone", everyoneString, MAX_TOKEN_CHARS);
-		targetplayer->flags &= ~FL_GODMODE; // MJN - no longer invincible
-		targetplayer->client->pers.sleeping = qfalse; // MJN - is awake
-		G_LogPrintf( "wake: %s\n", targetplayer->client->pers.netname );
-	}
-	else{
-		G_Printf( "Client is currently awake.\n" );
-		return;
-	}
-}
-/*
-=================
-
-M_Svcmd_ShowMOTD_f - MJN
-
-=================
-void M_Svcmd_ShowMOTD_f( gentity_t * targetplayer )
-{
-	targetplayer->client->sess.startShowMOTD = qtrue;
-	G_LogPrintf( "showmotd: %s\n", targetplayer->client->pers.netname );
-}
-/*
-=================
-
-M_Svcmd_Rename_f - MJN
-
-=================
-*/
-void M_Svcmd_Rename_f( void )
-{
-	char name[MAX_STRING_CHARS];
-	char string[MAX_STRING_CHARS];
-	char string1[MAX_STRING_CHARS-2];
-	char string2[MAX_STRING_CHARS-3];
-	char string3[MAX_STRING_CHARS-4];
-	char string4[MAX_STRING_CHARS-5];
-	char string5[MAX_STRING_CHARS-6];
-	char userinfo[MAX_INFO_STRING];
-	char space[MAX_STRING_CHARS] = " ";
-	gentity_t * targetplayer;
-	int clientid;
-
-	if ( trap_Argc() < 3 ){
-		G_Printf("Usage: mrename <playerid> <new name>\n");
-		return;
-	}
-	trap_Argv( 1, name, sizeof( name ) );
-	trap_Argv( 2, string1, sizeof( string ) );
-	trap_Argv( 3, string2, sizeof( string ) );
-	trap_Argv( 4, string3, sizeof( string ) );
-	trap_Argv( 5, string4, sizeof( string ) );
-	trap_Argv( 6, string5, sizeof( string ) );
-
-	clientid = M_G_ClientNumberFromName( name );
-
-	if( clientid != -1 ){
-		
-		targetplayer = &g_entities[clientid];
-
-		if( targetplayer && targetplayer->client && targetplayer->client->pers.connected ){
-			if ( !string1[0] ) {
-				trap_Printf( "Usage: mrename <playerid> <new name>\n" );
-				return;
-			}
-			else {
-				if (string2[0]){
-					strcat(string1, space);
-					strcat(string1, string2);
-				}
-				if (string3[0]){
-					strcat(string1, space);
-					strcat(string1, string3);
-				}
-				if (string4[0]){
-					strcat(string1, space);
-					strcat(string1, string4);
-				}
-				if (string5[0]){
-					strcat(string1, space);
-					strcat(string1, string5);
-				}
-					trap_GetUserinfo( clientid, userinfo, MAX_INFO_STRING );
-					Info_SetValueForKey( userinfo, "name", string1 );
-					trap_SetUserinfo( clientid, userinfo );
-					ClientUserinfoChanged( clientid );
-
-					G_LogPrintf( "rename: %s to %s\n", name, string );
-			}
-		}
-	}
-	else{
-		G_Printf("No user found to rename with that identifier.\n");
-		return;
-	}
-}
-/*
-=================
-
-M_Svcmd_ForceTeam_f - MJN
-
-=================
-*/
-void M_Svcmd_ForceTeam_f(gentity_t * targetplayer ) {
-
-	char name[MAX_STRING_CHARS];
-	char teamname[MAX_STRING_CHARS];
-	int clientid;
-		
-	if ( g_gametype.integer >= GT_TEAM) {	
-			// find the player
-			trap_Argv( 1, name, sizeof( name ) );
-			trap_Argv( 2, teamname, sizeof( teamname ) );
-				
-			clientid = M_G_ClientNumberFromName( name );
-			targetplayer = &g_entities[clientid];
-
-			if (clientid != -1){
-				// set the team
-				SetTeam( targetplayer, teamname );
-				trap_Cvar_VariableStringBuffer( "g_mMessageForceTeamTarget", targetString, MAX_TOKEN_CHARS);
-				trap_Cvar_VariableStringBuffer( "g_mMessageForceTeamBroadcast", broadcastString, MAX_TOKEN_CHARS);
-				trap_Cvar_VariableStringBuffer( "g_mMessageForceTeamEveryone", everyoneString, MAX_TOKEN_CHARS);
-				G_LogPrintf( "forceteam: %s to team %s\n", targetplayer->client->pers.netname, teamname );
-			}
-			else{
-				G_Printf("No user found with that name.\n");
-				return;
-			}
-	}
-	else
-	{
-		G_Printf("^1Warning^7: You cannot Force the teams in this gameplay\n");
-		return;
-	}
-}
-/*
-=================
-
-M_Svcmd_PSay_f - MJN
-
-=================
-*/
-void M_Svcmd_PSay_f( gentity_t * targetplayer )
-{
-	char toSay[MAX_STRING_CHARS];
-
-	M_StringEscapeToEnters( ConcatArgs(2), toSay, MAX_STRING_CHARS );
-	
-	switch(g_mPSayMode.integer){
-
-		// Center print only
-		case 1: trap_SendServerCommand( targetplayer->client->ps.clientNum, 
-							va("cp \"%s\"", toSay ) );
-			break;
-		// Console print only
-		case 2: 
-			trap_SendServerCommand( targetplayer->client->ps.clientNum, 
-							va("print \"%s\n\"", toSay ) );
-			break;
-		// Console and Center print.  It is also the default.
-		case 3:
-		default:
-			trap_SendServerCommand( targetplayer->client->ps.clientNum, 
-							va("cp \"%s\"", toSay ) );
-			trap_SendServerCommand( targetplayer->client->ps.clientNum, 
-							va("print \"%s\n\"", toSay ) );
-			break;
-	}
-
-	G_LogPrintf( "mlog_psay: %s -> %s\n", targetplayer->client->pers.netname, toSay);
-}
-/*
-=================
-
-M_Svcmd_Origin_f - MJN
-
-=================
-*/
-void M_Svcmd_Origin_f( gentity_t * targetplayer )
-{
-	vec3_t coord;
-
-	VectorCopy(targetplayer->client->ps.origin, coord);
-	trap_SendServerCommand( -1, va("print \"%s ^7: (X = %i, Y = %i, Z = %i)\"", 
-		targetplayer->client->pers.netname, (int)coord[0],(int)coord[1], (int)coord[2]) );
-
-	G_LogPrintf( "mlog_origin: %s\n", targetplayer->client->pers.netname );
-}
-/*
-=================
-
-M_Svcmd_Whois_f - MJN
-
-=================
-*/
-void M_Cmd_Whois_f ( gentity_t * ent )
-{
-
-	gentity_t *other;
 	int i;
-   if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ){
-		for (i = 0; i < level.maxclients; i++) {
-			other = &g_entities[i];
-			
-			switch (g_mWhois.integer){
 
-				case 1:	// Admins can see who is logged in only.
-						if(ent->client->sess.isAdmin ){ 
-							if(other->client->pers.connected && other->client->sess.isAdmin){
-								trap_SendServerCommand( ent-g_entities, va("print \"^3%s ^7: ^7%s\n\"", g_mRankName.string, other->client->pers.netname));
-							}
-						}
-						else{
-							trap_SendServerCommand( ent-g_entities, va("print \"Only Admins can view who is logged in.\n\"" ));
-							return;
-						}
-						break;
+	for( i = 0; i < 256; i++)
+	{
+		if(string1[i] == string2[i])
+		{
+			continue;
+		}
+		else if(string1[i] != string2[i])
+		{
+			return qfalse;
+		}
+	}
 
-				case 2:	// Just show me who is logged in.
-						if(other->client->pers.connected && other->client->sess.isAdmin){
-							trap_SendServerCommand( ent-g_entities, va("print \"^3%s ^7: ^7%s\n\"", g_mRankName.string, other->client->pers.netname));
-						}
-						break;
+	return qtrue;
+}
 
-				default: // Disabled
-						trap_SendServerCommand( ent-g_entities, va("print \"Command has been disabled by the server administrator.\n\"" ));
-						return;
+/*
+==================
+stristr
+==================
+*/
+char *stristr(char *str, char *charset) {
+	int i;
+
+	while(*str)
+	{
+		for (i = 0; charset[i] && str[i]; i++)
+		{
+			if (toupper(charset[i]) != toupper(str[i]))
+				break;
+		}
+
+		if (!charset[i])
+			return str;
+
+		str++;
+	}
+
+	return NULL;
+}
+
+/*
+==================
+ClientNumbersFromString
+
+Sets plist to an array of integers that represent client numbers that have
+names that are a partial match for s. List is terminated by a -1.
+
+Returns number of matching clientids.
+==================
+*/
+int ClientNumbersFromString( char *s, int *plist) {
+	gclient_t *p;
+	int i, found = 0;
+	char s2[MAX_STRING_CHARS];
+	char n2[MAX_STRING_CHARS];
+	char n1[MAX_STRING_CHARS];
+	char *m;
+	qboolean is_slot = qtrue;
+
+	*plist = -1;
+
+	// if a number is provided, it might be a slot #
+	for(i=0; i<(int)strlen(s); i++)
+	{
+		if(s[i] < '0' || s[i] > '9')
+		{
+			is_slot = qfalse;
+			break;
+		}
+	}
+	if(is_slot)
+	{
+		i = atoi(s);
+		if(i >= 0 && i < level.maxclients)
+		{
+			p = &level.clients[i];
+			if(p->pers.connected == CON_CONNECTED || p->pers.connected == CON_CONNECTING)
+			{
+				*plist++ = i;
+				*plist = -1;
+				return 1;
 			}
 		}
 	}
-   else{
-	   return;
-   }
+
+	// now look for name matches
+	Q_CleanStr(s);
+	Q_strncpyz(s2, s, sizeof(s2));
+	if(strlen(s2) < 1) return 0;
+	for(i=0; i < level.maxclients; i++)
+	{
+		p = &level.clients[i];
+		if(p->pers.connected != CON_CONNECTED && p->pers.connected != CON_CONNECTING)
+		{
+
+			continue;
+		}
+
+		Q_strncpyz(n1, p->pers.netname, sizeof(n1));
+		Q_CleanStr(n1);
+		Q_strncpyz(n2, n1, sizeof(n2));
+		m = stristr(n2, s2);
+
+		if(m != NULL)
+		{
+			*plist++ = i;
+			found++;
+		}
+	}
+	*plist = -1;
+	return found;
 }
-/*
-==================
 
-M_Svcmd_NoTarget_f
-
-==================
-*/
-void M_Svcmd_NoTarget_f( gentity_t *targetplayer ) {
-	char	*msg;
-
-	targetplayer->flags ^= FL_NOTARGET;
-	if (!(targetplayer->flags & FL_NOTARGET) )
-		msg = "notarget OFF\n";
-	else
-		msg = "notarget ON\n";
-
-	trap_SendServerCommand( targetplayer-g_entities, va("print \"%s\"", msg));
-	G_LogPrintf( "mlog_notarget: %s\n", targetplayer->client->pers.netname );
-}
-/*
-=================
-
-M_Svcmd_Teleport_f - MJN
-
-=================
-*/
-
-void M_Svcmd_Teleport_f( gentity_t * targetplayer )
+qboolean G_MatchOnePlayer(int *plist, char *err, int len)
 {
-	gentity_t * destinationplayer;
-	vec3_t		origin, angles;
-	char		name1[MAX_STRING_CHARS];
-	char		name2[MAX_STRING_CHARS];
-	char		buffer[MAX_TOKEN_CHARS];
-	int			clientid, clientid2;
-	int			i;
-	
-	trap_Argv( 1, name1, sizeof( name1 ) );
-	clientid = M_G_ClientNumberFromName( name1 );
-	targetplayer = &g_entities[clientid];
-	trap_Argv( 2, name2, sizeof( name2 ) );
-	clientid2 = M_G_ClientNumberFromName( name2 );
-	destinationplayer = &g_entities[clientid2];
+	gclient_t *cl;
+	int *p;
+	char line[MAX_NAME_LENGTH+10];
 
-	if( clientid == -1 || (clientid2 == -1 && Q_stricmp(name2,"POD") != 0 && Q_stricmp(name2,"pod") != 0 )){
-		G_Printf( "No client connected with that identifier\n" );
-		return;
-	}
-	
-	if ( targetplayer->health <= 0 ){
-		return;
-	}
-	if ( M_isSleeping(targetplayer) ){
-		G_Printf( "Client is currently sleeping and cannot be teleported.\n" );
-		return;
-	}
-	
-	if( !g_mAllowTeleFlag.integer  && ( g_gametype.integer == GT_CTF || g_gametype.integer == GT_CTY 
-		|| g_gametype.integer == GT_SIEGE) )
+	err[0] = '\0';
+	line[0] = '\0';
+
+	if(plist[0] == -1)
 	{
-		G_Printf( "Cannot use Teleport during Flag or Seige game modes.\n" );
+		Q_strcat(err, len, "^3Player does not exist.\n");
+		return qfalse;
+	}
+
+	if(plist[1] != -1)
+	{
+		Q_strcat(err, len, "^3Too many matches. Please be more specific or use the Players number.\n");
+
+		for(p = plist;*p != -1; p++)
+		{
+			cl = &level.clients[*p];
+
+			if(cl->pers.connected == CON_CONNECTED)
+			{
+				sprintf(line, "%2i - %s^7\n", *p, cl->pers.netname);
+
+				if(strlen(err)+strlen(line) > len)
+					break;
+
+				Q_strcat(err, len, line);
+			}
+		}
+		return qfalse;
+	}
+	return qtrue;
+}
+
+qboolean G_CheckAdmin(gentity_t *ent, int command)
+{
+	int Bitvalues = 0;
+
+	if(ent->client->sess.isAdmin == ADMIN_NO_ADMIN)
+	{
+		return qfalse;
+	}
+
+	//Right they are admin so lets check what sort so we can assign bitvalues
+	if(ent->client->sess.isAdmin == ADMIN_1)
+	{
+		Bitvalues = openrp_admin1Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_2)
+	{
+		Bitvalues = openrp_admin2Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_3)
+	{
+		Bitvalues = openrp_admin3Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_4)
+	{
+		Bitvalues = openrp_admin4Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_5)
+	{
+		Bitvalues = openrp_admin5Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_6)
+	{
+		Bitvalues = openrp_admin6Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_7)
+	{
+		Bitvalues = openrp_admin7Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_8)
+	{
+		Bitvalues = openrp_admin8Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_9)
+	{
+		Bitvalues = openrp_admin9Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_10)
+	{
+		Bitvalues = openrp_admin10Bitvalues.integer;
+	}
+	if(ent->client->sess.isAdmin == ADMIN_TEMP)
+	{
+		Bitvalues = openrp_adminTempBitvalues.integer;
+	}
+
+	//If the Bitvalues 0 then return false because no commands can be allowed if it's 0
+	if(Bitvalues == 0)
+	{
+		return qfalse;
+	}
+
+	//Got the Bitvalues so lets check if the command given is included in the Bitvalue
+	if(Bitvalues & command)
+	{
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
+
+}
+
+/*
+============
+Admin Control - Determines whether admins can perform admin commands on higher admin levels
+============
+*/
+qboolean G_AdminControl(int UserAdmin, int TargetAdmin)
+{
+
+	if(openrp_adminControl.integer == 0)
+	{
+		return qtrue;
+	}
+
+	if(openrp_adminControl.integer == 1 && UserAdmin >= TargetAdmin)
+	{					
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
+}
+
+/*
+============
+amban Function
+============
+*/
+void Cmd_amBan_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_BAN))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
 		return;
 	}
-	if( targetplayer->client && targetplayer->client->pers.connected ){
-	
-	
-	//Place of death
-	if(Q_stricmp(name2,"POD") == 0 || Q_stricmp(name2,"pod") == 0 )
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
 	{
-	VectorCopy(targetplayer->client->sess.placeOfDeath, origin);
-	angles[YAW] = 0;
-	TeleportPlayer(targetplayer, origin, angles );
-	G_LogPrintf( "mlog_teleport: %s\n", targetplayer->client->pers.netname );
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /amban (name/clientid)\n\""));
+		return;
+	}
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	//if(ent == victim)
+	//{
+	//	trap_SendServerCommand(ent-g_entities, va("print \"^5You can't ban yourself.\n\""));
+	//	return;
+	//}
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+
+	trap_SendConsoleCommand( EXEC_INSERT, va("addip %s", tent->client->sess.IP));
+	
+
+	if (!(tent->r.svFlags & SVF_BOT)){
+		trap_SendServerCommand(ent-g_entities, va("print \"^5The IP of the person you banned is %s\n\"", tent->client->sess.IP));
+	}
+	trap_DropClient(pids[0], "^1was permanently banned.\n");
+
+	G_LogPrintf("Ban admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
-	}
-
-		VectorCopy(destinationplayer->client->ps.origin, origin);
-		angles[YAW] = 0;
-		origin[2] = origin[2] + 50;
-		TeleportPlayer(targetplayer, origin, angles );
-
-		trap_Cvar_VariableStringBuffer( "g_mMessageTeleTarget", targetString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageTeleBroadcast", broadcastString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageTeleEveryone", everyoneString, MAX_TOKEN_CHARS);
-
-		G_LogPrintf( "mlog_teleport: %s\n", targetplayer->client->pers.netname );
-	}
 }
+
 /*
-===================
-
-  M_Svcmd_TimeScale_f
-
-===================
+============
+amkick Function
+============
 */
-void M_Svcmd_TimeScale_f (void)
+void Cmd_amKick_f(gentity_t *ent)
 {
-	char newScale[MAX_STRING_CHARS];
+	gentity_t *tent;
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	char cmdTarget[MAX_STRING_CHARS];
 
-	if( trap_Argc() < 2 ) {
-		G_Printf("Usage: mtimescale <scale>  \"1\" is default\n");
-		return;
-	}
-
-	trap_Argv( 1, newScale, MAX_STRING_CHARS );
-
-	trap_Cvar_Set("timescale", newScale);
-
-	G_LogPrintf( "mlog_timescale %s\n", newScale );
-}
-/*
-=================
-
-M_Svcmd_VoteDeny_f - MJN
-
-=================
-*/
-void M_Svcmd_VoteDeny_f (gentity_t * targetplayer) {
-
-	if(g_allowVote.integer){
-		
-		if( targetplayer->client && targetplayer->client->pers.connected ){
-			targetplayer->client->pers.denyvote = qtrue;
-		}
-
-		trap_Cvar_VariableStringBuffer( "g_mMessageVoteDenyTarget", targetString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageVoteDenyBroadcast", broadcastString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageVoteDenyEveryone", everyoneString, MAX_TOKEN_CHARS);
-
-		G_LogPrintf( "mlog_denyvote: %s is denied their right to vote\n", targetplayer->client->pers.netname );
-	}
-	else
+	if(!G_CheckAdmin(ent, ADMIN_KICK))
 	{
-		G_Printf("^1Warning^7: Voting is not enabled on the server.\n");
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
 		return;
 	}
-}
-/*
-=================
 
-M_Svcmd_VoteAllow_f - MJN
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
-=================
-*/
-void M_Svcmd_VoteAllow_f (gentity_t * targetplayer) {
-
-	if(g_allowVote.integer){
-		
-		if( targetplayer->client && targetplayer->client->pers.connected ){
-			targetplayer->client->pers.denyvote = qfalse;
-		}
-
-		trap_Cvar_VariableStringBuffer( "g_mMessageVoteAllowTarget", targetString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageVoteAllowBroadcast", broadcastString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageVoteAllowEveryone", everyoneString, MAX_TOKEN_CHARS);
-
-		G_LogPrintf( "mlog_allowvote: %s is now allowed to vote\n", targetplayer->client->pers.netname );
-	}
-	else
+	if(trap_Argc() < 2)
 	{
-		G_Printf("^1Warning^7: Voting is not enabled on the server.\n");
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /amkick (name/clientid)\n\""));
 		return;
 	}
-}
-/*
-=================
 
-M_Svcmd_LockTeam_f - MJN
-
-=================
-*/
-void M_Svcmd_LockTeam_f(void)
-{
-	char name[MAX_STRING_CHARS];
-	char teamname[MAX_TEAMNAME];
-	gentity_t * ent;
-	int clientid;
-
-	if ( g_gametype.integer >= GT_TEAM) {
-		
-		if ( trap_Argc() < 2 ){
-			G_Printf("Usage: mlockteam <team>\n");
-			return;
-		}
-        
-		clientid = M_G_ClientNumberFromName( name );
-		ent = &g_entities[clientid];
-		trap_Argv( 1, teamname, sizeof( teamname ) );
-		/*		
-		if ( !Q_stricmp( teamname, "red" ) || !Q_stricmp( teamname, "r" ) ) {
-			level.isLockedred = qtrue;
-		}
-		else if ( !Q_stricmp( teamname, "blue" ) || !Q_stricmp( teamname, "b" ) ) {
-			level.isLockedblue = qtrue;
-		}
-		else if( !Q_stricmp( teamname, "spectator" ) || !Q_stricmp( teamname, "s" ) || !Q_stricmp( teamname, "spec" ) ) {
-			level.isLockedspec = qtrue;
-		}
-		trap_SendServerCommand( ent-g_entities, va("print \"^7The %s team is now ^1Locked^7.\n\"", teamname));
-		G_LogPrintf( "mlog_teamlock: %s is locked\n", teamname );*/
-	}
-	else
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
-		G_Printf("^1Warning^7: You cannot Lock the teams in this gameplay\n");
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
 		return;
 	}
-}
-/*
-=================
 
-M_Svcmd_UnLockTeam_f - MJN
+	tent = &g_entities[pids[0]];
 
-=================
-*/
-void M_Svcmd_UnLockTeam_f( void )
-{
-	char name[MAX_STRING_CHARS];
-	char teamname[MAX_TEAMNAME];
-	gentity_t * ent;
-	int clientid;
-
-	if ( g_gametype.integer >= GT_TEAM) {
-
-		if ( trap_Argc() < 2 ){
-			G_Printf("Usage: munlockteam <team>\n");
-			return;
-		}
-
-		clientid = M_G_ClientNumberFromName( name );
-		ent = &g_entities[clientid];
-		trap_Argv( 1, teamname, sizeof( teamname ) );
-/*
-		if ( !Q_stricmp( teamname, "red" ) || !Q_stricmp( teamname, "r" ) ) {
-			level.isLockedred = qfalse;
-		}
-		else if ( !Q_stricmp( teamname, "blue" ) || !Q_stricmp( teamname, "b" ) ) {
-			level.isLockedblue = qfalse;
-		}
-		else if( !Q_stricmp( teamname, "spectator" ) || !Q_stricmp( teamname, "s" ) || !Q_stricmp( teamname, "spec" ) ) {
-			level.isLockedspec = qfalse;
-		}
-*/
-		trap_SendServerCommand( ent-g_entities, va("print \"^7The %s team is now ^5Unlocked^7.\n\"", teamname));
-		G_LogPrintf( "mlog_teamunlock: %s is unlocked\n", teamname );
-	}
-	else
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
 	{
-		G_Printf("^1Warning^7: You cannot Unlock the teams in this gameplay\n");
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
 		return;
 	}
+
+	trap_SendServerCommand(ent-g_entities, va("print \"^5The IP of the person you kicked is %s\n\"", tent->client->sess.IP));
+	trap_DropClient(pids[0], "^1was kicked.");
+	G_LogPrintf("Kick admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	return;
 }
+
 /*
-=================
-
-M_Svcmd_ChangeMap_f - MJN
-
-=================
+============
+amwarn Function
+============
 */
-void M_Svcmd_ChangeMap_f( void )
+void Cmd_amWarn_f(gentity_t *ent)
 {
-	char gametype[10];
-	char mapname[MAX_QPATH];
+	gentity_t *tent;
+	int warns = 3;
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	char cmdTarget[MAX_STRING_CHARS];
 
-	if ( trap_Argc() < 3 ){
-		G_Printf("Usage:  mgametype <gametype> <mapname>\n");
+	if(!G_CheckAdmin(ent, ADMIN_WARN))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
 		return;
 	}
-	else{
-		trap_Argv( 1, gametype, sizeof( gametype ) );
-		trap_Argv( 2, mapname, sizeof( mapname ) );
-		
-		trap_SendConsoleCommand( EXEC_INSERT, va("g_gametype %s\n", gametype) );
-		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", mapname) );
-		G_LogPrintf( "mlog_gametype: gametype was changed to %s using map %s\n", gametype, mapname);
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /amwarn (name/clientid)\n\""));
+		return;
 	}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+	tent->client->sess.warnLevel += 1;
+
+	warns = tent->client->sess.warnLevel;
+
+	trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s was warned.\n\"", tent->client->pers.netname));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been warned by an admin.\nYou have %s warnings.\"",(atoi(openrp_warnLevel.string) - warns) ));
+	G_LogPrintf("Warn admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+
+	if(tent->client->sess.warnLevel == atoi(openrp_warnLevel.string))
+	{
+		trap_DropClient(pids[0], "^1was kicked because they received the maximum number of warnings from admins.\n.");
+		G_LogPrintf("%s was kicked because they received the maximum number of warnings from admins.\n", tent->client->pers.netname);
+		return;
+	}
+	return;
 }
+
 /*
-=================
-
-M_Svcmd_Nextmap_f - MJN
-
-=================
+============
+amtele Function
+============
 */
-void M_Svcmd_NextMap_f( void ) 
+void Cmd_amTeleport_f(gentity_t *ent)
 {
-	trap_SendConsoleCommand( EXEC_APPEND, "vstr nextmap\n" );
-	G_LogPrintf( "mlog_nextmap: map was changed.\n");
-}
-/*
-=================
-
-M_Svcmd_Vstr_f - MJN
-
-=================
-*/
-void M_Svcmd_Vstr_f( void ) 
-{
-	char varname[MAX_STRING_CHARS];
+	gentity_t *player;
+	gentity_t *player2;
+	gentity_t *tent;
+	char name[MAX_STRING_CHARS], name2[MAX_STRING_CHARS], err[MAX_STRING_CHARS];
+	vec3_t origin;
+	int pids[MAX_CLIENTS];
 	
-	if ( trap_Argc() < 2 ){
-		G_Printf("Usage:  mvstr <var/name>\n");
-		return;
-	}else{
 
-		trap_Argv( 1, varname, sizeof(varname) );
-		trap_SendConsoleCommand( EXEC_APPEND, va( "vstr %s", varname) );
-		G_LogPrintf( "mlog_vstr: vstr name %s was executed\n", varname);
-	}
-}
-/*
-=================
-
-M_Svcmd_RandTeams_f - MJN
-
-=================
-*/
-void M_Svcmd_RandTeams_f( void ) {
-
-	char name[MAX_STRING_CHARS];
-//	int i, RandTeam;
-	gentity_t *ent;
-	int clientid;
-	
-	clientid = M_G_ClientNumberFromName( name );
-	ent = &g_entities[clientid];
-/*
-	if ( g_gametype.integer >= GT_TEAM) {
-		if((level.isLockedblue || level.isLockedred) == qtrue){
-			G_Printf("^1Warning^7: You cannot Randomize the teams when they're locked\n");
-			return;
-		}
-		else{
-			for( i = 0; i < level.maxclients; i ++){
-				RandTeam = Q_irand(1, 51);
-					if( RandTeam >= 26 ) {
-						if( !level.isLockedblue)
-							g_entities[i].client->sess.sessionTeam = TEAM_BLUE;
-					}else if( RandTeam < 26 ){
-						if (!level.isLockedred)
-							g_entities[i].client->sess.sessionTeam = TEAM_RED;
-					}else{
-						g_entities[i].client->sess.sessionTeam = TEAM_SPECTATOR;
-					}
-			}
-			trap_SendConsoleCommand( EXEC_APPEND, va( "map_restart 0 %i\n", CS_WARMUP ) );
-			G_LogPrintf( "mlog_randteams: Random teams were generated\n");
-		}
-	}
-	else
+	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
 	{
-		G_Printf("^1Warning^7: You cannot Randomize the teams in this gameplay\n");
-		return;
-	}*/
-}
-/*
-=================
-
-M_Cmd_ModInfo_f - MJN
-
-=================
-*/
-void M_Cmd_ModInfo_f (gentity_t * ent)
-{
-	int i, j, k;
-
-	char infoall[] = {"^4Client Commands^7:\n login, logout, mhelp, mstatus, mwhois, madmin <message>, mignore\n"};
-
-	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
-
-		if( ent->client->sess.isAdmin ){
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4%s ^7by ^4%s\n\n ^4%s Access^7:\n\"", OPENRP_CLIENTVERSION, AUTHOR, g_mRankName.string) );
-			for( i = 0; i < numPassThroughElements; i++ ){
-					trap_SendServerCommand( ent->client->ps.clientNum, va("print \"%s \"\n\n", passthroughfuncs[i].clientcommand ) );
-			}
-		}
-
-		// Everyone:
-		if( ent->client->sess.isAdmin ){
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"\n%s\n\"", infoall ));
-		}
-		else{
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"\n^4OpenRP %s ^7by ^4%s\n\"", OPENRP_CLIENTVERSION, AUTHOR ) );
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"\n%s\n\"", infoall ));
-		}
-		// Show allowed Emotes
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4Emote Access^7:\n\"" ) );
-		for( k = 0; k < numPassThroughEmotes; k++ ){
-				trap_SendServerCommand( ent->client->ps.clientNum, va("print \"%s \"\n\n", passthroughemotes[k].emotecommand ) );
-		}
-	}
-	else{
-		return;
-	}
-}
-/*
-=================
-
-M_Cmd_ModHelp_f - MJN
-
-=================
-*/
-void M_Cmd_ModHelp_f (gentity_t * ent)
-{	
-	int i, j;
-	char HelpWithNewLines[MAX_TOKEN_CHARS];
-	char HelpString[MAX_TOKEN_CHARS];
-
-	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW ) {
-		if( ent->client->sess.isAdmin ){
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4OpenRP %s ^7by ^4%s\n\n ^4%s Command Help^7:\n\"", OPENRP_SERVERVERSION, AUTHOR, g_mRankName.string ) );	
-				for( i = 0; i < numPassThroughElements; i++ ){
-						trap_SendServerCommand( ent->client->ps.clientNum, va("print \"%s - %s\n\"", passthroughfuncs[i].clientcommand, passthroughfuncs[i].helpinfo ) );
-				}
-		}
-		
-		trap_Cvar_VariableStringBuffer( "g_mHelpInfo", HelpString, sizeof(HelpString) );
-		M_StringEscapeToEnters( HelpString, HelpWithNewLines, sizeof(HelpString) );
-		trap_SendServerCommand( ent->client->ps.clientNum, va ( "print \"%s\"", HelpWithNewLines ) );
-	}
-	else{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
 		return;
 	}
 
-}
-/*
-=================
+	trap_Argv(1, name, sizeof(name)); //First Name
+	trap_Argv(2, name2, sizeof(name2)); //Second name
 
-M_Cmd_AdminGun_f
-
-=================
-*/
-
-void M_Cmd_AdminGun_f ( gentity_t * ent, char * cmd )
-{
-	int target;
-	int distance = 65536;
-	trace_t tr;
-	vec3_t forward, fwdOrg;
-
-	//if ( g_mAdminGun.integer ){
-
-		if( ent->client->sess.isAdmin ){
-				
-			AngleVectors( ent->client->ps.viewangles, forward, NULL, NULL );
-			
-			fwdOrg[0] = ent->client->ps.origin[0] + forward[0]*distance;
-			fwdOrg[1] = ent->client->ps.origin[1] + forward[1]*distance;
-			fwdOrg[2] = ( ent->client->ps.origin[2] + ent->client->ps.viewheight ) + forward[2]*distance;
-			
-			trap_Trace(&tr, ent->client->ps.origin, NULL, NULL, fwdOrg, ent->s.number, MASK_PLAYERSOLID);
-
-			if (tr.entityNum < MAX_CLIENTS && tr.entityNum != ent->s.number){
-
-				gentity_t *other = &g_entities[tr.entityNum];
-				target = other->client->ps.clientNum;
-				
-				if( Q_stricmp( cmd, "slapgun" ) == 0){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mslap %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "kickbangun" ) == 0 ){
-					// Add IP to banlist and then kick the player:
-					trap_SendConsoleCommand( EXEC_APPEND, va( "AddIP %i.%i.%i.%i", other->client->sess.IPstring[0], 
-						other->client->sess.IPstring[1], other->client->sess.IPstring[2], other->client->sess.IPstring[3] ) );
-					trap_SendConsoleCommand( EXEC_NOW, va("clientkick %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "allowvotegun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mallowvote %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "denyvotegun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mdenyvote %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "npcgun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mnpcaccess %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "notargetgun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mnotarget %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "origingun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("morigin %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "kickgun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("clientkick %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "sleepgun" ) == 0){
-					trap_SendConsoleCommand( EXEC_APPEND, va("msleep %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "wakegun" ) == 0){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mwake %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "empowergun" ) == 0){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mempower %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "unempowergun" ) == 0){
-					trap_SendConsoleCommand( EXEC_APPEND, va("munempower %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "terminatorgun" ) == 0){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mterminator %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "unterminatorgun" ) == 0){
-					trap_SendConsoleCommand( EXEC_APPEND, va("munterminator %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "protectgun" ) == 0){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mprotect %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "unprotectgun" ) == 0){
-					trap_SendConsoleCommand( EXEC_APPEND, va("munprotect %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "showmotdgun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mshowmotd %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "statusgun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mstatus %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "warngun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mwarn %i\n", target) );
-					return;
-				}else if( Q_stricmp( cmd, "forgivegun" ) == 0 ){
-					trap_SendConsoleCommand( EXEC_APPEND, va("mforgive %i\n", target) );
-					return;
-				}else{
-					trap_SendServerCommand( ent->client->ps.clientNum, va("print \"Invalid command.\n\""));
-					return;
-				}
-			}
-			else{
-				trap_SendServerCommand( ent->client->ps.clientNum, va("print \"^1Warning^7: Target is out of range!\n\""));
-				return;
-			}
-		}
-		else{
-			trap_SendServerCommand( ent->client->ps.clientNum, va("print \"You don't have access to admin commands.\n\""));
-			return;
-		}
-	/*
-	}
-	else{
-		trap_SendServerCommand( ent->client->ps.clientNum, va("print \"AdminGun system has been disabled.\n\""));
-		return;
-	}
-	*/
-}
-/*
-=================
-
-M_Cmd_Ignore_f - MJN
-
-=================
-*/
-void M_Cmd_Ignore_f( gentity_t *ent ) 
-{
-	char name[MAX_STRING_CHARS];
-	int ignoree;
-	qboolean ignore;
-
-	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( ent-g_entities, "print \"^5Command Usage: ignore <playerid>\n\"");
+	//Check if the argument is empty. If it is quit. If you don't errors occur. Don't know why
+	//as the below if(!player1->client) check should stop it anyway.
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /amtele (name1) (name2)\nThe amtele command works by teleporting name1 to name2.\n\""));
 		return;
 	}
 
-	trap_Argv( 1, name, sizeof( name ) );
-
-	ignoree = M_G_ClientNumberFromName( name );
-	
-	if( ignoree != -1 ){
-		
-		ignore = G_IsClientChatIgnored ( ent->client->ps.clientNum, ignoree ) ? qfalse : qtrue;
-
-		if ( ignoree == ent->client->ps.clientNum )
+	if(name2 == NULL)
+	{
+		if(ClientNumbersFromString(name2, pids) != 1) //If the name or clientid is not found
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"You cant ignore yourself.\n\""));
+			G_MatchOnePlayer(pids, err, sizeof(err));
+			trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", name2));
 			return;
-		}	
+		}
 
-		G_IgnoreClientChat ( ent->client->ps.clientNum, ignoree, ignore);
+		player2 = &g_entities[pids[0]];
 
-		if ( ignore )
+		if(player2->client->sess.isAdminProtect)
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"%s ^7is now being ignored.\n\"", g_entities[ignoree].client->pers.netname));
-			G_LogPrintf( "mlog_ignore: %s is being ignored by %s\n", g_entities[ignoree].client->pers.netname, ent->client->pers.netname );
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
+			return;
+		}
+
+		if(player2->client->ps.duelInProgress)
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
+			return;
+		}
+
+		if(!G_AdminControl(ent->client->sess.isAdmin, player2->client->sess.isAdmin))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+			return;
+		}
+
+		if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR )
+		{
+			tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
+			tent->s.clientNum = ent->s.clientNum;
+
+			tent = G_TempEntity( player2->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+			tent->s.clientNum = ent->s.clientNum;
+		}
+
+		VectorCopy (player2->client->ps.origin, origin);
+
+		origin[1] += 50;
+		origin[2] += 50;
+
+		VectorCopy (ent->client->ps.origin, origin);
+
+		ent->client->ps.eFlags ^= EF_TELEPORT_BIT;
+	}
+	else
+	{
+
+		if(ClientNumbersFromString(name2, pids) != 1)
+		{
+			G_MatchOnePlayer(pids, err, sizeof(err));
+			trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", name2));
+			return;
+		}
+
+		player = &g_entities[pids[0]];
+
+
+		if(ClientNumbersFromString(name, pids) != 1) //If the name or clientid is not found
+		{
+			G_MatchOnePlayer(pids, err, sizeof(err));
+			trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", name));
+			return;
+		}
+
+		player2 = &g_entities[pids[0]];
+
+		if(player2->client->sess.isAdminProtect)
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
+			return;
+		}
+
+		if(player2->client->ps.duelInProgress)
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
+			return;
+		}
+
+		if(!G_AdminControl(ent->client->sess.isAdmin, player2->client->sess.isAdmin))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+			return;
+		}
+
+		if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR )
+		{
+			tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
+			tent->s.clientNum = ent->s.clientNum;
+
+			tent = G_TempEntity( player2->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+			tent->s.clientNum = ent->s.clientNum;
+		}
+
+		VectorCopy (player->client->ps.origin, origin);
+
+		origin[1] += 50;
+		origin[2] += 50;
+
+		VectorCopy (origin, player2->client->ps.origin);
+
+		player2->client->ps.eFlags ^= EF_TELEPORT_BIT;
+	}
+	trap_SendServerCommand(ent-g_entities, va("print \"^5You teleported %s to %s.\n\"",  player2->client->pers.netname, player->client->pers.netname));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were teleported to %s by an admin.\"", player2->client->pers.netname));
+	G_LogPrintf("Teleport admin command executed by %s. This caused %s to teleport to %s.\n", player->client->pers.netname, player2->client->pers.netname);
+	return;
+}
+
+
+/*
+============
+amslay Function
+============
+*/
+void Cmd_amSlay_f(gentity_t *ent)
+{
+		int pids[MAX_CLIENTS];
+		char err[MAX_STRING_CHARS];
+		gentity_t *target;
+		gentity_t *tent;
+		char cmdTarget[MAX_STRING_CHARS];
+
+		vec3_t temp = {0, 0, 0};
+
+		if(!G_CheckAdmin(ent, ADMIN_KILL))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+			return;
+		}
+
+		trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+		if(trap_Argc() < 2)
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /amslay (name/clientid)\n\""));
+			return;
+		}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	target = &g_entities[pids[0]];
+
+	if(target->client->sess.isAdminProtect)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
+		return;
+	}
+
+	if(target->client->ps.duelInProgress)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
+		return;
+	}
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, target->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+		tent = G_TempEntity( target->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
+		tent->s.clientNum = target->s.clientNum;
+
+		tent = G_TempEntity( target->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+		tent->s.clientNum = target->s.clientNum;
+
+		if(target->health > 0)
+		{
+			target->health = 0;
+			G_Damage(target, target, target, temp, temp, 9999, 0, MOD_TRIGGER_HURT);
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You slayed %s.\n\"", target));
+			trap_SendServerCommand(target-g_entities, va("cp \"You were slain by an admin.\""));
 		}
 		else
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"%s ^7is now unignored.\n\"", g_entities[ignoree].client->pers.netname));
-			G_LogPrintf( "mlog_unignored: %s has stopped ignoring %s\n", ent->client->pers.netname, g_entities[ignoree].client->pers.netname );
-		}
-	}
-	else{
-		trap_SendServerCommand( ent-g_entities, va("print \"No user found to ignore with that name.\n\""));
-		return;
-	}
-
-}
-/*
-===============
-
-M_Svcmd_CheatAccess_f - MJN
-
-===============
-*/
-
-void M_Svcmd_CheatAccess_f( void ) {
-
-	char name[MAX_STRING_CHARS];
-	int clientid;
-	gentity_t * ent;
-	
-		if ( trap_Argc() < 2 ) {
-			G_Printf( "Usage: mnpcaccess <playerid>\n" );
+			trap_SendServerCommand(ent-g_entities, va("print \"^5This player is dead.\n\""));
 			return;
 		}
-		trap_Argv( 1, name, sizeof( name ) );
-		clientid = M_G_ClientNumberFromName( name );
-		ent = &g_entities[clientid];
+
+		G_LogPrintf("Slay admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+		return;
+}
+
+/*
+============
+amannounce Function
+============
+*/
+void Cmd_amAnnounce_f(gentity_t *ent)
+{ 
+		 int pos = 0;
+		 char real_msg[MAX_STRING_CHARS], err[MAX_STRING_CHARS];
+		 int pids[MAX_CLIENTS];
+		 gentity_t *tent;
+		 char *msg = ConcatArgs(2);
+		 char cmdTarget[MAX_STRING_CHARS];
+
+		 while(*msg) { 
+    if(msg[0] == '\\' && msg[1] == 'n') { 
+          msg++;
+          real_msg[pos++] = '\n';
+    } else { 
+          real_msg[pos++] = *msg;
+    } 
+    msg++;
+		 }
+
+		 real_msg[pos] = 0;
+
+		 trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(!G_CheckAdmin(ent, ADMIN_ANNOUNCE))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
 		
-		if( clientid != -1 ){
-			
-			if( M_isNPCAccess(ent) ){	
-				ent->client->pers.hasCheatAccess = qfalse;
-				trap_SendServerCommand( ent->client->ps.clientNum, va ("print \"NPC Spawn Access Removed.\n\"" ));
-				G_LogPrintf( "mlog_deniedNPCaccess: %s\n", ent->client->pers.netname );
+         if ( trap_Argc() < 2 ) 
+         { 
+            trap_SendServerCommand( ent-g_entities, va ( "print \"^5Command Usage: /amannounce (name) (message)\nUse all or -1 for the clientid if you want to announce something to all players.\n\"" ) ); 
+            return; 
+         }
+		 	if(!Q_stricmp(cmdTarget, "all") | (!Q_stricmp(cmdTarget, "-1") ))
+			{
+				trap_SendServerCommand( -1, va("cp \"%s\"", real_msg) );
+				G_LogPrintf("Announce admin command executed by %s. The announcement was: %s\n", ent->client->pers.netname, real_msg);
+				return;
 			}
-			else{
-				ent->client->pers.hasCheatAccess = qtrue;
-				trap_SendServerCommand( ent->client->ps.clientNum, va ("print \"NPC Spawn Access Granted.\n\"" ));
-				G_LogPrintf( "mlog_NPCaccess: %s\n", ent->client->pers.netname );
+
+		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+		trap_SendServerCommand(tent-g_entities, va("cp \"%s\"", real_msg));
+		G_LogPrintf("Announce admin command executed by %s. It was sent to %s. The announcement was: %s\n", ent->client->pers.netname, tent->client->pers.netname, real_msg);
+		return;
+	  }
+
+/*
+============
+ammute Function
+============
+*/
+void Cmd_amMute_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_MUTE))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /ammute (name/clientid)\n\""));
+		return;
+	}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+	if(!(tent->client->sess.state & PLAYER_MUTED))
+	{
+		tent->client->sess.state |= PLAYER_MUTED;
+	}
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were muted by an admin.\""));
+	G_LogPrintf("Mute admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	return;
+}
+
+/*
+============
+amunmute Function
+============
+*/
+void Cmd_amUnMute_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_MUTE))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /amunmute (name/clientid)\n\""));
+		return;
+	}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!tent->client->sess.state & PLAYER_MUTED)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5This player is not muted.\n\""));
+		return;
+	}
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+	if((tent->client->sess.state & PLAYER_MUTED))
+	{
+		tent->client->sess.state -= PLAYER_MUTED; //bad way of doing it but it should work
+	}
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were unmuted by an admin.\""));
+	G_LogPrintf("Unmute admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	return;
+}
+
+/*
+============
+amsleep Function
+============
+*/
+void Cmd_amSleep_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	gentity_t *tent2;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /amsleep (name/clientid)\n\""));
+		return;
+	}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	//if(tent->client->ps.duelInProgress)
+	//{
+	//	trap_SendServerCommand(ent-g_entities, va("print \"^3You cannot use this command on someone who is dueling\n\""));
+	//	return;
+	//}
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+	if(!(tent->client->sess.state & PLAYER_SLEEPING))
+	{
+		tent->client->sess.state |= PLAYER_SLEEPING;
+	}
+
+	tent2 = G_TempEntity( tent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
+	tent2->s.clientNum = tent->s.clientNum;
+
+	tent2 = G_TempEntity( tent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+	tent2->s.clientNum = tent->s.clientNum;
+
+	tent->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
+	tent->client->ps.forceDodgeAnim = 0;
+	tent->client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
+	tent->client->ps.quickerGetup = qfalse;
+
+	G_SetAnim(tent, NULL, SETANIM_BOTH, BOTH_STUMBLEDEATH1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
+
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You are now sleeping.\""));
+
+	G_LogPrintf("Sleep admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	return;
+}
+
+/*
+============
+amunsleep Function
+============
+*/
+void Cmd_amUnsleep_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	//gentity_t *tent2;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /amunsleep (name/clientid)\n\""));
+		return;
+	}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!tent->client->sess.state & PLAYER_MUTED)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5This player is not sleeping.\n\""));
+		return;
+	}
+
+	if(tent->client->ps.duelInProgress)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is duelling.\n\""));
+		return;
+	}
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+	if((tent->client->sess.state & PLAYER_SLEEPING))
+	{
+		tent->client->sess.state -= PLAYER_SLEEPING;
+	}
+
+	tent->client->ps.forceDodgeAnim = 0;
+	tent->client->ps.forceHandExtendTime = 0;
+	tent->client->ps.quickerGetup = qfalse;
+
+	//Play a nice healing sound... Ahh
+	//G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
+
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer sleeping.\""));
+
+	G_LogPrintf("Unsleep admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	return;
+}
+
+/*
+============
+amprotect Function
+============
+*/
+void Cmd_amProtect_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_PROTECT))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2){ //If no name is given protect the user of the command.
+		if((ent->client->ps.eFlags & EF_INVULNERABLE) > 0)
+		{
+			ent->client->ps.eFlags |= EF_INVULNERABLE;
+			ent->client->invulnerableTimer = 0;
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You are no longer protected.\n\""));
+		}
+		else
+		{
+			ent->client->ps.eFlags |= EF_INVULNERABLE;
+			ent->client->invulnerableTimer = level.time + Q3_INFINITE;
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You have been protected.\n\""));
+			G_LogPrintf("Protect admin command executed by %s on themself.\n", ent->client->pers.netname);
+		}
+		return;
+	}
+		
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+
+	if((tent->client->ps.eFlags & EF_INVULNERABLE) > 0)
+	{
+		tent->client->ps.eFlags |= EF_INVULNERABLE;
+		tent->client->invulnerableTimer = 0;
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer protected.\""));
+		return;
+	}
+	else
+	{
+		tent->client->ps.eFlags |= EF_INVULNERABLE;
+		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been protected.\""));
+		G_LogPrintf("Protect admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);	
+		return;
+	}
+}
+
+
+/*
+============
+amadminwhois Function
+============
+*/
+void Cmd_amListAdmins_f(gentity_t *ent)
+{
+	int i = 0;
+
+	if(!G_CheckAdmin(ent, ADMIN_ADMINWHOIS))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+
+	for(i = 0; i < MAX_CLIENTS; i++)
+	{
+		ent = &g_entities[i];
+
+		if(ent->inuse && ent->client)
+		{
+			if(ent->client->sess.isAdmin != ADMIN_NO_ADMIN)
+			{
+				{
+					trap_SendServerCommand(ent-g_entities, va("print \"%s ^2Admin level %i\n\"", ent->client->pers.netname, (ent->client->sess.isAdmin-1)));
+				}
 			}
 		}
-		else{
-			G_Printf( "No client connected with that identifier\n" );
+		else
+		{
+			continue;
+		}
+	}
+}
+
+/*
+============
+amempower Function
+============
+*/
+void Cmd_amEmpower_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS], i;
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	char cmdTarget[MAX_STRING_CHARS];
+	
+	if(!G_CheckAdmin(ent, ADMIN_EMPOWER))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
+	{
+		{
+			ent->client->ps.eFlags &= ~EF_BODYPUSH;
+			ent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER) | ( 1 << WP_MELEE);
+			ent->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
+																		 1 << FP_TELEPATHY | 1 << FP_GRIP | 1 << FP_LIGHTNING | 1 << FP_RAGE | 
+																		 1 << FP_PROTECT | 1 << FP_ABSORB | 1 << FP_DRAIN | 1 << FP_SEE);
+			for( i = 0; i < NUM_FORCE_POWERS; i ++ )
+				{
+			ent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
+			}
+			ent->client->ps.eFlags |= EF_BODYPUSH;
+		}
+
+		if(!(ent->client->sess.state & PLAYER_EMPOWERED))
+	{
+		ent->client->sess.state |= PLAYER_EMPOWERED;
+	}
+
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been empowered.\n\""));
+		return;
+	}
+	
+		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+	tent->client->ps.eFlags &= ~EF_BODYPUSH;
+	tent->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER) | ( 1 << WP_MELEE);
+	tent->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
+																 1 << FP_TELEPATHY | 1 << FP_GRIP | 1 << FP_LIGHTNING | 1 << FP_RAGE | 
+																 1 << FP_PROTECT | 1 << FP_ABSORB | 1 << FP_DRAIN | 1 << FP_SEE);
+	for( i = 0; i < NUM_FORCE_POWERS; i ++ )
+		{
+			tent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
+		}
+
+	tent->client->ps.eFlags |= EF_BODYPUSH;
+
+	
+		if(!(tent->client->sess.state & PLAYER_EMPOWERED))
+	{
+		tent->client->sess.state |= PLAYER_EMPOWERED;
+	}
+
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been empowered.\""));
+
+	G_LogPrintf("Empower admin command executed by %s.\n", ent->client->pers.netname);
+	return;
+}
+
+/*
+============
+ammerc Function
+============
+*/
+void Cmd_amMerc_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_MERC))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	//Mercing yourself
+	if(trap_Argc() < 2 && (!(ent->client->sess.state & PLAYER_MERCD))) //If the person who used the command did not specify a name, and if they are not currently a merc, then merc them.
+	{
+			//Give them every item.
+			ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
+			//Take away saber and melee. We'll give it back in the next line along with the other weapons.
+			ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
+			//Give them every weapon.
+			ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_SABER) | (1 << WP_MELEE) | (1 << WP_TUSKEN_RIFLE) |(1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+			| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
+			| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_GRENADE) | (1 << WP_BRYAR_PISTOL);
+		{
+			int num = 999;
+			int	i;
+
+		for ( i = 0 ; i < MAX_WEAPONS ; i++ ) { //Give them max ammo
+			ent->client->ps.ammo[i] = num;
+			}
+		}
+
+		ent->client->ps.weapon = WP_BLASTER; //Switch their active weapon to the E-11.
+
+		ent->client->sess.state |= PLAYER_MERCD; //Give them merc flags, which says that they are a merc.
+
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been merc'd.\n\""));
+		G_LogPrintf("Merc admin command executed by %s on themself.\n", ent->client->pers.netname);
+		return;
+	}
+
+	//Unmercing yourself
+	if(trap_Argc() < 2 && (ent->client->sess.state & PLAYER_MERCD)) //If the user is already a merc and they use the command again on themself, then unmerc them.
+	{
+		//Take away every item.
+		ent->client->ps.eFlags &= ~EF_SEEKERDRONE;
+		ent->client->ps.stats[STAT_HOLDABLE_ITEMS] &= ~(1 << HI_SEEKER) & ~(1 << HI_BINOCULARS) & ~(1 << HI_SENTRY_GUN) & ~(1 << HI_EWEB) & ~(1 << HI_CLOAK);
+		//Take away every weapon.
+		ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_TUSKEN_RIFLE) & ~(1 << WP_BLASTER) & ~(1 << WP_DISRUPTOR) & ~(1 << WP_BOWCASTER)
+			& ~(1 << WP_REPEATER) & ~(1 << WP_DEMP2) & ~(1 << WP_FLECHETTE) & ~(1 << WP_ROCKET_LAUNCHER) & ~(1 << WP_THERMAL) & ~(1 << WP_DET_PACK)
+			& ~(1 << WP_BRYAR_OLD) & ~(1 << WP_CONCUSSION) & ~(1 << WP_GRENADE) & ~(1 << WP_BRYAR_PISTOL);
+
+		//Give them melee and saber. They should already have these but this seems to prevent a bug with them not being switched to the correct active weapon.
+		//ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_SABER); 
+
+		ent->client->ps.weapon = WP_SABER; //Switch their active weapon to the saber.
+
+		ent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
+
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been unmerc'd.\n\""));
+		G_LogPrintf("Unmerc admin command executed by %s on themself.\n", ent->client->pers.netname);
+		return;
+	}
+
+	//Mercing another player
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+	if(!(tent->client->sess.state & PLAYER_MERCD)) //If the target is not currently a merc, then merc them.
+	{
+		//Give them every item.
+		tent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
+		//Take away saber and melee. We'll give it back in the next line along with the other weapons.
+		tent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
+		//Give them every weapon.
+		tent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_SABER) | (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+		| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
+		| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_GRENADE) | (1 << WP_BRYAR_PISTOL);
+
+		{
+			int num = 999;
+			int	i;
+
+		for ( i = 0 ; i < MAX_WEAPONS ; i++ ) { //Give them max ammo
+			tent->client->ps.ammo[i] = num;
+			}
+		}
+
+		tent->client->ps.weapon = WP_BLASTER; //Switch their active weapon to the E-11.
+
+		tent->client->sess.state |= PLAYER_MERCD; //Give them merc flags, which says that they are a merc.
+
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s was merc'd.\n\"", tent->client->pers.netname));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been merc'd.\""));
+		G_LogPrintf("Merc admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+		return;
+	}
+
+	if(tent->client->sess.state & PLAYER_MERCD) //If the target is currently a merc, then unmerc them.
+	{
+		//Take away every item.
+		tent->client->ps.eFlags &= ~EF_SEEKERDRONE;
+		tent->client->ps.stats[STAT_HOLDABLE_ITEMS] &= ~(1 << HI_SEEKER) & ~(1 << HI_BINOCULARS) & ~(1 << HI_SENTRY_GUN) & ~(1 << HI_EWEB) & ~(1 << HI_CLOAK);
+		//Take away every weapon.
+		tent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_TUSKEN_RIFLE) & ~(1 << WP_BLASTER) & ~(1 << WP_DISRUPTOR) & ~(1 << WP_BOWCASTER)
+			& ~(1 << WP_REPEATER) & ~(1 << WP_DEMP2) & ~(1 << WP_FLECHETTE) & ~(1 << WP_ROCKET_LAUNCHER) & ~(1 << WP_THERMAL) & ~(1 << WP_DET_PACK)
+			& ~(1 << WP_BRYAR_OLD) & ~(1 << WP_CONCUSSION) & ~(1 << WP_GRENADE) & ~(1 << WP_BRYAR_PISTOL);
+
+		//Give them melee and saber. They should already have these but this seems to prevent a bug with them not being switched to the correct active weapon.
+		//tent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE) | (1 << WP_SABER); 
+
+		tent->client->ps.weapon = WP_SABER; //Switch their active weapon to the saber.
+
+		tent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
+
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s was unmerc'd.\n\"", tent->client->pers.netname));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been unmerc'd.\""));
+		G_LogPrintf("Unmerc admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+		return;
+	}
+}
+
+/*
+============
+amresetscale Function
+============
+*/
+void Cmd_amResetScale_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_SCALE))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
+	{
+		{
+	ent->client->ps.iModelScale = 0;
+	ent->client->sess.Scale = 0;
+	ent->client->sess.Scaled = qfalse;
+
+	VectorSet(ent->modelScale, (ent->client->ps.iModelScale), (ent->client->ps.iModelScale), (ent->client->ps.iModelScale));
+		}
+	trap_SendServerCommand(ent-g_entities, va("print \"^5Your scale has been reset.\n\""));
+	G_LogPrintf("Reset Scale admin command executed by %s on themself.\n", ent->client->pers.netname);
+	return;
+	}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+	tent->client->ps.iModelScale = 0;
+	tent->client->sess.Scale = 0;
+	tent->client->sess.Scaled = qfalse;
+
+	VectorSet(tent->modelScale, (tent->client->ps.iModelScale), (tent->client->ps.iModelScale), (tent->client->ps.iModelScale));
+
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5Your scale has been reset.\""));
+
+	G_LogPrintf("Reset Scale admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	return;
+}
+
+/*
+============
+amscale Function
+============
+*/
+void Cmd_amScale_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS], scale[999];
+	gentity_t *tent;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_SCALE))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+//	char vert[MAX_STRING_CHARS];
+//	char range[MAX_STRING_CHARS];
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+	trap_Argv(2, scale, sizeof(scale));
+
+		if(atoi(scale) > 999 || atoi(scale) < 0)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Please choose a number between 0 and 999.\n\""));
+		return;
+	}
+
+	if(trap_Argc() < 2)
+	{
+		ent->client->ps.iModelScale = atoi(scale);
+		VectorSet(ent->modelScale, (ent->client->ps.iModelScale), (ent->client->ps.iModelScale), (ent->client->ps.iModelScale));
+		ent->client->sess.Scaled = qtrue;
+		ent->client->sess.Scale = atoi(scale);
+
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been scaled.\n\""));
+		return;
+	}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(tent->client->sess.isAdminProtect)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot perform this command on this player. Player has admin protect on.\n\""));
+		return;
+	}
+
+	tent->client->ps.iModelScale = atoi(scale);
+	VectorSet(tent->modelScale, (tent->client->ps.iModelScale), (tent->client->ps.iModelScale), (tent->client->ps.iModelScale));
+
+	tent->client->sess.Scaled = qtrue;
+	tent->client->sess.Scale = atoi(scale);
+
+	//vert = va("%f", 16 * (tent->client->ps.iModelScale / 100.f));
+	//range = va("%f", 80 * (tent->client->ps.iModelScale / 100.f));
+
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been scaled.\""));
+
+	G_LogPrintf("Scale admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	return;
+}
+
+
+/*
+============
+ambitvalues Function
+============
+*/
+void Cmd_amBitvalues_f(gentity_t *ent)
+{
+	if(!G_CheckAdmin(ent, ADMIN_BITVALUES))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+	trap_SendServerCommand(ent-g_entities, va("print \"^5Here are the bitvalues assigned to each admin rank:\n\""));
+	trap_SendServerCommand(ent-g_entities, va("print \"^2Admin 1: %i\nAdmin 2: %i\nAdmin 3 %i\nAdmin 4: %i\nAdmin 5: %i\n\"", openrp_admin1Bitvalues.integer, openrp_admin2Bitvalues.integer, openrp_admin3Bitvalues.integer, openrp_admin4Bitvalues.integer, openrp_admin5Bitvalues.integer));
+	trap_SendServerCommand(ent-g_entities, va("print \"^2Admin 6: %i\nAdmin 7: %i\nAdmin 8: %i\nAdmin 9: %i\nAdmin 10:%i\nTemporary Admin:%i\n\"", openrp_admin6Bitvalues.integer, openrp_admin7Bitvalues.integer, openrp_admin8Bitvalues.integer, openrp_admin9Bitvalues.integer, openrp_admin10Bitvalues.integer, openrp_adminTempBitvalues.integer));
+	return;
+}
+/*
+============
+amaddeffect Function
+============
+*/
+void Cmd_amEffect_f(gentity_t *ent)
+{
+		char   effect[MAX_STRING_CHARS], savePath[MAX_QPATH];
+		gentity_t *fx_runner = G_Spawn();         
+		vmCvar_t		mapname;
+		fileHandle_t   f;
+	    char         buf[16384] = { 0 };// 16k file size
+		long         len;
+		
+		trap_Argv( 1,  effect, sizeof( effect ) );
+
+	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
+	{
+		trap_SendServerCommand(ent-g_entities, va( "print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\"" ));
+		return;
+	}
+	
+
+		if ( trap_Argc() != 2 )
+         { 
+			trap_SendServerCommand( ent-g_entities, va( "print \"^5Command Usage: /amaddeffect (effect) Example: /amaddeffect env/small_fire\n\"" ) ); 
+            return; 
+         }
+				AddSpawnField("fxFile", effect);
+#ifdef __LINUX__
+				fx_runner->s.origin[2] = (int) ent->client->ps.origin[2];
+#endif
+#ifdef QAGAME
+				fx_runner->s.origin[2] = (int) ent->client->ps.origin[2] - 15;
+#endif
+				fx_runner->s.origin[1] = (int) ent->client->ps.origin[1];
+				fx_runner->s.origin[0] = (int) ent->client->ps.origin[0];
+				SP_fx_runner(fx_runner);
+
+				//cm - Dom
+				//Effects are now written to a file sharing the name of the map we are on
+				//This file is read at the start of each map load and the effects placed automatically
+				trap_SendServerCommand( ent-g_entities, va( "print \"^5Saving the effect...\n\"" ) );
+				trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
+				Com_sprintf( savePath, sizeof( savePath ), "mp_effects/%s.cfg", mapname.string );
+				len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
+
+				if ( !f )
+				{
+					trap_SendServerCommand(ent-g_entities, va(  "^1Failed to save the effect.\n" ));
+					return;
+				}
+
+				//File saved in format: EffectName X Y Z
+				Com_sprintf( buf, sizeof(buf), "amaddeffect %s %i %i %i\n", effect, (int)ent->client->ps.origin[0], (int)ent->client->ps.origin[1], (int)ent->client->ps.origin[2] - 5);
+
+			    trap_FS_Write( buf, strlen( buf ), f );
+				trap_FS_FCloseFile( f );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^5Effect saved.\n\"" ) );
+				G_LogPrintf("Add effect (saved effect) command executed by %s.\n", ent->client->pers.netname);
+				return;
+}
+
+/*
+============
+amcleareffects Function
+============
+*/
+void Cmd_amClearEffects_f(gentity_t *ent)
+{
+		char         savePath[MAX_QPATH];
+		vmCvar_t		mapname;
+		fileHandle_t   f;
+	    char         buf[16384] = { 0 };// 16k file size
+		long         len;
+		
+
+	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\"" ) );
+		return;
+	}
+
+		//cm - Dom
+		//Effects are now written to a file sharing the name of the map we are on
+		//This file is read at the start of each map load and the effects placed automatically
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Clearing all effects...\n\"" ) );
+		trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
+		Com_sprintf( savePath, sizeof( savePath ), "mp_effects/%s.cfg", mapname.string );
+		len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
+
+		if ( !f )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Failed to clear all effects.\n\"" ) );
 			return;
 		}
+				
+		//Make the file blank.
+		Com_sprintf( buf, sizeof(buf), "");
+
+		trap_FS_Write( buf, strlen( buf ), f );
+		trap_FS_FCloseFile( f );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5All effects have been cleared.\n\"" ) );
+		G_LogPrintf( "Clear effects command executed by %s.\n", ent->client->pers.netname );
+		return;
 }
+
 /*
-===============
-
-M_Cmd_ASay_f - MJN
-
-===============
+============
+amforceteam Function
+============
 */
-void M_Cmd_ASay_f ( gentity_t * ent )
+void Cmd_amForceTeam_f(gentity_t *ent)
 {
-	gentity_t * other;
-	char	*message;
-	int textcolor = COLOR_WHITE;
-	int j;
-
-	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( ent-g_entities, va("print \"^5Command Usage: amsay <message>\n\""));
-		return;
-	}
-
-	message = M_Cmd_ConcatArgs(1);
-
-	// Fix: ensiform - Buffer overflow fix.
-	if (strlen(message) > MAX_SAY_TEXT) {
-		G_LogPrintf( "ASay( cl:%d ) length exceeds 150.\n", ent->client->ps.clientNum );
-		return;
-	}
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS], teamname[MAX_STRING_CHARS];
+	gentity_t *tent;
 	
-	// send it to all the appropriate clients
-	for (j = 0; j < level.maxclients; j++) {
-		other = &g_entities[j];
-		
-		if( other->client && (other->client->sess.isAdmin)){
-			if ( g_mRankDisplay.integer && (ent->client->sess.isAdmin)){
-				trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c(%s)%c%c%c%s\"", "tchat", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, M_GetPlayerRank(ent), ':', Q_COLOR_ESCAPE, M_SetConsoleTextColor(textcolor, g_mASayColor.integer)/*COLOR_CYAN*/, message ));
-			}
-			else{
-				trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c%c%s\"", "tchat", ent->client->pers.netname, ':', Q_COLOR_ESCAPE, M_SetConsoleTextColor(textcolor, g_mASayColor.integer)/*COLOR_CYAN*/, message ));
-			}
+
+	if(!G_CheckAdmin(ent, ADMIN_FORCETEAM))
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\"" ) );
+		return;
+	}
+		trap_Argv( 1, cmdTarget, sizeof (cmdTarget ) ); //The first command argument is the target's name.
+
+		trap_Argv( 2, teamname, sizeof( teamname ) ); //The second command argument is the team's name.
+
+	if(trap_Argc() != 3) //If the user doesn't specify both args.
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Command Usage: /amforceteam (name) (newteam)\n\"" ) );
+		return;
+	}
+
+		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+		{
+			G_MatchOnePlayer( pids, err, sizeof( err ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Player or clientid %s does not exist.\n\"", cmdTarget ) );
+			return;
 		}
+
+		tent = &g_entities[pids[0]];
+
+		if ( !Q_stricmp( teamname, "red" ) || !Q_stricmp( teamname, "r" ) ) {
+			SetTeam( tent, "red" );
+			G_LogPrintf("ForceTeam [RED] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+		}
+		else if ( !Q_stricmp( teamname, "blue" ) || !Q_stricmp( teamname, "b" ) ) {
+			SetTeam( tent, "blue" );
+			G_LogPrintf("ForceTeam [BLUE] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+		}
+		else if ( !Q_stricmp( teamname, "spectate" ) || !Q_stricmp( teamname, "spectator" )  || !Q_stricmp( teamname, "spec" ) || !Q_stricmp( teamname, "s" ) ) {
+			SetTeam( tent, "spectator" );
+			G_LogPrintf("ForceTeam [SPECTATOR] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+		}
+		else if ( !Q_stricmp( teamname, "enter" ) || !Q_stricmp( teamname, "free" ) || !Q_stricmp( teamname, "join" ) || !Q_stricmp( teamname, "j" )
+			 || !Q_stricmp( teamname, "f" ) ) {
+			SetTeam( tent, "free" );
+			G_LogPrintf( "ForceTeam [FREE] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname );
+		}
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Player %s was forceteamed sucessfully.\n\"", tent->client->pers.netname ) );
+		return;
 	}
-	G_LogPrintf( "adminsay: %s -> %s\n", ent->client->pers.netname, message);
+
+/*
+============
+amip Function
+============
+*/
+void Cmd_amIP_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+				
+	if( !G_CheckAdmin( ent, ADMIN_IP ) )
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+		 
+    trap_Argv( 1,  cmdTarget, sizeof(  cmdTarget ) );
+
+	if( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5Command Usage: /amip (name/clientid)\n\""));
+		return;
+	}
+
+		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+		{
+			G_MatchOnePlayer(pids, err, sizeof(err));
+			trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+			return;
+		}
+
+		tent = &g_entities[pids[0]];
+
+		if (tent->r.svFlags & SVF_BOT){
+			trap_SendServerCommand(ent-g_entities, va("print \"%s ^5does not have an IP, as they are a bot.\n\"", tent->client->pers.netname));
+			return;
+		}
+		trap_SendServerCommand(ent-g_entities, va("print \"%s^5's IP is %s\n\"", tent->client->pers.netname,  tent->client->sess.IP));
+		return;
 }
 /*
-===============
-
-M_Svcmd_Slap_f - MJN
-
-===============
+============
+ammap Function
+============
 */
-
-void M_Svcmd_Slap_f( gentity_t * targetplayer )
+void Cmd_amMap_f(gentity_t *ent)
 {
-	vec3_t addvel;
-	int powerXY, powerZ;
-	int time, totaltime;
+	char map[MAX_STRING_CHARS];
 
-	// MJN - Can't slap a protected person.
-	if(M_isProtected(targetplayer)){
-		G_Printf("You cannot slap someone who is protected.");
+	if(!G_CheckAdmin(ent, ADMIN_MAP))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
 		return;
 	}
-	
-	// MJN - Not while dueling...
-	if(targetplayer->client->ps.duelInProgress){
-		G_Printf("You cannot slap someone who is currently dueling.");
-		return;
+	else
+	{
+	trap_Argv( 1, map, sizeof( map ) );
+	trap_SendServerCommand( -1, va("The map is being changed to %s", map));
+	trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
+	G_LogPrintf("Map changed to %s by %s.\n", map, ent->client->pers.netname);
+	return;
 	}
-
-	// MJN - are they in an emote?  Then unemote them :P
-	if (InEmote(targetplayer->client->emote_num ) || 
-		InSpecialEmote(targetplayer->client->emote_num )){
-		G_SetTauntAnim(targetplayer, targetplayer->client->emote_num);
-	}
-
-	powerXY = 400;
-	powerZ = 400;
-	time = 3;
-	totaltime = time * 1000;
-
-	VectorSet(addvel, crandom() * powerXY, crandom() * powerXY, (crandom() + 2) * powerZ);
-	VectorAdd( targetplayer->client->ps.velocity, addvel, targetplayer->client->ps.velocity );
-
-	targetplayer->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
-	targetplayer->client->ps.forceHandExtendTime = level.time + totaltime;
-	targetplayer->client->ps.forceDodgeAnim = 0;
-	targetplayer->client->ps.quickerGetup = qfalse;
-
-	targetplayer->s.pos.trTime = level.time;
-
-	G_Sound( targetplayer, CHAN_BODY, G_SoundIndex("sound/player/bodyfall_human2.mp3"));
-	G_ScreenShake( targetplayer->client->ps.origin, targetplayer, 20.0f, 500, qfalse );
-	
-	trap_Cvar_VariableStringBuffer( "g_mMessageSlapTarget", targetString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageSlapBroadcast", broadcastString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageSlapEveryone", everyoneString, MAX_TOKEN_CHARS);
-
-	G_LogPrintf( "slap: %s was slapped.\n", targetplayer->client->pers.netname );
 }
+
 /*
-===================
-
-  M_Svcmd_Empower_f - MJN
-
-===================
+============
+amweather Function
+============
 */
+void G_RemoveWeather( void ) //ensiform's whacky weather clearer code
+{ 
+	int i; 
+	char s[MAX_STRING_CHARS]; 
 
-void M_Svcmd_Empower_f( gentity_t * targetplayer )
-{
-	
-	int i=0;	
-		
-	if( targetplayer->client->ps.duelInProgress ){
-		G_Printf("You cannot empower this client at this time.\n");
-		return;
+	for (i=1 ; i<MAX_FX ; i++) {
+	trap_GetConfigstring( CS_EFFECTS + i, s, sizeof( s ) );
+
+	if (!*s || !s[0]) { 
+	return;
 	}
-	if ( targetplayer->client->ps.pm_type == PM_DEAD ) {
+
+	if (s[0] == '*')
+	{ 
+	trap_SetConfigstring( CS_EFFECTS + i, ""); 
+	}
+	}
+}
+
+void Cmd_amWeather_f(gentity_t *ent)
+	{
+		char	weather[MAX_STRING_CHARS], savePath[MAX_QPATH];
+		int		num;
+		vmCvar_t		mapname;
+		fileHandle_t	f;
+		char         buf[16384] = { 0 };// 16k file size
+		long         len;
+
+		trap_Argv( 1,  weather, sizeof( weather ) );
+
+	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
 		return;
 	}	
-	if( M_isTerminator(targetplayer) ){
-		M_Svcmd_UnTerminator_f( targetplayer );
-	}
-	if( M_isProtected(targetplayer) ){
-		M_Svcmd_UnProtect_f( targetplayer );
-	}
-	// Traps for Real Jedi Only During Jedi Vs. Merc games.
-	if(g_trueJedi.integer){
-		if( !targetplayer->client->ps.trueJedi){
-			G_Printf("^6Sorry, ^7Client is Not a Real Jedi\n");
-			return;
-		}
-	}
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Changing and saving the weather...\n\"" ) );
+		trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
+		Com_sprintf( savePath, sizeof( savePath ), "mp_weather/%s.cfg", mapname.string );
+		len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
 
-	// Only do this if player isn't empowered or we will be overwriting the saved forcepower setup.
-	if( !M_isEmpowered(targetplayer) ){
-
-		// MJN - Stop any running forcepowers.
-		while (i < NUM_FORCE_POWERS)
-		{
-			if ((targetplayer->client->ps.fd.forcePowersActive & (1 << i)) && i != FP_LEVITATION){
-				WP_ForcePowerStop(targetplayer, i);
-			}
-			i++;
-		}
-
-		if( g_mDebugEmpower.integer ){
-			if( !AllForceDisabled( g_forcePowerDisable.integer )){
-				// Save forcepowers:
-				for( i = 0; i < NUM_FORCE_POWERS; i ++ ){
-					// Save
-					targetplayer->client->pers.forcePowerLevelSaved[i] = targetplayer->client->ps.fd.forcePowerLevel[i];
-
-					// Set new:
-					targetplayer->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
-				}
-				// Save and set known powers:
-				targetplayer->client->pers.forcePowersKnownSaved = targetplayer->client->ps.fd.forcePowersKnown;
-				if ( g_gametype.integer >= GT_TEAM) {
-					targetplayer->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
-																	 1 << FP_MINDTRICK | 1 << FP_GRIP | 1 << FP_LIGHTNING | 1 << FP_RAGE | 
-																	 1 << FP_MANIPULATE | 1 << FP_ABSORB | 1 << FP_TEAM_HEAL | 1 << FP_LIFT | 
-																	 1 << FP_DRAIN | 1 << FP_SEE);
-				}
-				else{
-					targetplayer->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
-																 1 << FP_MINDTRICK | 1 << FP_GRIP | 1 << FP_LIGHTNING | 1 << FP_RAGE | 
-																 1 << FP_MANIPULATE | 1 << FP_ABSORB | 1 << FP_DRAIN | 1 << FP_SEE);
-				}
-			}
-		}
-		else{
-			// Save forcepowers:
-			for( i = 0; i < NUM_FORCE_POWERS; i ++ ){
-				// Save
-				targetplayer->client->pers.forcePowerLevelSaved[i] = targetplayer->client->ps.fd.forcePowerLevel[i];
-
-				// Set new:
-				targetplayer->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
-			}
-			// Save and set known powers:
-			targetplayer->client->pers.forcePowersKnownSaved = targetplayer->client->ps.fd.forcePowersKnown;
-			if ( g_gametype.integer >= GT_TEAM) {
-					targetplayer->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
-																	 1 << FP_MINDTRICK | 1 << FP_GRIP | 1 << FP_LIGHTNING | 1 << FP_RAGE | 
-																	 1 << FP_MANIPULATE | 1 << FP_ABSORB | 1 << FP_TEAM_HEAL | 1 << FP_LIFT | 
-																	 1 << FP_DRAIN | 1 << FP_SEE);
-			}
-			else{
-				targetplayer->client->ps.fd.forcePowersKnown = ( 1 << FP_HEAL | 1 << FP_SPEED | 1 << FP_PUSH | 1 << FP_PULL | 
-																 1 << FP_MINDTRICK | 1 << FP_GRIP | 1 << FP_LIGHTNING | 1 << FP_RAGE | 
-																 1 << FP_MANIPULATE | 1 << FP_ABSORB | 1 << FP_DRAIN | 1 << FP_SEE);
-			}
-		}
-	}
-	
-	if( g_mDebugEmpower.integer ){
-		if( !AllForceDisabled( g_forcePowerDisable.integer ) ){
-			if( g_gametype.integer == GT_SIEGE && targetplayer->client->sess.sessionTeam != TEAM_FREE ){
-				M_SetForcePool(targetplayer, 200);
-			}
-			else{
-				M_SetForcePool(targetplayer, 200);
-			}
-		}
-	}
-	else{
-		if( g_gametype.integer == GT_SIEGE && targetplayer->client->sess.sessionTeam != TEAM_FREE ){
-			M_SetForcePool(targetplayer, 200);
-		}
-		else{
-			M_SetForcePool(targetplayer, 200);
-		}
-	}
-	
-	targetplayer->client->ps.isJediMaster = qtrue;
-	targetplayer->client->ps.weapon = WP_SABER;
-	M_HolsterThoseSabers(targetplayer);
-	targetplayer->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_SABER );
-
-	targetplayer->client->pers.empowered = qtrue;
-
-	trap_Cvar_VariableStringBuffer( "g_mMessageEmpowerTarget", targetString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageEmpowerBroadcast", broadcastString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageEmpowerEveryone", everyoneString, MAX_TOKEN_CHARS);
-	
-	G_LogPrintf( "empower: %s\n", targetplayer->client->pers.netname );
-}
-/*
-===================
-
-  M_Svcmd_UnEmpower_f - MJN
-
-===================
-*/
-void M_Svcmd_UnEmpower_f( gentity_t * targetplayer )
-{
-	int i;
-
-	if( targetplayer->client->ps.duelInProgress ){
-		G_Printf("You cannot unempower this client at this time.\n");
-		return;
-	}
-
-	// Traps for Real Jedi Only During Jedi Vs. Merc games.
-	if(g_trueJedi.integer){
-		if( !targetplayer->client->ps.trueJedi){
-			G_Printf("^6Sorry, ^7Client is Not a Real Jedi\n");
-			return;
-		}
-	}
-
-	// Don't unempower someone who's not empowered or terminator:
-	if( !M_isEmpowered(targetplayer) || M_isTerminator(targetplayer)){
-		return;
-	}
-	
-	// Restore forcepowers:
-	for( i = 0; i < NUM_FORCE_POWERS; i ++ ){
 		
-		if( g_mDebugEmpower.integer )
-		{
-			if (!AllForceDisabled( g_forcePowerDisable.integer )){
-				// Save
-				targetplayer->client->ps.fd.forcePowerLevel[i] = targetplayer->client->pers.forcePowerLevelSaved[i];
-			}
-		}
-		else{
-			// Save
-			targetplayer->client->ps.fd.forcePowerLevel[i] = targetplayer->client->pers.forcePowerLevelSaved[i];
-		}
-	}
-
-	// Save and set known powers:
-	targetplayer->client->ps.fd.forcePowersKnown = targetplayer->client->pers.forcePowersKnownSaved;
-	
-	if(!g_trueJedi.integer){
-		// Set Weapons back:
-		targetplayer->client->ps.weapon = WP_SABER;
-		M_HolsterThoseSabers(targetplayer);
-		targetplayer->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_SABER | 1 << WP_BRYAR_PISTOL );
-	}
-
-	if( g_mDebugEmpower.integer )
-	{
-		// Set saved forcepower:
-		if ( !AllForceDisabled( g_forcePowerDisable.integer ) ){
-			M_SetForcePool(targetplayer, 100);
-		}
-	}
-	else{
-		M_SetForcePool(targetplayer, 100);
-	}
-	
-	targetplayer->client->ps.isJediMaster = qfalse;
-	M_HolsterThoseSabers(targetplayer);
-
-	targetplayer->client->pers.empowered = qfalse;
-	
-	trap_Cvar_VariableStringBuffer( "g_mMessageUnEmpowerTarget", targetString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageUnEmpowerBroadcast", broadcastString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageUnEmpowerEveryone", everyoneString, MAX_TOKEN_CHARS);
-	
-	G_LogPrintf( "unempower: %s\n", targetplayer->client->pers.netname );
-}
-//TODO: MJN - Verify that we are supposed to manipulate the force for non Jedi in jediVmerc mode.
-/*
-===================
-
-  M_Cmd_Terminator - MJN
-
-===================
-*/
-void M_Svcmd_Terminator_f( gentity_t * targetplayer )
-{
-	int i=0;
-	int j=0;
-	int k=0;
-	int max_ammo = 999;
-	
-	if( g_mDebugTerminator.integer )
-	{
-		if(HasSetSaberOnly()){
-			G_Printf("^6Sorry, ^7Sabers are allowed only\n");
-			return;
-		}
-	}
-
-	if ( targetplayer->client->ps.pm_type == PM_DEAD ) {
-		return;
-	}
-
-	if( M_isEmpowered(targetplayer) ){
-		M_Svcmd_UnEmpower_f(targetplayer);
-	}
-
-	if( M_isProtected(targetplayer) ){
-		M_Svcmd_UnProtect_f( targetplayer );
-	}
-
-	if( targetplayer->client->ps.duelInProgress ){
-		G_Printf("You cannot enable terminator for this client at this time.\n");
-		return;
-	}
-
-	if(g_trueJedi.integer){
-		if( !targetplayer->client->ps.trueNonJedi){
-			G_Printf("^6Sorry, ^7Client is Not a Real Merc\n");
-			return;
-		}
-	}
-
-	if( !M_isTerminator(targetplayer) ){
-
-		// MJN - Stop any running forcepowers.
-		while (i < NUM_FORCE_POWERS)
-		{
-			if ((targetplayer->client->ps.fd.forcePowersActive & (1 << i)) && i != FP_LEVITATION){
-				WP_ForcePowerStop(targetplayer, i);
-			}
-			i++;
-		}
-
-		// Save forcepowers:
-		for( i = 0; i < NUM_FORCE_POWERS; i ++ ){
-			if( g_mDebugEmpower.integer )
+		if ( !f )
 			{
-				if (!AllForceDisabled( g_forcePowerDisable.integer )){
-					// Save
-					targetplayer->client->pers.forcePowerLevelSaved[i] = targetplayer->client->ps.fd.forcePowerLevel[i];
-					// Set new:
-					targetplayer->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_0;
-				}
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1Failed to change and save the weather.\n\"" ) );
+				return;
 			}
-			else{
-				// Save
-				targetplayer->client->pers.forcePowerLevelSaved[i] = targetplayer->client->ps.fd.forcePowerLevel[i];
-				// Set new:
-				targetplayer->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_0;
+						
+			if (!Q_stricmp(weather, "snow")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*snow");
 			}
+			else if (!Q_stricmp(weather, "rain")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*rain 500");
+			}
+			else if (!Q_stricmp(weather, "sandstorm")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*wind");
+				G_EffectIndex("*sand");
+			}
+			else if (!Q_stricmp(weather, "blizzard")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*constantwind (100 100 -100)");
+				G_EffectIndex("*fog");
+				G_EffectIndex("*snow");
+			}
+			else if (!Q_stricmp(weather, "fog")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*heavyrainfog");
+			}
+			else if (!Q_stricmp(weather, "spacedust")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*spacedust 4000");
+			}
+			else if (!Q_stricmp(weather, "acidrain")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				G_EffectIndex("*acidrain 500");
+			}
+			
+			if (!Q_stricmp(weather, "clear")){
+				G_RemoveWeather();
+				num = G_EffectIndex("*clear");
+				trap_SetConfigstring( CS_EFFECTS + num, "");
+				Com_sprintf( buf, sizeof(buf), "");
+			}
+			else {
+			Com_sprintf( buf, sizeof(buf), "weather %s\n", weather);
+			}	
+			    trap_FS_Write( buf, strlen( buf ), f );
+				trap_FS_FCloseFile( f );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^5Weather changed and saved. To change it back, use /amweather clear\n\"" ) );
+				G_LogPrintf("Weather command executed by %s. The weather is now %s.\n", ent->client->pers.netname, weather);
 		}
-
-		// Save and set known powers:
-		targetplayer->client->pers.forcePowersKnownSaved = targetplayer->client->ps.fd.forcePowersKnown;
-		targetplayer->client->ps.fd.forcePowersKnown = 0;
-	}
-	
-	// set force
-	M_SetForcePool(targetplayer, 0);
-
-	while (j < HI_NUM_HOLDABLE)
-	{
-		targetplayer->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << j);
-		j++;
-	}
-	
-	// all health
-	if (targetplayer->health > targetplayer->client->ps.stats[STAT_MAX_HEALTH]) {
-		targetplayer->health = targetplayer->client->ps.stats[STAT_MAX_HEALTH];
-	}
-	else {
-		targetplayer->health = targetplayer->client->ps.stats[STAT_MAX_HEALTH];
-	}
-
-	// all weapons except for saber
-	targetplayer->client->ps.weapon = WP_MELEE;	
-	targetplayer->client->ps.stats[STAT_WEAPONS] =	( 1 << WP_TUSKEN_RIFLE | 1 << WP_MELEE | 1 << WP_BRYAR_PISTOL | 1 << WP_BLASTER | 
-													1 << WP_DISRUPTOR | 1 << WP_BOWCASTER | 1 << WP_REPEATER | 1 << WP_DEMP2 | 
-													1 << WP_FLECHETTE | 1 << WP_ROCKET_LAUNCHER | 1 << WP_THERMAL | 1 << WP_GRENADE | 
-													1 << WP_DET_PACK | 1 << WP_CONCUSSION );
-
-	// ammo
-	for ( k = 0 ; k < MAX_WEAPONS ; k++ ) {
-		targetplayer->client->ps.ammo[k] = max_ammo;
-	}
-
-	// armor
-	targetplayer->client->ps.stats[STAT_ARMOR] = targetplayer->client->ps.stats[STAT_MAX_HEALTH];
-	
-	targetplayer->client->pers.terminator = qtrue;
-	
-	trap_Cvar_VariableStringBuffer( "g_mMessageTerminatorTarget", targetString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageTerminatorBroadcast", broadcastString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageTerminatorEveryone", everyoneString, MAX_TOKEN_CHARS);
-	
-	G_LogPrintf( "terminator: %s\n", targetplayer->client->pers.netname );
-}
 /*
-===================
-
-  MUnTerminator
-
-===================
+============
+amstatus Function
+============
 */
-void M_Svcmd_UnTerminator_f( gentity_t * targetplayer )
+void Cmd_amStatus_f(gentity_t *ent)
 {
 	int i;
-	
-	if( g_mDebugTerminator.integer )
+
+  	if(!G_CheckAdmin(ent, ADMIN_STATUS))
 	{
-		if(HasSetSaberOnly()){
-			G_Printf("^6Sorry, ^7Sabers are allowed only\n");
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_SendServerCommand( ent-g_entities, va( "print \"^5Current clients connected & their IPs\n===================================\n\"" ) );
+   for(i = 0; i < level.maxclients; i++) { 
+      if(g_entities[i].client->pers.connected == CON_CONNECTED) { 
+		  trap_SendServerCommand(ent-g_entities, va("print \"^5ID: %i ^5Name: %s ^5IP: %s\n\"", g_entities[i].client->sess.pids[0], g_entities[i].client->pers.netname, g_entities[i].client->sess.IP));
+	  }
+   }
+   	trap_SendServerCommand(ent-g_entities, va("print \"^5===================================\n\""));
+   return;
+}
+
+/*
+============
+amrename Function
+============
+*/
+void uwRename(gentity_t *player, const char *newname) 
+{ 
+   char userinfo[MAX_INFO_STRING]; 
+   int clientNum = player-g_entities;
+   trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo)); 
+   Info_SetValueForKey(userinfo, "name", newname);
+   trap_SetUserinfo(clientNum, userinfo); 
+   ClientUserinfoChanged(clientNum); 
+   player->client->pers.netnameTime = level.time + 5000;
+}
+
+void uw2Rename(gentity_t *player, const char *newname) 
+{ 
+   char userinfo[MAX_INFO_STRING]; 
+   int clientNum = player-g_entities;
+   trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo)); 
+   Info_SetValueForKey(userinfo, "name", newname); 
+   trap_SetUserinfo(clientNum, userinfo); 
+   ClientUserinfoChanged(clientNum); 
+   player->client->pers.netnameTime = level.time + Q3_INFINITE;
+}
+
+void Cmd_amRename_f(gentity_t *ent)
+{ 
+   int clientid = -1; 
+   char currentname[MAX_STRING_CHARS], newname[MAX_STRING_CHARS];
+
+   if(!G_CheckAdmin(ent, ADMIN_RENAME))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+   if ( trap_Argc() != 3) 
+   { 
+      trap_SendServerCommand( ent-g_entities, va( "print \"^5Command Usage: /amrename (currentname) (newname)\n\"" ) ); 
+      return;
+   }
+   trap_Argv( 1, currentname, sizeof( currentname ) );
+   clientid = atoi( currentname );
+   if (clientid == -1) 
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"^5Can't find client ID for %s\n\"", currentname ) ); 
+            return; 
+         } 
+         if (clientid == -2) 
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"^5Ambiguous client ID for %s\n\"", currentname ) ); 
+            return; 
+         }
+		 if (clientid >= MAX_CLIENTS || clientid < 0)  
+         { 
+            trap_SendServerCommand( ent-g_entities, va("print \"^5Bad client ID for %s\n\"", currentname ) ); 
+            return;
+         }
+         if (!g_entities[clientid].inuse) 
+         { // check to make sure client slot is in use 
+            trap_SendServerCommand( ent-g_entities, va("print \"^5Client %s is not active\n\"", currentname ) ); 
+            return; 
+         }
+   trap_Argv( 2, newname, sizeof( newname ) );
+		G_LogPrintf("Rename admin command executed by %s on %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
+		trap_SendServerCommand(clientid, va("cvar name %s", newname));
+		uwRename(&g_entities[clientid], newname);
+
+	G_LogPrintf("Rename admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
+	return;
+}
+
+/*
+============
+amslap Function
+============
+*/
+void Cmd_amSlap_f(gentity_t *ent)
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+
+	if(!G_CheckAdmin(ent, ADMIN_SLAP))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You are not allowed to use this command. You may not be a high enough admin level or may not be logged into admin.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Command Usage: /amslap (name/clientid)\n\"" ) );
+		return;
+	}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
+		return;
+	}
+
+
+		 /*
+		 if(tent->client->ps.duelInProgress){
+			 trap_SendServerCommand( ent-g_entities, va("print \"^5You can't slap someone who is currently dueling.\n\"") ); 
 			return;
-		}
-	}
+		 }
+		 */
 
-	// MJN - This should be impossible since we cannot duel as a Terminator, but it is there as a safety net.
-	if( targetplayer->client->ps.duelInProgress ){
-		G_Printf("You cannot disenguage terminator for this client at this time.\n");
-		return;
-	}
-
-	if ( targetplayer->health <= 0 ){
-		return;
-	}
-
-	// Don't unterminator someone who's not terminator or empowered:
-	if( !M_isTerminator(targetplayer) || M_isEmpowered(targetplayer)){
-		return;
-	}
-	
-	if(g_trueJedi.integer){
-		if( !targetplayer->client->ps.trueNonJedi){
-			G_Printf("^6Sorry, ^7Client is Not a Real Merc\n");
-			return;
-		}
-		else{
-			// MJN - Make sure we only get the basejk weapons for jediVmerc.
-			targetplayer->client->ps.weapon = WP_MELEE;
-			targetplayer->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_MELEE | 1 << WP_BRYAR_PISTOL | 1 << WP_BLASTER | 1 << WP_BOWCASTER);
-		}
-	}
-	// Set basejk weapons back, non jediVmerc
-	// Reset Time Effect items if they are in use.
-	M_ResetTimeEffectItems(targetplayer);
-	
-	if( g_mDebugEmpower.integer ){
-		if (!AllForceDisabled( g_forcePowerDisable.integer )){
-			// Restore forcepowers:
-			for( i = 0; i < NUM_FORCE_POWERS; i ++ ){
-				// Save
-				targetplayer->client->ps.fd.forcePowerLevel[i] = targetplayer->client->pers.forcePowerLevelSaved[i];
-			}
-			// Save and set known powers:
-			targetplayer->client->ps.fd.forcePowersKnown = targetplayer->client->pers.forcePowersKnownSaved;
-			M_SetForcePool(targetplayer, 100);
-		}
-	}
-	else{
-		// Restore forcepowers:
-		for( i = 0; i < NUM_FORCE_POWERS; i ++ ){
-			// Save
-			targetplayer->client->ps.fd.forcePowerLevel[i] = targetplayer->client->pers.forcePowerLevelSaved[i];
-		}
-
-		// Save and set known powers:
-		targetplayer->client->ps.fd.forcePowersKnown = targetplayer->client->pers.forcePowersKnownSaved;
-		M_SetForcePool(targetplayer, 100);
-	}
-	if(!g_trueJedi.integer){
-		// Set basejk weapons back, non jediVmerc
-		if (targetplayer->client->ps.fd.forcePowerLevel[FP_SABER_OFFENSE] > FORCE_LEVEL_0 && 
-			targetplayer->client->ps.fd.forcePowersKnown & (1 << FP_SABER_OFFENSE ) ){
-			targetplayer->client->ps.weapon = WP_SABER;
-			M_HolsterThoseSabers(targetplayer);
-			targetplayer->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_SABER | 1 << WP_BRYAR_PISTOL );
-		}
-		else{
-			targetplayer->client->ps.weapon = WP_MELEE;
-			targetplayer->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_MELEE | 1 << WP_BRYAR_PISTOL );
-		}
-	}
-
-	targetplayer->client->pers.terminator = qfalse;
-	
-	trap_Cvar_VariableStringBuffer( "g_mMessageUnTerminatorTarget", targetString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageUnTerminatorBroadcast", broadcastString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageUnTerminatorEveryone", everyoneString, MAX_TOKEN_CHARS);
-	
-	G_LogPrintf( "unterminator: %s\n", targetplayer->client->pers.netname );	
-}
-/*
-===================
-
-  MProtect
-
-===================
-*/
-void M_Svcmd_Protect_f( gentity_t * targetplayer )
-{
-	
-	if( g_gametype.integer >= GT_TEAM )
-	{
-		G_Printf("You cannot use protect in this gamemode.\n" );
-		return;
-	}
-	if(targetplayer->client->ps.duelInProgress){
-		G_Printf("You cannot use protect when client is in a private duel.\n" );
-		return;
-	}
-	targetplayer->client->ps.eFlags |= EF_INVULNERABLE; // Gives protect until he attacks
-	targetplayer->client->invulnerableTimer = level.time + Q3_INFINITE; // for infinite, until attacks
-	targetplayer->client->pers.protect = qtrue;
-	
-	trap_Cvar_VariableStringBuffer( "g_mMessageProtectTarget", targetString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageProtectBroadcast", broadcastString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageProtectEveryone", everyoneString, MAX_TOKEN_CHARS);
-	
-	G_LogPrintf( "protect: %s\n", targetplayer->client->pers.netname );
-}
-/*
-===================
-
-  MUnProtect
-
-===================
-*/
-void M_Svcmd_UnProtect_f( gentity_t * targetplayer )
-{
-	
-	if( !M_isProtected(targetplayer) ){
-		return;
-	}
-	else{
-		targetplayer->client->ps.eFlags &= ~EF_INVULNERABLE; // No more protect
-		targetplayer->client->invulnerableTimer = 0; // No more protect
-		targetplayer->client->pers.protect = qfalse;
+		tent->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
+		tent->client->ps.forceHandExtendTime = level.time + 3000;
+		tent->client->ps.velocity[2] += 500;
+		tent->client->ps.forceDodgeAnim = 0;
+		tent->client->ps.quickerGetup = qfalse;
 		
-		trap_Cvar_VariableStringBuffer( "g_mMessageUnProtectTarget", targetString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageUnProtectBroadcast", broadcastString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageUnProtectEveryone", everyoneString, MAX_TOKEN_CHARS);
-		
-		G_LogPrintf( "unprotect: %s\n", targetplayer->client->pers.netname );
-	}
-}
-/*
-=================
+		trap_SendServerCommand(ent-g_entities, va("print \"^5You sucessfully slapped %s.\n\"", tent->client->pers.netname));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been slapped.\""));
 
-M_Svcmd_IssueWarning_f
-
-// Idea is courtesy of the unfinished "MultiPlayer_Xtra" mod.
-=================
-*/
-void M_Svcmd_IssueWarning_f( gentity_t * targetplayer )
-{
-	
-	int warnTotal = 0;
-	
-	// For listen servers.
-	if( targetplayer->client->pers.localClient ){
-		G_Printf( "Can't warn host player\n" );
+		G_LogPrintf("Slap admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		return;
-	}
-
-	// Check if person is following someone, if so, get them to normal spectator
-	if ( targetplayer->client->sess.spectatorState == SPECTATOR_FOLLOW ) {
-		StopFollowing( targetplayer );
-	}
-	
-	// Increment the warning!
-	warnTotal = targetplayer->client->sess.warnLevel += 1;
-
-	if(warnTotal >= g_mMaxWarnings.integer )
-	{
-		switch(g_mWarningPunishment.integer){
-			
-			case 1: //kick
-				//send messages
-				trap_Cvar_VariableStringBuffer( "g_mMessageWarningKickedTarget", targetString, MAX_TOKEN_CHARS);
-				trap_Cvar_VariableStringBuffer( "g_mMessageWarningKickedBroadcast", broadcastString, MAX_TOKEN_CHARS);
-				trap_Cvar_VariableStringBuffer( "g_mMessageWarningKickedEveryone", everyoneString, MAX_TOKEN_CHARS);
-				//execute command
-				trap_SendConsoleCommand( EXEC_APPEND, va("clientkick %i\n", targetplayer->client->ps.clientNum) );
-				//log it
-				G_LogPrintf( "warning_kicked: %s\n with IP %i.%i.%i.%i has met or exceeded the maximum number of warnings.\n", targetplayer->client->pers.netname,
-					targetplayer->client->sess.IPstring[0], targetplayer->client->sess.IPstring[1], targetplayer->client->sess.IPstring[2], targetplayer->client->sess.IPstring[3]);
-				break;
-			case 2: //kickban
-				//send messages
-				trap_Cvar_VariableStringBuffer( "g_mMessageWarningKickedTarget", targetString, MAX_TOKEN_CHARS);
-				trap_Cvar_VariableStringBuffer( "g_mMessageWarningKickedBroadcast", broadcastString, MAX_TOKEN_CHARS);
-				trap_Cvar_VariableStringBuffer( "g_mMessageWarningKickedEveryone", everyoneString, MAX_TOKEN_CHARS);
-				//execute commands
-				trap_SendConsoleCommand( EXEC_APPEND, va( "AddIP %i.%i.%i.%i", targetplayer->client->sess.IPstring[0], targetplayer->client->sess.IPstring[1], targetplayer->client->sess.IPstring[2], 
-					targetplayer->client->sess.IPstring[3]));
-				trap_SendConsoleCommand( EXEC_NOW, va("clientkick %i\n", targetplayer->client->ps.clientNum) );
-				//log it
-				G_LogPrintf( "warning_kickban: %s\n with IP %i.%i.%i.%i has met or exceeded the maximum number of warnings.\n", targetplayer->client->pers.netname,
-					targetplayer->client->sess.IPstring[0], targetplayer->client->sess.IPstring[1], targetplayer->client->sess.IPstring[2], targetplayer->client->sess.IPstring[3]);
-				break;
-			default: // do nothing special.
-				//send messages
-				trap_Cvar_VariableStringBuffer( "g_mMessageWarningTarget", targetString, MAX_TOKEN_CHARS);
-				trap_Cvar_VariableStringBuffer( "g_mMessageWarningBroadcast", broadcastString, MAX_TOKEN_CHARS);
-				trap_Cvar_VariableStringBuffer( "g_mMessageWarningEveryone", everyoneString, MAX_TOKEN_CHARS);
-				//tell the client how many warnings they have.
-				trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^7You ^7have a total of ^1%i ^7warnings.\n\"", warnTotal ) );
-				//log it
-				G_LogPrintf( "warning_exceeded: %s\n with IP %i.%i.%i.%i has met or exceeded the maximum number of warnings.  They have a total of %i warnings.\n", targetplayer->client->pers.netname,
-				targetplayer->client->sess.IPstring[0], targetplayer->client->sess.IPstring[1], targetplayer->client->sess.IPstring[2], targetplayer->client->sess.IPstring[3], warnTotal);
-				break;
-		}
-	}
-	else{
-		//send messages
-		trap_Cvar_VariableStringBuffer( "g_mMessageWarningTarget", targetString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageWarningBroadcast", broadcastString, MAX_TOKEN_CHARS);
-		trap_Cvar_VariableStringBuffer( "g_mMessageWarningEveryone", everyoneString, MAX_TOKEN_CHARS);
-		//tell the client how many warnings remaining.
-		trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^7You ^7have ^1%i ^7warnings ^7remaining.\n\"", g_mMaxWarnings.integer - warnTotal ) );
-		//log it
-		G_LogPrintf( "warning: %s\n with IP %i.%i.%i.%i was issued a warning.  They have a total of %i warning(s).\n", targetplayer->client->pers.netname, 
-			targetplayer->client->sess.IPstring[0], targetplayer->client->sess.IPstring[1], targetplayer->client->sess.IPstring[2], targetplayer->client->sess.IPstring[3], warnTotal );
-	}
-}
-/*
-=================
-
-M_Svcmd_UnIssueWarning_f
-
-=================
-*/
-void M_Svcmd_UnIssueWarning_f( gentity_t * targetplayer )
-{
-	
-	int warnTotal = 0;
-	
-	// For listen servers.
-	if( targetplayer->client->pers.localClient ){
-		G_Printf( "Can't unwarn host player\n" );
-		return;
-	}
-
-	// Check if person is following someone, if so, get them to normal spectator
-	if ( targetplayer->client->sess.spectatorState == SPECTATOR_FOLLOW ) {
-		StopFollowing( targetplayer );
-	}
-
-	// If they don't have any warnings, so don't do this.
-	if (targetplayer->client->sess.warnLevel <= 0){
-		return;
-	}
-	// decrement the warning!
-	warnTotal = targetplayer->client->sess.warnLevel -= 1;
-
-	//send messages
-	trap_Cvar_VariableStringBuffer( "g_mMessageForgiveTarget", targetString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageForgiveBroadcast", broadcastString, MAX_TOKEN_CHARS);
-	trap_Cvar_VariableStringBuffer( "g_mMessageForgiveEveryone", everyoneString, MAX_TOKEN_CHARS);
-	//tell the client how many warnings remaining.
-	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "print \"^7You ^7have ^1%i ^7warnings ^7remaining.\n\"", g_mMaxWarnings.integer - warnTotal ) );
-	//log it
-	G_LogPrintf( "forgive: %s\n with IP %i.%i.%i.%i was forgiven.  They have a total of %i warning(s).\n", targetplayer->client->pers.netname, 
-		targetplayer->client->sess.IPstring[0], targetplayer->client->sess.IPstring[1], targetplayer->client->sess.IPstring[2], targetplayer->client->sess.IPstring[3], warnTotal );
 }

@@ -838,11 +838,14 @@ typedef struct {
 	qboolean    characterChosen;    // Character chosen
 	int			characterID;	// Character ID
 	int			modelScale; // Model Scale
+	//OpenRP admin system stuff
 	qboolean	isAdmin;		// MJN - Logged in Admin.
-	unsigned char ip[4];			// MJN - For SavedIPs
-	int	 chatIgnoreClients[2];		// MJN - Clients which are ignoring this client. [0] = (0-31)  [1] = (32-63)
-	int warnLevel;					// MJN - Keeps track of how many warnings are issued to the client.
 	vec3_t placeOfDeath;
+	int state;						//The current state of the player
+	int Scale;						//The players new scale
+	int warnLevel;					//The current amount of warnings the player has
+	char IP[16];					//The players IP Address is stored here
+	int pids[MAX_CLIENTS];			//Client IDs
 
 } clientSession_t;
 

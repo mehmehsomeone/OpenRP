@@ -4,7 +4,7 @@
 
 //--Database Functions--
 void SaveCharacter(gentity_t * targetplayer);
-void LoadUser(gentity_t * targetplayer);
+void CheckAdmin(gentity_t * targetplayer);
 void LoadCharacter(gentity_t * targetplayer);
 void LoadSkills(gentity_t * targetplayer);
 void LoadForcePowers(gentity_t * targetplayer);
