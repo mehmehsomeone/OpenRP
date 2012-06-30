@@ -147,7 +147,7 @@ weaponData_t weaponData[WP_NUM_WEAPONS] =
 		5,//15,						//	int		ammoLow;			// Count when ammo is low
 		0,//2,						//	int		energyPerShot;		// Amount of energy used per shot
 		//[WeaponSys]
-		90000,						//	int		fireTime;			// Amount of time between firings was 800 -- 1.3 was 500
+		500,						//	int		fireTime;			// Amount of time between firings was 800 -- 1.3 was 500
 		//800,//400,				//	int		fireTime;			// Amount of time between firings
 		//[WeaponSys]
 		8192,					//	int		range;				// Range of weapon
@@ -177,7 +177,7 @@ weaponData_t weaponData[WP_NUM_WEAPONS] =
 		8192,					//	int		range;				// Range of weapon
 		//[WeaponSys]
 		1,						//	int		altEnergyPerShot;	// Amount of energy used for alt-fire was 3
-		250,					//	int		altFireTime;		// Amount of time between alt-firings was 350
+		300,					//	int		altFireTime;		// Amount of time between alt-firings was 350
 		//3,					//	int		altEnergyPerShot;	// Amount of energy used for alt-fire
 		//150,					//	int		altFireTime;		// Amount of time between alt-firings
 		//[/WeaponSys]
@@ -209,9 +209,9 @@ weaponData_t weaponData[WP_NUM_WEAPONS] =
 		0,						//	int		chargeSubTime;		// ms interval for subtracting ammo during charge
 		200,					//	int		altChargeSubTime;	// above for secondary
 		0,						//	int		chargeSub;			// amount to subtract during charge on each interval
-		1,						//int		altChargeSub;		// above for secondary
+		2,						//int		altChargeSub;		// above for secondary
 		0,						//	int		maxCharge;			// stop subtracting once charged for this many ms
-		1700					//	int		altMaxCharge;		// above for secondary
+		2000					//	int		altMaxCharge;		// above for secondary
 	},
 	{	// WP_BOWCASTER
 //		"Wookiee Bowcaster",	//	char	classname[32];		// Spawning name
@@ -244,12 +244,12 @@ weaponData_t weaponData[WP_NUM_WEAPONS] =
 		5,						//	int		ammoLow;			// Count when ammo is low
 		1,						//	int		energyPerShot;		// Amount of energy used per shot
 		//[WeaponSys]
-		100000,						//	int		fireTime;			// Amount of time between firings was 100 -- 1.3 was 87
+		100,						//	int		fireTime;			// Amount of time between firings was 100 -- 1.3 was 87
 //		100,					//	int		fireTime;			// Amount of time between firings
 		//[/WeaponSys]
 		8192,					//	int		range;				// Range of weapon
-		100,						//	int		altEnergyPerShot;	// Amount of energy used for alt-fire -- 1.3 was 100
-		500,					//	int		altFireTime;		// Amount of time between alt-firings -- 1.3 was 800
+		10,						//	int		altEnergyPerShot;	// Amount of energy used for alt-fire -- 1.3 was 100
+		750,					//	int		altFireTime;		// Amount of time between alt-firings -- 1.3 was 800
 		8192,					//	int		altRange;			// Range of alt-fire
 		0,						//	int		chargeSubTime;		// ms interval for subtracting ammo during charge
 		0,						//	int		altChargeSubTime;	// above for secondary
@@ -271,9 +271,9 @@ weaponData_t weaponData[WP_NUM_WEAPONS] =
 		0,						//	int		chargeSubTime;		// ms interval for subtracting ammo during charge
 		250,					//	int		altChargeSubTime;	// above for secondary
 		0,						//	int		chargeSub;			// amount to subtract during charge on each interval
-		3,						//	int		altChargeSub;		// above for secondary
+		2,						//	int		altChargeSub;		// above for secondary
 		0,						//	int		maxCharge;			// stop subtracting once charged for this many ms
-		2100					//	int		altMaxCharge;		// above for secondary
+		2000					//	int		altMaxCharge;		// above for secondary
 	},
 	{	// WP_FLECHETTE
 //		"Golan Arms Flechette",	//	char	classname[32];		// Spawning name
@@ -298,13 +298,13 @@ weaponData_t weaponData[WP_NUM_WEAPONS] =
 		1,						//	int		ammoLow;			// Count when ammo is low
 		1,						//	int		energyPerShot;		// Amount of energy used per shot
 		//[WeaponSys]
-		3600,					//	int		fireTime;			// Amount of time between firings
+		4000,					//	int		fireTime;			// Amount of time between firings
 		//900,					//	int		fireTime;			// Amount of time between firings
 		//[/WeaponSys]
 		8192,					//	int		range;				// Range of weapon
 		//[WeaponSys]
 		1,						//	int		altEnergyPerShot;	// Amount of energy used for alt-fire
-		3600,					//	int		altFireTime;		// Amount of time between alt-firings
+		4000,					//	int		altFireTime;		// Amount of time between alt-firings
 		//2,					//	int		altEnergyPerShot;	// Amount of energy used for alt-fire
 		//1200,					//	int		altFireTime;		// Amount of time between alt-firings
 		//[/WeaponSys]
