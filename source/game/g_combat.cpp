@@ -5095,8 +5095,8 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 
 		targ->client->ps.saberAttackChainCount += mpDamage;
 
-		if ((targ->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY
-			|| targ->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL))
+		if ((targ->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY))
+
 		{//knockdown
 			vec3_t blowBackDir;
 			VectorSubtract(targ->client->ps.origin,attacker->client->ps.origin, blowBackDir);
@@ -6454,18 +6454,14 @@ qboolean CanDamage (gentity_t *targ, vec3_t origin) {
 G_RadiusDamage
 ============
 */
-//[DodgeSys]
-qboolean G_DoDodge( gentity_t *self, gentity_t *shooter, vec3_t impactPoint, int hitLoc, int * dmg, int mod );
-//[/DodgeSys]
+
 qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, float radius,
 					 gentity_t *ignore, gentity_t *missile, int mod) {
 	float		points, dist;
 	gentity_t	*ent;
 	int			entityList[MAX_GENTITIES];
 	int			numListedEntities;
-	//[DodgeSys]
-	int			dodgeDmg;  //damage value passed to and from the dodge code.
-	//[/DodgeSys]
+
 	vec3_t		mins, maxs;
 	vec3_t		v;
 	vec3_t		dir;
@@ -6536,14 +6532,7 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 
 		points = damage * ( 1.0 - dist / radius );
 
-		//[DodgeSys]
-		//added dodge for splash damage.
-		dodgeDmg = (int) points;
-		if( CanDamage (ent, origin) && !G_DoDodge(ent, attacker, origin, -1, &dodgeDmg, mod) ) {
-		//if( CanDamage (ent, origin) ) {
-			//we might have reduced the damage by doing a partial dodge
-			points = (float) dodgeDmg;
-		//[/DodgeSys]
+
 			if( LogAccuracyHit( ent, attacker ) ) {
 				hitClient = qtrue;
 			}
@@ -6600,10 +6589,10 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 				evEnt->s.eventParm = 1;
 			}
 		}
+	return hitClient;
 	}
 
-	return hitClient;
-}
+
 
 
 //[SaberSys]
@@ -6624,12 +6613,7 @@ void AddFatigueKillBonus( gentity_t *attacker, gentity_t *victim )
 
 	//add bonus
 	WP_ForcePowerRegenerate(attacker, FATIGUE_KILLBONUS);
-	attacker->client->ps.stats[STAT_DODGE] += DODGE_KILLBONUS;
-
-	if(attacker->client->ps.stats[STAT_DODGE] > attacker->client->ps.stats[STAT_MAX_DODGE])
-	{
-		attacker->client->ps.stats[STAT_DODGE] = attacker->client->ps.stats[STAT_MAX_DODGE];
-	}
+	
 }
 //[/SaberSys]
 
@@ -6678,7 +6662,7 @@ void G_DodgeDrain(gentity_t *victim, gentity_t *attacker, int amount)
 			amount=1;
 	}
 
-	victim->client->ps.stats[STAT_DODGE] -= amount;
+
 
 	if(attacker->client && (attacker->client->ps.torsoAnim == saberMoveData[16].animToUse
 		|| attacker->client->ps.torsoAnim == 1252) )
@@ -6686,10 +6670,7 @@ void G_DodgeDrain(gentity_t *victim, gentity_t *attacker, int amount)
 		victim->client->ps.saberAttackChainCount+=16;
 	}
 
-	if(victim->client->ps.stats[STAT_DODGE] < 0)
-	{
-		victim->client->ps.stats[STAT_DODGE] = 0;
-	}
+	
 
 	if(attacker && attacker->client)
 	{//attacker gets experience for causing damage.

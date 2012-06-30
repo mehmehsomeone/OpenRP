@@ -434,9 +434,7 @@ vmCvar_t	sv_privatepassword;
 
 vmCvar_t	g_forceRegenTime;
 
-//[DodgeSys]
-vmCvar_t	g_dodgeRegenTime;
-//[/DodgeSys]
+
 
 //[SaberSys]
 vmCvar_t	g_mishapRegenTime;
@@ -580,9 +578,7 @@ vmCvar_t		g_debugsabercombat;
 #endif
 //[/SaberSys]
 
-//[DodgeSys]
-vmCvar_t		g_debugdodge;
-//[/DodgeSys]
+
 
 vmCvar_t		g_saberLockRandomNess;
 // nmckenzie: SABER_DAMAGE_WALLS
@@ -640,9 +636,7 @@ vmCvar_t		ojp_clientMOTD;
 vmCvar_t		ojp_MOTD;
 //[/ExpandedMOTD]
 
-//[DodgeSys]
-vmCvar_t		ojp_allowBodyDodge;
-//[/DodgeSys]
+
 
 //[DuelSys]
 // MJN
@@ -830,9 +824,6 @@ static cvarTable_t		gameCvarTable[] = {
 	//{ &g_forceRegenTime, "g_forceRegenTime", "200", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
 	//[/FatigueSys]
 
-	//[DodgeSys]
-	{ &g_dodgeRegenTime, "g_dodgeRegenTime", "1000", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
-	//[/DodgeSys]
 
 	//[SaberSys]
 	{ &g_mishapRegenTime, "g_mishapRegenTime", "3000", CVAR_ARCHIVE, 0, qtrue  },
@@ -977,9 +968,7 @@ static cvarTable_t		gameCvarTable[] = {
 #endif
 	//[/SaberSys]
 
-	//[DodgeSys]
-	{ &g_debugdodge, "g_debugdodge", "0", CVAR_CHEAT, 0, qtrue },
-	//[/DodgeSys]
+
 
 	{ &g_saberLockRandomNess, "g_saberLockRandomNess", "2", CVAR_CHEAT, 0, qfalse },
 // nmckenzie: SABER_DAMAGE_WALLS
@@ -1119,11 +1108,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &ojp_MOTD, "ojp_MOTD", "Please download the latest version of Legacy mod at legacyrp.com", CVAR_ARCHIVE, 0, qfalse },
 	//[/ExpandedMOTD]	
 
-	//[DodgeSys]
-	//toggles the use of Body Dodges, which are matrix-like moves that make the players 
-	//evade damage in exchange for DP.
-	{ &ojp_allowBodyDodge, "ojp_allowBodyDodge", "1", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qtrue },
-	//[/DodgeSys]
+	
 	//[FFARespawnTimer]
 	{ &ojp_ffaRespawnTimer, "ojp_ffaRespawnTimer","1",CVAR_ARCHIVE,0,qtrue},
 	//[/FFARespawnTimer]

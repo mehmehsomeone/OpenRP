@@ -386,19 +386,12 @@ void OJP_HandleBoltBlock(gentity_t *bolt, gentity_t *player, trace_t *trace);
 extern int OJP_SaberCanBlock(gentity_t *self, gentity_t *atk, qboolean checkBBoxBlock, vec3_t point, int rSaberNum, int rBladeNum);
 extern qboolean GAME_INLINE WalkCheck( gentity_t * self );
 //[/BoltBlockSys]
-//[DodgeSys]
-extern qboolean G_DoDodge( gentity_t *self, gentity_t *shooter, vec3_t dmgOrigin, int hitLoc, int * dmg, int mod );
-//G_MissileImpact now returns qfalse if and only if the player physically dodged the damage.
-//this allows G_RunMissile to properly handle he 
+
 qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
-//void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
-//[/DodgeSys]
 	gentity_t		*other;
 	qboolean		hitClient = qfalse;
 	qboolean		isKnockedSaber = qfalse;
-	//[DodgeSys]
-	int missileDmg;
-	//[/DodgeSys]
+
 
 	other = &g_entities[trace->entityNum];
 
@@ -412,10 +405,9 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		( ent->flags & ( FL_BOUNCE | FL_BOUNCE_HALF ) ) ) {
 		G_BounceMissile( ent, trace );
 		G_AddEvent( ent, EV_GRENADE_BOUNCE, 0 );
-		//[DodgeSys]
-		return qtrue;
-		//return;
-		//[/DodgeSys]
+	
+		return;
+
 	}
 	else if (ent->neverFree && ent->s.weapon == WP_SABER && (ent->flags & FL_BOUNCE_HALF))
 	{ //this is a knocked-away saber
@@ -423,10 +415,9 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		{
 			G_BounceMissile( ent, trace );
 			G_AddEvent( ent, EV_GRENADE_BOUNCE, 0 );
-			//[DodgeSys]
-			return qtrue;
-			//return;
-			//[/DodgeSys]
+			
+			return;
+		
 		}
 
 		isKnockedSaber = qtrue;
@@ -441,10 +432,10 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		{
 			ent->flags &= ~FL_BOUNCE_SHRAPNEL;
 		}
-		//[DodgeSys]
-		return qtrue;
-		//return;
-		//[/DodgeSys]
+		
+		
+		return;
+		
 	}
 
 	/*
@@ -512,10 +503,10 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 
 			G_DeflectMissile(other, ent, fwd);
 			G_MissileBounceEffect(ent, ent->r.currentOrigin, fwd);
-			//[DodgeSys]
-			return qtrue;
-			//return;
-			//[/DodgeSys]
+			
+			
+			return;
+			
 		}
 	}
 
@@ -552,10 +543,10 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 
 			G_DeflectMissile(other, ent, fwd);
 			G_MissileBounceEffect(ent, ent->r.currentOrigin, fwd);
-			//[DodgeSys]
-			return qtrue;
-			//return;
-			//[/DodgeSys]
+			
+			
+			return;
+			
 		}
 	}
 	//ROP VEHICLE_IMP END
@@ -572,10 +563,9 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		WP_SaberBlockNonRandom(other, ent->r.currentOrigin, qtrue);
 
 		OJP_HandleBoltBlock(ent, other, trace);
-		//[DodgeSys]
-		return qtrue;
-		//return;
-		//[/DodgeSys]
+		
+		return;
+		
 		//[/BoltBlockSys]
 	}
 	else if ((other->r.contents & CONTENTS_LIGHTSABER) && !isKnockedSaber)
@@ -611,10 +601,10 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			//[BoltBlockSys]
 			OJP_HandleBoltBlock(ent, otherOwner, trace);
 			//[/BoltBlockSys]
-			//[DodgeSys]
-			return qtrue;
-			//return;
-			//[/DodgeSys]
+			
+			
+			return;
+			
 		}
 	}
 
@@ -627,30 +617,18 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	{
 		laserTrapStick( ent, trace->endpos, trace->plane.normal );
 		G_AddEvent( ent, EV_MISSILE_STICK, 0 );
-		//[DodgeSys]
-		return qtrue;
-		//return;
-		//[/DodgeSys]
+		
+		
+		return;
+		
 	}
 
 	// impact damage
 	if (other->takedamage && !isKnockedSaber) {
-		//[DodgeSys]
-		//make players be able to dodge projectiles.
-		missileDmg = ent->damage;
-		if(G_DoDodge(other, &g_entities[other->r.ownerNum], trace->endpos, -1, &missileDmg, ent->methodOfDeath))
-		{//player dodged the damage, have missile continue moving.
-			if(ent->s.weapon == WP_ROCKET_LAUNCHER)
-				ent->genericValue1 = 0;
-			return qfalse;
-		}
-		//[/DodgeSys]
+		
 
 		// FIXME: wrong damage direction?
-		//[DodgeSys]
-		if ( missileDmg ) {
-		//if ( ent->damage ) {
-		//[/DodgeSys]
+		
 			vec3_t	velocity;
 			qboolean didDmg = qfalse;
 
@@ -673,10 +651,7 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 				else
 				{
 					G_Damage (other, ent, &g_entities[ent->r.ownerNum], velocity,
-						//[DodgeSys]
-						/*ent->s.origin*/ent->r.currentOrigin, missileDmg, 
-						/*ent->s.origin*///ent->r.currentOrigin, ent->damage, 
-						//[/DodgeSys]
+						
 						DAMAGE_HALF_ABSORB, ent->methodOfDeath);
 					didDmg = qtrue;
 				}
@@ -691,30 +666,21 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 				if(distance <= 100.0f)
 				{
 						G_Damage (other, ent, owner, velocity,
-						//[DodgeSys]
-						/*ent->s.origin*/ent->r.currentOrigin, missileDmg * 2,
-						/*ent->s.origin*///ent->r.currentOrigin, ent->damage, 
-						//[/DodgeSys]
+						
 						0, ent->methodOfDeath);
 //G_Printf("Damage: %i\n",missileDmg * 2);
 				}
 				else if (distance <= 300.0f)
 				{
 						G_Damage (other, ent, owner, velocity,
-						//[DodgeSys]
-						/*ent->s.origin*/ent->r.currentOrigin, missileDmg * 1.5,
-						/*ent->s.origin*///ent->r.currentOrigin, ent->damage, 
-						//[/DodgeSys]
+						
 						0, ent->methodOfDeath);
 //G_Printf("Damage: %f\n",missileDmg * 1.5);
 				}
 				else
 				{
 				G_Damage (other, ent, &g_entities[ent->r.ownerNum], velocity,
-					//[DodgeSys]
-					/*ent->s.origin*/ent->r.currentOrigin, missileDmg,
-					/*ent->s.origin*///ent->r.currentOrigin, ent->damage, 
-					//[/DodgeSys]
+					
 					0, ent->methodOfDeath);
 				}
 				didDmg = qtrue;
@@ -723,10 +689,7 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			//{
 				
 				//G_Damage (other, ent, &g_entities[ent->r.ownerNum], velocity, //previous code
-					//[DodgeSys]
-					/*ent->s.origin*///ent->r.currentOrigin, missileDmg,
-					/*ent->s.origin*///ent->r.currentOrigin, ent->damage, 
-					//[/DodgeSys]
+					
 					//0, ent->methodOfDeath);
 				//didDmg = qtrue;
 				
@@ -885,9 +848,9 @@ killProj:
 
 	trap_LinkEntity( ent );
 
-	//[DodgeSys]
-	return qtrue;
-	//[/DodgeSys]
+
+	return;
+	
 }
 
 /*
@@ -1026,16 +989,7 @@ void G_RunMissile( gentity_t *ent ) {
 			}
 		}
 
-		//[DodgeSys]
-		//changed G_MissileImpact to qboolean so that dodges will cause passthru behavor.
-		if(!G_MissileImpact( ent, &tr ))
-		{//target dodged the damage.
-			VectorCopy( origin, ent->r.currentOrigin );  
-			trap_LinkEntity( ent );
-			return;
-		}
-		//G_MissileImpact( ent, &tr );
-		//[/DodgeSys]
+		
 
 		if (tr.entityNum == ent->s.otherEntityNum)
 		{ //if the impact event other and the trace ent match then it's ok to do the g2 mark

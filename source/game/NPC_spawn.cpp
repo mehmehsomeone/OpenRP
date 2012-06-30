@@ -297,9 +297,7 @@ extern void G_CreateG2AttachedWeaponModel( gentity_t *ent, const char *weaponMod
 //[NPCSandCreature]
 extern void SandCreature_ClearTimers( gentity_t *ent );
 //[/NPCSandCreature]
-//[DodgeSys]
-void DetermineDodgeMax(gentity_t *ent);
-//[/DodgeSys]
+
 //[ExpSys]
 int TotalAllociatedSkillPoints(gentity_t *ent);
 //[/ExpSys]
@@ -466,21 +464,7 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 	}
 	//[/StanceSelection]
 
-	//[DodgeSys]
-	//determine DodgeMax since NPCs kick out of InitForcePowers early.
-	DetermineDodgeMax(ent);
-
-	//figure out how many skill points this NPC would need to have to have number of skills they have.
-	ent->client->sess.skillPoints = TotalAllociatedSkillPoints(ent);
-
-	if(!ent->client->sess.skillPoints)
-	{//apprenently this character doesn't have any skills at all, give them a point so they cause a divide by zero error later.
-		ent->client->sess.skillPoints = 1;
-	}
-
-	//set their starting DP
-	ent->client->ps.stats[STAT_DODGE] = ent->client->ps.stats[STAT_MAX_DODGE];
-	//[/DodgeSys]
+	
 
 	//[CoOp]
 	//missing howlerdata from SP

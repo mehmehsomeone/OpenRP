@@ -133,69 +133,7 @@ const int forcePowerMinRank[NUM_FORCE_POWER_LEVELS][NUM_FORCE_POWERS] = //0 == n
 	}
 };
 
-//[DodgeSys]
-#define SK_DP_FORFORCE		.5f	//determines the number of DP points players get for each skill point dedicated to Force Powers.
-#define SK_DP_FORMERC		1/6.0f	//determines the number of DP points get for each skill point dedicated to gunner/merc skills.
-void DetermineDodgeMax(gentity_t *ent)
-{//sets the maximum number of dodge points this player should have.  This is based on their skill point allociation.
-	int i;
-	int skillCount;
-	float dodgeMax = 0;
 
-	assert(ent && ent->client);
-
-	if(ent->client->ps.isJediMaster)
-	{//jedi masters have much more DP and don't actually have skills.
-		ent->client->ps.stats[STAT_MAX_DODGE] = 100;
-		return;
-	}
-	else if(ent->s.number < MAX_CLIENTS)
-	{//players get a initial DP bonus.
-		dodgeMax = 30;
-	}
-
-	//force powers
-	for(i = 0; i < NUM_FORCE_POWERS; i++)
-	{
-		if(ent->client->ps.fd.forcePowerLevel[i])
-		{//has points in this skill
-			for(skillCount = FORCE_LEVEL_1; skillCount <= ent->client->ps.fd.forcePowerLevel[i]; skillCount++)
-			{
-				dodgeMax += bgForcePowerCost[i][skillCount] * SK_DP_FORFORCE;
-			}
-		}
-	}
-
-	//additional skills
-	for(i = 0; i < NUM_SKILLS; i++)
-	{
-		if(ent->client->skillLevel[i])
-		{//has points in this skill
-			for(skillCount = FORCE_LEVEL_1; skillCount <= ent->client->skillLevel[i]; skillCount++)
-			{
-				//[StanceSelection]
-				if(i >= SK_BLUESTYLE && i <= SK_STAFFSTYLE)
-				{//styles count as force powers
-					dodgeMax += bgForcePowerCost[i+NUM_FORCE_POWERS][skillCount] * SK_DP_FORFORCE;
-				}
-				else
-				{
-					dodgeMax += bgForcePowerCost[i+NUM_FORCE_POWERS][skillCount] * SK_DP_FORMERC;
-				}
-
-				//dodgeMax += bgForcePowerCost[i][skillCount] * SK_DP_FORMERC;
-				//[/StanceSelection]
-			}
-		}
-	}
-
-	if(ent->client->ps.fd.forcePowerLevel[FP_SEE]>=FORCE_LEVEL_2 && ent->client->featLevel[FT_SIGHT] == 0)
-		dodgeMax+=10;
-	if(ent->client->ps.fd.forcePowerLevel[FP_SEE]>=FORCE_LEVEL_3 && ent->client->featLevel[FT_SIGHT] == 0)
-		dodgeMax+=15;
-	ent->client->ps.stats[STAT_MAX_DODGE] = (int) dodgeMax;
-}
-//[/DodgeSys]
 
 
 //[CoOp]
@@ -312,9 +250,6 @@ void WP_InitForcePowers( gentity_t *ent )
 		}
 		ent->client->sess.setForce = qtrue;
 
-		//[DodgeSys]
-		DetermineDodgeMax(ent);
-		//[/DodgeSys]
 		return;
 	}
 
@@ -585,10 +520,7 @@ void WP_InitForcePowers( gentity_t *ent )
 	}
 	ent->client->ps.fd.forceUsingAdded = 0;
 
-	//[DodgeSys]
-	//determine the player's DP max.
-	DetermineDodgeMax(ent);
-	//[/DodgeSys]
+
 }
 
 
@@ -2714,12 +2646,7 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 			else
 				self->client->ps.forceHandExtend = HANDEXTEND_WEAPONREADY;
 		}
-		//[DodgeSys]
-		else if(self->client->ps.forceHandExtend == HANDEXTEND_DODGE)
-		{//don't do the HANDEXTEND_WEAPONREADY since it screws up our saber block code.
-			self->client->ps.forceHandExtend = HANDEXTEND_NONE;
-		}
-		//[/DodgeSys]
+
 		else
 			self->client->ps.forceHandExtend = HANDEXTEND_WEAPONREADY;
 	}
@@ -3274,32 +3201,7 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 		}
 	}
 
-	//[DodgeSys]
-	if(self->client->DodgeDebounce < level.time  
-		&& !BG_InSlowBounce(&self->client->ps) && !PM_SaberInBrokenParry(self->client->ps.saberMove)
-		&& !PM_InKnockDown(&self->client->ps) && self->client->ps.forceHandExtend != HANDEXTEND_DODGE
-		&& self->client->ps.saberLockTime < level.time	//not in a saber lock.
-		&& self->client->ps.groundEntityNum != ENTITYNUM_NONE //can't regen while in the air.
-		&& WalkCheck(self)
-		)
-	{
-		if((self->client->ps.fd.forcePower > (self->client->ps.fd.forcePowerMax * FATIGUEDTHRESHHOLD)+1)
-			&& self->client->ps.stats[STAT_DODGE] < self->client->ps.stats[STAT_MAX_DODGE])
-		{//you have enough fatigue to transfer to Dodge
-			if(self->client->ps.stats[STAT_MAX_DODGE] - self->client->ps.stats[STAT_DODGE] < DODGE_FATIGUE)
-			{
-				self->client->ps.stats[STAT_DODGE] = self->client->ps.stats[STAT_MAX_DODGE];
-			}
-			else
-			{
-				self->client->ps.stats[STAT_DODGE] += DODGE_FATIGUE;
-			}
-			self->client->ps.fd.forcePower--;
-		}
-		
-		self->client->DodgeDebounce = level.time + g_dodgeRegenTime.integer;
-	}
-	//[/DodgeSys]
+
 
 	//[SaberSys]
 	if(self->client->MishapDebounce < level.time  
