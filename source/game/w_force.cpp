@@ -1233,8 +1233,6 @@ qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPo
 		if( defender->client->ps.saberAttackChainCount >=MISHAPLEVEL_LIGHT ) //Holmes, added
 			return qfalse;
 
-		if (defender->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL) //Holmes, added
-			return qfalse;
 		// 1% chance of failing due to readiness
 		if(!Q_irand( 0, 100 ))
 			return qfalse;
@@ -1242,9 +1240,6 @@ qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPo
 	else if(abilityDef == 1){ //Holmes- was >= 1, which conflicts with if abilityDef >=2.
 	//defender is slightly weaker than their attacker
 		if(defender->client->ps.groundEntityNum == ENTITYNUM_NONE)
-			return qfalse;
-	
-		if(defender->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL) //Holmes, added
 			return qfalse;
 
 

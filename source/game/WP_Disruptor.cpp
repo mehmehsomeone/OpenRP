@@ -159,14 +159,11 @@ qboolean G_CanDisruptify(gentity_t *ent)
 void WP_DisruptorAltFire( gentity_t *ent )
 //---------------------------------------------------------
 {
-	int			damage = 0, skip;
+	int			damage = 0;
 	qboolean	render_impact = qtrue;
-	vec3_t		start, end;
+	vec3_t		start;
 	vec3_t		muzzle2;
-	trace_t		tr;
-	gentity_t	*traceEnt, *tent;
 	float		shotRange = 8192.0f;
-	int			i;
 	
 	int			traces = DISRUPTOR_ALT_TRACES;
 	qboolean	fullCharge = qfalse;
@@ -190,6 +187,7 @@ void WP_DisruptorAltFire( gentity_t *ent )
 		VectorCopy( ent->r.currentOrigin, start );
 		start[2] += 24;
 	}
+}
 
 	
 
@@ -197,16 +195,8 @@ void WP_DisruptorAltFire( gentity_t *ent )
 void WP_FireDisruptor( gentity_t *ent, qboolean altFire )
 //---------------------------------------------------------
 {
-	int count;
-	count = DetermineDisruptorCharge(ent);
-
 	if (!ent || !ent->client || ent->client->ps.zoomMode != 1)
 	{ //do not ever let it do the alt fire when not zoomed
-		altFire = qfalse;
-	}
-
-	if (count <= DISRUPTOR_MIN_CHARGE)
-	{ //Do not fire until count is at a minimum --HOLMSTN
 		altFire = qfalse;
 	}
 

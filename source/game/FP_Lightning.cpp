@@ -2,11 +2,8 @@
 
 extern void Jedi_Decloak( gentity_t *self );
 
-const int DODGE_SABERBLOCKLIGHTNING	= 1; //the DP cost to block lightning
-
 qboolean OJP_BlockLightning(gentity_t *attacker, gentity_t *defender, vec3_t impactPoint, int damage)
 {//defender is attempting to block lightning.  Try to do it.
-	int dpBlockCost;
 	qboolean saberLightBlock = qtrue;
 
 	if(!defender || !defender->client || !attacker || !attacker->client)
@@ -24,18 +21,8 @@ qboolean OJP_BlockLightning(gentity_t *attacker, gentity_t *defender, vec3_t imp
 
 
 	if(!InFront(attacker->client->ps.origin, defender->client->ps.origin, defender->client->ps.viewangles, 0.0f)
-		&& (defender->client->ps.stats[STAT_DODGE] < DODGE_CRITICALLEVEL //too low on DP
-			|| !saberLightBlock) ) //can't block behind us while hand blocking.
+		&& (!saberLightBlock) ) //can't block behind us while hand blocking.
 		return qfalse;
-
-
-	//determine the cost to block the lightning
-	dpBlockCost = damage;
-
-	//check to see if we have enough DP
-	if(defender->client->ps.stats[STAT_DODGE] < dpBlockCost)
-		return qfalse;
-
 
 	if(saberLightBlock)
 		//ok, we can do it.  Hold up the saber to block it.
@@ -45,12 +32,6 @@ qboolean OJP_BlockLightning(gentity_t *attacker, gentity_t *defender, vec3_t imp
 		defender->client->ps.forceHandExtend = HANDEXTEND_FORCE_HOLD;
 		defender->client->ps.forceHandExtendTime = level.time + 500;
 	}
-
-	//charge us some DP as well.
-	//[ExpSys]
-	G_DodgeDrain(defender, attacker, dpBlockCost);
-	//defender->client->ps.stats[STAT_DODGE] -= dpBlockCost;
-	//[/ExpSys]
 
 	return qtrue;
 
@@ -166,8 +147,7 @@ void ForceLightningDamage( gentity_t *self, gentity_t *traceEnt, vec3_t dir, vec
 					if(!WalkCheck(traceEnt) 
 					|| (WalkCheck(traceEnt) && traceEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY) 
 					|| BG_IsUsingHeavyWeap(&traceEnt->client->ps)
-					|| PM_SaberInBrokenParry(traceEnt->client->ps.saberMove)
-					|| traceEnt->client->ps.stats[STAT_DODGE] < DODGE_CRITICALLEVEL)
+					|| PM_SaberInBrokenParry(traceEnt->client->ps.saberMove))
 					{
 						G_Knockdown(traceEnt, self, dir, 300, qtrue);
 					}

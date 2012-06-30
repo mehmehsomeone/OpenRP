@@ -409,10 +409,6 @@ void JMSaberThink(gentity_t *ent)
 	G_RunObject(ent);
 }
 
-
-//[ExpSys]
-void DetermineDodgeMax(gentity_t *ent);
-//[/ExpSys]
 void JMSaberTouch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	int i = 0;

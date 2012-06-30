@@ -32,22 +32,11 @@ void WP_BowcasterAltFire( gentity_t *ent )
 
 void WP_BowcasterMainFire( gentity_t *ent )
 {
-	int			damage	= BOWCASTER_DAMAGE, count=1,dp=0;
+	int			damage	= BOWCASTER_DAMAGE, count=1;
 	float		vel;
 	vec3_t		angs, dir;
 	gentity_t	*missile;
 	int i=0;
-
-	dp = (level.time - ent->client->ps.weaponChargeTime) / BOWCASTER_CHARGE_UNIT;
-
-	if ( dp < 1 )
-	{
-		dp = 1;
-	}
-	else if ( dp > BRYAR_MAX_CHARGE )
-	{
-		dp = BRYAR_MAX_CHARGE;
-	}
 
 	// create a range of different velocities
 	vel = BOWCASTER_VELOCITY * ( crandom() * BOWCASTER_VEL_RANGE + 1.0f );
@@ -72,8 +61,6 @@ void WP_BowcasterMainFire( gentity_t *ent )
 	missile->dflags = DAMAGE_DEATH_KNOCKBACK;
 	missile->methodOfDeath = MOD_BOWCASTER;
 	missile->clipmask = MASK_SHOT | CONTENTS_LIGHTSABER;
-	missile->s.generic1 = dp;
-	ent->client->ps.userInt2=dp;
 	// we don't want it to bounce
 	missile->bounceCount = 0;
 

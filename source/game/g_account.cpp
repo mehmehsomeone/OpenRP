@@ -287,7 +287,6 @@ Loads the character data
 
 =================
 */
-void DetermineDodgeMax(gentity_t *ent);
 void LoadCharacter(gentity_t * targetplayer)
 {
 	LoadSkills(targetplayer);
@@ -319,8 +318,6 @@ void LoadCharacter(gentity_t * targetplayer)
 		newForceString.append(tempFeat);
 	}
 	trap_SendServerCommand( targetplayer->client->ps.clientNum, va( "forcechanged x %s\n", newForceString.c_str() ) );
-	
-	DetermineDodgeMax(targetplayer);
 	return;
 }
 /*

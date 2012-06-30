@@ -72,15 +72,6 @@ void WP_FireBryarPistolAlt(gentity_t*ent)
 	{
 		count = 1;
 	}
-	//[BryarSecondary]
-	else if ( count > BRYAR_MAX_CHARGE )
-	{
-		count = BRYAR_MAX_CHARGE;
-	}
-
-	damage = BRYAR_PISTOL_ALT_DPDAMAGE + (float)count/BRYAR_MAX_CHARGE*(BRYAR_PISTOL_ALT_DPMAXDAMAGE-BRYAR_PISTOL_ALT_DPDAMAGE);
-
-	//[/BryarSecondary]
 
 	missile->s.generic1 = count; // The missile will then render according to the charge level.
 

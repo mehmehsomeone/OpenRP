@@ -1754,7 +1754,6 @@ void G_CheckForDismemberment(gentity_t *ent, gentity_t *enemy, vec3_t point, int
 extern int gGAvoidDismember;
 //[ExpSys]
 void AddSkill(gentity_t *self, float amount);
-void G_DodgeDrain(gentity_t *victim, gentity_t *attacker, int amount);
 //[/ExpSys]
 
 
@@ -2059,9 +2058,6 @@ void ForceGrip( gentity_t *self );
 void ForceProtect( gentity_t *self );
 void ForceAbsorb( gentity_t *self );
 void ForceTeamHeal( gentity_t *self );
-//[ManualDodge]
-void ManualButtonDodge(gentity_t *ent);
-//[/ManualDodge]
 void ForceSeeing( gentity_t *self );
 void ForceThrow( gentity_t *self, qboolean pull );
 void ForceTelepathy(gentity_t *self);

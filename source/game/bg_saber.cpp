@@ -3352,11 +3352,6 @@ qboolean PM_SaberPowerCheck(void)
 	return qfalse;
 }
 
-qboolean PM_CanDoRollStab( void )
-{
-	
-}
-
 
 //[CoOp]
 void PM_SaberDroidWeapon( void )
@@ -3695,34 +3690,6 @@ void PM_WeaponLightsaber(void)
 			if ( pm->ps->weaponTime <= 0 )
 			{
 				pm->ps->weaponTime = 0;
-			}
-		}
-
-		if ( pm->ps->legsAnim == BOTH_ROLL_F 
-			&& pm->ps->legsTimer <= 250 )
-		{
-			if ( (pm->cmd.buttons&BUTTON_ATTACK) )
-			{
-				//[SaberSys]
-				if ( BG_EnoughForcePowerForMove(FATIGUE_GROUNDATTACK) && !pm->ps->saberInFlight )
-				//if ( BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB) && !pm->ps->saberInFlight )
-				//[SaberSys]
-				{
-					if ( PM_CanDoRollStab() )
-					{
-						//make sure the saber is on for this move!
-						if ( pm->ps->saberHolstered == 2 )
-						{//all the way off
-							pm->ps->saberHolstered = 0;
-							PM_AddEvent(EV_SABER_UNHOLSTER);
-						}
-						PM_SetSaberMove( LS_ROLL_STAB );
-						//[SaberSys]
-						BG_ForcePowerDrain(pm->ps, FP_GRIP, FATIGUE_GROUNDATTACK);
-						//BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
-						//[/SaberSys]
-					}
-				}
 			}
 		}
 		return;

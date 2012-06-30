@@ -84,17 +84,6 @@ qboolean ButterFingers(gentity_t *saberent, gentity_t *saberOwner, gentity_t *ot
 //Default damage for an transition animation
 #define DAMAGE_TRANSITION		125
 
-#define DODGE_SABERBLOCK		15  //standard dodge cost for blocking a saber.
-
-//#define DODGE_REPEATERBLOCK		3	//the cost of blocking repeater shots is lower since the repeater shoots much faster. 
-//EDIT: Slowed way down and blob is way overused so I'm taking this out for now
-
-//This is the amount of DP that a player gains from making a successful parry while low on DP
-#define DODGE_LOWDPBOOST		10
-
-//This is the amount of FP that a player gains from making a successful parry while low on FP
-#define DODGE_LOWFPBOOST		5
-
 //Saber Behavior
 //remember that this is based on a 0-1000 scale
 
@@ -117,10 +106,6 @@ qboolean ButterFingers(gentity_t *saberent, gentity_t *saberOwner, gentity_t *ot
 #define MELEE_SWING2_DAMAGE			12
 //[/MeleeDefines]
 //[/Melee]
-
-
-
-//[/DodgeDefines]
 
 
 float RandFloat(float min, float max) {
@@ -3259,7 +3244,6 @@ int OJP_SaberBlockCost(gentity_t *defender, gentity_t *attacker, vec3_t hitLoc)
 		|| attacker->client->ps.weapon != WP_SABER ) //or the player that is attacking isn't using a saber
 	{//standard bolt block!
 			//[BlasterDP]
-		saberBlockCost=DODGE_BOLTBLOCK;
 		if(attacker->client && attacker->client->ps.weapon != WP_FLECHETTE)
 			saberBlockCost += 2;
 
@@ -3384,10 +3368,6 @@ int OJP_SaberBlockCost(gentity_t *defender, gentity_t *attacker, vec3_t hitLoc)
 		{
 			saberBlockCost=4; 
 		}
-		else
-		{
-		saberBlockCost = DODGE_BOLTBLOCK;
-		}
 
 	}
 	else if(attacker->client->ps.saberMove == LS_A_LUNGE
@@ -3505,11 +3485,6 @@ int OJP_SaberBlockCost(gentity_t *defender, gentity_t *attacker, vec3_t hitLoc)
 			}
 		}
 
-		//clamp to body dodge cost since it wouldn't be fair to cost more than that.
-		if(saberBlockCost > BasicDodgeCosts[MOD_SABER])
-		{
-			saberBlockCost = BasicDodgeCosts[MOD_SABER];
-		}
 	}
     if(PM_SaberInBrokenParry(defender->client->ps.saberMove))
 	{//we're stunned/stumbling, increase DP cost
@@ -3961,10 +3936,6 @@ int OJP_SaberCanBlock(gentity_t *self, gentity_t *atk, qboolean checkBBoxBlock, 
 			return 0;
 		}
 
-		if(BG_SuperBreakWinAnim(atk->client->ps.torsoAnim) && self->client->ps.stats[STAT_DODGE] < DODGE_CRITICALLEVEL)
-		{//can't block super breaks when in critical DP.
-			return 0;
-		}
 		if(!WalkCheck(self) 
 		&& (!InFront(atk->client->ps.origin, self->client->ps.origin, self->client->ps.viewangles, -.7f)
 		|| BG_SaberInAttack( self->client->ps.saberMove )
@@ -3981,12 +3952,6 @@ int OJP_SaberCanBlock(gentity_t *self, gentity_t *atk, qboolean checkBBoxBlock, 
 			}
 		}
 		
-	}
-
-	//check to see if we have the Dodge to do this.
-	if(self->client->ps.stats[STAT_DODGE] < OJP_SaberBlockCost(self, atk, point))
-	{
-		return 0;
 	}
 
 	//ok, I'm removing this to get around the problems with long reach attacks cliping thru the player.
@@ -5532,9 +5497,7 @@ static GAME_INLINE void G_SetViewLockDebounce( gentity_t *self )
 	{//running pauses you longer
 		self->client->viewLockTime = level.time + 500;
 	}
-	else if( PM_SaberInParry(G_GetParryForBlock(self->client->ps.saberBlocked)) //normal block (not a parry)
-		|| (!PM_SaberInKnockaway(self->client->ps.saberMove) //didn't parry
-		&& self->client->ps.stats[STAT_DODGE] < self->client->ps.stats[STAT_MAX_DODGE]*.50) )
+	else if( PM_SaberInParry(G_GetParryForBlock(self->client->ps.saberBlocked))) //normal block (not a parry)
 	{//normal block or attacked with less than %50 DP
 		self->client->viewLockTime = level.time + 300;
 	}
@@ -6118,44 +6081,6 @@ static GAME_INLINE qboolean CheckSaberDamage(gentity_t *self, int rSaberNum, int
 		int dflags;
 		gentity_t *victim = &g_entities[tr.entityNum];
 
-		if(G_DoDodge( victim, self, tr.endpos, -1, & dmg, MOD_SABER ))
-		{
-			//I'm going to return qtrue to prevent the system from continueing to try 
-			//to find an impact.  That could cause multi impact situations otherwise.
-			
-			//add saber impact debounce
-			DebounceSaberImpact(self, otherOwner, rSaberNum, rBladeNum, sabimpactentitynum);
-			return qtrue;
-		}
-		else
-		{//hit!
-			//G_Printf("%i: %i:  Caused damage with saber.\n", level.time, self->s.number); 
-
-			//determine if this saber blade does dismemberment or not.
-			if ( !WP_SaberBladeUseSecondBladeStyle( &self->client->saber[rSaberNum], rBladeNum )
-				&& !(self->client->saber[rSaberNum].saberFlags2&SFL2_NO_DISMEMBERMENT) )
-			{
-				dflags |= DAMAGE_NO_DISMEMBER;
-			}
-			if ( WP_SaberBladeUseSecondBladeStyle( &self->client->saber[rSaberNum], rBladeNum )
-				&& !(self->client->saber[rSaberNum].saberFlags2&SFL2_NO_DISMEMBERMENT2) )
-			{
-				dflags |= DAMAGE_NO_DISMEMBER;
-			}
-
-			if ( !WP_SaberBladeUseSecondBladeStyle( &self->client->saber[rSaberNum], rBladeNum )
-				&& self->client->saber[rSaberNum].knockbackScale > 0.0f )
-			{
-				if ( rSaberNum < 1 )
-				{
-					dflags |= DAMAGE_SABER_KNOCKBACK1;
-				}
-				else
-				{
-					dflags |= DAMAGE_SABER_KNOCKBACK2;
-				}
-			}
-
 			if ( WP_SaberBladeUseSecondBladeStyle( &self->client->saber[rSaberNum], rBladeNum )
 				&& self->client->saber[rSaberNum].knockbackScale > 0.0f )
 			{
@@ -6206,7 +6131,6 @@ static GAME_INLINE qboolean CheckSaberDamage(gentity_t *self, int rSaberNum, int
 				}
 			}
 		}
-	}
 
 	//attacker animation stuff
 	if(mechSelf.doButterFingers)
@@ -9225,8 +9149,7 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 
 					//[SaberSys]
 					//made the knockdown behavior of kicks be based on the player's mishap level or low DP and not hold alt attack.
-					if ((hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY
-						|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
+					if ((hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY)
 						&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
 					{//knockdown
 						if(hitEnt->client->ps.fd.saberAnimLevel == SS_STAFF)
@@ -9246,8 +9169,7 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 						}
 					}
 					else if (ent->client->ps.fd.saberAnimLevel == SS_DESANN
-						&& (hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT
-						|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
+						&& (hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT)
 						&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
 					{//knockdown
 						if ( kickPush >= 75.0f && !Q_irand( 0, 2 ) )

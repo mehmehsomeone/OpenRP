@@ -32,16 +32,8 @@ qboolean SabBeh_RollBalance(gentity_t *self, sabmech_t *mechSelf, qboolean force
 	
 	if(atkParry && self->client->ps.fd.forcePowerLevel[FP_SABER_DEFENSE] >= FORCE_LEVEL_3)
 		return qfalse;//Riposte change
-	if( self->client->ps.stats[STAT_DODGE] < DODGE_CRITICALLEVEL )//added by JRHockney to do more heavybounces like old times
-	{//heavy slow bounce
-		randNum = Q_irand(0, 99);
-		if(randNum < 0 || forceMishap)
-		{
-			mechSelf->doHeavySlowBounce = qtrue;
-			return qtrue;
-		}
-	}
-	else if( self->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY )
+
+	if( self->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY )
 	{//heavy slow bounce
 		randNum = Q_irand(0, 99);
 		if(randNum < 0 || forceMishap)
@@ -453,10 +445,6 @@ void SabBeh_AttackVsBlock( gentity_t *attacker, sabmech_t *mechAttacker,
 		GetStringForID( animTable, attacker->client->ps.torsoAnim ), GetStringForID( SaberMoveTable, attacker->client->ps.saberMove ), 
 		GetStringForID( animTable, blocker->client->ps.torsoAnim ), GetStringForID( SaberMoveTable, blocker->client->ps.saberMove ) );
 	*/
-
-	//[ExpSys] -- [DUALRAWR]
-	G_DodgeDrain(blocker, attacker, OJP_SaberBlockCost(blocker, attacker, hitLoc));
-	//[/ExpSys]
 
 	//costs FP as well.
 	BG_AddFatigue(&blocker->client->ps, 1);

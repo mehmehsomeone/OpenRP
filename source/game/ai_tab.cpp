@@ -4194,11 +4194,6 @@ void TAB_StandardBotAI(bot_state_t *bs, float thinktime)
 	//[SaberLockSys]
 	if(bs->cur_ps.saberLockTime > level.time)
 	{//bot is in a saber lock
-		//bots cheat by knowing their enemy's DP level, if they're low on DP, try to super break finish them.
-		if(g_entities[bs->cur_ps.saberLockEnemy].client->ps.stats[STAT_DODGE] < 50)
-		{
-			trap_EA_Attack(bs->client);
-		}
 		return;
 	}
 	//[/SaberLockSys]

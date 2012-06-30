@@ -387,12 +387,11 @@ extern int OJP_SaberCanBlock(gentity_t *self, gentity_t *atk, qboolean checkBBox
 extern qboolean GAME_INLINE WalkCheck( gentity_t * self );
 //[/BoltBlockSys]
 
-qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
+qboolean G_MissileImpact( gentity_t *ent, trace_t *trace )
+{
 	gentity_t		*other;
 	qboolean		hitClient = qfalse;
 	qboolean		isKnockedSaber = qfalse;
-
-
 	other = &g_entities[trace->entityNum];
 
 	// check for bounce
@@ -402,11 +401,12 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	//if ( !other->takedamage &&
 	//[/WeaponSys]
 		(ent->bounceCount > 0 || ent->bounceCount == -5) &&
-		( ent->flags & ( FL_BOUNCE | FL_BOUNCE_HALF ) ) ) {
+		( ent->flags & ( FL_BOUNCE | FL_BOUNCE_HALF ) ) )
+	{
 		G_BounceMissile( ent, trace );
 		G_AddEvent( ent, EV_GRENADE_BOUNCE, 0 );
 	
-		return;
+		return qtrue;
 
 	}
 	else if (ent->neverFree && ent->s.weapon == WP_SABER && (ent->flags & FL_BOUNCE_HALF))
@@ -416,7 +416,7 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			G_BounceMissile( ent, trace );
 			G_AddEvent( ent, EV_GRENADE_BOUNCE, 0 );
 			
-			return;
+			return qtrue;
 		
 		}
 
@@ -432,10 +432,7 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		{
 			ent->flags &= ~FL_BOUNCE_SHRAPNEL;
 		}
-		
-		
-		return;
-		
+		return qtrue;
 	}
 
 	/*
@@ -504,9 +501,7 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			G_DeflectMissile(other, ent, fwd);
 			G_MissileBounceEffect(ent, ent->r.currentOrigin, fwd);
 			
-			
-			return;
-			
+			return qtrue;
 		}
 	}
 
@@ -543,9 +538,8 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 
 			G_DeflectMissile(other, ent, fwd);
 			G_MissileBounceEffect(ent, ent->r.currentOrigin, fwd);
-			
-			
-			return;
+	
+			return qtrue;
 			
 		}
 	}
@@ -564,7 +558,7 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 
 		OJP_HandleBoltBlock(ent, other, trace);
 		
-		return;
+		return qtrue;
 		
 		//[/BoltBlockSys]
 	}
@@ -603,7 +597,7 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			//[/BoltBlockSys]
 			
 			
-			return;
+			return qtrue;
 			
 		}
 	}
@@ -619,25 +613,25 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		G_AddEvent( ent, EV_MISSILE_STICK, 0 );
 		
 		
-		return;
+		return qtrue;
 		
 	}
 
 	// impact damage
-	if (other->takedamage && !isKnockedSaber) {
-		
-
+	if (other->takedamage && !isKnockedSaber)
+	{
 		// FIXME: wrong damage direction?
-		
 			vec3_t	velocity;
 			qboolean didDmg = qfalse;
 
-			if( LogAccuracyHit( other, &g_entities[ent->r.ownerNum] ) ) {
+			if( LogAccuracyHit( other, &g_entities[ent->r.ownerNum] ) )
+			{
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
 				hitClient = qtrue;
 			}
 			BG_EvaluateTrajectoryDelta( &ent->s.pos, level.time, velocity );
-			if ( VectorLength( velocity ) == 0 ) {
+			if ( VectorLength( velocity ) == 0 )
+			{
 				velocity[2] = 1;	// stepped on a grenade
 			}
 
@@ -648,52 +642,13 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 				{
 					ent->think(ent);
 				}
-				else
-				{
-					G_Damage (other, ent, &g_entities[ent->r.ownerNum], velocity,
-						
-						DAMAGE_HALF_ABSORB, ent->methodOfDeath);
-					didDmg = qtrue;
-				}
 			}
 			else
-			//if(ent->s.weapon == WP_BLASTER || ent->s.weapon == WP_REPEATER
-			//|| ent->s.weapon == WP_BOWCASTER || ent->s.weapon == WP_BRYAR_PISTOL)
-				{
-					gentity_t *owner = &g_entities[ent->r.ownerNum];
+			{
+				gentity_t *owner = &g_entities[ent->r.ownerNum];
 				float distance = VectorDistance(owner->r.currentOrigin,other->r.currentOrigin);
-				//G_Printf("Distance: %f\n",distance);
-				if(distance <= 100.0f)
-				{
-						G_Damage (other, ent, owner, velocity,
-						
-						0, ent->methodOfDeath);
-//G_Printf("Damage: %i\n",missileDmg * 2);
-				}
-				else if (distance <= 300.0f)
-				{
-						G_Damage (other, ent, owner, velocity,
-						
-						0, ent->methodOfDeath);
-//G_Printf("Damage: %f\n",missileDmg * 1.5);
-				}
-				else
-				{
-				G_Damage (other, ent, &g_entities[ent->r.ownerNum], velocity,
-					
-					0, ent->methodOfDeath);
-				}
-				didDmg = qtrue;
 			}
-			//else
-			//{
-				
-				//G_Damage (other, ent, &g_entities[ent->r.ownerNum], velocity, //previous code
-					
-					//0, ent->methodOfDeath);
-				//didDmg = qtrue;
-				
-			//}
+				didDmg = qtrue;
 
 
 			if (didDmg && other && other->client)
@@ -758,15 +713,16 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 				}
 			}
 		}
-	}
 killProj:
 	//[Grapple]
-	if (!strcmp(ent->classname, "hook")) {
+	if (!strcmp(ent->classname, "hook"))
+	{
 		gentity_t *nent;
 		vec3_t v;
 
 		nent = G_Spawn();
-		if ( other->takedamage && other->client ) {
+		if ( other->takedamage && other->client )
+		{
 
 			G_AddEvent( nent, EV_MISSILE_HIT, DirToByte( trace->plane.normal ) );
 			nent->s.otherEntityNum = other->s.number;
@@ -778,7 +734,9 @@ killProj:
 			v[2] = other->r.currentOrigin[2] + (other->r.mins[2] + other->r.maxs[2]) * 0.5;
 
 			SnapVectorTowards( v, ent->s.pos.trBase );	// save net bandwidth
-		} else {
+		} 
+		else
+		{
 			VectorCopy(trace->endpos, v);
 			G_AddEvent( nent, EV_MISSILE_MISS, DirToByte( trace->plane.normal ) );
 			ent->enemy = NULL;
@@ -808,12 +766,17 @@ killProj:
 	// is it cheaper in bandwidth to just remove this ent and create a new
 	// one, rather than changing the missile into the explosion?
 
-	if ( other->takedamage && other->client && !isKnockedSaber ) {
+	if ( other->takedamage && other->client && !isKnockedSaber )
+	{
 		G_AddEvent( ent, EV_MISSILE_HIT, DirToByte( trace->plane.normal ) );
 		ent->s.otherEntityNum = other->s.number;
-	} else if( trace->surfaceFlags & SURF_METALSTEPS ) {
+	}
+	else if( trace->surfaceFlags & SURF_METALSTEPS )
+	{
 		G_AddEvent( ent, EV_MISSILE_MISS_METAL, DirToByte( trace->plane.normal ) );
-	} else if (ent->s.weapon != G2_MODEL_PART && !isKnockedSaber) {
+	}
+	else if (ent->s.weapon != G2_MODEL_PART && !isKnockedSaber)
+	{
 		G_AddEvent( ent, EV_MISSILE_MISS, DirToByte( trace->plane.normal ) );
 	}
 
@@ -831,11 +794,14 @@ killProj:
 
 	ent->takedamage = qfalse;
 	// splash damage (doesn't apply to person directly hit)
-	if ( ent->splashDamage ) {
+	if ( ent->splashDamage )
+	{
 		if( G_RadiusDamage( trace->endpos, ent->parent, ent->splashDamage, ent->splashRadius, 
-			other, ent, ent->splashMethodOfDeath ) ) {
+			other, ent, ent->splashMethodOfDeath ) )
+		{
 			if( !hitClient 
-				&& g_entities[ent->r.ownerNum].client ) {
+				&& g_entities[ent->r.ownerNum].client )
+			{
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
 			}
 		}
@@ -848,9 +814,7 @@ killProj:
 
 	trap_LinkEntity( ent );
 
-
-	return;
-	
+	return qtrue;
 }
 
 /*
@@ -1308,21 +1272,6 @@ void OJP_HandleBoltBlock(gentity_t *bolt, gentity_t *player, trace_t *trace)
 	*/
 	//For jedi AI
 	player->client->ps.saberEventFlags |= SEF_DEFLECTED;
-
-	//deduce DP cost
-	//[ExpSys]
-	bolt->activator = prevOwner;
-
-	if(otherDefLevel == FORCE_LEVEL_3
-		&& player->client->pers.cmd.forwardmove < 0)
-	{
-		int amount = OJP_SaberBlockCost(player, bolt, trace->endpos);
-		amount/=100*40;
-		G_DodgeDrain(player, prevOwner, amount);
-	}
-	else
-		G_DodgeDrain(player, prevOwner, OJP_SaberBlockCost(player, bolt, trace->endpos));
-	//[ExpSys]
 
 	//[SaberLockSys]
 	player->client->ps.saberLockFrame = 0; //break out of saberlocks.
