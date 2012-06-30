@@ -55,27 +55,7 @@
 
 #define MAX_CLIENT_SCORE_SEND 20
 
-//[DodgeSys]
-//[/DodgeDefines]
-//percentage of Dodge points remaining of the full amount required for a Partial Dodge.
-#define DODGE_PARTIAL		.5
 
-//Default amount of Maximum dodge
-#define	DODGE_MAX			100
-
-//The Fatigue (Force) Points to Dodge Points Ratio
-#define	DODGE_FATIGUE		6
-
-//The minimum damage level at which dodge works
-#define DODGE_MINDAM		20
-
-//Velocity at which you hop away from continued damage
-#define DODGE_HOP			g_speed.value	
-
-//Distance at which Dodge Saber Blocks occur
-#define	DODGE_SABDIST		200
-//[/DodgeDefines]
-//[/DodgeSys]
 
 //[FatigueSys]
 //[FatigueDefines]
@@ -126,12 +106,6 @@
 #define MISHAP_MAXINACCURACY	7  //maximum possible offset angle for weapon accuracy. 
 //[/WeaponSys]
 
-//[DodgeSys]
-//[DodgeDefines]
-//the level below which DP is critical (for the DP meterand desperation regen, etc)
-#define	DODGE_CRITICALLEVEL	   15
-//[/DodgeDefines]
-//[/DodgeSys]
 
 //[ExpSys]
 //[ExpDefines]
@@ -637,12 +611,7 @@ typedef enum {
 	STAT_ARMOR,				
 	STAT_DEAD_YAW,					// look this direction when dead (FIXME: get rid of?)
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
-	//[DodgeSys]
-	STAT_MAX_HEALTH,					// health / armor limit, changable by handicap
-	STAT_DODGE,			//number of Dodge Points the player has.  DP is used for evading/blocking attacks before they hurt you.
-	STAT_MAX_DODGE,		//maximum number of dodge points allowed.
-	//STAT_MAX_HEALTH					// health / armor limit, changable by handicap
-	//[/DodgeSys]
+
 	STAT_AMMOPOOL//[Reload]
 } statIndex_t;
 

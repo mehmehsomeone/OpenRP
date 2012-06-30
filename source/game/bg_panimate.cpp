@@ -3888,16 +3888,7 @@ float BG_GetLegsAnimPoint(playerState_t * ps, int AnimIndex)
 
 #include "../namespace_end.h"		// End of animation utilities
 
-//[DodgeSys]
-qboolean BG_HopAnim( int anim )
-{//check to see if anim is a hop animation.
-	if( BOTH_HOP_F <= anim && anim <= BOTH_HOP_R )
-	{
-		return qtrue;
-	}
-	return qfalse;
-}
-//[/DodgeSys]
+
 
 //[SaberSys]
 qboolean BG_BounceAnim( int anim )

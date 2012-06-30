@@ -3354,32 +3354,6 @@ qboolean PM_SaberPowerCheck(void)
 
 qboolean PM_CanDoRollStab( void )
 {
-	//[DodgeSys]
-	//Can't roll stab in a Dodge Roll.
-	if ( pm->ps->weapon == WP_SABER && !(pm->ps->userInt3 & (1 << FLAG_DODGEROLL)) )
-	//if ( pm->ps->weapon == WP_SABER )
-	{
-		saberInfo_t *saber = BG_MySaber( pm->ps->clientNum, 0 );
-		if ( saber
-			&& (saber->saberFlags&SFL_NO_ROLL_STAB) )
-		{
-			return qfalse;
-		}
-		saber = BG_MySaber( pm->ps->clientNum, 1 );
-		if ( saber
-			&& (saber->saberFlags&SFL_NO_ROLL_STAB) )
-		{
-			return qfalse;
-		}
-
-		return qtrue;
-	}
-	//you shouldn't be able to roll stab with a non-saber weapon selected.
-	else
-	{
-		return qfalse;
-	}
-	//[/DodgeSys]
 	
 }
 

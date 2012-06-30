@@ -5784,9 +5784,7 @@ static void PM_CheckDuck (void)
             if ( PM_CanStand() )
             {
                 pm->maxs[2] = pm->ps->standheight;
-				//[DodgeSys]
-				pm->ps->userInt3 &= ~(1 << FLAG_DODGEROLL);
-				//[/DodgeSys]
+
                 pm->ps->pm_flags &= ~PMF_ROLLING;
             }
 			//[/OpenRP - Jump-crouch Fix - Thanks to Xycaleth]
@@ -10152,19 +10150,7 @@ void PM_AdjustAttackStates( pmove_t *pm )
 //[SPPortComplete]
 void BG_CmdForRoll( playerState_t *ps, int anim, usercmd_t *pCmd )
 {
-//[DodgeSys]
-#ifdef QAGAME
-	if(ps->userInt3 & (1 << FLAG_DODGEROLL))
-	{//remove the FLAG_DODGEROLL at the end of the rolls
-		float animationpoint = BG_GetLegsAnimPoint(ps, pm_entSelf->localAnimIndex);
 
-		if(animationpoint <= .1)
-		{
-			ps->userInt3 &= ~(1 << FLAG_DODGEROLL);
-		}
-	}
-#endif
-//[/DodgeSys]
 
 	switch ( (anim) )
 	{
@@ -10340,15 +10326,6 @@ void BG_AdjustClientSpeed(playerState_t *ps, usercmd_t *cmd, int svTime)
 	}
 	//[/MoveSys]
 
-	//[DodgeSys]
-	//removed the movement restriction so gunners have a chance...
-	/*
-	if (ps->forceHandExtend == HANDEXTEND_DODGE)
-	{
-		ps->speed = 0;
-	}
-	*/
-	//[/DodgeSys]
 
 	if (ps->forceHandExtend == HANDEXTEND_KNOCKDOWN ||
 		ps->forceHandExtend == HANDEXTEND_PRETHROWN ||
@@ -12083,28 +12060,6 @@ static ID_INLINE void PM_CmdForSaberMoves(usercmd_t *ucmd)
 		ucmd->upmove = 0;
 	}
 	//[/SaberSys]
-	//[DodgeSys]
-	else if(pm->ps->torsoAnim == BOTH_HOP_F)
-	{
-		ucmd->forwardmove = 127;
-		ucmd->rightmove = 0;
-	}
-	else if(pm->ps->torsoAnim == BOTH_HOP_R)
-	{
-		ucmd->forwardmove = 0;
-		ucmd->rightmove = 75;
-	}
-	else if(pm->ps->torsoAnim == BOTH_HOP_L)
-	{
-		ucmd->forwardmove = 0;
-		ucmd->rightmove = -75;
-	}
-	else if(pm->ps->torsoAnim == BOTH_HOP_B)
-	{
-		ucmd->forwardmove = -127;
-		ucmd->rightmove = 0;
-	}
-	//[/DodgeSys]
 
 }
 
