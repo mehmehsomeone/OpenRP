@@ -1143,26 +1143,6 @@ void OJP_HandleBoltBlock(gentity_t *bolt, gentity_t *player, trace_t *trace)
 					fwd[i]=1.5f;
 				}
 			}
-			//add some slop factor to the manual reflections.
-			if(player->client->pers.cmd.forwardmove >= 0)
-			{
-				float slopFactor = (MISHAP_MAXINACCURACY-6) * (FORCE_LEVEL_3 - player->client->ps.fd.forcePowerLevel[FP_SABER_DEFENSE])/FORCE_LEVEL_3;
-				//[MoreRandom]
-				slopFactor += Q_irand(1,5);
-				vectoangles( fwd, angs );
-				//angs[PITCH] += flrand(-slopFactor, slopFactor);
-				//angs[YAW] += flrand(-slopFactor, slopFactor);
-				angs[PITCH] += flrand(1, slopFactor);
-				angs[YAW] += flrand(1, slopFactor);
-				AngleVectors( angs, fwd, NULL, NULL );
-			}
-			else
-			{
-				vectoangles( fwd, angs );
-				angs[PITCH]+=flrand(1,3);
-				angs[YAW]+=flrand(1,3);
-				AngleVectors( angs, fwd, NULL, NULL );
-			}
 			
 			//G_Printf("%i: %i: Level 3 Reflect\n", level.time, player->s.number);
 

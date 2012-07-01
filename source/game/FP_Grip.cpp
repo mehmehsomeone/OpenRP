@@ -211,7 +211,6 @@ void ForceGrip( gentity_t *self )
 		self->client->ps.fd.forceGripEntityNum = tr.entityNum;
 		g_entities[tr.entityNum].client->ps.fd.forceGripStarted = level.time;
 		g_entities[tr.entityNum].client->forceAttacker = self->client->ps.clientNum;
-		BG_ReduceMishapLevel(&g_entities[tr.entityNum].client->ps);
 		self->client->ps.fd.forceGripDamageDebounceTime = 0;
 		VectorClear(g_entities[tr.entityNum].client->ps.velocity);
 		

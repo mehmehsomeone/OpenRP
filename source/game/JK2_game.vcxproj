@@ -313,7 +313,6 @@
     <ClCompile Include="g_object.cpp" />
     <ClCompile Include="g_reload.cpp" />
     <ClCompile Include="g_roff.cpp" />
-    <ClCompile Include="g_saberbeh.cpp" />
     <ClCompile Include="g_saga.cpp" />
     <ClCompile Include="g_session.cpp" />
     <ClCompile Include="g_spawn.cpp" />
@@ -462,7 +461,6 @@
     <ClInclude Include="g_nav.h" />
     <ClInclude Include="g_public.h" />
     <ClInclude Include="g_roff.h" />
-    <ClInclude Include="g_saberbeh.h" />
     <ClInclude Include="g_team.h" />
     <ClInclude Include="g_weapons.h" />
     <ClInclude Include="inv.h" />

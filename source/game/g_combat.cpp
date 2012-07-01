@@ -4696,9 +4696,6 @@ extern qboolean PM_InKnockDown( playerState_t *ps );
 extern qboolean PM_RollingAnim( int anim );
 extern qboolean BG_KnockDownAnim( int anim );
 //[/CoOp]
-//[SaberSys]
-extern void BG_ReduceMishapLevel(playerState_t *ps);
-//[/SaberSys]
 //[KnockdownSys]
 void G_Knockdown( gentity_t *self, gentity_t *attacker, const vec3_t pushDir, float strength, qboolean breakSaberLock )
 {
@@ -4832,11 +4829,6 @@ void G_Knockdown( gentity_t *self, gentity_t *attacker, const vec3_t pushDir, fl
 					self->client->ps.torsoTimer += PLAYER_KNOCKDOWN_HOLD_EXTRA_TIME;
 				}
 			}
-
-			//[SaberSys]
-			//bump our MP level down.
-			BG_ReduceMishapLevel(&self->client->ps);			
-			//[/SaberSys]
 		}
 	}
 }
@@ -5081,34 +5073,6 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	if ( (mod == MOD_BRYAR_PISTOL_ALT || mod == MOD_SEEKER) && targ && targ->inuse && targ->client )
 	{//doesn't do actual damage to the target, instead it acts like a stun hit that increases MP/DP and tries to knock
 		//the player over like a kick.
-		
-		//int mpDamage = (float) inflictor->s.generic1/BRYAR_MAX_CHARGE*MISHAPLEVEL_MAX;
-
-
-		if ((targ->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY))
-
-		{//knockdown
-			vec3_t blowBackDir;
-			VectorSubtract(targ->client->ps.origin,attacker->client->ps.origin, blowBackDir);
-
-			G_Throw(targ,blowBackDir,4);
-			if ( targ->client->ps.saberAttackChainCount >= MISHAPLEVEL_FULL )
-			{
-				G_Knockdown( targ, attacker, dir, 300, qtrue );
-			}
-			else
-			{
-				G_Knockdown( targ, attacker, dir, 100, qtrue );
-			}
-		}
-		else if(targ->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT)
-		{//stumble
-			vec3_t blowBackDir;
-			VectorSubtract(targ->client->ps.origin,attacker->client->ps.origin, blowBackDir);
-			G_Throw(targ,blowBackDir,2);
-			AnimateStun(targ, attacker, point);   
-			BG_ReduceMishapLevel(&targ->client->ps);
-		}
 
 		targ->client->ps.electrifyTime = level.time + Q_irand( 300, 800 );
 		return;

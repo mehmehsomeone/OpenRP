@@ -4087,12 +4087,7 @@ static void CG_SetLerpFrameAnimation( centity_t *cent, clientInfo_t *ci, lerpFra
 
 		animSpeed *= animSpeedMult;
 
-		//[FatigueSys]
-		BG_SaberStartTransAnim(cent->currentState.number, cent->currentState.fireflag, 
-			cent->currentState.weapon, newAnimation, &animSpeed, 
-			cent->currentState.brokenLimbs, cent->currentState.userInt3);
-		//BG_SaberStartTransAnim(cent->currentState.number, cent->currentState.fireflag, cent->currentState.weapon, newAnimation, &animSpeed, cent->currentState.brokenLimbs);
-		//[/FatigueSys]
+		BG_SaberStartTransAnim(cent->currentState.number, cent->currentState.fireflag, cent->currentState.weapon, newAnimation, &animSpeed, cent->currentState.brokenLimbs);
 
 		if (torsoOnly)
 		{
@@ -10710,18 +10705,6 @@ CheckTrail:
     {// Use Raven's superior sabers.
 	//[/SFXSabers]
 		saberTrail->duration = saberMoveData[cent->currentState.saberMove].trailLength;
-
-		//[SaberSys]
-		if(cent->currentState.userInt3 & (1 << FLAG_ATTACKFAKE))
-		{//attack faking, have a longer saber trail
-			saberTrail->duration *= 2;
-		}
-
-		if( cent->currentState.userInt3 & (1 << FLAG_FATIGUED) )
-		{//fatigued players have slightly shorter saber trails since they're moving slower.
-			saberTrail->duration *= .5;
-		}
-		//[/SaberSys]
 
 		trailDur = (saberTrail->duration/5.0f);
 		if (!trailDur)

@@ -4,13 +4,7 @@
 
 #define METROID_JUMP 1
 
-//extern void G_AddMercBalance(gentity_t *defender, int amount);//add balance for having forcepower used on absorbing gunners
-//[FatigueSys]
-extern void G_AddMercBalance(gentity_t *self, int amount);//add balance to flamethrower
-extern qboolean BG_SaberAttacking( playerState_t *ps );
-extern qboolean BG_SaberInTransitionAny( int move );
-extern qboolean GAME_INLINE WalkCheck( gentity_t * self );
-//[/FatigueSys]
+extern void G_AddMercBalance(gentity_t *defender, int amount);//add balance for having forcepower used on absorbing gunners
 
 int speedLoopSound = 0;
  
@@ -528,11 +522,7 @@ void WP_SpawnInitForcePowers( gentity_t *ent )
 {
 	int i = 0;
 
-	//[SaberSys]
-	//new balancing system uses 7 as the default.
-	//ent->client->ps.saberAttackChainCount = 7;
-	ent->client->ps.saberAttackChainCount = 0;
-	//[/SaberSys]
+	ent->client->ps.saberAttackChainCount = 7;
 
 	i = 0;
 
@@ -722,10 +712,6 @@ int ForcePowerUsableOn(gentity_t *attacker, gentity_t *other, forcePowers_t forc
 	//[InAirChange]
 	//if(other && other->client && other->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
 	//	return 1;
-
-	if(other->client && other->client->ps.fd.saberAnimLevel == SS_DESANN
-		&& other->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY)
-		return 0;
 
 	if(forcePower == FP_MINDTRICK && other->client)
 	{
@@ -1186,7 +1172,6 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 extern qboolean PM_SaberInParry( int move );
 qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPower);
 //[/ForceSys]
-extern void BG_ReduceMishapLevel(playerState_t *ps);
 
 qboolean IsHybrid(gentity_t *ent)
 {
@@ -1230,8 +1215,6 @@ qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPo
 		if(!WalkCheck(defender) || defender->client->ps.groundEntityNum == ENTITYNUM_NONE)
 		//can't block much stronger Force power while running or in mid-air
 			return qfalse;
-		if( defender->client->ps.saberAttackChainCount >=MISHAPLEVEL_LIGHT ) //Holmes, added
-			return qfalse;
 
 		// 1% chance of failing due to readiness
 		if(!Q_irand( 0, 100 ))
@@ -1252,19 +1235,11 @@ qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPo
 			return qfalse;
 
 
-		if( defender->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY )
-			return qfalse;
-	
-		if( defender->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT
-		&& attacker->client->ps.fd.saberAnimLevel == SS_DESANN)
-			return qfalse;
-
 		if (defender->client->ps.forceHandExtend != HANDEXTEND_NONE)
 			return qtrue;
 
 		if(IsHybrid(defender))
 		{
-			defender->client->ps.userInt3 |= (1<<FLAG_BLOCKING);
 			defender->client->blockTime = level.time + 1000;
 		}
 	
@@ -2455,43 +2430,6 @@ extern qboolean DrivingCloakableVehicle(gentity_t *self);
 extern void G_ToggleVehicleCloak(playerState_t *ps);
 //[/CloakingVehicles]
 
-
-//[FatigueSys]
-static GAME_INLINE qboolean MeditateCheck( gentity_t * self )
-{		
-	int	anim;
-
-	if ( self->client->saber[0].meditateAnim != -1 )
-	{
-		anim = self->client->saber[0].meditateAnim;
-	}
-	else if ( self->client->saber[1].model 
-			&& self->client->saber[1].model[0]
-			&& self->client->saber[1].meditateAnim != -1 )
-	{
-		anim = self->client->saber[1].meditateAnim;
-	}
-	else
-	{
-		anim = BOTH_MEDITATE; 
-	}
-
-	//we don't use a HANDEXTEND_TAUNT check anymore since 
-	//it's not always consistantly on during a meditate taunt.
-	if( self->client->ps.torsoAnim == anim && self->client->ps.torsoTimer <= 100)
-	{
-		return qtrue;
-	}
-	
-	return qfalse;
-}
-//[/FatigueSys]
-
-
-//[FatigueSys]
-extern qboolean PM_SaberInBrokenParry( int move );
-extern qboolean PM_InKnockDown( playerState_t *ps );
-//[/FatigueSys]
 //[Flamethrower]
 void Flamethrower_Fire( gentity_t *self );
 //[/Flamethrower]
@@ -2501,9 +2439,6 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 	int			i, holo, holoregen;
 	int			prepower = 0;
 
-	//[FatigueSys]
-	int			FatigueTime;
-	//[/FatigueSys]
 
 	//see if any force powers are running
 	if ( !self )
@@ -2563,14 +2498,6 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 	{ //bad
 		self->client->ps.fd.forcePowerSelected = 0;
 	}
-
-	//Fatigued state check.  This is used because not all current deduction sources of FP check to 
-	//see if popping the flag is nessicary or not.
-	if(self->client->ps.fd.forcePower <= (self->client->ps.fd.forcePowerMax * FATIGUEDTHRESHHOLD))
-	{//Pop the Fatigued flag
-		self->client->ps.userInt3 |= ( 1 << FLAG_FATIGUED );
-	}
-	//[/FatigueSys]
 
 
 	if ( ((self->client->sess.selectedFP != self->client->ps.fd.forcePowerSelected) ||
@@ -3034,15 +2961,7 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 		if (self->client->ps.fd.forcePowerRegenDebounceTime < level.time &&
 		//if ( !self->client->ps.saberInFlight && self->client->ps.fd.forcePowerRegenDebounceTime < level.time &&
 		//[/SaberThrowSys]
-			//[FatigueSys]
-			//Don't regen force while attacking with the saber.
-			(self->client->ps.weapon != WP_SABER || !BG_SaberInSpecial(self->client->ps.saberMove)) &&
-			!BG_SaberAttacking(&self->client->ps) && !BG_SaberInTransitionAny(self->client->ps.saberMove)
-			//Don't regen while running
-			&& WalkCheck(self)
-			&& self->client->ps.groundEntityNum != ENTITYNUM_NONE)  //can't regen while in the air.
-			//(self->client->ps.weapon != WP_SABER || !BG_SaberInSpecial(self->client->ps.saberMove)) )
-			//[/FatigueSys]
+			(self->client->ps.weapon != WP_SABER || !BG_SaberInSpecial(self->client->ps.saberMove)) )
 		{
 			if (g_gametype.integer != GT_HOLOCRON || g_MaxHolocronCarry.value)
 			{
@@ -3118,117 +3037,10 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 			*/
 			//[/FatigueSys]
 			{
-				if ( g_gametype.integer == GT_POWERDUEL && self->client->sess.duelTeam == DUELTEAM_LONE )
-				{
-					if ( g_duel_fraglimit.integer )
-					{
-						//[FatigueSys]
-						FatigueTime = (g_forceRegenTime.integer*
-							(0.6 + (.3 * (float)self->client->sess.wins / (float)g_duel_fraglimit.integer)));
-						//self->client->ps.fd.forcePowerRegenDebounceTime = level.time + (g_forceRegenTime.integer*
-						//	(0.6 + (.3 * (float)self->client->sess.wins / (float)g_duel_fraglimit.integer)));
-						//[/FatigueSys]
-					}
-					else
-					{
-						//[FatigueSys]
-						FatigueTime = (g_forceRegenTime.integer*0.7);
-						//self->client->ps.fd.forcePowerRegenDebounceTime = level.time + (g_forceRegenTime.integer*0.7);
-						//[/FatigueSys]
-					}
-				}
-				else
-				{
-					//[FatigueSys]
-					FatigueTime = g_forceRegenTime.integer;
-					//self->client->ps.fd.forcePowerRegenDebounceTime = level.time + g_forceRegenTime.integer;
-					//[/FatigueSys]
-				}
 
-				//[FatigueSys]
-				if(MeditateCheck(self))
-				{//more regen rate while meditating
-					self->client->ps.fd.forcePowerRegenDebounceTime = level.time + (FatigueTime/4);
-
-					//[Test]
-					//simple debugging messages for determining if the meditation regen is working.
-					if(d_test.integer != -1 && self->client->ps.clientNum == d_test.integer)
-					{
-						trap_SendServerCommand( d_test.integer, va("print \"%i: Meditation FP Regen. Next RegenTime: %i\n\"", d_test.integer, FatigueTime/4 ) );
-					}
-					//[/Test]
-				}	
-				
-				else if(self->client->saber[0].numBlades == 1 && self->client->ps.fd.saberAnimLevel == SS_STAFF)
-				{//faster regen rate for singleblade staff/niman's perk
-					self->client->ps.fd.forcePowerRegenDebounceTime = level.time + FatigueTime - 100;
-
-					//[Test]
-					//simple debugging messages for determining if the meditation regen is working.
-					if(d_test.integer != -1 && self->client->ps.clientNum == d_test.integer)
-					{
-						trap_SendServerCommand( d_test.integer, va("print \"%i: Niman FP Regen. Next RegenTime: %i\n\"", d_test.integer, FatigueTime-100 ) );
-					}
-					//[/Test]
-				}
-				
-				else	
-				{//standard regen
-					self->client->ps.fd.forcePowerRegenDebounceTime = level.time + FatigueTime;
-					//[Test]
-					//simple debugging messages for determining if the meditation regen is working.
-					if(d_test.integer != -1 && self->client->ps.clientNum == d_test.integer)
-					{
-						trap_SendServerCommand( d_test.integer, va("print \"%i: Normal FP Regen. Next RegenTime: %i\n\"", d_test.integer, FatigueTime ) );
-					}
-					//[/Test]
-				}
-				
-				//[/FatigueSys]
 			}
-
-			//[FatigueSys]
-			if( self->client->ps.fd.forcePower > (self->client->ps.fd.forcePowerMax * FATIGUEDTHRESHHOLD) )
-			{//You gained some FP back.  Cancel the Fatigue status.
-				self->client->ps.userInt3 &= ~( 1 << FLAG_FATIGUED );
-			}
-			//[/FatigueSys]
 		}
 	}
-
-
-
-	//[SaberSys]
-	if(self->client->MishapDebounce < level.time  
-		&& !BG_InSlowBounce(&self->client->ps) && !PM_SaberInBrokenParry(self->client->ps.saberMove)
-		&& !PM_InKnockDown(&self->client->ps) && self->client->ps.forceHandExtend != HANDEXTEND_DODGE
-		&& self->client->ps.saberLockTime < level.time	//not in a saber lock.
-		&& self->client->ps.groundEntityNum != ENTITYNUM_NONE)  //can't regen while in the air.
-	{
-		if(self->client->ps.saberAttackChainCount > 0)
-		{
-			self->client->ps.saberAttackChainCount--;
-		}
-		
-		if(self->client->ps.weapon == WP_SABER)
-		{//saberer regens slower since they use MP differently
-			if(self->client->ps.fd.saberAnimLevel == SS_MEDIUM)
-			{//yellow style is more "centered" and recovers MP faster.
-				//self->client->MishapDebounce = level.time + (g_mishapRegenTime.integer*.75);
-				//self->client->MishapDebounce/=100*10+self->client->MishapDebounce;
-				self->client->MishapDebounce = level.time + (g_mishapRegenTime.integer*.75);
-			}
-			else
-			{
-				self->client->MishapDebounce = level.time + g_mishapRegenTime.integer;
-			}
-		}
-		else
-		{//gunner regen faster
-				self->client->MishapDebounce = level.time + g_mishapRegenTime.integer/5;
-		}
-	}
-	//[/SaberSys]
 	
 powersetcheck:
 

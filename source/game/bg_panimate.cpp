@@ -1366,22 +1366,6 @@ int PM_SaberDeflectionForQuad( int quad )
 	return LS_NONE;
 }
 
-
-//[FatigueSys]
-//moved to bg_saber.c
-
-/*
-qboolean PM_SaberInDeflect( int move )
-{
-	if ( move >= LS_D1_BR && move <= LS_D1_B_ )
-	{
-		return qtrue;
-	}
-	return qfalse;
-}
-*/
-//[/FatigueSys]
-
 qboolean PM_SaberInParry( int move )
 {
 	if ( move >= LS_PARRY_UP && move <= LS_PARRY_LL )
@@ -3282,10 +3266,7 @@ qboolean PM_SaberReturnAnim( int anim );
 //[/SaberSys]
 //[FatigueSys]
 //Made it so saber moves go slower if your fatigued
-void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, 
-							int broken, int fatigued )
-//void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken )
-//[/FatigueSys]
+void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken )
 {
 	//[SaberSys]
 	//I don't like having to do this every time but it's the best I can think of for now.
@@ -3389,55 +3370,8 @@ void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int 
 		}	
 	}
 	//[/SaberSys]
-
-	//[FatigueSys]
-	if( (fatigued & (1 << FLAG_FATIGUED)) && anim >= BOTH_A1_T__B_ && anim <= BOTH_ROLL_STAB
-		//not a wall run move
-		&& anim != BOTH_FORCEWALLRELEASE_FORWARD && anim != BOTH_FORCEWALLRUNFLIP_START 
-		&& anim != BOTH_FORCEWALLRUNFLIP_END
-		//not a overhead flip move
-		&& anim != BOTH_JUMPFLIPSTABDOWN  
-		&& anim != BOTH_JUMPFLIPSLASHDOWN1
-		//don't slow down the lunge attack because it has movement associated with it
-		&& anim != BOTH_LUNGE2_B__T_
-		)
-	{//You're pooped.  Move slower
-		*animSpeed *= .5f;
-	}
-	//[/FatigueSys]
-
-	//[SaberSys]
-	if( (fatigued & (1 << FLAG_SLOWBOUNCE)) )
-	{//slow animation for slow bounces
-		if(BG_BounceAnim(anim))
-		{
-			*animSpeed *= .15f;
-		}
-		else if(PM_SaberReturnAnim(anim))
-		{
-			*animSpeed *= .3f;
-		}
-	}
-	
-	else if( (fatigued & (1 << FLAG_PARRIED)) )
-	{//getting parried slows down your reaction
-		if(BG_BounceAnim(anim) || PM_SaberReturnAnim(anim))
-		{//only apply to bounce and returns since this flag is technically turned off immediately after the animation is set.  
-			//IE this ends up appling to the animation set after this flag is supposed to end unless we specifically target certain animations.
-			*animSpeed *= .5f;
-		}
-	}
-	//[QuickParry]
-	else if ( (fatigued & (1 << FLAG_QUICKPARRY)))
-	{
-		if(BG_BounceAnim(anim) || PM_SaberReturnAnim(anim))
-		{
-			*animSpeed *= 1.0f;
-		}
-	}
-	//[/QuickParry]
-	//[/SaberSys]
 }
+	
 
 /*
 -------------------------
@@ -3464,10 +3398,7 @@ void BG_SetAnimFinal(playerState_t *ps, animation_t *animations,
 	//NOTE: Setting blendTime here breaks actual blending..
 	blendTime = 0;
 
-	//[FatigueSys]
-	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, anim, &editAnimSpeed, ps->brokenLimbs, ps->userInt3);
-	//BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, anim, &editAnimSpeed, ps->brokenLimbs);
-	//[/FatigueSys]
+	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, anim, &editAnimSpeed, ps->brokenLimbs);
 
 	// Set torso anim
 	if (setAnimParts & SETANIM_TORSO)
@@ -3816,7 +3747,7 @@ float BG_GetTorsoAnimPoint(playerState_t * ps, int AnimIndex)
 	float animPercentage = 0;
 
 	//Be sure to scale by the proper anim speed just as if we were going to play the animation
-	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, ps->torsoAnim, &animSpeedFactor, ps->brokenLimbs, ps->userInt3);
+	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, ps->torsoAnim, &animSpeedFactor, ps->brokenLimbs);
 
 	if( animSpeedFactor > 0 )
 	{
@@ -3855,7 +3786,7 @@ float BG_GetLegsAnimPoint(playerState_t * ps, int AnimIndex)
 	float animPercentage = 0;
 
 	//Be sure to scale by the proper anim speed just as if we were going to play the animation
-	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, ps->legsAnim, &animSpeedFactor, ps->brokenLimbs, ps->userInt3);
+	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, ps->legsAnim, &animSpeedFactor, ps->brokenLimbs);
 
 	if( animSpeedFactor > 0 )
 	{

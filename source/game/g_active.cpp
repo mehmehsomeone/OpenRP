@@ -2355,7 +2355,6 @@ extern vmCvar_t g_logDuelStats;
 //[/DuelSys]
 //[SaberLockSys]
 extern qboolean SabBeh_ButtonforSaberLock(gentity_t* self);
-extern void G_RollBalance(gentity_t *self, gentity_t *inflictor, qboolean forceMishap);
 //[/SaberLockSys]
 //[StanceSelection]
 extern qboolean G_ValidSaberStyle(gentity_t *ent, int saberStyle);
@@ -3723,23 +3722,6 @@ void ClientThink_real( gentity_t *ent ) {
 	if ( ent->NPC )
 	{
 		VectorCopy( ent->client->ps.viewangles, ent->r.currentAngles );
-	}
-
-	if (pm.checkDuelLoss)
-	{//racc - we owned someone in a saber duel, but didn't super break from the saberlock.  Check for death blow conditions. 
-		//[SaberLockSys]
-		//racc - losing a saberlock with checkDuelLoss set results in the loser mishaping.
-		if (pm.checkDuelLoss > 0 && (pm.checkDuelLoss <= MAX_CLIENTS || (pm.checkDuelLoss < (MAX_GENTITIES-1) && g_entities[pm.checkDuelLoss-1].s.eType == ET_NPC) ) )
-		{
-			gentity_t *clientLost = &g_entities[pm.checkDuelLoss-1];
-
-			if (clientLost && clientLost->inuse && clientLost->client)
-			{
-				G_RollBalance(clientLost, ent, qtrue);
-			}
-		}
-
-		pm.checkDuelLoss = 0;
 	}
 
 	//[Asteroids]

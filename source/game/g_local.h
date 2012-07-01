@@ -209,10 +209,6 @@ extern	vmCvar_t	sv_privatepassword;
 extern	vmCvar_t	g_forceRegenTime;
 
 
-//[SaberSys]
-extern  vmCvar_t	g_mishapRegenTime;
-//[/SaberSys]
-
 extern	vmCvar_t	g_spawnInvulnerability;
 extern	vmCvar_t	g_forcePowerDisable;
 extern	vmCvar_t	g_weaponDisable;
@@ -1240,14 +1236,6 @@ struct gclient_s {
 	int			SaberBlockTime;
 	//[/SaberSys]
 
-
-
-
-
-	//[SaberSys]
-	//debounce timer on the regeneration of the mishap/balance bar. 
-	int			MishapDebounce;
-	//[/SaberSys]
 
 	//[Asteroids]
 	//can't put these in playerstate, crashes game (need to change exe?)

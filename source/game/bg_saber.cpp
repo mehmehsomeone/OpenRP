@@ -59,15 +59,6 @@ void BG_ForcePowerDrain( playerState_t *ps, forcePowers_t forcePower, int overri
 	{
 		ps->fd.forcePower = 0;
 	}
-
-	//[FatigueSys]
-	//check for fatigued state.  I'm putting this here in addition to BG_AddFatigue
-	//because a lot of the code uses this function for draining instead.
-	if(ps->fd.forcePower <= (ps->fd.forcePowerMax * FATIGUEDTHRESHHOLD))
-	{//Pop the Fatigued flag
-		ps->userInt3 |= ( 1 << FLAG_FATIGUED );
-	}
-	//[/FatigueSys]
 }
 
 qboolean BG_EnoughForcePowerForMove( int cost )
@@ -1357,10 +1348,6 @@ void PM_SaberLockBreak( playerState_t *genemy, qboolean victory, int strength )
 	if ( victory )
 	{ //someone lost the lock, so punish them by knocking them down
 		//[SaberLockSys]
-		if(!superBreak)
-		{//if we're not in a superbreak, force the loser to mishap.
-			pm->checkDuelLoss = genemy->clientNum+1;
-		}
 
 		//racc - this seems to override the actual saberlock completion animations I don't want that.
 		/*
@@ -2466,15 +2453,10 @@ static qboolean PM_CheckEnemyPresence( int dir, float radius )
 //keep them from screwing up the fatigue system balance.
 
 //racc - force cost of doing cartwheels.
-#define SABER_ALT_ATTACK_POWER_LR	FATIGUE_CARTWHEEL
-#define SABER_ALT_ATTACK_POWER_LRA	FATIGUE_CARTWHEEL_ATARU
-//#define SABER_ALT_ATTACK_POWER_LR	10//30?
+#define SABER_ALT_ATTACK_POWER_LR	10//30?
 
-//racc - force cost of doing all the special saber attacks (other than the katas and cartwheels)
-//#define SABER_ALT_ATTACK_POWER_FB	3 NUAM
-//#define SABER_ALT_ATTACK_POWER_FB	25//30/50?
-//[/SaberSys]
-
+#define SABER_ALT_ATTACK_POWER_FB	3 NUAM
+#define SABER_ALT_ATTACK_POWER_FB	25//30/50?
 extern qboolean PM_SaberInReturn( int move ); //bg_panimate.c
 saberMoveName_t PM_CheckPullAttack( void )
 {
@@ -2594,7 +2576,7 @@ saberMoveName_t PM_SaberAttackForMovement(saberMoveName_t curmove)
 		{//cartwheel right
 			if(saber1 && !saber2 && pm->ps->fd.saberAnimLevel == SS_DUAL)//for a part of single dual/ataru's. 1 point cartwheels
 			{
-				BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_LRA);
+				BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_LR);
 			}
 			else
 			{
@@ -2663,14 +2645,8 @@ saberMoveName_t PM_SaberAttackForMovement(saberMoveName_t curmove)
 			&& ( pm->cmd.upmove > 0 || (pm->ps->pm_flags & PMF_JUMP_HELD) )//focus-holding player
 			&& BG_EnoughForcePowerForMove( SABER_ALT_ATTACK_POWER_LR ) )//have enough power
 		{//cartwheel left
-			if(saber1 && !saber2 && pm->ps->fd.saberAnimLevel == SS_DUAL)//for a part of single dual/ataru's. 1 point cartwheels
-			{
-				BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_LRA);
-			}
-			else
-			{
-				BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_LR);
-			}
+			BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_LR);
+		
 			if ( overrideJumpLeftAttackMove != LS_INVALID )
 			{//overridden with another move
 				return overrideJumpLeftAttackMove;
@@ -2736,19 +2712,13 @@ saberMoveName_t PM_SaberAttackForMovement(saberMoveName_t curmove)
 				pm->ps->weaponTime <= 0 &&
 				pm->ps->forceHandExtend == HANDEXTEND_NONE &&
 				(pm->cmd.buttons & BUTTON_ATTACK)&&
-				//[SaberSys]
-				BG_EnoughForcePowerForMove(FATIGUE_JUMPATTACK) )
-				//BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB) )
-				//[/SaberSys]
+				BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB) )
 			{ //DUAL/STAFF JUMP ATTACK
 				newmove = PM_SaberJumpAttackMove2();
 				if ( newmove != LS_A_T2B 
 					&& newmove != LS_NONE )
 				{
-					//[SaberSys]
-					BG_ForcePowerDrain(pm->ps, FP_GRIP, FATIGUE_JUMPATTACK);
-					//BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
-					//[/SaberSys]
+					BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
 				}
 			}
 			else if (!noSpecials&&
@@ -2762,10 +2732,7 @@ saberMoveName_t PM_SaberAttackForMovement(saberMoveName_t curmove)
 				PM_GroundDistance() < 32 &&
 				!BG_InSpecialJump(pm->ps->legsAnim) &&
 				!BG_SaberInSpecialAttack(pm->ps->torsoAnim)&&
-				//[SaberSys]
-				BG_EnoughForcePowerForMove(FATIGUE_JUMPATTACK))
-				//BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB))
-				//[/SaberSys]
+				BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB))
 			{ //FLIP AND DOWNWARD ATTACK
 				//trace_t tr;
 
@@ -2775,10 +2742,7 @@ saberMoveName_t PM_SaberAttackForMovement(saberMoveName_t curmove)
 					if ( newmove != LS_A_T2B
 						&& newmove != LS_NONE )
 					{
-						//[SaberSys]
-						BG_ForcePowerDrain(pm->ps, FP_GRIP, FATIGUE_JUMPATTACK);
-						//BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
-						//[/SaberSys]
+						BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
 					}
 				}
 			}
@@ -2806,45 +2770,28 @@ saberMoveName_t PM_SaberAttackForMovement(saberMoveName_t curmove)
 			}
 			*/
 			//[/SaberSys]
-			//[SaberSys]
-			//all single saber styles can now do lunges.
-			else if (
-			//else if ((pm->ps->fd.saberAnimLevel == SS_FAST || pm->ps->fd.saberAnimLevel == SS_DUAL || pm->ps->fd.saberAnimLevel == SS_STAFF) &&
-			//[/SaberSys]
+			else if ((pm->ps->fd.saberAnimLevel == SS_FAST || pm->ps->fd.saberAnimLevel == SS_DUAL || pm->ps->fd.saberAnimLevel == SS_STAFF) &&
 				pm->ps->groundEntityNum != ENTITYNUM_NONE &&
 				(pm->ps->pm_flags & PMF_DUCKED) &&
 				pm->ps->weaponTime <= 0 &&
 				!BG_SaberInSpecialAttack(pm->ps->torsoAnim)&&
-				//[SaberSys]
-				BG_EnoughForcePowerForMove(FATIGUE_GROUNDATTACK) &&
-				!PM_SaberInBounce(curmove)) //can't combo into a lunge move 
-				//BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB))
-				//[/SaberSys]
+				BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB))
 			{ //LUNGE (weak)
 				newmove = PM_SaberLungeAttackMove( noSpecials );
 				if ( newmove != LS_A_T2B
 					&& newmove != LS_NONE )
 				{
-					//[SaberSys]
-					BG_ForcePowerDrain(pm->ps, FP_GRIP, FATIGUE_GROUNDATTACK);
-					//BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
-					//[/SaberSys]
+					BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
 				}
 			}
 			else if ( !noSpecials )
 			{
 				saberMoveName_t stabDownMove = PM_CheckStabDown();
 				if (stabDownMove != LS_NONE 
-					//[SaberSys]
-					&& BG_EnoughForcePowerForMove(FATIGUE_GROUNDATTACK) )
-					//&& BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB) )
-					//[/SaberSys]
+					&& BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB) )
 				{//racc - stab down at someone on the ground.
 					newmove = stabDownMove;
-					//[SaberSys]
-					BG_ForcePowerDrain(pm->ps, FP_GRIP, FATIGUE_GROUNDATTACK);
-					//BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
-					//[/SaberSys]
+					BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
 				}
 				else
 				{
@@ -3565,106 +3512,12 @@ int BlockedforQuad(int quad)
 }
 //[/SaberSys]
 
-
-
-int PM_DoFake(int curmove)
-{
-	int newQuad = -1;
-
-	if(pm->ps->userInt3 & (1 << FLAG_ATTACKFAKE)) 
-	{//already attack faking, can't do another one until this one is over.
-		return LS_NONE;
-	}
-
-	if ( pm->cmd.rightmove > 0 )
-	{//moving right
-		if ( pm->cmd.forwardmove > 0 )
-		{//forward right = TL2BR slash
-			newQuad = Q_TL;
-		}
-		else if ( pm->cmd.forwardmove < 0 )
-		{//backward right = BL2TR uppercut
-			newQuad = Q_BL;
-		}
-		else
-		{//just right is a left slice
-			newQuad = Q_L;
-		}
-	}
-	else if ( pm->cmd.rightmove < 0 )
-	{//moving left
-		if ( pm->cmd.forwardmove > 0 )
-		{//forward left = TR2BL slash
-			newQuad = Q_TR;
-		}
-		else if ( pm->cmd.forwardmove < 0 )
-		{//backward left = BR2TL uppercut
-			newQuad = Q_BR;
-		}
-		else
-		{//just left is a right slice
-			newQuad = Q_R;
-		}
-	}
-	else
-	{//not moving left or right
-		if ( pm->cmd.forwardmove > 0 )
-		{//forward= T2B slash
-			newQuad = Q_T;
-		}
-		else if ( pm->cmd.forwardmove < 0 )
-		{//backward= T2B slash	//or B2T uppercut?
-			newQuad = Q_T;
-		}
-		else
-		{//Not moving at all
-		}
-	}
-
-	if(newQuad == -1)
-	{//assume that we're trying to fake in our current direction so we'll automatically fake 
-		//in the completely opposite direction.  This allows the player to do a fake while standing still.
-		newQuad = saberMoveData[curmove].endQuad;
-	}
-
-	if ( newQuad == saberMoveData[curmove].endQuad )
-	{//player is attempting to do a fake move to the same quadrant 
-		//as such, fake to the completely opposite quad
-		newQuad += 4;
-		if(newQuad > Q_B)
-		{//rotated past Q_B, shift back to get the proper quadrant
-			newQuad -= Q_NUM_QUADS;
-		}
-	}
-
-	if(newQuad == Q_B)
-	{//attacks can't be launched from this quad, just randomly fake to the bottom left/right
-		if(PM_irand_timesync(0, 9) <= 4 )
-		{
-			newQuad = Q_BL;
-		}
-		else
-		{
-			newQuad = Q_BR;
-		}
-
-	}
-
-	//add faking flag
-	pm->ps->userInt3 |= ( 1 << FLAG_ATTACKFAKE );
-	return transitionMove[saberMoveData[curmove].endQuad][newQuad];
-}
-
 qboolean InSaberDelayAnimation(int move)
 {//1.3
 	if((move >= 665 && move <= 669) || (move >=690 && move <= 694) || (move >= 715 && move <= 719))
 		return qtrue;
 	return qfalse;
 }
-
-//[SaberSys]
-void BG_AddFatigue( playerState_t * ps, int Fatigue);
-//[/SaberSys]
 void PM_WeaponLightsaber(void)
 {
 	int			addTime,amount;
@@ -4797,19 +4650,13 @@ weapChecks:
 						//PM_GroundDistance() < 32 &&
 						!BG_InSpecialJump(pm->ps->legsAnim) &&
 						!BG_SaberInSpecialAttack(pm->ps->torsoAnim)&&
-						//[SaberSys]
-						BG_EnoughForcePowerForMove( FATIGUE_JUMPATTACK ))
- 						//BG_EnoughForcePowerForMove( SABER_ALT_ATTACK_POWER_FB ))
-						//[SaberSys]
+ 						BG_EnoughForcePowerForMove( SABER_ALT_ATTACK_POWER_FB ))
 					{ //attempt to do a DFA
 						newmove = PM_SaberJumpAttackMove();
 						if ( newmove != LS_A_T2B
 							&& newmove != LS_NONE )
 						{
-							//[SaberSys]
-							BG_ForcePowerDrain(pm->ps, FP_GRIP, FATIGUE_JUMPATTACK);
-							//BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
-							//[/SaberSys]
+							BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
 						}
 					}
 					else
@@ -4984,78 +4831,6 @@ weapChecks:
 	}
 	pm->ps->weaponTime = addTime;
 }
-
-
-//[FatigueSys]
-//Add Fatigue to a player
-void BG_AddFatigue( playerState_t * ps, int Fatigue)
-{
-	/*
-	//For now, all saber attacks cost one FP.
-	if(ps->fd.forcePower > Fatigue)
-	{
-		ps->fd.forcePower -= Fatigue;
-	}
-	else
-	{//don't have enough so just completely drain FP then.
-		ps->fd.forcePower = 0;
-	}
-	
-	if(ps->fd.forcePower <= (ps->fd.forcePowerMax * FATIGUEDTHRESHHOLD))
-	{//Pop the Fatigued flag
-		ps->userInt3 |= ( 1 << FLAG_FATIGUED );
-	}
-	*/
-}
-
-
-int Fatigue_SaberAttack( playerState_t * ps )
-{//returns the FP cost for a saber attack by this player.
-	/* racc - all saber styles use 1 fp for attacks.
-	if( ps->fd.saberAnimLevel == SS_DUAL )
-	{//duals cost more to attack
-		return 2*FATIGUE_SABERATTACK;
-	}
-
-	if( ps->fd.saberAnimLevel == SS_STAFF )
-	{//doubles cost more to attack
-		return 2*FATIGUE_SABERATTACK;
-	}
-	*/
-
-	return FATIGUE_SABERATTACK;
-}
-
-
-extern qboolean BG_SaberInAttackPure( int move );
-//Add Fatigue for all the sabermoves.
-void BG_SaberFatigue( playerState_t * ps, int newMove, int anim )
-{
-	if ( ps->saberMove != newMove )
-	{//wasn't playing that attack before
-		if ( BG_KickMove( newMove ) )
-		{//melee move
-			BG_AddFatigue( ps, FATIGUE_MELEE );
-		}
-		else if ( BG_SaberInAttackPure( newMove ) )
-		{//simple saber attack
-			BG_AddFatigue( ps, Fatigue_SaberAttack(ps) );
-		}
-		else if( PM_SaberInTransition( newMove ) && pm->ps->userInt3 & (1 << FLAG_ATTACKFAKE) )
-		{//attack fakes cost FP as well
-			if( ps->fd.saberAnimLevel == SS_DUAL ) 
-			{//dual sabers don't have transition/FP costs.
-			}
-			else
-			{//single sabers
-				BG_AddFatigue( ps, FATIGUE_SABERTRANS);
-			}
-		}
-	}
-
-	return;
-}
-//[/FatigueSys]
 
 //[SaberSys]
 void PM_SaberFakeFlagUpdate(playerState_t *ps, int newMove, int currentMove);
@@ -5391,29 +5166,6 @@ void PM_SetSaberMove(short newMove)
 */
 //[/SaberLockSys]
 
-		//[FatigueSys]
-		BG_SaberFatigue( pm->ps, newMove, anim );
-		//[/FatgieSys]
-
-		//[SaberSys]
-		//update the attack fake flag
-		PM_SaberFakeFlagUpdate(pm->ps, newMove, anim);
-		
-		if(!PM_SaberInBounce(newMove) && !PM_SaberInReturn(newMove) ) //or new move isn't slowbounce move
-		{//switched away from a slow bounce move, remove the flags.
-			pm->ps->userInt3 &= ~( 1 << FLAG_SLOWBOUNCE );
-			pm->ps->userInt3 &= ~( 1 << FLAG_OLDSLOWBOUNCE );
-			pm->ps->userInt3 &= ~( 1 << FLAG_PARRIED );
-			//[QuickParry]
-			pm->ps->userInt3 &= ~( 1 << FLAG_QUICKPARRY);
-			//[/QuickParry]
-		}
-
-		if(!PM_SaberInParry(newMove))
-		{//cancel out pre-block flag
-			pm->ps->userInt3 &= ~( 1 << FLAG_PREBLOCK );
-		}
-		//[/SaberSys]
 
 		if ( BG_SaberInAttack( newMove ) || BG_SaberInSpecialAttack( anim ) )
 		{
@@ -5579,29 +5331,11 @@ qboolean PM_DoKick(void)
 			}
 		}
 
-		if (kickMove != -1 && BG_EnoughForcePowerForMove(FATIGUE_SABERATTACK))
-		{
-			BG_ForcePowerDrain(pm->ps,FP_SEE,5);
-			PM_SetSaberMove( kickMove );
-			return qtrue;
-		}
 	}
 
 	return qfalse;
 }
 //[/MELEE]
-
-
-//[SaberSys]
-qboolean BG_SaberInNonIdleDamageMove(playerState_t *ps, int AnimIndex);
-void PM_SaberFakeFlagUpdate(playerState_t *ps, int newMove, int currentMove)
-{//checks to see if the attack fake flag needs to be removed.
-	if(!PM_SaberInTransition(newMove) && !PM_SaberInStart(newMove) && !BG_SaberInAttackPure(newMove))
-	{//not going into an attack move, clear the flag
-		pm->ps->userInt3 &= ~( 1 << FLAG_ATTACKFAKE );
-	}
-}
-
 
 //saber status utility tools
 qboolean BG_SaberInFullDamageMove( playerState_t *ps, int AnimIndex )
@@ -5651,11 +5385,6 @@ extern qboolean BG_BounceAnim( int anim );
 extern qboolean PM_SaberReturnAnim( int anim );
 qboolean BG_InSlowBounce(playerState_t *ps)
 {//checks for a bounce/return animation in combination with the slow bounce flag
-	if(ps->userInt3 & (1 << FLAG_SLOWBOUNCE)
-		&& (BG_BounceAnim(ps->torsoAnim) || PM_SaberReturnAnim(ps->torsoAnim)) )
-	{//in slow bounce
-		return qtrue;
-	}
 	return qfalse;
 }
 //[/SaberSys]

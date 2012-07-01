@@ -3,9 +3,6 @@
 #include "w_saber.h"
 #include "ai_main.h"
 #include "../ghoul2/G2.h"
-//[SaberSys]
-#include "g_saberbeh.h"
-//[/SaberSys]
 #define SABER_BOX_SIZE 16.0f
 extern bot_state_t *botstates[MAX_CLIENTS];
 extern qboolean InFront( vec3_t spot, vec3_t from, vec3_t fromAngles, float threshHold );
@@ -92,8 +89,6 @@ qboolean ButterFingers(gentity_t *saberent, gentity_t *saberOwner, gentity_t *ot
 //This is multipled by the bot's skill level (which can be 1-5)
 #define BOT_PARRYRATE			50
 
-//scaler multipler for mishaps while running.
-#define SABBEH_RUN_MODIFIER		2
 //[/SaberDefines]
 //[/SaberSys]
 
@@ -1518,13 +1513,6 @@ static GAME_INLINE qboolean WP_SabersCheckLock2( gentity_t *attacker, gentity_t 
 
 	//racc - FYI, the PM_lightsaber code sets .saberMoves to LS_NONE the next time it's run on these players.
 
-	//[SaberLockSys]
-	//remove the attack fake flag from both players since the saberlock code operates outside the standard saber animation control.
-	//Without this, we were having trouble with cascading saberlocks when the saberlocks are cause directly by attack fakes.
-	attacker->client->ps.userInt3 &= ~( 1 << FLAG_ATTACKFAKE );
-	defender->client->ps.userInt3 &= ~( 1 << FLAG_ATTACKFAKE );
-	//[/SaberLockSys]
-
 	VectorSubtract( defender->r.currentOrigin, attacker->r.currentOrigin, defDir );
 	VectorCopy( attacker->client->ps.viewangles, attAngles );
 	attAngles[YAW] = vectoyaw( defDir );
@@ -2534,10 +2522,7 @@ static GAME_INLINE int G_GetAttackDamage(gentity_t *self, int minDmg, int maxDmg
 	float animSpeedFactor = 1.0f;
 
 	//Be sure to scale by the proper anim speed just as if we were going to play the animation
-	//[FatigueSys]
-	BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, self->client->ps.torsoAnim, &animSpeedFactor, self->client->ps.brokenLimbs, self->client->ps.userInt3);
-	//BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, self->client->ps.torsoAnim, &animSpeedFactor, self->client->ps.brokenLimbs);
-	//[/FatigueSys]
+	BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, self->client->ps.torsoAnim, &animSpeedFactor, self->client->ps.brokenLimbs);
 	speedDif = attackAnimLength - (attackAnimLength * animSpeedFactor);
 	attackAnimLength += speedDif;
 	peakPoint = attackAnimLength;
@@ -2586,10 +2571,7 @@ static GAME_INLINE float G_GetAnimPoint(gentity_t *self)
 	float animPercentage = 0;
 
 	//Be sure to scale by the proper anim speed just as if we were going to play the animation
-	//[FatigueSys]
-	BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, self->client->ps.torsoAnim, &animSpeedFactor, self->client->ps.brokenLimbs, self->client->ps.userInt3);
-	//BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, self->client->ps.torsoAnim, &animSpeedFactor, self->client->ps.brokenLimbs);
-	//[/FatigueSys]
+	BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, self->client->ps.torsoAnim, &animSpeedFactor, self->client->ps.brokenLimbs);
 	speedDif = attackAnimLength - (attackAnimLength * animSpeedFactor);
 	attackAnimLength += speedDif;
 
@@ -3391,37 +3373,8 @@ int OJP_SaberBlockCost(gentity_t *defender, gentity_t *attacker, vec3_t hitLoc)
 	}
 	else
 	{//"normal" swing moves
-		if(attacker->client->ps.userInt3 & (1 << FLAG_ATTACKFAKE)) 
-		{//attacker is in an attack fake
-			if(attacker->client->ps.fd.saberAnimLevel == SS_STRONG
-				&& !G_BlockIsParry(defender, attacker, hitLoc))
-			{//Red does additional DP damage with attack fakes if they aren't parried.
-				saberBlockCost = (BasicSaberBlockCost(attacker->client->ps.fd.saberAnimLevel) * 1.35);
-			}
-			else
-			{
-				saberBlockCost = (BasicSaberBlockCost(attacker->client->ps.fd.saberAnimLevel) * 1.25);
-			}
-		}
-		else
 		{//normal saber block
 			saberBlockCost = BasicSaberBlockCost(attacker->client->ps.fd.saberAnimLevel);
-		}
-
-		//add running damage bonus to normal swings but don't apply if the defender is slowbouncing
-		if(!WalkCheck(attacker) 
-			&& !(defender->client->ps.userInt3 & ( 1 << FLAG_SLOWBOUNCE ))
-			&& !(defender->client->ps.userInt3 & ( 1 << FLAG_OLDSLOWBOUNCE ))) 
-		{
-
-			if(attacker->client->saber[0].numBlades == 1 && attacker->client->ps.fd.saberAnimLevel == SS_DUAL)//Ataru's other perk more powerful running hits
-			{
-				saberBlockCost *= 3.0;
-			}
-			else
-			{
-				saberBlockCost *= 1.5;
-			}
 		}
 	}
 	    
@@ -3925,14 +3878,6 @@ int OJP_SaberCanBlock(gentity_t *self, gentity_t *atk, qboolean checkBBoxBlock, 
 	{//player is attacking with saber
 		if( !BG_SaberInNonIdleDamageMove(&atk->client->ps, atk->localAnimIndex) )
 		{//saber attacker isn't in a real damaging move
-			return 0;
-		}
-
-		if((atk->client->ps.saberMove == LS_A_LUNGE 
-			|| atk->client->ps.saberMove == LS_SPINATTACK
-			|| atk->client->ps.saberMove == LS_SPINATTACK_DUAL)
-			&& self->client->ps.userInt3 & (1 << FLAG_FATIGUED) ) 
-		{//saber attacker, we can't block lunge attacks while fatigued. 
 			return 0;
 		}
 
@@ -5490,114 +5435,6 @@ qboolean BG_SuperBreakWinAnim( int anim );
 */
 //[/SaberSys]
 
-//[SaberSys]
-static GAME_INLINE void G_SetViewLockDebounce( gentity_t *self )
-{
-	if(!WalkCheck(self))
-	{//running pauses you longer
-		self->client->viewLockTime = level.time + 500;
-	}
-	else if( PM_SaberInParry(G_GetParryForBlock(self->client->ps.saberBlocked))) //normal block (not a parry)
-	{//normal block or attacked with less than %50 DP
-		self->client->viewLockTime = level.time + 300;
-	}
-	else
-	{
-        self->client->viewLockTime = level.time;
-	}
-}
-
-
-static GAME_INLINE void G_SetViewLock( gentity_t *self, vec3_t impactPos, vec3_t impactNormal )
-{//Sets the view/movement lock flags based on the given information
-	vec3_t	cross;
-	vec3_t	length;
-	vec3_t  forward;
-	vec3_t  right;
-	vec3_t  up;
-
-	if( !self || !self->client )
-	{
-		return;
-	}
-
-	//Since this is the only function that sets/unsets these flags.  We need to clear them
-	//all before messing with them.  Otherwise we end up with all the flags piling up until
-	//they are cleared.
-	self->client->ps.userInt1 = 0;
-
-	if( VectorCompare( impactNormal, vec3_origin ) 
-		|| self->client->ps.saberInFlight )
-	{//bad impact surface normal or our saber is in flgiht
-		return;
-	}
-
-	//find the impact point in terms of the player origin
-	VectorSubtract( impactPos, self->client->ps.origin, length );
-
-	//Check for very low hits.  If it's very close to the lower bbox edge just skip view/move locking.  
-	//This is to prevent issues with many of the saber moves touching the ground naturally.
-	if ( length[2] < (.8 * self->r.mins[2]))
-	{
-		return;
-	}
-
-	CrossProduct( length, impactNormal, cross );
-
-	if( cross[0] > 0 )
-	{
-		self->client->ps.userInt1 |= LOCK_UP;
-	}
-	else if ( cross[0] < 0 )
-	{
-		self->client->ps.userInt1 |= LOCK_DOWN;
-	}
-
-	if( cross[2] > 0 )
-	{
-		self->client->ps.userInt1 |= LOCK_RIGHT;
-	}
-	else if ( cross[2] < 0 )
-	{
-		self->client->ps.userInt1 |= LOCK_LEFT;
-	}
-
-
-	//Movement lock
-
-	//Forward
-	AngleVectors(self->client->ps.viewangles, forward, right, up);
-	if ( DotProduct(length, forward) < 0 )
-	{//lock backwards
-		self->client->ps.userInt1 |= LOCK_MOVEBACK;
-	}
-	else if ( DotProduct(length, forward) > 0 )
-	{//lock forwards
-		self->client->ps.userInt1 |= LOCK_MOVEFORWARD;
-	}
-
-	if ( DotProduct(length, right) < 0 )
-	{
-		self->client->ps.userInt1 |= LOCK_MOVELEFT;
-	}
-	else if ( DotProduct(length, right) > 0 )
-	{
-		self->client->ps.userInt1 |= LOCK_MOVERIGHT;
-	}
-
-	if ( DotProduct(length, up) > 0 )
-	{
-		self->client->ps.userInt1 |= LOCK_MOVEDOWN;
-	}
-	else if ( DotProduct(length, up) < 0 )
-	{
-		self->client->ps.userInt1 |= LOCK_MOVEUP;
-	}
-}
-
- 		
-//[SaberSys]
-
 
 static GAME_INLINE void AnimateKnockaway( gentity_t *self, gentity_t * inflictor, vec3_t impact )
 {//do an knockaway.
@@ -5667,12 +5504,6 @@ void AnimateKnockdown( gentity_t * self, gentity_t * inflictor )
 		{
 			VectorSubtract(self->client->ps.origin, inflictor->r.currentOrigin, pushDir);
 		}
-		else
-		{//this is possible in debug situations or where there's mishaps without another player (IE rarely)
-			AngleVectors(self->client->ps.viewangles, pushDir, NULL, NULL);
-			//reverse it
-			VectorScale(pushDir, -1, pushDir);
-		}
 		pushDir[2] = 0;
 		VectorNormalize(pushDir);
 		G_Throw(self, pushDir, throwStr);
@@ -5738,9 +5569,6 @@ qboolean GAME_INLINE WalkCheck( gentity_t * self )
 
 //[SaberSys]
 //racc - OJP Enhanced completely rewritten CheckSaberDamage function.  This is the heart of the saber system beast.
-void SabBeh_SetupSaberMechanics( gentity_t *self, sabmech_t *mechSelf, 
-								gentity_t *otherOwner, sabmech_t *mechOther, vec3_t hitLoc, 
-								qboolean *didHit, qboolean otherHitSaberBlade );
 extern qboolean BG_SaberInTransitionDamageMove( playerState_t *ps );
 extern qboolean BG_SaberInFullDamageMove( playerState_t *ps, int AnimIndex );
 extern qboolean BG_InSlowBounce(playerState_t *ps);
@@ -6072,9 +5900,6 @@ static GAME_INLINE qboolean CheckSaberDamage(gentity_t *self, int rSaberNum, int
 		}
 	}
 
-	//update/roll mishaps.
-	SabBeh_RunSaberBehavior(self, &mechSelf, otherOwner, &mechOther, tr.endpos, &didHit, hitSaberBlade);
-
 	if(didHit && (!OnSameTeam(self, &g_entities[tr.entityNum]) || g_friendlySaber.integer))
 	{//deal damage
 		//damage the thing we hit
@@ -6149,14 +5974,6 @@ static GAME_INLINE qboolean CheckSaberDamage(gentity_t *self, int rSaberNum, int
 	else if (mechSelf.doStun)
 	{
 		AnimateStun(self, otherOwner, tr.endpos);
-	}
-	else if(mechSelf.doSlowBounce)
-	{
-		SabBeh_AnimateSlowBounce(self, otherOwner);
-	}
-	else if(mechSelf.doHeavySlowBounce)
-	{
-		SabBeh_AnimateHeavySlowBounce(self, otherOwner);
 	}
 	else if (mechOther.doStun)
 	{//we stunned them, do the knockaway animation
@@ -6262,14 +6079,6 @@ static GAME_INLINE qboolean CheckSaberDamage(gentity_t *self, int rSaberNum, int
 		{
 			AnimateStun(otherOwner, self, tr.endpos);
 		}
-		else if(mechOther.doSlowBounce)
-		{
-			SabBeh_AnimateSlowBounce(otherOwner, self);
-		}
-		else if(mechOther.doHeavySlowBounce)
-		{
-			SabBeh_AnimateHeavySlowBounce(otherOwner, self);
-		}
 		else if (mechSelf.doStun)
 		{//we stunned them, do the knockaway animation
 			AnimateKnockaway(otherOwner, self, tr.endpos);
@@ -6282,8 +6091,7 @@ static GAME_INLINE qboolean CheckSaberDamage(gentity_t *self, int rSaberNum, int
 		{//Didn't go into a special animation, so do a saber lock/bounce/deflection/etc that's approprate
 			if(BG_SaberInNonIdleDamageMove(&otherOwner->client->ps, otherOwner->localAnimIndex)  //otherOwner was doing a damaging move
 				&& otherOwner->client->ps.saberLockTime < level.time //otherOwner isn't in a saberlock (this can change mid-impact)
-				&& (self->client->ps.saberBlocked != BLOCKED_NONE //self reacted to this impact.
-						|| !idleDamage) )  //or self was in an attack move (and probably mishaped from this impact)  
+				&& (self->client->ps.saberBlocked != BLOCKED_NONE ) ) //self reacted to this impact.
 			{
 				//G_Printf("%i: %i: Saber Bounced %s\n", level.time, otherOwner->s.number, 
 				//	GetStringForID( animTable, otherOwner->client->ps.torsoAnim ));
@@ -8994,9 +8802,6 @@ static void G_TossTheMofo(gentity_t *ent, vec3_t tossDir, float tossStr)
 //[KnockdownSys]
 extern void G_ThrownDeathAnimForDeathAnim( gentity_t *hitEnt, vec3_t impactPoint );
 //[/KnockdownSys]
-//[SaberSys]
-extern void BG_ReduceMishapLevel(playerState_t *ps);
-//[/SaberSys]
 static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, vec3_t kickEnd, int kickDamage, float kickPush )
 {
 	vec3_t	traceOrg, traceEnd, kickMins, kickMaxs;
@@ -9108,13 +8913,6 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 					hitEnt->client->otherKillerVehWeapon = 0;
 					hitEnt->client->otherKillerWeaponType = WP_NONE;
 					//[Asteroids]
-
-					//[FatigueSys]
-					if(PM_SaberInBrokenParry(hitEnt->client->ps.saberMove))
-					{//kicks do fatigue damage if they were stunned.
-						BG_ForcePowerDrain(&hitEnt->client->ps, FP_GRIP, FATIGUE_KICKHIT);
-					}
-					//[/FatigueSys]
 				}
 
 				if (d_saberKickTweak.integer)
@@ -9147,49 +8945,6 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 					//reenabled SP code since the knockdown code now based on the SP code again.
 					G_Throw( hitEnt, kickDir, kickPush*10 );
 
-					//[SaberSys]
-					//made the knockdown behavior of kicks be based on the player's mishap level or low DP and not hold alt attack.
-					if ((hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY)
-						&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
-					{//knockdown
-						if(hitEnt->client->ps.fd.saberAnimLevel == SS_STAFF)
-						{
-							SabBeh_AnimateSlowBounce(hitEnt,ent);
-						}
-						else
-						{
-							if ( kickPush >= 75.0f && !Q_irand( 0, 2 ) )
-							{
-								G_Knockdown( hitEnt, ent, kickDir, 300, qtrue );
-							}
-							else
-							{
-								G_Knockdown( hitEnt, ent, kickDir, kickPush, qtrue );
-							}
-						}
-					}
-					else if (ent->client->ps.fd.saberAnimLevel == SS_DESANN
-						&& (hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT)
-						&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
-					{//knockdown
-						if ( kickPush >= 75.0f && !Q_irand( 0, 2 ) )
-							{
-								G_Knockdown( hitEnt, ent, kickDir, 300, qtrue );
-							}
-						else
-							{
-								G_Knockdown( hitEnt, ent, kickDir, kickPush, qtrue );
-							}
-						}
-					else
-					{//stumble
-						AnimateStun(hitEnt, ent, trace.endpos);   
-					}
-
-					BG_ReduceMishapLevel(&hitEnt->client->ps);
-					//[/SaberSys]
-
-					/* original basejka code
 					if ( kickPush >= 75.0f && !Q_irand( 0, 2 ) )
 					{
 						G_TossTheMofo(hitEnt, kickDir, 300.0f);
@@ -9198,8 +8953,6 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 					{
 						G_TossTheMofo(hitEnt, kickDir, kickPush);
 					}
-					*/
-					//[/KnockdownSys]
 				}
 			}
 		}

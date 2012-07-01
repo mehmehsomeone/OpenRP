@@ -433,10 +433,6 @@ typedef struct bot_state_s
 	int					forceMove_Up;
 	//end rww
 
-	//[SaberSys]
-	qboolean			doSaberThrow;
-	//[/SaberSys]
-
 	//[TABBot]
 	//bot's wp route path
 	bot_route_t			botRoute;
