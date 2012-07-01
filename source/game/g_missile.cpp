@@ -1131,7 +1131,7 @@ void OJP_HandleBoltBlock(gentity_t *bolt, gentity_t *player, trace_t *trace)
 		}
 		else
 		{
-			vec3_t	bounce_dir, angs;
+			vec3_t	bounce_dir;
 			float	speed;
 			int i=0;
 			//gentity_t	*owner = ent;

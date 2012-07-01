@@ -402,7 +402,7 @@ saberMoveName_t PM_AttackMoveForQuad( int quad )
 }
 
 //[SaberSys]
-//qboolean PM_SaberKataDone(int curmove, int newmove);
+qboolean PM_SaberKataDone(int curmove, int newmove);
 
 int PM_ReturnforQuad( int quad );
 //[/SaberSys]
@@ -498,11 +498,6 @@ int PM_SaberAnimTransitionAnim( int curmove, int newmove )
 		case LS_A_T2B:
 			if ( newmove == curmove )
 			{
-				//[SaberSys]
-				//racc - removing the chaining requirements on the saber system.
-				retmove = transitionMove[saberMoveData[curmove].endQuad][saberMoveData[newmove].startQuad];
-
-				/* racc - basejka code.
 				//going into an attack
 				if ( PM_SaberKataDone( curmove, newmove ) )
 				{//done with this kata, must return to ready before attack again
@@ -512,8 +507,6 @@ int PM_SaberAnimTransitionAnim( int curmove, int newmove )
 				{//okay to chain to another attack
 					retmove = transitionMove[saberMoveData[curmove].endQuad][saberMoveData[newmove].startQuad];
 				}
-				*/
-				//[/SaberSys]
 			}
 			else if ( saberMoveData[curmove].endQuad == saberMoveData[newmove].startQuad )
 			{//new move starts from same quadrant
@@ -827,9 +820,6 @@ int saberMoveTransitionAngle[Q_NUM_QUADS][Q_NUM_QUADS] =
 	0//Q_B,Q_B,
 };
 
-//[SaberSys]
-//racc - removing the attack chain (kata) stuff.  The OJP saber code now handles it.
-/*
 int PM_SaberAttackChainAngle( int move1, int move2 )
 {
 	if ( move1 == -1 || move2 == -1 )
@@ -932,8 +922,6 @@ qboolean PM_SaberKataDone(int curmove, int newmove)
 	}
 	return qfalse;
 }
-*/
-//[/SaberSys]
 
 void PM_SetAnimFrame( playerState_t *gent, int frame, qboolean torso, qboolean legs )
 {
@@ -3972,14 +3960,6 @@ void PM_WeaponLightsaber(void)
 				else
 				{
 					int bounceMove;
-
-					//[SaberSys]
-					//removed the bounce check since it was redundent
-					if ( (pm->ps->userInt3 & (1 << FLAG_SLOWBOUNCE) 
-						&& !(pm->ps->userInt3 & (1 << FLAG_OLDSLOWBOUNCE)))  //starting a new style slow bounce, always use a return
-						|| (!BG_SaberInAttack( pm->ps->saberMove ) && !PM_SaberInStart( pm->ps->saberMove )) )
-					//if ( PM_SaberInBounce( pm->ps->saberMove ) || !BG_SaberInAttack( pm->ps->saberMove ) )
-					//[/SaberSys]
 					{
 						//[SaberSys]
 						/* This stuff can cause instant attacks/multi hits.
@@ -4019,10 +3999,6 @@ void PM_WeaponLightsaber(void)
 							pm->ps->torsoTimer = 0;
 							//[/SaberSys]
 						}
-					}
-					else
-					{//start the bounce
-						bounceMove = PM_SaberBounceForAttack( (saberMoveName_t)pm->ps->saberMove );
 					}
 
 //[SaberLockSys]
@@ -4495,8 +4471,6 @@ weapChecks:
 #endif
 				{//perform attack fake
 					newmove = PM_ReturnforQuad(saberMoveData[curmove].endQuad);
-					//attack fakes now cost FP
-					BG_AddFatigue(pm->ps, 1);
 				}
 				//newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
 			}
@@ -4544,7 +4518,6 @@ weapChecks:
 			//Check for finishing an anim if necc.
 			if ( curmove >= LS_S_TL2BR && curmove <= LS_S_T2B )
 			{//allow the player to fake into another transition
-				newmove = PM_DoFake(curmove);
 				if(newmove == LS_NONE)
 				{//no movement, just do the attack
 					newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
@@ -4555,7 +4528,6 @@ weapChecks:
 			}
 			else if ( PM_SaberInTransition( curmove ) )
 			{//in a transition, must play sequential attack
-				newmove = PM_DoFake(curmove);
 				if(newmove == LS_NONE)
 				{//no movement, just let the normal attack code handle it
 					newmove = saberMoveData[curmove].chain_attack;
@@ -4701,32 +4673,6 @@ weapChecks:
 					*/
 					//[/SaberLockSys]
 
-					//[SaberSys]
-					if ( (PM_SaberInBounce( curmove ) || PM_SaberInParry( curmove ))
-						&& newmove >= LS_A_TL2BR && newmove <= LS_A_T2B )
-					{//prevent similar attack directions to prevent lightning-like bounce attacks.
-						if(saberMoveData[newmove].startQuad == saberMoveData[curmove].endQuad)
-						{//can't attack in the same direction
-							newmove = LS_READY;
-						}
-						/* old method blocks adjacent attack quads as well.  I don't think we need this anymore.
-						if(saberMoveData[newmove].startQuad >= saberMoveData[curmove].endQuad
-							&& saberMoveData[newmove].startQuad < saberMoveData[curmove].endQuad + 2)
-						{
-							newmove = LS_READY;
-						}
-						else if(saberMoveData[newmove].startQuad <= saberMoveData[curmove].endQuad
-							&& saberMoveData[newmove].startQuad > saberMoveData[curmove].endQuad - 2)
-						{
-							newmove = LS_READY;
-						}
-						*/
-					}
-
-					//starting a new attack, as such, remove the attack fake flag.
-					pm->ps->userInt3 &= ~( 1 << FLAG_ATTACKFAKE );
-
-					/* basejka code
 					if ( (PM_SaberInBounce( curmove )||PM_SaberInBrokenParry( curmove ))
 						&& saberMoveData[newmove].startQuad == saberMoveData[curmove].endQuad )
 					{//this attack would be a repeat of the last (which was blocked), so don't actually use it, use the default chain attack for this bounce
@@ -4737,8 +4683,6 @@ weapChecks:
 					{//cannot chain this time
 						newmove = saberMoveData[curmove].chain_idle;
 					}
-					*/
-					//[/SaberSys]
 				}
 				/*
 				if ( newmove == LS_NONE )

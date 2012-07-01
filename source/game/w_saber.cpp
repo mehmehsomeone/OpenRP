@@ -11,6 +11,28 @@ extern void G_TestLine(vec3_t start, vec3_t end, int color, int time);
 //[SaberSys]
 extern float VectorDistance(vec3_t v1, vec3_t v2);
 qboolean G_FindClosestPointOnLineSegment( const vec3_t start, const vec3_t end, const vec3_t from, vec3_t result );
+struct sabmech_s {
+	//Do Knockaway animation
+	qboolean doStun;
+
+	//Do knockdown animation
+	qboolean doKnockdown;
+
+	//Do butterFingers (disarment)
+	qboolean doButterFingers;
+
+	//did a parry (do knockaway animation)
+	qboolean doParry;
+
+	qboolean doSlowBounce;
+
+	qboolean doHeavySlowBounce;
+
+#ifdef _DEBUG
+	int behaveMode;
+#endif
+};
+typedef struct sabmech_s sabmech_t;
 //[/SaberSys]
 
 //[Melee]
@@ -5415,6 +5437,110 @@ void WP_SaberBounceSound( gentity_t *ent, int saberNum, int bladeNum )
 }
 
 
+static GAME_INLINE void G_SetViewLockDebounce( gentity_t *self )
+{
+	if(!WalkCheck(self))
+	{//running pauses you longer
+		self->client->viewLockTime = level.time + 500;
+	}
+	else if( PM_SaberInParry(G_GetParryForBlock(self->client->ps.saberBlocked))) //normal block (not a parry)
+	{//normal block or attacked with less than %50 DP
+		self->client->viewLockTime = level.time + 300;
+	}
+	else
+	{
+        self->client->viewLockTime = level.time;
+	}
+}
+
+
+static GAME_INLINE void G_SetViewLock( gentity_t *self, vec3_t impactPos, vec3_t impactNormal )
+{//Sets the view/movement lock flags based on the given information
+	vec3_t	cross;
+	vec3_t	length;
+	vec3_t  forward;
+	vec3_t  right;
+	vec3_t  up;
+
+	if( !self || !self->client )
+	{
+		return;
+	}
+
+	//Since this is the only function that sets/unsets these flags.  We need to clear them
+	//all before messing with them.  Otherwise we end up with all the flags piling up until
+	//they are cleared.
+	self->client->ps.userInt1 = 0;
+
+	if( VectorCompare( impactNormal, vec3_origin ) 
+		|| self->client->ps.saberInFlight )
+	{//bad impact surface normal or our saber is in flgiht
+		return;
+	}
+
+	//find the impact point in terms of the player origin
+	VectorSubtract( impactPos, self->client->ps.origin, length );
+
+	//Check for very low hits.  If it's very close to the lower bbox edge just skip view/move locking.  
+	//This is to prevent issues with many of the saber moves touching the ground naturally.
+	if ( length[2] < (.8 * self->r.mins[2]))
+	{
+		return;
+	}
+
+	CrossProduct( length, impactNormal, cross );
+
+	if( cross[0] > 0 )
+	{
+		self->client->ps.userInt1 |= LOCK_UP;
+	}
+	else if ( cross[0] < 0 )
+	{
+		self->client->ps.userInt1 |= LOCK_DOWN;
+	}
+
+	if( cross[2] > 0 )
+	{
+		self->client->ps.userInt1 |= LOCK_RIGHT;
+	}
+	else if ( cross[2] < 0 )
+	{
+		self->client->ps.userInt1 |= LOCK_LEFT;
+	}
+
+
+	//Movement lock
+
+	//Forward
+	AngleVectors(self->client->ps.viewangles, forward, right, up);
+	if ( DotProduct(length, forward) < 0 )
+	{//lock backwards
+		self->client->ps.userInt1 |= LOCK_MOVEBACK;
+	}
+	else if ( DotProduct(length, forward) > 0 )
+	{//lock forwards
+		self->client->ps.userInt1 |= LOCK_MOVEFORWARD;
+	}
+
+	if ( DotProduct(length, right) < 0 )
+	{
+		self->client->ps.userInt1 |= LOCK_MOVELEFT;
+	}
+	else if ( DotProduct(length, right) > 0 )
+	{
+		self->client->ps.userInt1 |= LOCK_MOVERIGHT;
+	}
+
+	if ( DotProduct(length, up) > 0 )
+	{
+		self->client->ps.userInt1 |= LOCK_MOVEDOWN;
+	}
+	else if ( DotProduct(length, up) < 0 )
+	{
+		self->client->ps.userInt1 |= LOCK_MOVEUP;
+	}
+}
+
 
 //[SaberSys]
 //Not used anymore.
@@ -8768,8 +8894,35 @@ void UpdateClientRenderinfo(gentity_t *self, vec3_t renderOrigin, vec3_t renderA
 #define STAFF_KICK_RANGE 13
 extern void G_GetBoltPosition( gentity_t *self, int boltIndex, vec3_t pos, int modelIndex ); //NPC_utils.c
 
-//[KnockdownSys]
-/* racc - replaced with SP style knockdowns.
+extern qboolean BG_InKnockDown( int anim );
+static qboolean G_KickDownable(gentity_t *ent)
+{
+	if (!d_saberKickTweak.integer)
+	{
+		return qtrue;
+	}
+
+	if (!ent || !ent->inuse || !ent->client)
+	{
+		return qfalse;
+	}
+
+	if (BG_InKnockDown(ent->client->ps.legsAnim) ||
+		BG_InKnockDown(ent->client->ps.torsoAnim))
+	{
+		return qfalse;
+	}
+
+	if (ent->client->ps.weaponTime <= 0 &&
+		ent->client->ps.weapon == WP_SABER &&
+		ent->client->ps.groundEntityNum != ENTITYNUM_NONE)
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
 static void G_TossTheMofo(gentity_t *ent, vec3_t tossDir, float tossStr)
 {
 	if (!ent->inuse || !ent->client)
@@ -8794,8 +8947,6 @@ static void G_TossTheMofo(gentity_t *ent, vec3_t tossDir, float tossStr)
 		//ent->client->ps.quickerGetup = qtrue;
 	}
 }
-*/
-//[/KnockdownSys]
 
 
 

@@ -1,4 +1,5 @@
 #include "bg_saga.h"
+#include "q_shared.h"
 
 //[ExpSys]
 //moved to bg_public.h since we want to use it in a variety of locations now.
@@ -432,6 +433,8 @@ typedef struct bot_state_s
 	int					forceMove_Right;
 	int					forceMove_Up;
 	//end rww
+
+	qboolean			doSaberThrow;
 
 	//[TABBot]
 	//bot's wp route path
