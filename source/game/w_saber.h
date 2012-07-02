@@ -10,7 +10,7 @@
 #define	SEF_EVENTS		(SEF_HITENEMY|SEF_HITOBJECT|SEF_HITWALL|SEF_PARRIED|SEF_DEFLECTED|SEF_BLOCKED)
 #define	SEF_LOCKED		0x40	//Sabers locked with someone else
 #define	SEF_INWATER		0x80	//Saber is in water
-#define	SEF_LOCK_WON	0x100	//Won a saberLock //racc - only used by NPCs to determine post lock behavior.
+#define	SEF_LOCK_WON	0x100	//Won a saberLock
 //saberEntityState
 #define SES_LEAVING		1
 #define SES_HOVERING	1//2
@@ -28,25 +28,18 @@
 #define MAX_GRIP_DISTANCE 256
 #define MAX_TRICK_DISTANCE 512
 #define FORCE_JUMP_CHARGE_TIME 6400//3000.0f
-#define GRIP_DRAIN_AMOUNT 10
-#define LIGHTNING_DRAIN_AMOUNT 1
-#define FORCE_LIGHTNING_RADIUS 200
+#define GRIP_DRAIN_AMOUNT 30
+#define FORCE_LIGHTNING_RADIUS 300
 #define MAX_DRAIN_DISTANCE 512
 
-//[Linux]
-#ifndef __linux__
-typedef enum
-#else
-enum
-#endif
-//[/Linux]
+typedef enum forceJump_e
 {
 	FJ_FORWARD,
 	FJ_BACKWARD,
 	FJ_RIGHT,
 	FJ_LEFT,
 	FJ_UP
-};
+} forceJump_t;
 
 typedef enum
 {
@@ -73,11 +66,7 @@ extern vmCvar_t g_MaxHolocronCarry;
 #define SABERMAXS_Z 3.0f//8.0f
 #define	SABER_MIN_THROW_DIST	80.0f
 
-#include "../namespace_begin.h"
 extern int forcePowerNeeded[NUM_FORCE_POWER_LEVELS][NUM_FORCE_POWERS];
 extern float forceJumpHeight[NUM_FORCE_POWER_LEVELS];
 extern float forceJumpStrength[NUM_FORCE_POWER_LEVELS];
 extern float forcePushPullRadius[NUM_FORCE_POWER_LEVELS];
-#include "../namespace_end.h"
-
-static int runningForTime;

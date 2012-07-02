@@ -347,12 +347,6 @@ extern vmCvar_t		ojp_clientMOTD;
 extern vmCvar_t		ojp_MOTD;
 //[/ExpandedMOTD]
 
-
-
-//[FFARespawnTimer]
-extern vmCvar_t		ojp_ffaRespawnTimer;
-//[/FFARespawnTimer]
-
 extern vmCvar_t		ojp_truebalance;//[TrueBalance]
 
 extern vmCvar_t ojp_modelscaleEnabled;//[Modelscale]

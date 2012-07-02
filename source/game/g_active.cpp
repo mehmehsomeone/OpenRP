@@ -4165,10 +4165,6 @@ void ClientThink_real( gentity_t *ent ) {
 			{ //wave respawning on
 				forceRes = 1;
 			}
-			else if((g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM ||
-				g_gametype.integer == GT_CTF) &&
-				ojp_ffaRespawnTimer.integer)
-				forceRes = 1;
 
 			if ( forceRes > 0 && 
 				( level.time - client->respawnTime ) > forceRes * 1000 ) {

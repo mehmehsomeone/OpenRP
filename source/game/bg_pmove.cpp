@@ -6466,9 +6466,6 @@ extern qboolean BG_CrouchAnim( int anim );
 PM_Footsteps
 ===============
 */
-//[SaberSys]
-extern qboolean PM_SaberInBrokenParry( int move );
-//[/SaberSys]
 static void PM_Footsteps( void ) {
 	float		bobmove;
 	int			old;
@@ -6482,13 +6479,7 @@ static void PM_Footsteps( void ) {
 	}
 	//[/Knockdown]
 
-	//[SaberSys]
-	//racc - Broken parries should play full body.
-	if ( (PM_InSaberAnim( (pm->ps->legsAnim) ) 
-		&& !BG_SpinningSaberAnim(pm->ps->legsAnim) 
-		&& !PM_SaberInBrokenParry(pm->ps->saberMove) ) 
-	//if ( (PM_InSaberAnim( (pm->ps->legsAnim) ) && !BG_SpinningSaberAnim( (pm->ps->legsAnim) )) 
-	//[/SaberSys]
+	if ( (PM_InSaberAnim( (pm->ps->legsAnim) ) && !BG_SpinningSaberAnim( (pm->ps->legsAnim) )) 
 		|| (pm->ps->legsAnim) == BOTH_STAND1 
 		|| (pm->ps->legsAnim) == BOTH_STAND1TO2 
 		|| (pm->ps->legsAnim) == BOTH_STAND2TO1 
@@ -8248,8 +8239,6 @@ backAgain:
 	}
 }
 
-
-//[SaberSys]
 void PM_DoPunch(void)
 {
 	int desTAnim = BOTH_MELEE1;
@@ -8265,7 +8254,6 @@ void PM_DoPunch(void)
 		pm->ps->weaponTime = pm->ps->torsoTimer;
 	}
 }
-//[/SaberSys]
 
 qboolean CanShootRocket()
 {
@@ -9358,14 +9346,12 @@ static void PM_Weapon( void )
 			}
 			else if (pm->cmd.buttons & BUTTON_ALT_ATTACK)
 			{
-				if(!PM_DoKick())
-				{//if got here then no move to do so put torso into leg idle or whatever
 					if (pm->ps->torsoAnim != pm->ps->legsAnim)
 					{
 						PM_SetAnim(SETANIM_BOTH, pm->ps->legsAnim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
 					}
 					pm->ps->weaponTime = 0;
-				}
+
 				return;
 			}
 			else
@@ -12492,15 +12478,6 @@ void PmoveSingle (pmove_t *pmove) {
 		pm->ps->saberMove == LS_A_FLIP_SLASH || pm->ps->saberMove == LS_A_JUMP_T__B_ ||
 		pm->ps->saberMove == LS_DUAL_LR || pm->ps->saberMove == LS_DUAL_FB)
 	{
-		//[SaberSys]
-		//tweaked this so that the flip stab move doesn't overrotate during the move and end up facing right after the move.
-		if( (pm->ps->legsAnim == BOTH_JUMPFLIPSTABDOWN &&  pm->ps->legsTimer < 1600 && pm->ps->legsTimer > 1150) 
-			|| (pm->ps->legsAnim == BOTH_JUMPFLIPSLASHDOWN1 &&  pm->ps->legsTimer < 1600 && pm->ps->legsTimer > 900) )
-		{ //flipover medium stance attack
-			pm->ps->viewangles[YAW] += pml.frametime*240.0f;
-			PM_SetPMViewAngle(pm->ps, pm->ps->viewangles, &pm->cmd);
-		}
-		/* basejka code
 		if (pm->ps->legsAnim == BOTH_JUMPFLIPSTABDOWN ||
 			pm->ps->legsAnim == BOTH_JUMPFLIPSLASHDOWN1)
 		{ //flipover medium stance attack
@@ -12510,8 +12487,6 @@ void PmoveSingle (pmove_t *pmove) {
 				PM_SetPMViewAngle(pm->ps, pm->ps->viewangles, &pm->cmd);
 			}
 		}
-		*/
-		//[/SaberSys]
 		stiffenedUp = qtrue;
 	}
 	else if ((pm->ps->legsAnim) == (BOTH_A2_STABBACK1) ||

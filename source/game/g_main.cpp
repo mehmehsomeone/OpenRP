@@ -658,10 +658,6 @@ vmCvar_t	g_allowBotLimit;
 vmCvar_t	mapURL;
 //[/MapURLs]
 
-//[FFARespawnTimer]
-vmCvar_t		ojp_ffaRespawnTimer;
-//[/FFARespawnTimer]
-
 vmCvar_t		ojp_truebalance;//[TrueBalance]
 
 vmCvar_t	ojp_modelscaleEnabled;//[ModelScale]
@@ -1094,10 +1090,6 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &ojp_MOTD, "ojp_MOTD", "Please download the latest version of Legacy mod at legacyrp.com", CVAR_ARCHIVE, 0, qfalse },
 	//[/ExpandedMOTD]	
 
-	
-	//[FFARespawnTimer]
-	{ &ojp_ffaRespawnTimer, "ojp_ffaRespawnTimer","1",CVAR_ARCHIVE,0,qtrue},
-	//[/FFARespawnTimer]
 	{ &ojp_truebalance, "ojp_trueBalance","1",CVAR_ARCHIVE|CVAR_LATCH,0,qtrue},  //[TrueBalance]
 
 	{ &ojp_modelscaleEnabled, "ojp_modelscaleenabled","1", CVAR_ARCHIVE ,0,qtrue},//[ModelScale]
@@ -3952,7 +3944,6 @@ extern void Jedi_Decloak( gentity_t *self );
 qboolean G_PointInBounds( vec3_t point, vec3_t mins, vec3_t maxs );
 
 int g_siegeRespawnCheck = 0;
-int ojp_ffaRespawnTimerCheck =0;//[FFARespawnTimer]
 
 //[AREAPORTALFIX]
 void SetMoverState( gentity_t *ent, moverState_t moverState, int time );
@@ -3997,32 +3988,6 @@ void G_RunFrame( int levelTime ) {
 
 		g_siegeRespawnCheck = level.time + g_siegeRespawn.integer * 1000;
 	}
-
-	//[FFARespawnTimer]
-	if ((g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM
-		|| g_gametype.integer == GT_CTF) &&
-		ojp_ffaRespawnTimer.integer &&
-		ojp_ffaRespawnTimerCheck < level.time)
-	{
-		int i = 0;
-		gentity_t *clEnt;
-		while (i < MAX_CLIENTS)
-		{
-			clEnt = &g_entities[i];
-
-			if (clEnt->inuse && clEnt->client &&
-				clEnt->client->tempSpectate > level.time &&
-				clEnt->client->sess.sessionTeam != TEAM_SPECTATOR)
-			{
-				respawn(clEnt);
-				clEnt->client->tempSpectate = 0;
-			}
-			i++;
-		}
-
-		ojp_ffaRespawnTimerCheck = level.time + 30000;
-	}
-	//[/FFARespawnTimer]
 
 	if (gDoSlowMoDuel)
 	{

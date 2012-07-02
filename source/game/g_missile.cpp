@@ -383,8 +383,6 @@ G_MissileImpact
 void WP_SaberBlockNonRandom( gentity_t *self, vec3_t hitloc, qboolean missileBlock );
 //[BoltBlockSys]
 void OJP_HandleBoltBlock(gentity_t *bolt, gentity_t *player, trace_t *trace);
-extern int OJP_SaberCanBlock(gentity_t *self, gentity_t *atk, qboolean checkBBoxBlock, vec3_t point, int rSaberNum, int rBladeNum);
-extern qboolean GAME_INLINE WalkCheck( gentity_t * self );
 //[/BoltBlockSys]
 
 qboolean G_MissileImpact( gentity_t *ent, trace_t *trace )
@@ -545,23 +543,6 @@ qboolean G_MissileImpact( gentity_t *ent, trace_t *trace )
 	}
 	//ROP VEHICLE_IMP END
 	
-	//[BoltBlockSys]
-	if (OJP_SaberCanBlock(other, ent, qfalse, trace->endpos, -1, -1))
-	//[/BoltBlockSys]
-	{ //only block one projectile per 200ms (to prevent giant swarms of projectiles being blocked)
-		//[BoltBlockSys]
-		//racc - missile hit the actual player and it's a type of missile that you can deflect/ref with the saber.
-
-		//racc - play projectile block animation
-		other->client->ps.weaponTime = 0;
-		WP_SaberBlockNonRandom(other, ent->r.currentOrigin, qtrue);
-
-		OJP_HandleBoltBlock(ent, other, trace);
-		
-		return qtrue;
-		
-		//[/BoltBlockSys]
-	}
 	else if ((other->r.contents & CONTENTS_LIGHTSABER) && !isKnockedSaber)
 	{ //hit this person's saber, so..
 		gentity_t *otherOwner = &g_entities[other->r.ownerNum];
@@ -822,11 +803,6 @@ killProj:
 G_RunMissile
 ================
 */
-//[RealTrace]
-extern int G_RealTrace(gentity_t *SaberAttacker, trace_t *tr, vec3_t start, vec3_t mins, 
-										vec3_t maxs, vec3_t end, int passEntityNum, 
-										int contentmask, int rSaberNum, int rBladeNum);
-//[/RealTrace]
 void G_RunMissile( gentity_t *ent ) {
 	vec3_t		origin, groundSpot;
 	trace_t		tr;
@@ -865,10 +841,6 @@ void G_RunMissile( gentity_t *ent ) {
 			passent = ent->r.ownerNum;
 		}
 	}
-	// trace a line from the previous position to the current position
-	//[RealTrace]
-	G_RealTrace( ent, &tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, ent->clipmask, -1, -1 );
-	//[/RealTrace]
 
 	if ( tr.startsolid || tr.allsolid ) {
 		// make sure the tr.entityNum is set to the entity we're stuck in

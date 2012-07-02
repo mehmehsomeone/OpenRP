@@ -52,6 +52,8 @@ void ObjectDie (gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	G_FreeEntity( self );
 }
 
+
+
 qboolean G_HeavyMelee( gentity_t *attacker )
 {
 	if (g_gametype.integer == GT_SIEGE 
@@ -63,6 +65,17 @@ qboolean G_HeavyMelee( gentity_t *attacker )
 		return qtrue;
 	}
 	return qfalse;
+}
+
+void G_Knockdown( gentity_t *victim )
+{
+	if ( victim && victim->client && BG_KnockDownable(&victim->client->ps) )
+	{
+		victim->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
+		victim->client->ps.forceDodgeAnim = 0;
+		victim->client->ps.forceHandExtendTime = level.time + 1100;
+		victim->client->ps.quickerGetup = qfalse;
+	}
 }
 
 int G_GetHitLocation(gentity_t *target, vec3_t ppoint)

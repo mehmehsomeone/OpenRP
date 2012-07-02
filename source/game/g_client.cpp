@@ -10,7 +10,6 @@ static vec3_t	playerMins = {-15, -15, DEFAULT_MINS_2};
 static vec3_t	playerMaxs = {15, 15, DEFAULT_MAXS_2};
 
 extern int g_siegeRespawnCheck;
-extern int ojp_ffaRespawnTimerCheck;//[FFARespawnTimer]
 
 void WP_SaberAddG2Model( gentity_t *saberent, const char *saberModel, qhandle_t saberSkin );
 void WP_SaberRemoveG2Model( gentity_t *saberent );
@@ -1260,29 +1259,6 @@ void respawn( gentity_t *ent ) {
 	else if(g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM
 		|| g_gametype.integer == GT_CTF)
 	{
-		if (ojp_ffaRespawnTimer.integer)
-		{
-			if (ent->client->tempSpectate <= level.time)
-			{
-				int minDel = g_siegeRespawn.integer* 2000;
-				if (minDel < 20000)
-				{
-					minDel = 20000;
-				}
-				OJP_Spectator(ent);
-				ent->client->tempSpectate = level.time + minDel;
-
-				// Respawn time.
-				if ( ent->s.number < MAX_CLIENTS )
-				{
-					gentity_t *te = G_TempEntity( ent->client->ps.origin, EV_SIEGESPEC );
-					te->s.time = ojp_ffaRespawnTimerCheck;
-					te->s.owner = ent->s.number;
-				}
-
-				return;
-			}
-		}
 		ClientSpawn(ent);
 		//[LastManStanding]
 		if ( ojp_lms.integer > 0 && BG_IsLMSGametype(g_gametype.integer) && LMS_EnoughPlayers())

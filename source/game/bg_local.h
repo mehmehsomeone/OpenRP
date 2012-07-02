@@ -112,7 +112,3 @@ void PM_SetForceJumpZStart(float value);
 void BG_CycleInven(playerState_t *ps, int direction);
 
 #include "../namespace_end.h"
-
-//[Melee]
-qboolean PM_DoKick(void); //pm function for performing kicks
-//[/Melee]
