@@ -70,6 +70,7 @@ extern qboolean PM_SaberInBounce( int move );
 extern qboolean PM_SaberInParry( int move );
 extern qboolean PM_SaberInKnockaway( int move );
 extern qboolean PM_SaberInBrokenParry( int move );
+extern qboolean PM_SaberInDeflect( int move );
 extern qboolean BG_SpinningSaberAnim( int anim );
 extern qboolean BG_FlippingAnim( int anim );
 extern qboolean PM_RollingAnim( int anim );
@@ -2296,6 +2297,7 @@ saberMoveName_t G_PickAutoMultiKick( gentity_t *self, qboolean allowSingles, qbo
 
 
 extern qboolean G_CanKickEntity( gentity_t *self, gentity_t *target );
+extern saberMoveName_t G_PickAutoKick( gentity_t *self, gentity_t *enemy, qboolean storeMove );
 //[/CoOp]
 extern float NPC_EnemyRangeFromBolt( int boltIndex );
 static void Jedi_CombatDistance( int enemy_dist )
@@ -2515,6 +2517,28 @@ static void Jedi_CombatDistance( int enemy_dist )
 				Jedi_Advance();
 				return;
 			}
+			//[CoOp]
+			else
+			{//ok, we can't drain at the moment
+				//RAFIXME - impliment this later
+				if ( Jedi_DecideKick() )
+				{//let's try a kick
+					if ( G_PickAutoMultiKick( NPC, qfalse, qtrue ) != LS_NONE 
+						|| (G_CanKickEntity(NPC, NPC->enemy) && G_PickAutoKick( NPC, NPC->enemy, qtrue ) != LS_NONE) ) 
+					{//kicked!
+						TIMER_Set( NPC, "kickDebounce", Q_irand( 3000, 10000 ) );
+						return;
+					}
+				}
+				ForceThrow( NPC, qfalse );
+			}
+			/*
+			else
+			{
+				ForceThrow( NPC, qfalse );
+			}
+			*/
+			//[/CoOp]
 		}
 		Jedi_Retreat();
 	}
@@ -2532,6 +2556,31 @@ static void Jedi_CombatDistance( int enemy_dist )
 	}
 	else if ( enemy_dist <= -16 )
 	{//we're too damn close!
+		//[CoOp]
+		if ( !Q_irand( 0, 30 )
+			&& Kyle_CanDoGrab() )
+		{//try to grapple
+			Kyle_TryGrab();
+			return;
+		}
+		/* RAFIXME - this weapon doesn't exist yet
+		else if ( NPC->client->ps.stats[STAT_WEAPONS]&(1<<WP_SCEPTER) 
+			&& !Q_irand( 0, 20 ) )
+		{
+			Tavion_StartScepterSlam();
+			return;
+		}
+		*/
+		if ( Jedi_DecideKick() )
+		{//let's try a kick
+			if ( G_PickAutoMultiKick( NPC, qfalse, qtrue ) != LS_NONE
+				|| (G_CanKickEntity(NPC, NPC->enemy ) && G_PickAutoKick( NPC, NPC->enemy, qtrue ) != LS_NONE ) )
+			{//kicked!
+				TIMER_Set( NPC, "kickDebounce", Q_irand( 3000, 10000 ) );
+				return;
+			}
+		}
+		//[/CoOp]
 		Jedi_Retreat();
 	}
 	else if ( enemy_dist <= 0 )
@@ -2539,6 +2588,31 @@ static void Jedi_CombatDistance( int enemy_dist )
 		//if we are attacking, see if we should stop
 		if ( NPCInfo->stats.aggression < 4 )
 		{//back off and defend
+			//[CoOp]
+			if ( !Q_irand( 0, 30 )
+				&& Kyle_CanDoGrab() )
+			{//try to grapple
+				Kyle_TryGrab();
+				return;
+			}
+			/* RAFIXME - this weapon doesn't exist yet
+			else if ( NPC->client->ps.stats[STAT_WEAPONS]&(1<<WP_SCEPTER) 
+				&& !Q_irand( 0, 20 ) )
+			{
+				Tavion_StartScepterSlam();
+				return;
+			}
+			*/
+			if ( Jedi_DecideKick() )
+			{//let's try a kick
+				if ( G_PickAutoMultiKick( NPC, qfalse, qtrue ) != LS_NONE
+					|| (G_CanKickEntity(NPC, NPC->enemy ) && G_PickAutoKick( NPC, NPC->enemy, qtrue ) != LS_NONE ) )
+				{//kicked!
+					TIMER_Set( NPC, "kickDebounce", Q_irand( 3000, 10000 ) );
+					return;
+				}
+			}
+			//[/CoOp]
 			Jedi_Retreat();
 		}
 	}
@@ -2907,6 +2981,18 @@ static void Jedi_CombatDistance( int enemy_dist )
 		//[/CoOp]
 		if ( NPCInfo->stats.aggression < 4 )
 		{//back off and defend
+			//[CoOp]
+			if ( Jedi_DecideKick() )
+			{//let's try a kick
+				if ( G_PickAutoMultiKick( NPC, qfalse, qtrue ) != LS_NONE
+					|| (G_CanKickEntity(NPC, NPC->enemy ) 
+					&& G_PickAutoKick( NPC, NPC->enemy, qtrue ) != LS_NONE ) )
+				{//kicked!
+					TIMER_Set( NPC, "kickDebounce", Q_irand( 3000, 10000 ) );
+					return;
+				}
+			}
+			//[/CoOp]
 			Jedi_Retreat();
 		}
 		else if ( NPCInfo->stats.aggression > 5 )
@@ -3603,6 +3689,7 @@ qboolean Jedi_SaberBusy( gentity_t *self )
 		|| BG_SaberInSpecialAttack( self->client->ps.torsoAnim ) 
 		//|| PM_SaberInBounce( self->client->ps.saberMove ) 
 		|| PM_SaberInBrokenParry( self->client->ps.saberMove ) 
+		//|| PM_SaberInDeflect( self->client->ps.saberMove ) 
 		|| BG_FlippingAnim( self->client->ps.torsoAnim ) 
 		|| PM_RollingAnim( self->client->ps.torsoAnim ) ) )
 	{//my saber is not in a parrying position
@@ -5269,6 +5356,19 @@ static void Jedi_EvasionSaber( vec3_t enemy_movedir, float enemy_dist, vec3_t en
 			case 1:
 			case 2:
 			case 3:
+				//[CoOp]
+				//use jedi force push? or kick?
+				//FIXME: try to do this if health low or enemy back to a cliff?
+				if ( Jedi_DecideKick()//let's try a kick
+					&& ( G_PickAutoMultiKick( NPC, qfalse, qtrue ) != LS_NONE 
+						|| (G_CanKickEntity(NPC, NPC->enemy )
+						&&G_PickAutoKick( NPC, NPC->enemy, qtrue )!=LS_NONE) ) )
+				{//kicked
+					TIMER_Set( NPC, "kickDebounce", Q_irand( 3000, 10000 ) );
+				}
+				else if ( (NPCInfo->rank == RANK_ENSIGN || NPCInfo->rank > RANK_LT_JG) && TIMER_Done( NPC, "parryTime" ) )
+				//if ( (NPCInfo->rank == RANK_ENSIGN || NPCInfo->rank > RANK_LT_JG) && TIMER_Done( NPC, "parryTime" ) )
+				//[/CoOp]
 				{//FIXME: check forcePushRadius[NPC->client->ps.fd.forcePowerLevel[FP_PUSH]]
 					ForceThrow( NPC, qfalse );
 				}
@@ -5295,6 +5395,16 @@ static void Jedi_EvasionSaber( vec3_t enemy_movedir, float enemy_dist, vec3_t en
 				if ( !Q_irand( 0, 5 ) || !Jedi_Strafe( 300, 1000, 0, 1000, qfalse ) )
 				{//certain chance they will pick an alternative evasion
 					//if couldn't strafe, try a different kind of evasion...
+					//[CoOp]
+					if ( Jedi_DecideKick() 
+						&& G_CanKickEntity(NPC, NPC->enemy ) 
+						&& G_PickAutoKick( NPC, NPC->enemy, qtrue ) != LS_NONE )
+					{//kicked!
+						TIMER_Set( NPC, "kickDebounce", Q_irand( 3000, 10000 ) );
+					}
+					else if ( shooting_lightning || throwing_saber || enemy_dist < 80 )
+					//if ( shooting_lightning || throwing_saber || enemy_dist < 80 )
+					//[/CoOp]
 					{
 						//FIXME: force-jump+forward - jump over the guy!
 						if ( shooting_lightning || (!Q_irand( 0, 2 ) && NPCInfo->stats.aggression < 4 && TIMER_Done( NPC, "parryTime" ) ) )

@@ -219,6 +219,7 @@ void WP_GrenadeBlow(gentity_t*self)
 			{
 				int shield = Q_irand(25,50);
 				int ammo = Q_irand(15,30);
+				G_DodgeDrain(ent, self, 15);//15 for nau
 				ent->client->ps.saberAttackChainCount += mpDamage;
 				if(ent->client->ps.stats[STAT_ARMOR]-shield >= 0)
 					ent->client->ps.stats[STAT_ARMOR]-=shield;

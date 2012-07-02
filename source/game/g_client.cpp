@@ -10,6 +10,7 @@ static vec3_t	playerMins = {-15, -15, DEFAULT_MINS_2};
 static vec3_t	playerMaxs = {15, 15, DEFAULT_MAXS_2};
 
 extern int g_siegeRespawnCheck;
+extern int ojp_ffaRespawnTimerCheck;//[FFARespawnTimer]
 
 void WP_SaberAddG2Model( gentity_t *saberent, const char *saberModel, qhandle_t saberSkin );
 void WP_SaberRemoveG2Model( gentity_t *saberent );
@@ -408,6 +409,10 @@ void JMSaberThink(gentity_t *ent)
 	G_RunObject(ent);
 }
 
+
+//[ExpSys]
+void DetermineDodgeMax(gentity_t *ent);
+//[/ExpSys]
 void JMSaberTouch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	int i = 0;
@@ -477,6 +482,12 @@ void JMSaberTouch(gentity_t *self, gentity_t *other, trace_t *trace)
 		i++;
 	}
 
+	//[ExpSys]
+	//recalc DP
+	DetermineDodgeMax(other);
+	//set dp to max.
+	other->client->ps.stats[STAT_DODGE] = other->client->ps.stats[STAT_MAX_DODGE]; 
+	//[/ExpSys]
 
 	self->pos2[0] = 1;
 	self->pos2[1] = level.time + JMSABER_RESPAWN_TIME;
@@ -1259,6 +1270,29 @@ void respawn( gentity_t *ent ) {
 	else if(g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM
 		|| g_gametype.integer == GT_CTF)
 	{
+		if (ojp_ffaRespawnTimer.integer)
+		{
+			if (ent->client->tempSpectate <= level.time)
+			{
+				int minDel = g_siegeRespawn.integer* 2000;
+				if (minDel < 20000)
+				{
+					minDel = 20000;
+				}
+				OJP_Spectator(ent);
+				ent->client->tempSpectate = level.time + minDel;
+
+				// Respawn time.
+				if ( ent->s.number < MAX_CLIENTS )
+				{
+					gentity_t *te = G_TempEntity( ent->client->ps.origin, EV_SIEGESPEC );
+					te->s.time = ojp_ffaRespawnTimerCheck;
+					te->s.owner = ent->s.number;
+				}
+
+				return;
+			}
+		}
 		ClientSpawn(ent);
 		//[LastManStanding]
 		if ( ojp_lms.integer > 0 && BG_IsLMSGametype(g_gametype.integer) && LMS_EnoughPlayers())
@@ -3034,7 +3068,10 @@ tryTorso:
 
 		f = torsoAnim;
 
-		BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, f, &animSpeedScale, self->client->ps.brokenLimbs);
+		//[FatigueSys]
+		BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, f, &animSpeedScale, self->client->ps.brokenLimbs, self->client->ps.userInt3);
+		//BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, f, &animSpeedScale, self->client->ps.brokenLimbs);
+		//[/FatigueSys]
 
 		animSpeed = 50.0f / bgAllAnims[self->localAnimIndex].anims[f].frameLerp;
 		lAnimSpeedScale = (animSpeed *= animSpeedScale);
@@ -3270,7 +3307,9 @@ void ClientSpawn(gentity_t *ent) {
 	int					savedSkill[NUM_SKILLS];
 	int					savedFeat[NUM_FEATS];
 	//[/ExpSys]
-	
+	//[DodgeSys]
+	int					savedDodgeMax;
+	//[/DodgeSys]
 	int					maxHealth;
 	saberInfo_t			saberSaved[MAX_SABERS];
 	int					l = 0;
@@ -3626,7 +3665,10 @@ void ClientSpawn(gentity_t *ent) {
 	}
 	//[/ExpSys]
 
-	
+	//[DodgeSys]
+	savedDodgeMax = client->ps.stats[STAT_MAX_DODGE];
+	//[/DodgeSys]
+
 	l = 0;
 	while (l < MAX_SABERS)
 	{
@@ -3719,7 +3761,9 @@ void ClientSpawn(gentity_t *ent) {
 	}
 	//[/ExpSys]
 
-	
+	//[DodgeSys]
+	client->ps.stats[STAT_MAX_DODGE] = savedDodgeMax;
+	//[/DodgeSys]
 
 	l = 0;
 	while (l < MAX_SABERS)
@@ -4556,7 +4600,10 @@ void ClientSpawn(gentity_t *ent) {
 	*/
 	//[/ExpSys]
 
-	
+	//[DodgeSys]
+	//Init dodge stat.
+	client->ps.stats[STAT_DODGE] = client->ps.stats[STAT_MAX_DODGE];
+	//[/DodgeSys]
 
 	G_SetOrigin( ent, spawn_origin );
 	VectorCopy( spawn_origin, client->ps.origin );

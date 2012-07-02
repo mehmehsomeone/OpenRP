@@ -1880,6 +1880,7 @@ void CG_FireWeapon( centity_t *cent, qboolean altFire ) {
 	entityState_t *ent;
 	int				c;
 	weaponInfo_t	*weap;
+	int mishap = cg.predictedPlayerState.saberAttackChainCount;
 	ent = &cent->currentState;
 	if ( ent->weapon == WP_NONE ) {
 		return;
@@ -1902,7 +1903,11 @@ void CG_FireWeapon( centity_t *cent, qboolean altFire ) {
 	{
 		if ((ent->weapon == WP_BRYAR_PISTOL && altFire) ||
 				(ent->weapon == WP_BRYAR_OLD && altFire) ||
-				(ent->weapon == WP_DEMP2 && altFire))
+				(ent->weapon == WP_DEMP2 && altFire)
+				|| (mishap >= 5 && ent->weapon != WP_BOWCASTER && ent->weapon != WP_BLASTER
+				&& ent->weapon != WP_REPEATER && ent->weapon != WP_FLECHETTE && ent->weapon != WP_DET_PACK && ent->weapon != WP_THERMAL
+				&& ent->weapon != WP_GRENADE && (ent->weapon != WP_BRYAR_PISTOL 
+				|| ent->weapon == WP_BRYAR_PISTOL && altFire)))
 		{
 			float val = ( cg.time - cent->currentState.constantLight ) * 0.001f;
 
@@ -1916,6 +1921,12 @@ void CG_FireWeapon( centity_t *cent, qboolean altFire ) {
 			}
 
 			val *= 2;
+			if(mishap >= 5 && mishap <= 8)
+				val = 2;
+			else if(mishap > 8 && mishap <= 14)
+				val = 4;
+			else if(mishap > 14)
+				val = 6;
 			CGCam_Shake( val, 250 );
 		}
 		else if (ent->weapon == WP_ROCKET_LAUNCHER ||

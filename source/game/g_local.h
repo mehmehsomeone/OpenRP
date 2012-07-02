@@ -208,6 +208,13 @@ extern	vmCvar_t	sv_privatepassword;
 
 extern	vmCvar_t	g_forceRegenTime;
 
+//[DodgeSys]
+extern	vmCvar_t	g_dodgeRegenTime;
+//[/DodgeSys]
+
+//[SaberSys]
+extern  vmCvar_t	g_mishapRegenTime;
+//[/SaberSys]
 
 extern	vmCvar_t	g_spawnInvulnerability;
 extern	vmCvar_t	g_forcePowerDisable;
@@ -346,6 +353,14 @@ extern vmCvar_t		g_corpseRemovalTime;
 extern vmCvar_t		ojp_clientMOTD;
 extern vmCvar_t		ojp_MOTD;
 //[/ExpandedMOTD]
+
+//[DodgeSys]
+extern vmCvar_t		ojp_allowBodyDodge;
+//[/DodgeSys]
+
+//[FFARespawnTimer]
+extern vmCvar_t		ojp_ffaRespawnTimer;
+//[/FFARespawnTimer]
 
 extern vmCvar_t		ojp_truebalance;//[TrueBalance]
 
@@ -1230,6 +1245,18 @@ struct gclient_s {
 	int			SaberBlockTime;
 	//[/SaberSys]
 
+	//[DodgeSys]
+	int			DodgeDebounce;
+	//[/DodgeSys]
+
+	//[ManualDodge]
+	int			ManualDodgeDebounce;
+	//[/ManualDodge]
+
+	//[SaberSys]
+	//debounce timer on the regeneration of the mishap/balance bar. 
+	int			MishapDebounce;
+	//[/SaberSys]
 
 	//[Asteroids]
 	//can't put these in playerstate, crashes game (need to change exe?)
@@ -1736,6 +1763,7 @@ void G_CheckForDismemberment(gentity_t *ent, gentity_t *enemy, vec3_t point, int
 extern int gGAvoidDismember;
 //[ExpSys]
 void AddSkill(gentity_t *self, float amount);
+void G_DodgeDrain(gentity_t *victim, gentity_t *attacker, int amount);
 //[/ExpSys]
 
 
@@ -1846,7 +1874,19 @@ qboolean CheckGauntletAttack( gentity_t *ent );
 #define TD_VELOCITY			900		//max velocity for thermal dets
 //[/SnapThrow]
 
+//[DodgeSys]
+#define DISRUPTOR_MAX_CHARGE (g_gametype.integer == GT_SIEGE ? 200 : 60) //max charge on disruptor's alt fire.
+#define DISRUPTOR_MIN_CHARGE (g_gametype.integer == GT_SIEGE ? 0 : 45) //min charge on disruptor alt fire. --HOLMSTN 
 
+#define DODGE_BOLTBLOCK			4	//standard DP cost to block a missile bolt -- 1.3 was 2.5
+#define DODGE_BOWCASTERBLOCK	3
+
+//[BryarSecondary]
+#define BRYAR_PISTOL_ALT_DPDAMAGE			DODGE_BOLTBLOCK			//minimum DP damage of bryar secondary
+#define BRYAR_PISTOL_ALT_DPMAXDAMAGE		DODGE_BOLTBLOCK*1.5		//maximum DP damage of bryar secondary
+#define BRYAR_MAX_CHARGE					5
+//[/BryarSecondary]
+//[/DodgeSys]
 //[Grapple]
 void Weapon_HookThink (gentity_t *ent);
 void Weapon_HookFree (gentity_t *ent);
@@ -2040,6 +2080,9 @@ void ForceGrip( gentity_t *self );
 void ForceProtect( gentity_t *self );
 void ForceAbsorb( gentity_t *self );
 void ForceTeamHeal( gentity_t *self );
+//[ManualDodge]
+void ManualButtonDodge(gentity_t *ent);
+//[/ManualDodge]
 void ForceSeeing( gentity_t *self );
 void ForceThrow( gentity_t *self, qboolean pull );
 void ForceTelepathy(gentity_t *self);

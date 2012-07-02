@@ -52,8 +52,6 @@ void ObjectDie (gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	G_FreeEntity( self );
 }
 
-
-
 qboolean G_HeavyMelee( gentity_t *attacker )
 {
 	if (g_gametype.integer == GT_SIEGE 
@@ -65,17 +63,6 @@ qboolean G_HeavyMelee( gentity_t *attacker )
 		return qtrue;
 	}
 	return qfalse;
-}
-
-void G_Knockdown( gentity_t *victim )
-{
-	if ( victim && victim->client && BG_KnockDownable(&victim->client->ps) )
-	{
-		victim->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
-		victim->client->ps.forceDodgeAnim = 0;
-		victim->client->ps.forceHandExtendTime = level.time + 1100;
-		victim->client->ps.quickerGetup = qfalse;
-	}
 }
 
 int G_GetHitLocation(gentity_t *target, vec3_t ppoint)
@@ -4709,6 +4696,9 @@ extern qboolean PM_InKnockDown( playerState_t *ps );
 extern qboolean PM_RollingAnim( int anim );
 extern qboolean BG_KnockDownAnim( int anim );
 //[/CoOp]
+//[SaberSys]
+extern void BG_ReduceMishapLevel(playerState_t *ps);
+//[/SaberSys]
 //[KnockdownSys]
 void G_Knockdown( gentity_t *self, gentity_t *attacker, const vec3_t pushDir, float strength, qboolean breakSaberLock )
 {
@@ -4842,6 +4832,11 @@ void G_Knockdown( gentity_t *self, gentity_t *attacker, const vec3_t pushDir, fl
 					self->client->ps.torsoTimer += PLAYER_KNOCKDOWN_HOLD_EXTRA_TIME;
 				}
 			}
+
+			//[SaberSys]
+			//bump our MP level down.
+			BG_ReduceMishapLevel(&self->client->ps);			
+			//[/SaberSys]
 		}
 	}
 }
@@ -5039,6 +5034,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 
 	if((mod == MOD_REPEATER_ALT || mod == MOD_REPEATER_ALT_SPLASH) && targ && targ->client)
 	{//Don't really like putting this here, move it later
+		G_DodgeDrain(targ,attacker,Q_irand(2,5));
 		G_Throw(targ,dir,2);
 		//targ->client->ps.velocity[2] += 5;
 		return;
@@ -5086,6 +5082,43 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	if ( (mod == MOD_BRYAR_PISTOL_ALT || mod == MOD_SEEKER) && targ && targ->inuse && targ->client )
 	{//doesn't do actual damage to the target, instead it acts like a stun hit that increases MP/DP and tries to knock
 		//the player over like a kick.
+		
+		//int mpDamage = (float) inflictor->s.generic1/BRYAR_MAX_CHARGE*MISHAPLEVEL_MAX;
+		int mpDamage = (float) inflictor->s.generic1/BRYAR_MAX_CHARGE*7;
+		//deal DP damage
+		if(mod != MOD_SEEKER)
+		{
+			G_DodgeDrain(targ, attacker, damage);
+		}
+		
+		G_Printf("%i: %i: Bryar MP Damage %i, Charge %i\n", level.time, targ->s.number, mpDamage, inflictor->s.generic1);
+
+		targ->client->ps.saberAttackChainCount += mpDamage;
+
+		if ((targ->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY
+			|| targ->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL))
+		{//knockdown
+			vec3_t blowBackDir;
+			VectorSubtract(targ->client->ps.origin,attacker->client->ps.origin, blowBackDir);
+
+			G_Throw(targ,blowBackDir,4);
+			if ( targ->client->ps.saberAttackChainCount >= MISHAPLEVEL_FULL )
+			{
+				G_Knockdown( targ, attacker, dir, 300, qtrue );
+			}
+			else
+			{
+				G_Knockdown( targ, attacker, dir, 100, qtrue );
+			}
+		}
+		else if(targ->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT)
+		{//stumble
+			vec3_t blowBackDir;
+			VectorSubtract(targ->client->ps.origin,attacker->client->ps.origin, blowBackDir);
+			G_Throw(targ,blowBackDir,2);
+			AnimateStun(targ, attacker, point);   
+			BG_ReduceMishapLevel(&targ->client->ps);
+		}
 
 		targ->client->ps.electrifyTime = level.time + Q_irand( 300, 800 );
 		return;
@@ -6421,14 +6454,18 @@ qboolean CanDamage (gentity_t *targ, vec3_t origin) {
 G_RadiusDamage
 ============
 */
-
+//[DodgeSys]
+qboolean G_DoDodge( gentity_t *self, gentity_t *shooter, vec3_t impactPoint, int hitLoc, int * dmg, int mod );
+//[/DodgeSys]
 qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, float radius,
 					 gentity_t *ignore, gentity_t *missile, int mod) {
 	float		points, dist;
 	gentity_t	*ent;
 	int			entityList[MAX_GENTITIES];
 	int			numListedEntities;
-
+	//[DodgeSys]
+	int			dodgeDmg;  //damage value passed to and from the dodge code.
+	//[/DodgeSys]
 	vec3_t		mins, maxs;
 	vec3_t		v;
 	vec3_t		dir;
@@ -6499,7 +6536,14 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 
 		points = damage * ( 1.0 - dist / radius );
 
-
+		//[DodgeSys]
+		//added dodge for splash damage.
+		dodgeDmg = (int) points;
+		if( CanDamage (ent, origin) && !G_DoDodge(ent, attacker, origin, -1, &dodgeDmg, mod) ) {
+		//if( CanDamage (ent, origin) ) {
+			//we might have reduced the damage by doing a partial dodge
+			points = (float) dodgeDmg;
+		//[/DodgeSys]
 			if( LogAccuracyHit( ent, attacker ) ) {
 				hitClient = qtrue;
 			}
@@ -6556,13 +6600,14 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 				evEnt->s.eventParm = 1;
 			}
 		}
-	return hitClient;
 	}
 
-
+	return hitClient;
+}
 
 
 //[SaberSys]
+#define DODGE_KILLBONUS 20 //the DP bonus you get for killing another player
 #define FATIGUE_KILLBONUS 20 //the FP bonus you get for killing another player
 extern void WP_ForcePowerRegenerate( gentity_t *self, int overrideAmt );
 void AddFatigueKillBonus( gentity_t *attacker, gentity_t *victim )
@@ -6579,7 +6624,12 @@ void AddFatigueKillBonus( gentity_t *attacker, gentity_t *victim )
 
 	//add bonus
 	WP_ForcePowerRegenerate(attacker, FATIGUE_KILLBONUS);
-	
+	attacker->client->ps.stats[STAT_DODGE] += DODGE_KILLBONUS;
+
+	if(attacker->client->ps.stats[STAT_DODGE] > attacker->client->ps.stats[STAT_MAX_DODGE])
+	{
+		attacker->client->ps.stats[STAT_DODGE] = attacker->client->ps.stats[STAT_MAX_DODGE];
+	}
 }
 //[/SaberSys]
 
@@ -6608,6 +6658,53 @@ void AddSkill(gentity_t *self, float amount)
 	{
 		self->client->sess.skillPoints = g_maxForceRank.value;
 	}
+}
+
+
+void G_DodgeDrain(gentity_t *victim, gentity_t *attacker, int amount)
+{//drains DP from victim.  Also awards experience points to the attacker.
+	if ( !g_friendlyFire.integer && OnSameTeam(victim, attacker))
+	{//don't drain DP if we're hit by a team member
+		return;
+	}
+
+	if(victim->flags &FL_GODMODE)
+		return;
+
+	if(victim->client && victim->client->ps.fd.forcePowersActive & (1 << FP_MANIPULATE))
+	{
+		amount /= 2;
+		if(amount < 1)
+			amount=1;
+	}
+
+	victim->client->ps.stats[STAT_DODGE] -= amount;
+
+	if(attacker->client && (attacker->client->ps.torsoAnim == saberMoveData[16].animToUse
+		|| attacker->client->ps.torsoAnim == 1252) )
+	{//In DFA?
+		victim->client->ps.saberAttackChainCount+=16;
+	}
+
+	if(victim->client->ps.stats[STAT_DODGE] < 0)
+	{
+		victim->client->ps.stats[STAT_DODGE] = 0;
+	}
+
+	if(attacker && attacker->client)
+	{//attacker gets experience for causing damage.
+			
+		//don't want a divide by zero errors
+		//Bug fix: double negitive here, was firing only if skillPoints is NOT equal to zero.
+		assert(attacker->client->sess.skillPoints);
+		//assert(!attacker->client->sess.skillPoints);
+
+		//scale skill points based on the ratio between skills
+		//AddSkill(attacker, 
+		//	(float) amount / SKILL_DP_PER_SKILL * (victim->client->sess.skillPoints / attacker->client->sess.skillPoints)); 
+	}
+
+	//G_Printf("%i: %i: %i Points of Dodge Drained\n", level.time, victim->s.number, amount);
 }
 //[/ExpSys]
 

@@ -101,6 +101,26 @@ const char *ammoTicName[MAX_OJPHUD_TICS] =
 "ammo_tic8",
 };
 
+const char *mishapTicName[] = 
+{
+"mishap_tic1", 
+"mishap_tic2", 
+"mishap_tic3", 
+"mishap_tic4", 
+"mishap_tic5",
+"mishap_tic6",
+"mishap_tic7",
+"mishap_tic8",
+"mishap_tic9",
+"mishap_tic10",
+"mishap_tic11",
+"mishap_tic12",
+"mishap_tic13",
+"mishap_tic14",
+"mishap_tic15",
+//[/NewHud]
+};
+
 char *showPowersName[] = 
 {
 	"HEAL2",//FP_HEAL
@@ -968,6 +988,41 @@ static void CG_DrawSaberStyle( centity_t *cent, menuDef_t *menuHUD)
 
 }
 
+
+//[SaberSys]
+static void CG_DrawBalance( centity_t *cent, menuDef_t *menuHUD)
+{//render the balance/mishap meter.
+
+	itemDef_t		*focusItem;
+	int				i;
+
+	// Can we find the menu?
+	if (!menuHUD)
+	{
+		return;
+	}
+
+	for (i = cg.snap->ps.saberAttackChainCount-1; i >= 0; i--)
+	{
+		focusItem = Menu_FindItemByName(menuHUD, mishapTicName[i]);
+
+		if (focusItem)
+		{
+			CG_DrawPic( 
+					focusItem->window.rect.x,
+					focusItem->window.rect.y,
+					focusItem->window.rect.w, 
+					focusItem->window.rect.h, 
+					focusItem->window.background
+					);
+		}
+
+
+	}
+}
+//[/SaberSys]
+
+
 /*
 ================
 CG_DrawAmmo
@@ -1096,6 +1151,9 @@ static void CG_DrawAmmo( centity_t	*cent,menuDef_t *menuHUD)
 }
 
 
+
+
+
 /*
 ================
 CG_DrawForcePower
@@ -1120,7 +1178,9 @@ void CG_DrawForcePower( menuDef_t *menuHUD )
 	aColor[2] = 0.996f;
 	aColor[3] = 0.8f;
 
-	if (cg.forceHUDTotalFlashTime > cg.time )
+	if (cg.forceHUDTotalFlashTime > cg.time || (cg_entities[cg.snap->ps.clientNum].currentState.userInt3 &  ( 1 << FLAG_FATIGUED)))
+	//if (cg.forceHUDTotalFlashTime > cg.time )
+	//[/FatigueSys]
 	{
 		//color of the bar
 		aColor[0] = 1.0f;
@@ -1445,6 +1505,10 @@ void CG_DrawHUD(centity_t	*cent)
 		}
 
 		CG_DrawForcePower(menuHUD);
+
+		//[SaberSys]
+		CG_DrawBalance(cent, menuHUD);
+		//[/SaberSys]
 
 		// Draw ammo tics or saber style
 		if ( cent->currentState.weapon == WP_SABER )

@@ -293,6 +293,7 @@ void ForceManipulate(gentity_t*self)
 		}
 		self->client->ps.fd.forceGripEntityNum = tr.entityNum;
 		g_entities[tr.entityNum].client->ps.fd.forceGripStarted = level.time;
+		BG_ReduceMishapLevel(&g_entities[tr.entityNum].client->ps);
 		self->client->ps.fd.forceGripDamageDebounceTime = 0;
 
 		self->client->ps.forceHandExtend = HANDEXTEND_FORCE_HOLD;

@@ -1986,6 +1986,10 @@ extern	vmCvar_t		cg_debugBB;
 Ghoul2 Insert End
 */
 
+//[ClientPlugInDetect]
+extern vmCvar_t	ojp_clientplugin;
+//[/ClientPlugInDetect]
+
 //[RGBSabers]
 extern vmCvar_t	rgb_saber1;
 extern vmCvar_t	rgb_saber2;

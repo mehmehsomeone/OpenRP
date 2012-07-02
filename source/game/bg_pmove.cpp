@@ -2406,6 +2406,10 @@ int JumpHeightDeduction(void)
 PM_CheckJump
 =============
 */
+//[FatigueSys]
+extern qboolean BG_EnoughForcePowerForMove( int cost );
+extern void BG_AddFatigue( playerState_t * ps, int Fatigue);
+//[/FatigueSys]
 static qboolean PM_CheckJump( void ) 
 {
 	qboolean allowFlips = qtrue;
@@ -2890,6 +2894,29 @@ static qboolean PM_CheckJump( void )
 			{//backflip
 				saberInfo_t *saber1 = BG_MySaber( pm->ps->clientNum, 0 );
 				saberInfo_t *saber2 = BG_MySaber( pm->ps->clientNum, 1 );
+				//[FatigueSys]
+				//can't backflip if we don't have enough FP
+				if ( allowFlips && BG_EnoughForcePowerForMove(FATIGUE_BACKFLIP_ATARU)
+					&& saber1 && !saber2 && pm->ps->fd.saberAnimLevel == SS_DUAL)//for a part of single dual/ataru's. 1 point cartwheels)
+				//if ( allowFlips )
+				//[/FatigueSys]
+				{
+					vertPush = JUMP_VELOCITY;
+					anim = BOTH_FLIP_BACK1;//BG_PickAnim( BOTH_FLIP_BACK1, BOTH_FLIP_BACK3 );
+					//[FatigueSys]
+					BG_AddFatigue(pm->ps, FATIGUE_BACKFLIP_ATARU);
+					//[/FatigueSys]
+				}
+				else if ( allowFlips && BG_EnoughForcePowerForMove(FATIGUE_BACKFLIP) )
+				//if ( allowFlips )
+				//[/FatigueSys]
+				{
+					vertPush = JUMP_VELOCITY;
+					anim = BOTH_FLIP_BACK1;//BG_PickAnim( BOTH_FLIP_BACK1, BOTH_FLIP_BACK3 );
+					//[FatigueSys]
+					BG_AddFatigue(pm->ps, FATIGUE_BACKFLIP);
+					//[/FatigueSys]
+				}
 			}
 
 			vertPush += 128; //give them an extra shove
@@ -3417,6 +3444,15 @@ static qboolean PM_CheckJump( void )
 	{
 		return qfalse;
 	}
+
+	//[FatigueSys]
+	if( pm->ps->fd.forcePower < FATIGUE_JUMP )
+	{//too tired to jump
+		return qfalse;
+	}
+							
+	BG_AddFatigue(pm->ps, FATIGUE_JUMP);
+	//[/FatigueSys]
 
 	if ( pm->cmd.upmove > 0 )
 	{//no special jumps
@@ -6466,6 +6502,9 @@ extern qboolean BG_CrouchAnim( int anim );
 PM_Footsteps
 ===============
 */
+//[SaberSys]
+extern qboolean PM_SaberInBrokenParry( int move );
+//[/SaberSys]
 static void PM_Footsteps( void ) {
 	float		bobmove;
 	int			old;
@@ -6479,7 +6518,13 @@ static void PM_Footsteps( void ) {
 	}
 	//[/Knockdown]
 
-	if ( (PM_InSaberAnim( (pm->ps->legsAnim) ) && !BG_SpinningSaberAnim( (pm->ps->legsAnim) )) 
+	//[SaberSys]
+	//racc - Broken parries should play full body.
+	if ( (PM_InSaberAnim( (pm->ps->legsAnim) ) 
+		&& !BG_SpinningSaberAnim(pm->ps->legsAnim) 
+		&& !PM_SaberInBrokenParry(pm->ps->saberMove) ) 
+	//if ( (PM_InSaberAnim( (pm->ps->legsAnim) ) && !BG_SpinningSaberAnim( (pm->ps->legsAnim) )) 
+	//[/SaberSys]
 		|| (pm->ps->legsAnim) == BOTH_STAND1 
 		|| (pm->ps->legsAnim) == BOTH_STAND1TO2 
 		|| (pm->ps->legsAnim) == BOTH_STAND2TO1 
@@ -8239,6 +8284,8 @@ backAgain:
 	}
 }
 
+
+//[SaberSys]
 void PM_DoPunch(void)
 {
 	int desTAnim = BOTH_MELEE1;
@@ -8254,6 +8301,7 @@ void PM_DoPunch(void)
 		pm->ps->weaponTime = pm->ps->torsoTimer;
 	}
 }
+//[/SaberSys]
 
 qboolean CanShootRocket()
 {
@@ -8291,6 +8339,7 @@ qboolean CanFireWeapon()
 		trap_SendServerCommand(pm->ps->clientNum, va("addtext %s", "Hold down crouch to fire rocket"));
 #endif
 		 //PM_AddEvent(EV_ROCKETNEEDCROUCH);
+		 pm->ps->userInt3 |= (1 << FLAG_ATTACKRELEASE);
 		 return qfalse;
 	 }
 
@@ -9025,6 +9074,11 @@ static void PM_Weapon( void )
 	}
 #endif
 
+	if(! (pm->cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK)) && pm->ps->userInt3 & (1 << FLAG_ATTACKRELEASE))
+		pm->ps->userInt3 &= ~(1 << FLAG_ATTACKRELEASE);
+
+	if(pm->ps->userInt3 & (1 << FLAG_ATTACKRELEASE))
+		return;
 
 	if ((pm->ps->weapon == WP_DISRUPTOR || pm->ps->weapon == WP_TUSKEN_RIFLE) &&
 		pm->ps->zoomMode == 1)
@@ -9346,12 +9400,14 @@ static void PM_Weapon( void )
 			}
 			else if (pm->cmd.buttons & BUTTON_ALT_ATTACK)
 			{
+				if(!PM_DoKick())
+				{//if got here then no move to do so put torso into leg idle or whatever
 					if (pm->ps->torsoAnim != pm->ps->legsAnim)
 					{
 						PM_SetAnim(SETANIM_BOTH, pm->ps->legsAnim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
 					}
 					pm->ps->weaponTime = 0;
-
+				}
 				return;
 			}
 			else
@@ -9608,6 +9664,9 @@ extern qboolean in_camera;
 void PM_UpdateViewAngles( playerState_t *ps, const usercmd_t *cmd ) {
 	short		temp;
 	int		i;
+	//[SaberSys]
+	short		angle;
+	//[/SaberSys]
 
 	if ( ps->pm_type == PM_INTERMISSION || ps->pm_type == PM_SPINTERMISSION) {
 		return;		// no view changes at all
@@ -9624,6 +9683,59 @@ void PM_UpdateViewAngles( playerState_t *ps, const usercmd_t *cmd ) {
 		return;
 	}
 	//[/CoOp]
+
+	//[SaberSys]
+	if ( ps->userInt1 )
+	{//have some sort of lock in place
+		if ( ps->userInt1 & LOCK_UP )
+		{
+			temp = cmd->angles[PITCH] + ps->delta_angles[PITCH];
+			angle = ANGLE2SHORT(ps->viewangles[PITCH]);
+			
+			if ( temp < angle )
+			{//cancel out the cmd angles with the delta_angles if the resulting sum 
+				//is in the banned direction
+				ps->delta_angles[PITCH] = angle - cmd->angles[PITCH];
+			}
+		}
+
+		if ( ps->userInt1 & LOCK_DOWN )
+		{
+			temp = cmd->angles[PITCH] + ps->delta_angles[PITCH];
+			angle = ANGLE2SHORT(ps->viewangles[PITCH]);
+
+			if ( temp > angle )
+			{//cancel out the cmd angles with the delta_angles if the resulting sum 
+				//is in the banned direction
+				ps->delta_angles[PITCH] = angle - cmd->angles[PITCH];
+			}		
+		}
+
+		if ( ps->userInt1 & LOCK_RIGHT )
+		{
+			temp = cmd->angles[YAW] + ps->delta_angles[YAW];
+			angle = ANGLE2SHORT(ps->viewangles[YAW]);
+			
+			if ( temp < angle )
+			{//cancel out the cmd angles with the delta_angles if the resulting sum 
+				//is in the banned direction
+				ps->delta_angles[YAW] = angle - cmd->angles[YAW];
+			}	
+		}
+
+		if ( ps->userInt1 & LOCK_LEFT )
+		{
+			temp = cmd->angles[YAW] + ps->delta_angles[YAW];
+			angle = ANGLE2SHORT(ps->viewangles[YAW]);
+			
+			if ( temp > angle )
+			{//cancel out the cmd angles with the delta_angles if the resulting sum 
+				//is in the banned direction
+				ps->delta_angles[YAW] = angle - cmd->angles[YAW];
+			}
+		}
+	}
+	//[/SaberSys]
 
 	// circularly clamp the angles with deltas
 	for (i=0 ; i<3 ; i++) {
@@ -10302,6 +10414,8 @@ void BG_AdjustClientSpeed(playerState_t *ps, usercmd_t *cmd, int svTime)
 		}
 	}
 
+	//[SaberSys]
+	/* racc - got rid of this stuff.  The running mishap penalty should get this instead.
 	if ( BG_SaberInAttack( ps->saberMove ) && cmd->forwardmove < 0 )
 	{//if running backwards while attacking, don't run as fast.
 		switch( ps->fd.saberAnimLevel )
@@ -10321,8 +10435,18 @@ void BG_AdjustClientSpeed(playerState_t *ps, usercmd_t *cmd, int svTime)
 			break;
 		}
 	}
+	else if ( BG_SpinningSaberAnim( ps->legsAnim ) )
+	*/
 	if ( BG_SpinningSaberAnim( ps->legsAnim ) )
+	//[/SaberSys]
 	{
+	
+		//[MoveSys]
+		//increased the spinning animation movement speed to %75 normal.
+		ps->speed *= 0.75f;
+
+		//removed the silly speed difference exception for the Red Style.
+		/* basejka code
 		ps->speed *= 0.5f;
 		
 		if (ps->fd.saberAnimLevel == FORCE_LEVEL_3)
@@ -10333,7 +10457,42 @@ void BG_AdjustClientSpeed(playerState_t *ps, usercmd_t *cmd, int svTime)
 		{
 			ps->speed *= 0.5f;
 		}
+		*/
+		//[/MoveSys]
 	}
+	//[SaberSys]
+	//removed the silly speed difference stuff
+	/*
+	else if ( ps->weapon == WP_SABER && BG_SaberInAttack( ps->saberMove ) )
+	{//if attacking with saber while running, drop your speed
+		switch( ps->fd.saberAnimLevel )
+		{
+		case FORCE_LEVEL_2:
+		case SS_DUAL:
+		case SS_STAFF:
+			ps->speed *= 0.85f;
+			break;
+		case FORCE_LEVEL_3:
+			ps->speed *= 0.55f;
+			break;
+		default:
+			break;
+		}
+	}
+	else if (ps->weapon == WP_SABER && ps->fd.saberAnimLevel == FORCE_LEVEL_3 &&
+		PM_SaberInTransition(ps->saberMove))
+	{ //Now, we want to even slow down in transitions for level 3 (since it has chains and stuff now)
+		if (cmd->forwardmove < 0)
+		{
+			ps->speed *= 0.4f;
+		}
+		else
+		{
+			ps->speed *= 0.6f;
+		}
+	}
+	*/
+	//[/SaberSys]
 
 	if ( BG_InRoll( ps, ps->legsAnim ) && ps->speed > 50 )
 	{ //can't roll unless you're able to move normally
@@ -10366,7 +10525,13 @@ void BG_AdjustClientSpeed(playerState_t *ps, usercmd_t *cmd, int svTime)
 		//Automatically slow down as the roll ends.
 	}
 
-
+	//[MoveSys]
+	if( ((ps->userInt3 & FLAG_FATIGUED) || (ps->stats[STAT_DODGE] < DODGE_CRITICALLEVEL)) 
+		&& !(cmd->buttons&BUTTON_WALKING) && pm->ps->groundEntityNum != ENTITYNUM_NONE)
+	{//run slower when tired
+		ps->speed *= .8;
+	}
+	//[/MoveSys]
 
 	saber = BG_MySaber( ps->clientNum, 0 );
 	if ( saber 
@@ -11852,6 +12017,49 @@ static ID_INLINE void PM_CmdForSaberMoves(usercmd_t *ucmd)
 		//lock their viewangles during these attacks.
 		PM_SetPMViewAngle(pm->ps, pm->ps->viewangles, ucmd);
 	}
+	//[SaberSys]
+	else if(PM_SaberInBrokenParry(pm->ps->saberMove))
+	{//you can't move while stunned.
+		
+		switch(pm->ps->torsoAnim)
+		{
+		case BOTH_H1_S1_T_:
+		case BOTH_H1_S1_TR:
+		case BOTH_H1_S1_TL:
+		case BOTH_H1_S1_BL:
+		case BOTH_H1_S1_B_:
+		case BOTH_H1_S1_BR:
+			//slight backwards stumble
+			if(BG_GetTorsoAnimPoint(pm->ps, pm_entSelf->localAnimIndex) >= .5f)
+			{//past the stumble part of the animation
+				ucmd->forwardmove = -46;
+			}
+			else
+			{
+				ucmd->forwardmove = 0;
+			}
+			break;
+
+		case BOTH_H6_S6_BL:
+			//slight back hop
+			ucmd->forwardmove = -30;
+			break;
+
+		case BOTH_H7_S7_T_:
+		case BOTH_H7_S7_TR:
+			//two small steps back
+			ucmd->forwardmove = -30;
+			break;
+			
+		default:  //don't know this one.
+			ucmd->forwardmove = 0;
+			break;
+		};
+
+		ucmd->rightmove = 0;
+		ucmd->upmove = 0;
+	}
+	//[/SaberSys]
 
 }
 
@@ -12391,6 +12599,62 @@ void PM_MoveForKata(usercmd_t *ucmd)
 }
 
 
+//[SaberSys]
+void PM_MoveLock( void )
+{
+	if( pm->ps->userInt1 )
+	{
+		if ( pm->ps->userInt1 & LOCK_MOVERIGHT )
+		{
+			if (pm->cmd.rightmove > 0)
+			{
+				pm->cmd.rightmove = 0;
+			}
+		}
+
+		if ( pm->ps->userInt1 & LOCK_MOVELEFT )
+		{
+			if (pm->cmd.rightmove < 0)
+			{
+				pm->cmd.rightmove = 0;
+			}
+		}
+
+		if ( pm->ps->userInt1 & LOCK_MOVEFORWARD )
+		{ 
+			if (pm->cmd.forwardmove > 0)
+			{
+				pm->cmd.forwardmove = 0;
+			}
+		}
+
+		if ( pm->ps->userInt1 & LOCK_MOVEBACK )
+		{ 
+			if (pm->cmd.forwardmove < 0)
+			{
+				pm->cmd.forwardmove = 0;
+			}
+		}
+
+		if ( pm->ps->userInt1 & LOCK_MOVEUP )
+		{
+			if (pm->cmd.upmove > 0)
+			{
+				pm->cmd.upmove = 0;
+			}
+		}
+
+		if ( pm->ps->userInt1 & LOCK_MOVEDOWN )
+		{
+			if (pm->cmd.upmove < 0)
+			{
+				pm->cmd.upmove = 0;
+			}
+		}
+	}
+}
+//[/SaberSys]
+
 void PmoveSingle (pmove_t *pmove) {
 	qboolean stiffenedUp = qfalse;
 	float gDist = 0;
@@ -12458,6 +12722,15 @@ void PmoveSingle (pmove_t *pmove) {
 		}
 	}
 
+	//[SaberSys]
+	PM_MoveLock();
+	//[/SaberSys]
+	if (pm->ps->userInt3 & (1 << FLAG_BLOCKING))
+	{
+		stiffenedUp = qtrue;
+	//PM_SetAnim( SETANIM_BOTH, BOTH_STAND1IDLE1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0 );
+		pm->ps->legsAnim = BOTH_STAND1IDLE1;
+	}
 	if (pm->ps->pm_type == PM_FLOAT)
 	{ //You get no control over where you go in grip movement
 		stiffenedUp = qtrue;
@@ -12478,6 +12751,15 @@ void PmoveSingle (pmove_t *pmove) {
 		pm->ps->saberMove == LS_A_FLIP_SLASH || pm->ps->saberMove == LS_A_JUMP_T__B_ ||
 		pm->ps->saberMove == LS_DUAL_LR || pm->ps->saberMove == LS_DUAL_FB)
 	{
+		//[SaberSys]
+		//tweaked this so that the flip stab move doesn't overrotate during the move and end up facing right after the move.
+		if( (pm->ps->legsAnim == BOTH_JUMPFLIPSTABDOWN &&  pm->ps->legsTimer < 1600 && pm->ps->legsTimer > 1150) 
+			|| (pm->ps->legsAnim == BOTH_JUMPFLIPSLASHDOWN1 &&  pm->ps->legsTimer < 1600 && pm->ps->legsTimer > 900) )
+		{ //flipover medium stance attack
+			pm->ps->viewangles[YAW] += pml.frametime*240.0f;
+			PM_SetPMViewAngle(pm->ps, pm->ps->viewangles, &pm->cmd);
+		}
+		/* basejka code
 		if (pm->ps->legsAnim == BOTH_JUMPFLIPSTABDOWN ||
 			pm->ps->legsAnim == BOTH_JUMPFLIPSLASHDOWN1)
 		{ //flipover medium stance attack
@@ -12487,6 +12769,8 @@ void PmoveSingle (pmove_t *pmove) {
 				PM_SetPMViewAngle(pm->ps, pm->ps->viewangles, &pm->cmd);
 			}
 		}
+		*/
+		//[/SaberSys]
 		stiffenedUp = qtrue;
 	}
 	else if ((pm->ps->legsAnim) == (BOTH_A2_STABBACK1) ||
@@ -12622,6 +12906,12 @@ void PmoveSingle (pmove_t *pmove) {
 	{ //can't move while in a force land
 		stiffenedUp = qtrue;
 	}
+	//[SaberSys]
+	else if(BG_InSlowBounce(pm->ps))
+	{//can't move during a slow bounce
+		stiffenedUp = qtrue;
+	}
+	//[/SaberSys]
 
 	if ( pm->ps->saberMove == LS_A_LUNGE )
 	{//can't move during lunge
@@ -12698,6 +12988,7 @@ void PmoveSingle (pmove_t *pmove) {
 	}
 
 	if (pm->ps->fd.forceGripCripple
+		&& pm->ps->saberAttackChainCount >= MISHAPLEVEL_HEAVY
 		&& (pm->ps->weapon != WP_SABER 
 		&& pm->ps->weapon != WP_MELEE))
 	{ //don't let attack or alt attack if being gripped I guess
@@ -13715,6 +14006,7 @@ qboolean PM_CheckRollGetup( void )
 	{//lying on back or front
 		
 		if ( (pm->ps->clientNum < MAX_CLIENTS //player
+				&& !(pm->ps->userInt3 & (1 << FLAG_FATIGUED)) //can't do roll getups while fatigued.
 				&& ( pm->cmd.rightmove //pressing left or right
 					|| (pm->cmd.forwardmove &&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) ) ) //or pressing fwd/back and have force jump.
 #ifdef QAGAME
@@ -13962,6 +14254,7 @@ qboolean PM_GettingUpFromKnockDown( float standheight, float crouchheight )
 					case BOTH_KNOCKDOWN1:
 						//RAFIXME - Impliment PM_ControlledByPlayer?
 						if ( pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0 //has force jump
+							&& !(pm->ps->userInt3 & (1 << FLAG_FATIGUED))  //player isn't fatigued.
 							&& ( (pm->ps->clientNum < MAX_CLIENTS && pm->cmd.upmove > 0) //is a player trying to jump
 								|| pm->ps->clientNum >= MAX_CLIENTS) ) //an NPC doesn't have to give a command to do this.
 						//if ( (pm->ps->clientNum&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) || ((pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer())&&pm->cmd.upmove>0&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) )//FORCE_LEVEL_1) )FORCE_LEVEL_1) )
@@ -13978,6 +14271,7 @@ qboolean PM_GettingUpFromKnockDown( float standheight, float crouchheight )
 					case BOTH_PLAYER_PA_3_FLY:
 						//RAFIXME - impliment PM_ControlledByPlayer?
 						if ( pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0 //has force jump
+							&& !(pm->ps->userInt3 & (1 << FLAG_FATIGUED))  //player isn't fatigued.
 							&& ( (pm->ps->clientNum < MAX_CLIENTS && pm->cmd.upmove > 0) //is a player trying to jump
 								|| pm->ps->clientNum >= MAX_CLIENTS) ) //an NPC doesn't have to give a command to do this.
 						//if ( (pm->ps->clientNum&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) || ((pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer())&&pm->cmd.upmove>0&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) )//FORCE_LEVEL_1) )FORCE_LEVEL_1) )
@@ -13995,6 +14289,7 @@ qboolean PM_GettingUpFromKnockDown( float standheight, float crouchheight )
 					case BOTH_KNOCKDOWN3:
 						//RAFIXME - impliment PM_ControlledByPlayer?
 						if ( pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0 //has force jump
+							&& !(pm->ps->userInt3 & (1 << FLAG_FATIGUED))  //player isn't fatigued.
 							&& ( (pm->ps->clientNum < MAX_CLIENTS && pm->cmd.upmove > 0) //is a player trying to jump
 								|| pm->ps->clientNum >= MAX_CLIENTS) ) //an NPC doesn't have to give a command to do this.
 						//if ( (pm->ps->clientNum&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) || ((pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer())&&pm->cmd.upmove>0&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) )//FORCE_LEVEL_1) )
@@ -14012,6 +14307,7 @@ qboolean PM_GettingUpFromKnockDown( float standheight, float crouchheight )
 					case BOTH_RELEASED:
 						//RAFIXME - impliment PM_ControlledByPlayer?
 						if ( pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0 //has force jump
+							&& !(pm->ps->userInt3 & (1 << FLAG_FATIGUED))  //player isn't fatigued.
 							&& ( (pm->ps->clientNum < MAX_CLIENTS && pm->cmd.upmove > 0) //is a player trying to jump
 								|| pm->ps->clientNum >= MAX_CLIENTS) ) //an NPC doesn't have to give a command to do this.
 						//if ( (pm->ps->clientNum&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) || ((pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer())&&pm->cmd.upmove>0&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) )//FORCE_LEVEL_1) )FORCE_LEVEL_1) )
@@ -14028,6 +14324,7 @@ qboolean PM_GettingUpFromKnockDown( float standheight, float crouchheight )
 					case BOTH_LK_DL_ST_T_SB_1_L:
 						//RAFIXME - impliment PM_ControlledByPlayer?
 						if ( pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0 //has force jump
+							&& !(pm->ps->userInt3 & (1 << FLAG_FATIGUED))  //player isn't fatigued.
 							&& ( (pm->ps->clientNum < MAX_CLIENTS && pm->cmd.upmove > 0) //is a player trying to jump
 								|| pm->ps->clientNum >= MAX_CLIENTS) ) //an NPC doesn't have to give a command to do this.
 						//if ( (pm->ps->clientNum&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) || ((pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer())&&pm->cmd.upmove>0&&pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0) )//FORCE_LEVEL_1) )FORCE_LEVEL_1) )

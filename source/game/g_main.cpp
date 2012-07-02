@@ -434,6 +434,14 @@ vmCvar_t	sv_privatepassword;
 
 vmCvar_t	g_forceRegenTime;
 
+//[DodgeSys]
+vmCvar_t	g_dodgeRegenTime;
+//[/DodgeSys]
+
+//[SaberSys]
+vmCvar_t	g_mishapRegenTime;
+//[/SaberSys]
+
 vmCvar_t	g_spawnInvulnerability;
 vmCvar_t	g_forcePowerDisable;
 vmCvar_t	g_weaponDisable;
@@ -572,7 +580,9 @@ vmCvar_t		g_debugsabercombat;
 #endif
 //[/SaberSys]
 
-
+//[DodgeSys]
+vmCvar_t		g_debugdodge;
+//[/DodgeSys]
 
 vmCvar_t		g_saberLockRandomNess;
 // nmckenzie: SABER_DAMAGE_WALLS
@@ -630,7 +640,9 @@ vmCvar_t		ojp_clientMOTD;
 vmCvar_t		ojp_MOTD;
 //[/ExpandedMOTD]
 
-
+//[DodgeSys]
+vmCvar_t		ojp_allowBodyDodge;
+//[/DodgeSys]
 
 //[DuelSys]
 // MJN
@@ -657,6 +669,10 @@ vmCvar_t	g_allowBotLimit;
 //[MapURLs]
 vmCvar_t	mapURL;
 //[/MapURLs]
+
+//[FFARespawnTimer]
+vmCvar_t		ojp_ffaRespawnTimer;
+//[/FFARespawnTimer]
 
 vmCvar_t		ojp_truebalance;//[TrueBalance]
 
@@ -809,7 +825,18 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &sv_privatepassword, "sv_privatePassword", "", CVAR_TEMP, 0, qfalse },
 	//[/PrivatePasswordFix]
 
-	{ &g_forceRegenTime, "g_forceRegenTime", "200", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
+	//[FatigueSys]
+	{ &g_forceRegenTime, "g_forceRegenTime", "500", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
+	//{ &g_forceRegenTime, "g_forceRegenTime", "200", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
+	//[/FatigueSys]
+
+	//[DodgeSys]
+	{ &g_dodgeRegenTime, "g_dodgeRegenTime", "1000", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
+	//[/DodgeSys]
+
+	//[SaberSys]
+	{ &g_mishapRegenTime, "g_mishapRegenTime", "3000", CVAR_ARCHIVE, 0, qtrue  },
+	//[/SaberSys]
 
 	{ &g_spawnInvulnerability, "g_spawnInvulnerability", "3000", CVAR_ARCHIVE, 0, qtrue  },
 
@@ -950,7 +977,9 @@ static cvarTable_t		gameCvarTable[] = {
 #endif
 	//[/SaberSys]
 
-
+	//[DodgeSys]
+	{ &g_debugdodge, "g_debugdodge", "0", CVAR_CHEAT, 0, qtrue },
+	//[/DodgeSys]
 
 	{ &g_saberLockRandomNess, "g_saberLockRandomNess", "2", CVAR_CHEAT, 0, qfalse },
 // nmckenzie: SABER_DAMAGE_WALLS
@@ -1090,6 +1119,14 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &ojp_MOTD, "ojp_MOTD", "Please download the latest version of Legacy mod at legacyrp.com", CVAR_ARCHIVE, 0, qfalse },
 	//[/ExpandedMOTD]	
 
+	//[DodgeSys]
+	//toggles the use of Body Dodges, which are matrix-like moves that make the players 
+	//evade damage in exchange for DP.
+	{ &ojp_allowBodyDodge, "ojp_allowBodyDodge", "1", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qtrue },
+	//[/DodgeSys]
+	//[FFARespawnTimer]
+	{ &ojp_ffaRespawnTimer, "ojp_ffaRespawnTimer","1",CVAR_ARCHIVE,0,qtrue},
+	//[/FFARespawnTimer]
 	{ &ojp_truebalance, "ojp_trueBalance","1",CVAR_ARCHIVE|CVAR_LATCH,0,qtrue},  //[TrueBalance]
 
 	{ &ojp_modelscaleEnabled, "ojp_modelscaleenabled","1", CVAR_ARCHIVE ,0,qtrue},//[ModelScale]
@@ -3944,6 +3981,7 @@ extern void Jedi_Decloak( gentity_t *self );
 qboolean G_PointInBounds( vec3_t point, vec3_t mins, vec3_t maxs );
 
 int g_siegeRespawnCheck = 0;
+int ojp_ffaRespawnTimerCheck =0;//[FFARespawnTimer]
 
 //[AREAPORTALFIX]
 void SetMoverState( gentity_t *ent, moverState_t moverState, int time );
@@ -3988,6 +4026,32 @@ void G_RunFrame( int levelTime ) {
 
 		g_siegeRespawnCheck = level.time + g_siegeRespawn.integer * 1000;
 	}
+
+	//[FFARespawnTimer]
+	if ((g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM
+		|| g_gametype.integer == GT_CTF) &&
+		ojp_ffaRespawnTimer.integer &&
+		ojp_ffaRespawnTimerCheck < level.time)
+	{
+		int i = 0;
+		gentity_t *clEnt;
+		while (i < MAX_CLIENTS)
+		{
+			clEnt = &g_entities[i];
+
+			if (clEnt->inuse && clEnt->client &&
+				clEnt->client->tempSpectate > level.time &&
+				clEnt->client->sess.sessionTeam != TEAM_SPECTATOR)
+			{
+				respawn(clEnt);
+				clEnt->client->tempSpectate = 0;
+			}
+			i++;
+		}
+
+		ojp_ffaRespawnTimerCheck = level.time + 30000;
+	}
+	//[/FFARespawnTimer]
 
 	if (gDoSlowMoDuel)
 	{

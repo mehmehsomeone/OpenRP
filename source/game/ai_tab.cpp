@@ -2753,6 +2753,13 @@ void TAB_BotBehave_AttackMove(bot_state_t *bs)
 		&& (InFieldOfVision(bs->viewangles, 30, ang) 
 			|| (bs->virtualWeapon == WP_SABER && InFieldOfVision(bs->viewangles, 100, ang))) )
 	{//don't attack unless you're inside your AttackDistance band and actually pointing at your enemy.  
+		//[ExpSys]
+		if(bs->virtualWeapon != WP_SABER && bs->cur_ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY)
+		{//don't shoot like a retard if you're not going to hit anything
+			return;
+		}
+		//[/ExpSys]
+
 		//This is to prevent the bots from attackmoving with the saber @ 500 meters. :)
 		trap_EA_Attack(bs->client);
 
@@ -3037,6 +3044,10 @@ void TAB_BotBehave_AttackBasic(bot_state_t *bs, gentity_t* target)
 		|| PM_SaberInReturn(bs->cur_ps.saberMove))
 		{//we want to attack, and we need to choose a new attack swing, pick randomly.
 			TAB_MoveforAttackQuad(bs, moveDir, Q_irand(Q_BR, Q_B));
+		}
+		else if( bs->cur_ps.userInt3 & (1 << FLAG_ATTACKFAKE)) 
+		{//successfully started an attack fake, don't do it again for a while.
+			bs->saberBFTime = level.time + Q_irand(3000, 5000); //every 3-5 secs
 		}
 		else if( bs->saberBFTime < level.time
 			&&(PM_SaberInTransition(bs->cur_ps.saberMove) 
@@ -4183,6 +4194,11 @@ void TAB_StandardBotAI(bot_state_t *bs, float thinktime)
 	//[SaberLockSys]
 	if(bs->cur_ps.saberLockTime > level.time)
 	{//bot is in a saber lock
+		//bots cheat by knowing their enemy's DP level, if they're low on DP, try to super break finish them.
+		if(g_entities[bs->cur_ps.saberLockEnemy].client->ps.stats[STAT_DODGE] < 50)
+		{
+			trap_EA_Attack(bs->client);
+		}
 		return;
 	}
 	//[/SaberLockSys]

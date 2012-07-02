@@ -2355,6 +2355,7 @@ extern vmCvar_t g_logDuelStats;
 //[/DuelSys]
 //[SaberLockSys]
 extern qboolean SabBeh_ButtonforSaberLock(gentity_t* self);
+extern void G_RollBalance(gentity_t *self, gentity_t *inflictor, qboolean forceMishap);
 //[/SaberLockSys]
 //[StanceSelection]
 extern qboolean G_ValidSaberStyle(gentity_t *ent, int saberStyle);
@@ -3611,7 +3612,16 @@ void ClientThink_real( gentity_t *ent ) {
 			SetClientViewAngle( ent, lockAng );
 		}
 
-
+		//[SaberLockSys]
+		if(ent->client->pers.cmd.buttons & BUTTON_ALT_ATTACK && ent->client->pers.cmd.forwardmove < 0
+			&& !( ent->client->ps.stats[STAT_DODGE] < DODGE_CRITICALLEVEL 
+			|| ent->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY))
+		{//breaking out of the saberlock!
+			ent->client->ps.saberLockFrame = 0;
+		}
+		else if ( ent->client->ps.saberLockHitCheckTime < level.time )
+		//if ( ent->client->ps.saberLockHitCheckTime < level.time )
+		//[/SaberLockSys]
 		{//have moved to next frame since last lock push
 			//[SaberLockSys]
 			//racc - tweaked this to slow down the speed at which the saber locks advance.  I'm not sure I like this or not yet.
@@ -3722,6 +3732,23 @@ void ClientThink_real( gentity_t *ent ) {
 	if ( ent->NPC )
 	{
 		VectorCopy( ent->client->ps.viewangles, ent->r.currentAngles );
+	}
+
+	if (pm.checkDuelLoss)
+	{//racc - we owned someone in a saber duel, but didn't super break from the saberlock.  Check for death blow conditions. 
+		//[SaberLockSys]
+		//racc - losing a saberlock with checkDuelLoss set results in the loser mishaping.
+		if (pm.checkDuelLoss > 0 && (pm.checkDuelLoss <= MAX_CLIENTS || (pm.checkDuelLoss < (MAX_GENTITIES-1) && g_entities[pm.checkDuelLoss-1].s.eType == ET_NPC) ) )
+		{
+			gentity_t *clientLost = &g_entities[pm.checkDuelLoss-1];
+
+			if (clientLost && clientLost->inuse && clientLost->client)
+			{
+				G_RollBalance(clientLost, ent, qtrue);
+			}
+		}
+
+		pm.checkDuelLoss = 0;
 	}
 
 	//[Asteroids]
@@ -4165,6 +4192,10 @@ void ClientThink_real( gentity_t *ent ) {
 			{ //wave respawning on
 				forceRes = 1;
 			}
+			else if((g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM ||
+				g_gametype.integer == GT_CTF) &&
+				ojp_ffaRespawnTimer.integer)
+				forceRes = 1;
 
 			if ( forceRes > 0 && 
 				( level.time - client->respawnTime ) > forceRes * 1000 ) {

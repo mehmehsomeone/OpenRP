@@ -55,6 +55,58 @@
 
 #define MAX_CLIENT_SCORE_SEND 20
 
+
+
+//[FatigueSys]
+//[FatigueDefines]
+//Fatigue for backflips
+#define FATIGUE_BACKFLIP		-FATIGUE_JUMP + 3
+#define FATIGUE_BACKFLIP_ATARU		-FATIGUE_JUMP + 1
+//#define FATIGUE_WALLFLIP		-FATIGUE_JUMP + 3 something that isnt working right
+
+//Fatigue for jumps (This is the basic cost of a jump, force jumps cost points in addition to this)
+#define FATIGUE_JUMP			2
+
+//Fatigue for standard melee moves
+#define FATIGUE_MELEE			1
+
+//Fatigue for standard saber attacks
+#define FATIGUE_SABERATTACK		1
+
+//Fatigue Cost for saber transition moves (spins)
+#define FATIGUE_SABERTRANS		1
+
+//percentage of max fatigue at which point your player starts acting fatigued.
+#define FATIGUEDTHRESHHOLD		.1
+
+//the fatigue caused by getting hit by a kick.
+#define FATIGUE_KICKHIT			5
+
+//the fatigue for doing cartwheels.
+#define FATIGUE_CARTWHEEL		-FATIGUE_JUMP + 3
+#define FATIGUE_CARTWHEEL_ATARU -FATIGUE_JUMP + 1
+
+//FP cost of saber ground attacks
+#define FATIGUE_GROUNDATTACK	3	
+	
+//FP cost of saber jump attacks
+#define FATIGUE_JUMPATTACK		-FATIGUE_JUMP + 3
+//[/FatigueDefines]
+//[/FatigueSys]
+
+//[SaberSys]
+#define MISHAPLEVEL_MAX			15  //the max possible amount of MP.  This is currently dictated by network variable size limits.
+#define MISHAPLEVEL_FULL		14  //the point at which full mishaps occur on the balance bar.
+#define MISHAPLEVEL_HEAVY		8
+#define MISHAPLEVEL_LIGHT		5
+#define MISHAPLEVEL_NONE		0
+//[/SaberSys]
+
+//[WeaponSys]
+#define MISHAP_MAXINACCURACY	7  //maximum possible offset angle for weapon accuracy. 
+//[/WeaponSys]
+
+
 //[ExpSys]
 //[ExpDefines]
 //the current theory is that a player gets 1 SP per player they kill.  
@@ -559,7 +611,7 @@ typedef enum {
 	STAT_ARMOR,				
 	STAT_DEAD_YAW,					// look this direction when dead (FIXME: get rid of?)
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
-	STAT_MAX_HEALTH,					// health / armor limit, changable by handicap
+
 	STAT_AMMOPOOL//[Reload]
 } statIndex_t;
 
@@ -1731,7 +1783,15 @@ qboolean BG_InDeathAnim( int anim );
 qboolean BG_InSaberLockOld( int anim );
 qboolean BG_InSaberLock( int anim );
 
-void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken );
+//[SaberSys]
+qboolean BG_InWalk( int anim );
+//[/SaberSys]
+
+//[FatigueSys]
+void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, 
+							float *animSpeed, int broken, int fatigued );
+//void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken );
+//[/FatigueSys]
 
 void BG_ForcePowerDrain( playerState_t *ps, forcePowers_t forcePower, int overrideAmt );
 

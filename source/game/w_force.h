@@ -26,6 +26,7 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 extern void WP_DeactivateSaber( gentity_t *self, qboolean clearLength );
 extern void G_Knockdown( gentity_t *self, gentity_t *attacker, const vec3_t pushDir, float strength, qboolean breakSaberLock );
 extern qboolean PM_SaberInParry( int move );
+extern void BG_ReduceMishapLevel(playerState_t *ps);
 extern qboolean GAME_INLINE WalkCheck( gentity_t * self );
 extern qboolean PM_SaberInBrokenParry( int move );
 
