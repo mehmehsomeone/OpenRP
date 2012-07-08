@@ -4,14 +4,6 @@
 
 #define METROID_JUMP 1
 
-//extern void G_AddMercBalance(gentity_t *defender, int amount);//add balance for having forcepower used on absorbing gunners
-//[FatigueSys]
-extern void G_AddMercBalance(gentity_t *self, int amount);//add balance to flamethrower
-extern qboolean BG_SaberAttacking( playerState_t *ps );
-extern qboolean BG_SaberInTransitionAny( int move );
-extern qboolean GAME_INLINE WalkCheck( gentity_t * self );
-//[/FatigueSys]
-
 int speedLoopSound = 0;
  
 int rageLoopSound = 0;

@@ -367,7 +367,7 @@ extern vmCvar_t		ojp_truebalance;//[TrueBalance]
 extern vmCvar_t ojp_modelscaleEnabled;//[Modelscale]
 
 //[OpenRP Admin]
-extern vmCvar_t		openrp_warnLevel; 
+extern vmCvar_t		openrp_maxWarnings; 
 
 //Bitvalues for Admins
 extern vmCvar_t		openrp_admin1Bitvalues;
@@ -862,7 +862,7 @@ typedef struct {
 	vec3_t placeOfDeath;
 	int state;						//The current state of the player
 	int Scale;						//The players new scale
-	int warnLevel;					//The current amount of warnings the player has
+	int warnings;					//The current amount of warnings the player has
 	char IP[16];					//The players IP Address is stored here
 	qboolean Scaled;
 	int pids[MAX_CLIENTS];			//Client IDs

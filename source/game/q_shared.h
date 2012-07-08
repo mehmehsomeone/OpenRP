@@ -2470,24 +2470,6 @@ typedef struct siegePers_s
 #define LOCK_MOVEDOWN		512
 //[/SaberSys]
 
-//[FatigueSys]
-//entitystate/playerstate userint3
-
-//Flag bits in bit number form
-//use "(1 << flag)"
-
-//Fatigued Flag.
-#define	FLAG_FATIGUED		1
-
-//Dodge low flag
-#define FLAG_DODGEROLL		2
-
-//indicates that the current attack/transition is
-//part of a fake.  This makes the attack much stronger
-//forbreaking thru other attacks and blocks.
-#define FLAG_ATTACKFAKE		3
-//[/FatigueSys]
-
 //[SaberSys]
 //This flag indicates that the player should have a slower than usual bounce since they just avoided a mishap by
 //having enough FP/DP.

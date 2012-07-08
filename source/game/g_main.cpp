@@ -679,7 +679,7 @@ vmCvar_t		ojp_truebalance;//[TrueBalance]
 vmCvar_t	ojp_modelscaleEnabled;//[ModelScale]
 
 //[OpenRP Admin]
-vmCvar_t		openrp_warnLevel; 
+vmCvar_t		openrp_maxWarnings; 
 
 //Bitvalues for Admins
 vmCvar_t		openrp_admin1Bitvalues;
@@ -825,18 +825,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &sv_privatepassword, "sv_privatePassword", "", CVAR_TEMP, 0, qfalse },
 	//[/PrivatePasswordFix]
 
-	//[FatigueSys]
-	{ &g_forceRegenTime, "g_forceRegenTime", "500", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
-	//{ &g_forceRegenTime, "g_forceRegenTime", "200", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
-	//[/FatigueSys]
-
-	//[DodgeSys]
-	{ &g_dodgeRegenTime, "g_dodgeRegenTime", "1000", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
-	//[/DodgeSys]
-
-	//[SaberSys]
-	{ &g_mishapRegenTime, "g_mishapRegenTime", "3000", CVAR_ARCHIVE, 0, qtrue  },
-	//[/SaberSys]
+	{ &g_forceRegenTime, "g_forceRegenTime", "200", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
 
 	{ &g_spawnInvulnerability, "g_spawnInvulnerability", "3000", CVAR_ARCHIVE, 0, qtrue  },
 
@@ -1140,7 +1129,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_mAllowEmotes, "g_mAllowEmotes", "4", CVAR_ARCHIVE, 0, qtrue },
 
 	//[OpenRP Admin]
-	{ &openrp_warnLevel, "openrp_warnLevel", "3", CVAR_ARCHIVE, 0, qtrue  },
+	{ &openrp_maxWarnings, "openrp_maxWarnings", "3", CVAR_ARCHIVE, 0, qtrue  },
 
 	{ &openrp_admin1Bitvalues, "openrp_admin1Bitvalues", "268435455", 0 , 0, qtrue  },
 	{ &openrp_admin2Bitvalues, "openrp_admin2Bitvalues", "1", 0 , 0, qtrue  },

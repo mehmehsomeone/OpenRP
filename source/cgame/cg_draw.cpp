@@ -1178,9 +1178,8 @@ void CG_DrawForcePower( menuDef_t *menuHUD )
 	aColor[2] = 0.996f;
 	aColor[3] = 0.8f;
 
-	if (cg.forceHUDTotalFlashTime > cg.time || (cg_entities[cg.snap->ps.clientNum].currentState.userInt3 &  ( 1 << FLAG_FATIGUED)))
-	//if (cg.forceHUDTotalFlashTime > cg.time )
-	//[/FatigueSys]
+	// Make the hud flash by setting forceHUDTotalFlashTime above cg.time
+	if (cg.forceHUDTotalFlashTime > cg.time )
 	{
 		//color of the bar
 		aColor[0] = 1.0f;

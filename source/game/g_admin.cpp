@@ -380,7 +380,6 @@ amwarn Function
 void Cmd_amWarn_f(gentity_t *ent)
 {
 	gentity_t *tent;
-	int warns = 3;
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS];
 	char cmdTarget[MAX_STRING_CHARS];
@@ -414,15 +413,13 @@ void Cmd_amWarn_f(gentity_t *ent)
 		return;
 	}
 
-	tent->client->sess.warnLevel += 1;
+	tent->client->sess.warnings += 1;
 
-	warns = tent->client->sess.warnLevel;
-
-	trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5Player %s was warned.\n\"", tent->client->pers.netname));
-	trap_SendServerCommand(tent->client->ps.clientNum, va("cp \"^5You have been warned by an admin.\nYou have %s warnings.\"",(atoi(openrp_warnLevel.string) - warns) ));
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Player %s was warned.\nThey have %i/%i warnings.\"", tent->client->pers.netname, tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
+	trap_SendServerCommand( tent->client->ps.clientNum, va( "cp \"^5You have been warned by an admin.\nYou have %i/%i warnings.\"", tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
 	G_LogPrintf("Warn admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 
-	if(tent->client->sess.warnLevel == atoi(openrp_warnLevel.string))
+	if( tent->client->sess.warnings == atoi( openrp_maxWarnings.string ) )
 	{
 		trap_DropClient(pids[0], "^1was kicked because they received the maximum number of warnings from admins.\n.");
 		G_LogPrintf("%s was kicked because they received the maximum number of warnings from admins.\n", tent->client->pers.netname);

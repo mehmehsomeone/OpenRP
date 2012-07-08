@@ -3340,10 +3340,6 @@ void BG_PlayerStateToEntityState( playerState_t *ps, entityState_t *s, qboolean 
 	s->loopSound = ps->loopSound;
 	s->generic1 = ps->generic1;
 
-	//[FatigueSys]
-	s->userInt3 = ps->userInt3;
-	//[/FatigueSys]
-
 	//NOT INCLUDED IN ENTITYSTATETOPLAYERSTATE:
 	s->modelindex2 = ps->weaponstate;
 	s->constantLight = ps->weaponChargeTime;
@@ -3495,10 +3491,6 @@ void BG_PlayerStateToEntityStateExtraPolate( playerState_t *ps, entityState_t *s
 
 	s->loopSound = ps->loopSound;
 	s->generic1 = ps->generic1;
-
-	//[FatigueSys]
-	s->userInt3 = ps->userInt3;
-	//[/FatigueSys]
 
 	//NOT INCLUDED IN ENTITYSTATETOPLAYERSTATE:
 	s->modelindex2 = ps->weaponstate;
