@@ -1624,6 +1624,11 @@ void Cmd_amWeather_f(gentity_t *ent)
 	G_LogPrintf("Weather command executed by %s. The weather is now %s.\n", ent->client->pers.netname, weather);
 }
 
+//-----------
+//WeatherPlus
+//-----------
+
+
 void Cmd_amWeatherPlus_f(gentity_t *ent)
 {
 	char	weather[MAX_STRING_CHARS];
@@ -1635,10 +1640,7 @@ void Cmd_amWeatherPlus_f(gentity_t *ent)
 	{
 		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
 		return;
-	}
-
-
-						
+	}						
 	if (!Q_stricmp(weather, "snow"))
 	{
 		trap_SetConfigstring( CS_EFFECTS + num, "");
@@ -1667,30 +1669,46 @@ void Cmd_amWeatherPlus_f(gentity_t *ent)
 		G_EffectIndex("*constantwind (100 100 -100)");
 		G_EffectIndex("*fog");
 		G_EffectIndex("*snow");
-		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nSand\nWind\n\"" ) ;
+		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nFog\nSnow\n\"" ) ;
 	}
-	else if (!Q_stricmp(weather, "fog"))
+	else if (!Q_stricmp(weather, "heavyfog"))
 	{
-		G_RemoveWeather();
-		num = G_EffectIndex("*clear");
+		
+		
 		trap_SetConfigstring( CS_EFFECTS + num, "");
 		G_EffectIndex("*heavyrainfog");
+		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nHeavy Fog\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "spacedust"))
 	{
-		G_RemoveWeather();
-		num = G_EffectIndex("*clear");
+		
+		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nSpace Dust\n\"" ) ;
 		trap_SetConfigstring( CS_EFFECTS + num, "");
 		G_EffectIndex("*spacedust 4000");
 	}
 	else if (!Q_stricmp(weather, "acidrain"))
 	{
-		G_RemoveWeather();
-		num = G_EffectIndex("*clear");
+		
+		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nAcid Rain\n\"" ) ;
 		trap_SetConfigstring( CS_EFFECTS + num, "");
 		G_EffectIndex("*acidrain 500");
 	}
+	
+	else if (!Q_stricmp(weather, "fog"))
+	{
+		
+		
+		trap_SetConfigstring( CS_EFFECTS + num, "");
+		G_EffectIndex("*fog");
+		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nFog\n\"" ) ;
+	}
+		else if (!Q_stricmp(weather, "sand"))
+	{
 
+		trap_SetConfigstring( CS_EFFECTS + num, "");
+		G_EffectIndex("*sand");
+		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nSand\n\"" ) ;
+	}
 	else
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: Invalid type of weather.\n\"" );
@@ -2261,7 +2279,7 @@ Create Faction
 void Cmd_CreateFaction_F(gentity_t * ent)
 {
 	CheckAdmin( ent );
-	if(!G_CheckAdmin(ent, ADMIN_CREATEFACTION))
+	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
 		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
 		return;
@@ -2336,7 +2354,7 @@ Set Faction
 void Cmd_SetFaction_F( gentity_t * ent )
 {
 	CheckAdmin( ent );
-	if(!G_CheckAdmin(ent, ADMIN_SETFACTION))
+	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
 		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
 		return;
@@ -2374,77 +2392,25 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	int userID = q.get_num( va( "SELECT userID FROM characters WHERE ID='%i'", charID ) );
 	//Get their clientID so we can send them messages
 	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
+	if (!Q_stricmp(factionName, "none"))
+	{
+		q.execute( va( "UPDATE characters set faction='none' WHERE ID='%i'", charID ) );
+		q.execute( va( "UPDATE characters set factionrank='none'WHERE ID='%i'", charID ) );
+		trap_SendServerCommand( clientID,  "print \"^2You have been removed from your faction.\n\"" );
+		trap_SendServerCommand( clientID,  "cp \"^2You have been removed from your faction.\n\"" );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Character %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
+	}
+	else {
+		q.execute( va( "UPDATE characters set faction='%s' WHERE ID='%i'", factionNameSTR.c_str(), charID ) );
+		q.execute( va( "UPDATE characters set factionrank='Member' WHERE ID='%i'", charID ) );
 
-	q.execute( va( "UPDATE characters set faction='%s' WHERE ID='%i'", factionNameSTR.c_str(), charID ) );
-	q.execute( va( "UPDATE characters set factionrank='Member' WHERE ID='%i'", charID ) );
+		trap_SendServerCommand( clientID, va( "print \"^2You have been put in the %s faction! Type /Faction to view info about it.\n\"", factionNameSTR.c_str() ) );
+		trap_SendServerCommand( clientID, va( "cp \"^2You have been put in the %s faction! Type /Faction to view info about it.\n\"", factionNameSTR.c_str() ) );
 
-	trap_SendServerCommand( clientID, va( "print \"^2You have been put in the %s faction! Type /Faction to view info about it.\n\"", factionNameSTR.c_str() ) );
-	trap_SendServerCommand( clientID, va( "cp \"^2You have been put in the %s faction! Type /Faction to view info about it.\n\"", factionNameSTR.c_str() ) );
-
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Character %s has been put in the faction %s.\nUse /SetFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
-
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Character %s has been put in the faction %s.\nUse /SetFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
+	}
 	return;
 }
-
-/*
-=================
-
-Kick Faction
-
-=====
-*/
-void Cmd_KickFaction_F( gentity_t * ent )
-{
-	CheckAdmin( ent );
-	if(!G_CheckAdmin(ent, ADMIN_KICKFACTION))
-	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
-		return;
-	}
-
-	Database db(DATABASE_PATH);
-	Query q(db);
-
-	if ( !db.Connected() )
-	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
-		return;
-	}
-
-	char charName[MAX_STRING_CHARS];
-
-	trap_Argv( 1, charName, MAX_STRING_CHARS );
-	string charNameSTR = charName;
-
-	//Check if the character exists
-	transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
-
-	int charID = q.get_num( va( "SELECT ID FROM characters WHERE name='%s'", charNameSTR.c_str() ) );
-
-	if(charID == 0)
-	{
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
-		return;
-	}
-
-	//Get their userID
-	int userID = q.get_num( va( "SELECT userID FROM characters WHERE ID='%i'", charID ) );
-	//Get their clientID so we can send them messages
-	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
-
-	string charCurrentFactionSTR = q.get_string( va( "SELECT faction FROM characters WHERE ID='%i'", charID ) );
-
-	q.execute( va( "UPDATE characters set faction='none' WHERE ID='%i'", charID ) );
-	q.execute( va( "UPDATE characters set factionrank='none' WHERE ID='%i'", charID ) );
-
-	trap_SendServerCommand( clientID, va( "print \"^1You have been removed from the %s faction.\n\"", charCurrentFactionSTR.c_str() ) );
-	trap_SendServerCommand( clientID, va( "cp \"^1You have been removed from the %s faction.\n\"", charCurrentFactionSTR.c_str() ) );
-
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Character %s has been removed from the faction %s.\n\"", charNameSTR.c_str(), charCurrentFactionSTR.c_str() ) );
-
-	return;
-}
-
 /*
 =================
 
@@ -2455,7 +2421,7 @@ Set Faction Rank
 void Cmd_SetFactionRank_F( gentity_t * ent )
 {
 	CheckAdmin( ent );
-	if(!G_CheckAdmin(ent, ADMIN_SETFACTIONRANK))
+	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
 		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
 		return;

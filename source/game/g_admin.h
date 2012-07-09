@@ -38,3 +38,4 @@ void Cmd_SetFactionRank_F( gentity_t * ent );
 void Cmd_FactionGenerate_F(gentity_t * ent);
 void Cmd_GenerateCredits_F(gentity_t * ent);
 void Cmd_GetNPC_F( gentity_t *ent );
+void Cmd_amWeatherPlus_f(gentity_t *ent);

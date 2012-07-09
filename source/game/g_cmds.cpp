@@ -4051,6 +4051,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_GenerateCredits_F (ent);
 		return;
 	}
+		if (Q_stricmp (cmd, "editaccount") == 0) {
+		Cmd_EditAccount_F (ent);
+		return;
+	}
 	if (Q_stricmp (cmd, "createfaction") == 0) {
 		Cmd_CreateFaction_F (ent);
 		return;
@@ -4178,6 +4182,10 @@ void ClientCommand( int clientNum ) {
 	}
 	if(Q_stricmp(cmd, "amweather") == 0) {
 		Cmd_amWeather_f (ent);
+		return;
+	}
+	if(Q_stricmp(cmd, "amweatherplus") == 0) {
+		Cmd_amWeatherPlus_f (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "ammap") == 0) {

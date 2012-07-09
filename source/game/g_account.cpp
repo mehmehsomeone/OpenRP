@@ -368,3 +368,53 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 		return;
 }
 
+void Cmd_EditAccount_F(gentity_t * ent)
+{
+	if( !ent->client->sess.loggedinAccount )
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You must be logged in to edit your account.\n\"");
+			return;
+		}
+	Database db(DATABASE_PATH);
+	Query q(db);
+	
+		if (!db.Connected())
+		{
+			G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
+			return;
+		}
+		
+			if(trap_Argc() != 3) //If the user doesn't specify both args.
+				{
+				trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: /editaccount <username/password> <value> \n\"" ) ;
+				return;
+				}
+			char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS];
+			trap_Argv( 1, parameter, MAX_STRING_CHARS );
+			string parameterSTR = parameter;
+			trap_Argv( 2, change, MAX_STRING_CHARS );
+			string changeSTR = change;
+
+		if ((!Q_stricmp(parameter, "username")))
+		{
+			transform( changeSTR.begin(), changeSTR.end(), changeSTR.begin(), ::tolower );
+			string DBname = q.get_string( va( "SELECT name FROM users WHERE name='%s'",changeSTR.c_str() ) );
+			if(!DBname.empty())
+			{
+				trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^1Error: Username %s is already in use.\n\"",DBname.c_str() ) );
+				return;
+			}
+			q.execute( va( "UPDATE users set name='%s' WHERE ID= '%i'", changeSTR, ent->client->sess.userID));
+			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Username has been changed to ^7 %s\n\"",changeSTR.c_str() ) );
+		}
+		else if((!Q_stricmp(parameter, "password")))
+		{
+			q.execute( va( "UPDATE users set password='%s' WHERE ID='%i'", changeSTR, ent->client->sess.userID));
+			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Password has been changed to ^7 %s\n\"",changeSTR.c_str() ) );
+			return;
+		}
+		else
+		{
+			trap_SendServerCommand ( ent->client->ps.clientNum, "print \"^5Command Usage: /editaccount <username/password> <value> \n\"" ) ;
+		}
+}

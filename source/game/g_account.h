@@ -11,7 +11,7 @@ void Cmd_AccountLogin_F(gentity_t * ent);
 void Cmd_AccountLogout_F(gentity_t * ent);
 void Cmd_AccountCreate_F(gentity_t * ent);
 void Cmd_AccountInfo_F(gentity_t * ent);
-
+void Cmd_EditAccount_F(gentity_t * ent);
 //Hashtable for feats
 typedef struct{
 	int    ID;				// Feat ID
