@@ -184,6 +184,8 @@ int ForcePowerforJump[NUM_FORCE_POWER_LEVELS] =
 	0,
 	30,
 	30,
+	30,
+	30,
 	30
 };
 
@@ -211,7 +213,6 @@ int ForcePowerforJump[NUM_FORCE_POWER_LEVELS] =
 //[/TABBotDefines]
 
 //Returns the Force level needed to make this jump
-//FORCE_LEVEL_4 (4) = Jump too high!
 int ForceJumpNeeded(vec3_t startvect, vec3_t endvect)
 {
 	float heightdif, lengthdif; 
@@ -230,7 +231,12 @@ int ForceJumpNeeded(vec3_t startvect, vec3_t endvect)
 		return FORCE_LEVEL_0;
 	}
 
-	if (heightdif > 512)
+	if (heightdif > 750 || lengthdif > 1500)
+	{
+		return FORCE_LEVEL_5;
+	}
+
+	if (heightdif > 512 || lengthdif > 1024)
 	{ //too high
 		return FORCE_LEVEL_4;
 	}

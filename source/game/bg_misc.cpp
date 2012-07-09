@@ -167,75 +167,75 @@ int bgForcePowerCost[NUM_TOTAL_SKILLS][NUM_FORCE_POWER_LEVELS] = //0 == neutral
 //[/ExpSys]
 {
 	//[ExpSys]
-	{	0,	2,	4,	6	},	// Heal			// FP_HEAL
-	{	0,	1,	3,	8	},	// Jump			//FP_LEVITATION,//hold/duration -- lvl3 was 10
-	{	0,	2,	4,	6	},	// Speed		//FP_SPEED,//duration
-	{	0,	2,	5,	5	},	// Push			//FP_PUSH,//hold/duration
-	{	0,	3,	5,	7	},	// Pull			//FP_PULL,//hold/duration
-	{	0,	1,	5,	8	},	// Mind Trick	//FP_MINDTRICK,//instant -- lvl3 was 10
-	{	0,	2,	5,	8	},	// Grip			//FP_GRIP,//hold/duration -- lvl3 was 10
-	{	0,	2,	8,	6	},	// Lightning	//FP_LIGHTNING,//hold/duration
-	{	0,	4,	6,	8	},	// Dark Rage	//FP_RAGE,//duration
-	{	0,	2,	5,	8	},	// Protection	//FP_MANIPULATE,//duration
-	{	0,	5,	5,	8	},	// Absorb		//FP_ABSORB,//duration
-	{	0,	1,	3,	6	},	// Team Heal	//FP_TEAM_HEAL,//instant
-	{	0,	1,	3,	6	},	// Team Force	//FP_LIFT,//instant
-	{	0,	2,	4,	6	},	// Drain		//FP_DRAIN,//hold/duration
-	{	0,	2,	4,	8	},	// Sight		//FP_SEE,//duration -- lvl3 was 10
-	{	0,	SABER_OFFENSE_L1,	0,	0	},	// Saber Attack	//FP_SABER_OFFENSE,
-	{	0,	SABER_DEFENSE_L1,	2,	10	},	// Saber Defend	//FP_SABER_DEFENSE, -- lvl3 was 10 -- 1.3 was 8
+	{	0,	2,	4,	6, 6, 6	},	// Heal			// FP_HEAL
+	{	0,	1,	3,	8, 8, 8	},	// Jump			//FP_LEVITATION,//hold/duration -- lvl3 was 10
+	{	0,	2,	4,	6, 6, 6	},	// Speed		//FP_SPEED,//duration
+	{	0,	2,	5,	5, 5, 5	},	// Push			//FP_PUSH,//hold/duration
+	{	0,	3,	5,	7, 7, 7	},	// Pull			//FP_PULL,//hold/duration
+	{	0,	1,	5,	8, 8, 8	},	// Mind Trick	//FP_MINDTRICK,//instant -- lvl3 was 10
+	{	0,	2,	5,	8, 8, 8	},	// Grip			//FP_GRIP,//hold/duration -- lvl3 was 10
+	{	0,	2,	8,	6, 6, 6	},	// Lightning	//FP_LIGHTNING,//hold/duration
+	{	0,	4,	6,	8, 8, 8	},	// Dark Rage	//FP_RAGE,//duration
+	{	0,	2,	5,	8, 8, 8	},	// Protection	//FP_MANIPULATE,//duration
+	{	0,	5,	5,	8, 8, 8	},	// Absorb		//FP_ABSORB,//duration
+	{	0,	1,	3,	6, 6, 6	},	// Team Heal	//FP_TEAM_HEAL,//instant
+	{	0,	1,	3,	6, 6, 6	},	// Team Force	//FP_LIFT,//instant
+	{	0,	2,	4,	6, 6, 6	},	// Drain		//FP_DRAIN,//hold/duration
+	{	0,	2,	4,	8, 8, 8	},	// Sight		//FP_SEE,//duration -- lvl3 was 10
+	{	0,	SABER_OFFENSE_L1,	0,	0, 0, 0	},	// Saber Attack	//FP_SABER_OFFENSE,
+	{	0,	SABER_DEFENSE_L1,	2,	10, 10, 10	},	// Saber Defend	//FP_SABER_DEFENSE, -- lvl3 was 10 -- 1.3 was 8
 	{	0,	2,	4,	8	},	// Saber Throw	//FP_SABERTHROW,
 	//NUM_FORCE_POWERS
 	//racc - additional skills
-	{	0,	8,	0,	0	},	//SK_JETPACK,		// Jetpack Skill	
-	{	0,	9,	7,	8	},	//SK_PISTOL,		//blaster pistol -- 1.3 was 0,1,2,8
-	{	0,	9,	4,	6	},	//SK_BLASTER,		//blaster rifle skill
-	{	0,	8,	0,	0	},	//SK_THERMAL,		//thermal detenator skill -- 1.3 was 0,6,6,8
-	{	0,	10,	0,	0	},	//SK_ROCKET,		//rocket launcher skill -- 1.3 was 0,6,6,8
-	{	0,	3,	3,	0	},	//SK_BACTA			//bacta medikits skill
-	{	0,	6,	0,	0	},	//SK_FLAMETHROWER	//flamethrower skill
-	{	0,	10,	8,	8	},	//SK_BOWCASTER,		//bowcaster skill
-	{	0,	8,	0,	0	},	//SK_FORCEFIELD,	//forcefield skill -- 1.3 was 3
-	{	0,	8,	0,	0	},	//SK_CLOAK,		//cloaking device skill
-	{	0,	6,	0,	0	},	//SK_SEEKER,		//seeker droid skill
-	{	0,  6,  0,  0	},	//SK_SENTRY,		//sentry gun skill
-	{	0,  5,  0,  0	},	//SK_DETPACK,		//detpack skill -- 1.3 was 0,5,5
-	{   0,  10, 7,  8	},  //SK_REPEATER,      // repeater/clone rifle skill
-	{   0,  9,  7,  7   },	//SK_DISRUPTOR,      // Disruptor/sniper rifle skill
+	{	0,	8,	0,	0, 0, 0	},	//SK_JETPACK,		// Jetpack Skill	
+	{	0,	9,	7,	8, 0, 0	},	//SK_PISTOL,		//blaster pistol -- 1.3 was 0,1,2,8
+	{	0,	9,	4,	6, 0, 0	},	//SK_BLASTER,		//blaster rifle skill
+	{	0,	8,	0,	0, 0, 0	},	//SK_THERMAL,		//thermal detenator skill -- 1.3 was 0,6,6,8
+	{	0,	10,	0,	0, 0, 0	},	//SK_ROCKET,		//rocket launcher skill -- 1.3 was 0,6,6,8
+	{	0,	3,	3,	0, 0, 0	},	//SK_BACTA			//bacta medikits skill
+	{	0,	6,	0,	0, 0, 0	},	//SK_FLAMETHROWER	//flamethrower skill
+	{	0,	10,	8,	8, 0, 0	},	//SK_BOWCASTER,		//bowcaster skill
+	{	0,	8,	0,	0, 0, 0	},	//SK_FORCEFIELD,	//forcefield skill -- 1.3 was 3
+	{	0,	8,	0,	0, 0, 0	},	//SK_CLOAK,		//cloaking device skill
+	{	0,	6,	0,	0, 0, 0	},	//SK_SEEKER,		//seeker droid skill
+	{	0,  6,  0,  0, 0, 0	},	//SK_SENTRY,		//sentry gun skill
+	{	0,  5,  0,  0, 0, 0	},	//SK_DETPACK,		//detpack skill -- 1.3 was 0,5,5
+	{   0,  10, 7,  8, 0, 0	},  //SK_REPEATER,      // repeater/clone rifle skill
+	{   0,  9,  7,  7, 0, 0	},	//SK_DISRUPTOR,      // Disruptor/sniper rifle skill
 	//[StanceSelection]
-	{	0,	8,	8,	0	},	//SK_BLUESTYLE,	//Yellow lightsaber style
-	{	0,	8,	8,	0	},	//SK_REDSTYLE,	//Red lightsaber style
-	{	0,	8,	8,	0	},	//SK_PURPLESTYLE,	//Purple lightsaber style
-	{	0,	8,	8,	0	},	//SK_GREENSTYLE,	//Green lightsaber style
-	{	0,	8,	8,	0	},	//SK_DUALSTYLE,	//Dual lightsaber style
-	{	0,	8,	8,	0	},	//SK_STAFFSTYLE,	//Staff lightsaber style
+	{	0,	8,	8,	0, 0, 0	},	//SK_BLUESTYLE,	//Yellow lightsaber style
+	{	0,	8,	8,	0, 0, 0	},	//SK_REDSTYLE,	//Red lightsaber style
+	{	0,	8,	8,	0, 0, 0	},	//SK_PURPLESTYLE,	//Purple lightsaber style
+	{	0,	8,	8,	0, 0, 0	},	//SK_GREENSTYLE,	//Green lightsaber style
+	{	0,	8,	8,	0, 0, 0	},	//SK_DUALSTYLE,	//Dual lightsaber style
+	{	0,	8,	8,	0, 0, 0	},	//SK_STAFFSTYLE,	//Staff lightsaber style
 	//[/StanceSelection]
-	{	0,	10,	0,	0	},  //SK_REPEATERUPGRADE //Repeater Upgrade
-	{	0,	9,	5,	6	},  //SK_FLECHETTE //Flechette
-	{	0,	10,	0,	0	},	//SK_BLASTERRATEOFFIREUPGRADE
-	{	0,	10,	8,	8	},//SK_TUSKEN_RIFLE
-	{	0,	5,	7,	9	},//SK_SHIELD
-	{	0,	5,	7,	9	},//SK_GRENADE
-	{	0,	1,	0,	0	},//SK_SMOKEGRENADE
-	{	0,	1,	0,	0	},//SK_FLASHGRENADE
-	{	0,	1,	0,	0	},//SK_CRYOBAN
-	{	0,	1,	0,	0	},//SK_EMP
-	{   0,  1,  2,  3   },//SK_DEMP
-	{   0,  1,  2,  3   },//SK_CONC
-	{   0,  1,  2,  3   },//FT_BLASTERS
-	{   0,  1,  2,  3   },//FT_RIFLES
-	{   0,  1,  2,  3   },//FT_HEAVY_WEAPONS
-	{   0,  1,  2,  3   },//FT_SPECIALIST_WEAPONS
-	{   0,  1,  2,  3   },//FT_DEMOLITION
-	{   0,  1,  2,  3   },//FT_EXPLOSIVES
-	{   0,  1,  2,  3   },//FT_ENGINEERING
-	{   0,  1,  2,  3   },//FT_SIGHT
-	{   0,  1,  2,  3   },//FT_BACTA
-	{   0,  1,  2,  3   },//FT_FLAMETHROWER
-	{   0,  1,  2,  3   },//FT_JETPACK
-	{   0,  1,  2,  3   },//FT_CLOAK
-	{   0,  1,  2,  3   },//FT_SHIELDS
-	{   0,  1,  2,  3   },//FT_ENERGY
+	{	0,	10,	0,	0, 0, 0	},  //SK_REPEATERUPGRADE //Repeater Upgrade
+	{	0,	9,	5,	6, 0, 0	},  //SK_FLECHETTE //Flechette
+	{	0,	10,	0,	0, 0, 0	},	//SK_BLASTERRATEOFFIREUPGRADE
+	{	0,	10,	8,	8, 0, 0	},//SK_TUSKEN_RIFLE
+	{	0,	5,	7,	9, 0, 0	},//SK_SHIELD
+	{	0,	5,	7,	9, 0, 0	},//SK_GRENADE
+	{	0,	1,	0,	0, 0, 0	},//SK_SMOKEGRENADE
+	{	0,	1,	0,	0, 0, 0	},//SK_FLASHGRENADE
+	{	0,	1,	0,	0, 0, 0	},//SK_CRYOBAN
+	{	0,	1,	0,	0, 0, 0	},//SK_EMP
+	{   0,  1,  2,  3, 0, 0	},//SK_DEMP
+	{   0,  1,  2,  3, 0, 0	},//SK_CONC
+	{   0,  1,  2,  3, 0, 0	},//FT_BLASTERS
+	{   0,  1,  2,  3, 0, 0	},//FT_RIFLES
+	{   0,  1,  2,  3, 0, 0	},//FT_HEAVY_WEAPONS
+	{   0,  1,  2,  3, 0, 0	},//FT_SPECIALIST_WEAPONS
+	{   0,  1,  2,  3, 0, 0	},//FT_DEMOLITION
+	{   0,  1,  2,  3, 0, 0	},//FT_EXPLOSIVES
+	{   0,  1,  2,  3, 0, 0	},//FT_ENGINEERING
+	{   0,  1,  2,  3, 0, 0	},//FT_SIGHT
+	{   0,  1,  2,  3, 0, 0	},//FT_BACTA
+	{   0,  1,  2,  3, 0, 0	},//FT_FLAMETHROWER
+	{   0,  1,  2,  3, 0, 0	},//FT_JETPACK
+	{   0,  1,  2,  3, 0, 0 },//FT_CLOAK
+	{   0,  1,  2,  3, 0, 0	},//FT_SHIELDS
+	{   0,  1,  2,  3, 0, 0	},//FT_ENERGY
 	//[/ExpSys]
 };
 
@@ -909,9 +909,9 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	//while (i < NUM_FORCE_POWERS)
 	//[/ExpSys]
 	{
-		if (final_Powers[i] > FORCE_LEVEL_3)
+		if (final_Powers[i] > FORCE_LEVEL_5)
 		{
-			final_Powers[i] = FORCE_LEVEL_3;
+			final_Powers[i] = FORCE_LEVEL_5;
 		}
 		i++;
 	}

@@ -184,6 +184,74 @@ int forcePowerNeeded[NUM_FORCE_POWER_LEVELS][NUM_FORCE_POWERS] =
 		0,//FP_SABER_DEFENSE,
 		20//FP_SABERTHROW,
 		//NUM_FORCE_POWERS
+	},
+	{
+		30,//FP_HEAL,//instant //You get 5 points of health.. for 50 force points! //50
+		10,//FP_LEVITATION,//hold/duration
+		//[ForceSys]
+		1,//FP_SPEED,//duration -- 1.3 was 2
+		//reduced the FP cost for pull/push
+		10,//FP_PUSH,//hold/duration
+		10,//FP_PULL,//hold/duration
+		//50,//FP_SPEED,//duration
+		//20,//FP_PUSH,//hold/duration
+		//20,//FP_PULL,//hold/duration
+		//[/ForceSys]
+		20,//FP_MINDTRICK,//instant
+		0,//FP_GRIP,//hold/duration
+		//[ForceSys]
+		7,//FP_LIGHTNING,//initial FP cost -- Was 10 -- 1.3 was 8
+		//1,//FP_LIGHTNING,//hold/duration
+		//[/ForceSys]
+		50,//FP_RAGE,//duration
+		0,//FP_MANIPULATE,//duration -- 1.3 was 1
+		10,//FP_ABSORB,//duration
+		25,//FP_TEAM_HEAL,//instant
+		20,//FP_LIFT,//instant -- 1.3 was 25
+		//[ForceSys]
+		//drain now acts like lightning.
+		10,//FP_DRAIN,//initial FP cost
+		//20,//FP_DRAIN,//hold/duration
+		//[/ForceSys]
+		20,//FP_SEE,//duration
+		0,//FP_SABER_OFFENSE,
+		0,//FP_SABER_DEFENSE,
+		20//FP_SABERTHROW,
+		//NUM_FORCE_POWERS
+	},
+	{
+		30,//FP_HEAL,//instant //You get 5 points of health.. for 50 force points! //50
+		10,//FP_LEVITATION,//hold/duration
+		//[ForceSys]
+		1,//FP_SPEED,//duration -- 1.3 was 2
+		//reduced the FP cost for pull/push
+		10,//FP_PUSH,//hold/duration
+		10,//FP_PULL,//hold/duration
+		//50,//FP_SPEED,//duration
+		//20,//FP_PUSH,//hold/duration
+		//20,//FP_PULL,//hold/duration
+		//[/ForceSys]
+		20,//FP_MINDTRICK,//instant
+		0,//FP_GRIP,//hold/duration
+		//[ForceSys]
+		7,//FP_LIGHTNING,//initial FP cost -- Was 10 -- 1.3 was 8
+		//1,//FP_LIGHTNING,//hold/duration
+		//[/ForceSys]
+		50,//FP_RAGE,//duration
+		0,//FP_MANIPULATE,//duration -- 1.3 was 1
+		10,//FP_ABSORB,//duration
+		25,//FP_TEAM_HEAL,//instant
+		20,//FP_LIFT,//instant -- 1.3 was 25
+		//[ForceSys]
+		//drain now acts like lightning.
+		10,//FP_DRAIN,//initial FP cost
+		//20,//FP_DRAIN,//hold/duration
+		//[/ForceSys]
+		20,//FP_SEE,//duration
+		0,//FP_SABER_OFFENSE,
+		0,//FP_SABER_DEFENSE,
+		20//FP_SABERTHROW,
+		//NUM_FORCE_POWERS
 	}
 };
 
@@ -192,7 +260,9 @@ float forceJumpHeight[NUM_FORCE_POWER_LEVELS] =
 	32,//normal jump (+stepheight+crouchdiff = 66) 
 	440,//(+stepheight+crouchdiff = 130) -- 96 was 150
 	1000,//(+stepheight+crouchdiff = 226) -- 192 was 350
-	1560//(+stepheight+crouchdiff = 418)  -- 384	was 550
+	1560,//(+stepheight+crouchdiff = 418)  -- 384	was 550
+	2000,
+	2500
 };
 
 float forceJumpStrength[NUM_FORCE_POWER_LEVELS] = 
@@ -200,7 +270,9 @@ float forceJumpStrength[NUM_FORCE_POWER_LEVELS] =
 	JUMP_VELOCITY,//normal jump
 	420,
 	590,
-	840
+	840,
+	980,
+	1060
 };
 
 //rww - Get a pointer to the bgEntity by the index
@@ -2251,7 +2323,9 @@ float forceJumpHeightMax[NUM_FORCE_POWER_LEVELS] =
 	85,//normal jump (32+stepheight(18)+crouchdiff(24) = 74)  was 66 
 	340,//(96+stepheight(18)+crouchdiff(24) = 138) -- 130 --- forceJumpHeight level 1 +35 was 185
 	480,//(192+stepheight(18)+crouchdiff(24) = 234) was 385
-	820//(384+stepheight(18)+crouchdiff(24) = 426) was 585
+	820,//(384+stepheight(18)+crouchdiff(24) = 426) was 585
+	1000,
+	1100
 };
 
 void PM_GrabWallForJump( int anim )
@@ -2276,6 +2350,8 @@ int ForceFallBrakeRate[NUM_FORCE_POWER_LEVELS] =
 	50,
 	60,
 	70,
+	80,
+	90
 };
 
 //time between Force Fall braking actions.

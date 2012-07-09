@@ -122,6 +122,48 @@ const int forcePowerMinRank[NUM_FORCE_POWER_LEVELS][NUM_FORCE_POWERS] = //0 == n
 		10,//FP_SABER_DEFENSE,
 		10//FP_SABERTHROW,
 		//NUM_FORCE_POWERS
+	},
+		{
+		10,//FP_HEAL,//instant
+		0,//FP_LEVITATION,//hold/duration
+		0,//FP_SPEED,//duration
+		0,//FP_PUSH,//hold/duration
+		0,//FP_PULL,//hold/duration
+		10,//FP_MINDTRICK,//instant
+		15,//FP_GRIP,//hold/duration
+		10,//FP_LIGHTNING,//hold/duration
+		15,//FP_RAGE,//duration
+		15,//FP_MANIPULATE,//duration
+		15,//FP_ABSORB,//duration
+		10,//FP_TEAM_HEAL,//instant
+		10,//FP_LIFT,//instant
+		10,//FP_DRAIN,//hold/duration
+		5,//FP_SEE,//duration
+		10,//FP_SABER_OFFENSE,
+		10,//FP_SABER_DEFENSE,
+		10//FP_SABERTHROW,
+		//NUM_FORCE_POWERS
+	},
+		{
+		10,//FP_HEAL,//instant
+		0,//FP_LEVITATION,//hold/duration
+		0,//FP_SPEED,//duration
+		0,//FP_PUSH,//hold/duration
+		0,//FP_PULL,//hold/duration
+		10,//FP_MINDTRICK,//instant
+		15,//FP_GRIP,//hold/duration
+		10,//FP_LIGHTNING,//hold/duration
+		15,//FP_RAGE,//duration
+		15,//FP_MANIPULATE,//duration
+		15,//FP_ABSORB,//duration
+		10,//FP_TEAM_HEAL,//instant
+		10,//FP_LIFT,//instant
+		10,//FP_DRAIN,//hold/duration
+		5,//FP_SEE,//duration
+		10,//FP_SABER_OFFENSE,
+		10,//FP_SABER_DEFENSE,
+		10//FP_SABERTHROW,
+		//NUM_FORCE_POWERS
 	}
 };
 
@@ -1086,9 +1128,9 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		hearable = qtrue;
 		hearDist = 256;
 		//[ForceSys]
-		duration = 500;
+		//duration = 500;
 		self->client->forceSpeedStartTime = level.time;
-		/*
+		
 		if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_1)
 		{
 			duration = 10000;
@@ -1101,6 +1143,14 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		{
 			duration = 20000;
 		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_4)
+		{
+			duration = 25000;
+		}
+		else if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_5)
+		{
+			duration = 30000;
+		}
 		else //shouldn't get here
 		{
 			break;
@@ -1110,7 +1160,7 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		{
 			duration = overrideAmt;
 		}
-		*/
+		
 		//[/ForceSys]
 
 		self->client->ps.fd.forcePowersActive |= ( 1 << forcePower );
@@ -1131,7 +1181,11 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		else if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_2)
 			duration += 5000;
 		else if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_3)
-			duration = 30000;
+			duration += 5000;
+		else if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_4)
+			duration += 5000;
+		else if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_5)
+			duration = 40000;
 		else //shouldn't get here
 			break;
 
@@ -1427,7 +1481,9 @@ float forcePushPullRadius[NUM_FORCE_POWER_LEVELS] =
 	0,//none
 	384,//256,
 	448,//384,
-	512
+	512,
+	576,
+	640
 };
 //rwwFIXMEFIXME: incorporate this into the below function? Currently it's only being used by jedi AI
 

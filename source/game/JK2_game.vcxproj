@@ -294,6 +294,7 @@
     <ClCompile Include="g_bot.cpp" />
     <ClCompile Include="g_breakable.cpp" />
     <ClCompile Include="g_camera.cpp" />
+    <ClCompile Include="g_character.cpp" />
     <ClCompile Include="g_client.cpp" />
     <ClCompile Include="g_cmds.cpp" />
     <ClCompile Include="g_combat.cpp" />
@@ -455,6 +456,7 @@
     <ClInclude Include="..\qcommon\disablewarnings.h" />
     <ClInclude Include="..\ghoul2\G2.h" />
     <ClInclude Include="g_camera.h" />
+    <ClInclude Include="g_character.h" />
     <ClInclude Include="g_dynmusic.h" />
     <ClInclude Include="g_ICARUScb.h" />
     <ClInclude Include="g_local.h" />

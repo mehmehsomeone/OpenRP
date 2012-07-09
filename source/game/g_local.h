@@ -859,6 +859,7 @@ typedef struct {
 	int			modelScale; // Model Scale
 	//OpenRP admin system stuff
 	qboolean	isAdmin;		// MJN - Logged in Admin.
+	int adminLevel;
 	vec3_t placeOfDeath;
 	int state;						//The current state of the player
 	int Scale;						//The players new scale

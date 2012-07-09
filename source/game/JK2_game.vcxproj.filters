@@ -445,6 +445,9 @@
     <ClCompile Include="FP_Team_Heal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="g_character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ai.h">
@@ -625,6 +628,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="g_dynmusic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g_character.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

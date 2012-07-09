@@ -8,6 +8,7 @@
 #include "g_emote.h"
 #include "g_cvars.h"
 #include "g_account.h"
+#include "g_character.h"
 //[SVN]
 //rearraigned repository to make it easier to initially compile.
 #include "../../OpenRP/ui/jamp/menudef.h"
@@ -3946,7 +3947,7 @@ extern void SetupReload(gentity_t *ent);
 
 void ClientCommand( int clientNum ) {
 	gentity_t *ent;
-//	gentity_t *targetplayer;
+//	gentity_t *ent;
 	char	cmd[MAX_TOKEN_CHARS];
 	char	cmd2[MAX_TOKEN_CHARS];
 	//char	cmd3[MAX_TOKEN_CHARS];
@@ -4025,9 +4026,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_AccountInfo_F (ent);
 		return;
 	}
-	if (!Q_stricmp (cmd, "characterinfo")) {
+	if (!Q_stricmp (cmd, "charinfo")) {
 		Cmd_CharacterInfo_F (ent);
 		return;
+		//g_account.cpp ln 850
 	}
 	if (Q_stricmp (cmd, "grantadmin") == 0) {
 		Cmd_GrantAdmin_F (ent);
@@ -4037,8 +4039,8 @@ void ClientCommand( int clientNum ) {
 		Cmd_RemoveAdmin_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "givexp") == 0) {
-		Cmd_GiveXP_F (ent);
+	if (Q_stricmp (cmd, "genexp") == 0) {
+		Cmd_GenerateXP_F (ent);
 		return;
 	}
 	if (Q_stricmp (cmd, "givecredits") == 0) {
@@ -4077,8 +4079,8 @@ void ClientCommand( int clientNum ) {
 		Cmd_FactionDeposit_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "factiongen") == 0) {
-		Cmd_FactionGenerate_F (ent);
+	if (Q_stricmp (cmd, "factiongencredits") == 0) {
+		Cmd_FactionGenerateCredits_F (ent);
 		return;
 	}
 	if (Q_stricmp (cmd, "listfactions") == 0) {
@@ -4097,15 +4099,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_Inventory_F (ent);
 		return;
 	}
-	/*
-	if (Q_stricmp (cmd, "addFeat") == 0) {
-		Cmd_AddFeat_F (ent);
-		return;
-	}
-	if (Q_stricmp (cmd, "feats") == 0) {
-		Cmd_ListFeats_F (ent);
-		return;
-	}*/
 	if (Q_stricmp(cmd, "amlistadmins") == 0) {
 		Cmd_amListAdmins_f (ent);
 		return;
@@ -4118,21 +4111,15 @@ void ClientCommand( int clientNum ) {
 		Cmd_amBan_f (ent);
 		return;
 	}
-/*	if(Q_stricmp(cmd, "amwarn") == 0) {
+	if(Q_stricmp(cmd, "amwarn") == 0) {
 		Cmd_amWarn_f (ent);
 		return;
 	}
-*/
+
 	if (Q_stricmp(cmd, "amtele") == 0) {
 		Cmd_amTeleport_f (ent);
 		return;
 	}
-/*	if(Q_stricmp(cmd, "amslay") == 0) {
-		Cmd_amSlay_f (ent);
-		return;
-	}
-*/
-
 	if(Q_stricmp(cmd, "ammute") == 0) {
 		Cmd_amMute_f (ent);
 		return;
