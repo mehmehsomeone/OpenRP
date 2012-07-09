@@ -4104,84 +4104,84 @@ void ClientCommand( int clientNum ) {
 		return;
 	}
 	if (Q_stricmp(cmd, "amlistadmins") == 0) {
-		Cmd_amListAdmins_f (ent);
+		Cmd_amListAdmins_F (ent);
 		return;
 	}
 	if (Q_stricmp(cmd, "amkick") == 0) {
-		Cmd_amKick_f (ent);
+		Cmd_amKick_F (ent);
 		return;
 	}
 	if (Q_stricmp(cmd, "amban") == 0) {
-		Cmd_amBan_f (ent);
+		Cmd_amBan_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amwarn") == 0) {
-		Cmd_amWarn_f (ent);
+		Cmd_amWarn_F (ent);
 		return;
 	}
 
 	if (Q_stricmp(cmd, "amtele") == 0) {
-		Cmd_amTeleport_f (ent);
+		Cmd_amTeleport_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "ammute") == 0) {
-		Cmd_amMute_f (ent);
+		Cmd_amMute_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amunmute") == 0) {
-		Cmd_amUnMute_f (ent);
+		Cmd_amUnMute_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amsleep") == 0) {
-		Cmd_amSleep_f (ent);
+		Cmd_amSleep_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amunsleep") == 0) {
-		Cmd_amUnsleep_f (ent);
+		Cmd_amUnsleep_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amprotect") == 0) {
-		Cmd_amProtect_f (ent);
+		Cmd_amProtect_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amempower") == 0) {
-		Cmd_amEmpower_f (ent);
+		Cmd_amEmpower_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "ambitvalues") == 0) {
-		Cmd_amBitvalues_f (ent);
+		Cmd_amBitvalues_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "ammerc") == 0) {
-		Cmd_amMerc_f (ent);
+		Cmd_amMerc_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amannounce") == 0) {
-		Cmd_amAnnounce_f (ent);
+		Cmd_amAnnounce_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "ameffect") == 0) {
-		Cmd_amEffect_f (ent);
+		Cmd_amEffect_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amcleareffects") == 0) {
-		Cmd_amClearEffects_f (ent);
+		Cmd_amClearEffects_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amforceteam") == 0) {
-		Cmd_amForceTeam_f (ent);
+		Cmd_amForceTeam_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amip") == 0) {
-		Cmd_amIP_f (ent);
+		Cmd_amIP_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amstatus") == 0) {
-		Cmd_amStatus_f (ent);
+		Cmd_amStatus_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amweather") == 0) {
-		Cmd_amWeather_f (ent);
+		Cmd_amWeather_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amweatherplus") == 0) {
@@ -4189,15 +4189,19 @@ void ClientCommand( int clientNum ) {
 		return;
 	}
 	if(Q_stricmp(cmd, "ammap") == 0) {
-		Cmd_amMap_f (ent);
+		Cmd_amMap_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amrename") == 0) {
-		Cmd_amRename_f (ent);
+		Cmd_amRename_F (ent);
 		return;
 	}
 	if (Q_stricmp(cmd, "amslap") == 0) {
-		Cmd_amSlap_f (ent);
+		Cmd_amSlap_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "amcheataccess") == 0) {
+		Cmd_CheatAccess_F (ent);
 		return;
 	}
 	if( Q_stricmp (cmd, "emsit") == 0) {

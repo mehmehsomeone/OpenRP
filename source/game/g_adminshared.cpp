@@ -45,17 +45,3 @@ if (ent->client->saber[1].soundOff && ent->client->saber[1].model[0]){
 	ent->client->ps.weaponTime = 400;
 	}
 }
-
-/*
-===========
-M_isNPCAccess
-
-Returns true if they have the ability to spawn npcs.
-============
-*/
-qboolean M_isNPCAccess(gentity_t *ent){
-        if ( ent->client->pers.hasCheatAccess ){
-                return qtrue;
-        }
-        return qfalse;
-}

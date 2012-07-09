@@ -277,7 +277,7 @@ qboolean G_AdminControl(int UserAdmin, int TargetAdmin)
 amban Function
 ============
 */
-void Cmd_amBan_f(gentity_t *ent)
+void Cmd_amBan_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS];
@@ -336,7 +336,7 @@ void Cmd_amBan_f(gentity_t *ent)
 amkick Function
 ============
 */
-void Cmd_amKick_f(gentity_t *ent)
+void Cmd_amKick_F(gentity_t *ent)
 {
 	gentity_t *tent;
 	int pids[MAX_CLIENTS];
@@ -383,7 +383,7 @@ void Cmd_amKick_f(gentity_t *ent)
 amwarn Function
 ============
 */
-void Cmd_amWarn_f(gentity_t *ent)
+void Cmd_amWarn_F(gentity_t *ent)
 {
 	gentity_t *tent;
 	int pids[MAX_CLIENTS];
@@ -439,7 +439,7 @@ void Cmd_amWarn_f(gentity_t *ent)
 amtele Function
 ============
 */
-void Cmd_amTeleport_f(gentity_t *ent)
+void Cmd_amTeleport_F(gentity_t *ent)
 {
 	gentity_t *player;
 	gentity_t *player2;
@@ -570,7 +570,7 @@ void Cmd_amTeleport_f(gentity_t *ent)
 amannounce Function
 ============
 */
-void Cmd_amAnnounce_f(gentity_t *ent)
+void Cmd_amAnnounce_F(gentity_t *ent)
 { 
 		 int pos = 0;
 		 char real_msg[MAX_STRING_CHARS], err[MAX_STRING_CHARS];
@@ -630,7 +630,7 @@ void Cmd_amAnnounce_f(gentity_t *ent)
 ammute Function
 ============
 */
-void Cmd_amMute_f(gentity_t *ent)
+void Cmd_amMute_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS];
@@ -680,7 +680,7 @@ void Cmd_amMute_f(gentity_t *ent)
 amunmute Function
 ============
 */
-void Cmd_amUnMute_f(gentity_t *ent)
+void Cmd_amUnMute_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS];
@@ -736,7 +736,7 @@ void Cmd_amUnMute_f(gentity_t *ent)
 amsleep Function
 ============
 */
-void Cmd_amSleep_f(gentity_t *ent)
+void Cmd_amSleep_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS];
@@ -808,7 +808,7 @@ void Cmd_amSleep_f(gentity_t *ent)
 amunsleep Function
 ============
 */
-void Cmd_amUnsleep_f(gentity_t *ent)
+void Cmd_amUnsleep_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS];
@@ -880,7 +880,7 @@ void Cmd_amUnsleep_f(gentity_t *ent)
 amprotect Function
 ============
 */
-void Cmd_amProtect_f(gentity_t *ent)
+void Cmd_amProtect_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS];
@@ -952,7 +952,7 @@ void Cmd_amProtect_f(gentity_t *ent)
 amadminwhois Function
 ============
 */
-void Cmd_amListAdmins_f(gentity_t *ent)
+void Cmd_amListAdmins_F(gentity_t *ent)
 {
 	int i = 0;
 
@@ -988,7 +988,7 @@ void Cmd_amListAdmins_f(gentity_t *ent)
 amempower Function
 ============
 */
-void Cmd_amEmpower_f(gentity_t *ent)
+void Cmd_amEmpower_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS], i;
 	char err[MAX_STRING_CHARS];
@@ -1071,7 +1071,7 @@ void Cmd_amEmpower_f(gentity_t *ent)
 ammerc Function
 ============
 */
-void Cmd_amMerc_f(gentity_t *ent)
+void Cmd_amMerc_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS];
@@ -1213,7 +1213,7 @@ void Cmd_amMerc_f(gentity_t *ent)
 amresetscale Function
 ============
 */
-void Cmd_amResetScale_f(gentity_t *ent)
+void Cmd_amResetScale_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS], cmdTarget[MAX_STRING_CHARS];
@@ -1273,7 +1273,7 @@ void Cmd_amResetScale_f(gentity_t *ent)
 amscale Function
 ============
 */
-void Cmd_amScale_f(gentity_t *ent)
+void Cmd_amScale_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS], scale[999], cmdTarget[MAX_STRING_CHARS];
@@ -1338,7 +1338,7 @@ void Cmd_amScale_f(gentity_t *ent)
 ambitvalues Function
 ============
 */
-void Cmd_amBitvalues_f(gentity_t *ent)
+void Cmd_amBitvalues_F(gentity_t *ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_BITVALUES))
 	{
@@ -1355,7 +1355,7 @@ void Cmd_amBitvalues_f(gentity_t *ent)
 amaddeffect Function
 ============
 */
-void Cmd_amEffect_f(gentity_t *ent)
+void Cmd_amEffect_F(gentity_t *ent)
 {
 	char   effect[MAX_STRING_CHARS]; // 16k file size
 	gentity_t *fx_runner = G_Spawn();         
@@ -1395,7 +1395,7 @@ void Cmd_amEffect_f(gentity_t *ent)
 amcleareffects Function
 ============
 */
-void Cmd_amClearEffects_f(gentity_t *ent)
+void Cmd_amClearEffects_F(gentity_t *ent)
 {
 		char         savePath[MAX_QPATH], buf[16384] = { 0 }; // 16k file size
 		vmCvar_t		mapname;
@@ -1438,7 +1438,7 @@ void Cmd_amClearEffects_f(gentity_t *ent)
 amforceteam Function
 ============
 */
-void Cmd_amForceTeam_f(gentity_t *ent)
+void Cmd_amForceTeam_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS], teamname[MAX_STRING_CHARS], cmdTarget[MAX_STRING_CHARS];
@@ -1495,7 +1495,7 @@ void Cmd_amForceTeam_f(gentity_t *ent)
 ammap Function
 ============
 */
-void Cmd_amMap_f(gentity_t *ent)
+void Cmd_amMap_F(gentity_t *ent)
 {
 	char map[MAX_STRING_CHARS];
 
@@ -1540,7 +1540,7 @@ void G_RemoveWeather( void ) //ensiform's whacky weather clearer code
 	}
 }
 
-void Cmd_amWeather_f(gentity_t *ent)
+void Cmd_amWeather_F(gentity_t *ent)
 {
 	char	weather[MAX_STRING_CHARS];
 	int		num;
@@ -1629,7 +1629,7 @@ void Cmd_amWeather_f(gentity_t *ent)
 //-----------
 
 
-void Cmd_amWeatherPlus_f(gentity_t *ent)
+void Cmd_amWeatherPlus_F(gentity_t *ent)
 {
 	char	weather[MAX_STRING_CHARS];
 	int		num;
@@ -1730,7 +1730,7 @@ void Cmd_amWeatherPlus_f(gentity_t *ent)
 amstatus Function
 ============
 */
-void Cmd_amStatus_f(gentity_t *ent)
+void Cmd_amStatus_F(gentity_t *ent)
 {
 	int i;
 
@@ -1777,7 +1777,7 @@ void uw2Rename(gentity_t *player, const char *newname)
    player->client->pers.netnameTime = level.time + Q3_INFINITE;
 }
 
-void Cmd_amRename_f(gentity_t *ent)
+void Cmd_amRename_F(gentity_t *ent)
 { 
    int clientid = -1; 
    char currentname[MAX_STRING_CHARS], newname[MAX_STRING_CHARS];
@@ -1829,7 +1829,7 @@ void Cmd_amRename_f(gentity_t *ent)
 amslap Function
 ============
 */
-void Cmd_amSlap_f(gentity_t *ent)
+void Cmd_amSlap_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS], cmdTarget[MAX_STRING_CHARS];
@@ -1877,7 +1877,7 @@ void Cmd_amSlap_f(gentity_t *ent)
 	return;
 }
 
-void Cmd_info_f( gentity_t *ent )
+void Cmd_info_F( gentity_t *ent )
 {
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5OpenRP Pre-alpha 1 - info\n ------------------------------------------\nWebsite:http://code.google.com/p/openrp/\n ------------------------------------------\n\nPlayer Commands:\nqwinfo\nme\n\"" ) );
 	
@@ -2536,7 +2536,7 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 	return;
 }
 
-void Cmd_GetNPC_F( gentity_t *ent )
+void Cmd_CheatAccess_F( gentity_t *ent )
 {
 	//This dictates that you are not logged in.
 	if( !isLoggedIn(ent) )
@@ -2544,19 +2544,32 @@ void Cmd_GetNPC_F( gentity_t *ent )
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You are not logged in.\n\"");
 		return;
 	}
-	//You are not allowed access to spawn NPC's.
-	if( M_isNPCAccess(ent) )
+
+	//If the user of the command doesn't have the proper bitvalue
+	if(!G_CheckAdmin(ent, ADMIN_CHEATS) )
 	{
-		ent->client->pers.hasCheatAccess = qfalse;
-		trap_SendServerCommand( ent->client->ps.clientNum, va ("print \"^5NPC Spawn Access ^1Removed.\n\"" ));
-		G_LogPrintf( "deniedNPCaccess: %s\n", ent->client->pers.netname );
-		}
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+	}
+	//If the user of the command does have the proper bitvalue
 	else
 	{
-		//You are now allowed to spawn NPC's.
-		ent->client->pers.hasCheatAccess = qtrue;
-		trap_SendServerCommand( ent->client->ps.clientNum, va ("print \"^5NPC Spawn Access ^2Granted.\n\"" ));
-		G_LogPrintf( "NPCaccess: %s\n", ent->client->pers.netname );
+		//If they don't have cheat access
+		if( ent->client->pers.hasCheatAccess = qfalse )
+		{
+			//They do now.
+			ent->client->pers.hasCheatAccess = qtrue;
+			trap_SendServerCommand( ent->client->ps.clientNum, va ("print \"^5Cheat Access ^2Granted.\n\"" ));
+			G_LogPrintf( "%s executed the cheatAccess command and they now have cheat access.\n", ent->client->pers.netname );
+		}
+
+		//If they do have cheat access
+		else
+		{
+			//They don't anymore.
+			ent->client->pers.hasCheatAccess = qfalse;
+			trap_SendServerCommand( ent->client->ps.clientNum, va ("print \"^5Cheat Access ^1Removed.\n\"" ));
+			G_LogPrintf( "%s executed the cheatAccess command and they now no longer have cheat access (they had it but toggled it off).\n", ent->client->pers.netname );
+		}
 	}
 	return;
 }

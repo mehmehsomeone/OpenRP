@@ -36,4 +36,3 @@
 #define PLAYER_MERCD					16 //This player is mercd.
 
 void M_HolsterThoseSabers(gentity_t *ent);
-qboolean M_isNPCAccess(gentity_t *ent);
