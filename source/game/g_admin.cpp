@@ -17,7 +17,6 @@ char	*ConcatArgs( int start );
 
 void LevelCheck( int charID );
 
-
 /*
 ================
 G_CompareStrings
@@ -911,7 +910,6 @@ void Cmd_amProtect_F(gentity_t *ent)
 		}
 		return;
 	}
-		
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -927,7 +925,6 @@ void Cmd_amProtect_F(gentity_t *ent)
 		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You can't use this command on that person! They are a higher admin level than you.\n\""));
 		return;
 	}
-
 
 	if((tent->client->ps.eFlags & EF_INVULNERABLE) > 0)
 	{
@@ -969,7 +966,7 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 
 		if(ent->inuse && ent->client)
 		{
-			if(ent->client->sess.isAdmin = qfalse)
+			if(ent->client->sess.isAdmin = qtrue)
 			{
 				{
 					trap_SendServerCommand(ent->client->ps.clientNum, va("print \"%s ^2Admin level %i\n\"", ent->client->pers.netname, (ent->client->sess.isAdmin-1)));
@@ -1027,7 +1024,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 		return;
 	}
 	
-		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
 		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
