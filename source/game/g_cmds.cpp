@@ -4055,6 +4055,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_EditAccount_F (ent);
 		return;
 	}
+		if (Q_stricmp (cmd, "editchar") == 0) {
+		Cmd_EditCharacter_F (ent);
+		return;
+	}
 	if (Q_stricmp (cmd, "createfaction") == 0) {
 		Cmd_CreateFaction_F (ent);
 		return;

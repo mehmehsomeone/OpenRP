@@ -1243,3 +1243,85 @@ void Cmd_Inventory_F( gentity_t * ent )
 
 	return;
 }
+
+
+/*
+=================
+Cmd_editcharacter_F
+Edits character info
+Command: editchar
+=================
+*/
+void Cmd_EditCharacter_F( gentity_t * ent)
+{
+	if( ( !ent->client->sess.loggedinAccount ) || ( !ent->client->sess.characterChosen ) )
+	{
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to view your character's info.\n\"" );
+		return;
+	}
+	
+	Database db(DATABASE_PATH);
+	Query q(db);
+	
+		if (!db.Connected())
+		{
+			G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
+			return;
+		}
+
+		if (trap_Argc() != 3) //If the user doesn't specify both args.
+		{
+				trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: /editchar <name/model/modelscale> <value> \n\"" ) ;
+				return;
+		}
+		char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS];
+		trap_Argv( 1, parameter, MAX_STRING_CHARS );
+		string parameterSTR = parameter;
+		trap_Argv( 2, change, MAX_STRING_CHARS );
+		string changeSTR = change;
+		int modelscale = 0;
+		if ((!Q_stricmp(parameter, "name")))
+		{
+			transform( changeSTR.begin(), changeSTR.end(), changeSTR.begin(), ::tolower );
+			string DBname = q.get_string( va( "SELECT name FROM characters WHERE name='%s'",changeSTR.c_str() ) );
+			if(!DBname.empty())
+			{
+				trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^1Error: Name %s is already in use.\n\"",DBname.c_str() ) );
+				return;
+			}
+			q.execute( va( "UPDATE characters set name='%s' WHERE ID= '%i'", changeSTR, ent->client->sess.userID));
+			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Name has been changed to ^7 %s\n\"",changeSTR.c_str() ) );
+		}
+		else if((!Q_stricmp(parameter, "model")))
+		{
+			q.execute( va( "UPDATE characters set model='%s' WHERE ID='%i'", changeSTR, ent->client->sess.userID));
+			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Model has been changed to ^7 %s\n\"",changeSTR.c_str() ) );
+			return;
+		}
+		else if((!Q_stricmp(parameter, "modelscale")))
+		{
+			modelscale = atoi(change);
+			if(!G_CheckAdmin(ent, ADMIN_SEARCHCHAR))
+			{
+			q.execute( va( "UPDATE characters set modelscale='%i' WHERE ID='%i'", modelscale, ent->client->sess.userID));
+			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Modelscale has been changed to ^7 %i\n\"",modelscale ) );
+			return;
+			}
+			else
+			{
+				if (modelscale < 65 || modelscale > 140 )
+				{
+					q.execute( va( "UPDATE characters set modelscale='%i' WHERE ID='%i'", modelscale, ent->client->sess.userID));
+					trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Modelscale has been changed to ^7 %i\n\"",modelscale ) );
+				}
+				else
+				{
+					trap_SendServerCommand ( ent->client->ps.clientNum,  "print \"^1Error: Modelscale must be between 65 and 140\n\"" );
+					return;
+		}
+		else
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: /editchar <name/model/modelscale> <value> \n\"" ) ;
+			return;
+		}
+}
