@@ -369,6 +369,9 @@ extern vmCvar_t ojp_modelscaleEnabled;//[Modelscale]
 //[OpenRP Admin]
 extern vmCvar_t		openrp_maxWarnings; 
 
+//OpenRP website
+extern vmCvar_t		openrp_website;
+
 //Bitvalues for Admins
 extern vmCvar_t		openrp_admin1Bitvalues;
 extern vmCvar_t		openrp_admin2Bitvalues; 
@@ -380,6 +383,7 @@ extern vmCvar_t		openrp_admin7Bitvalues;
 extern vmCvar_t		openrp_admin8Bitvalues;
 extern vmCvar_t		openrp_admin9Bitvalues;
 extern vmCvar_t		openrp_admin10Bitvalues;
+
 
 //Determines whether admins can perform admin commands on higher admin levels
 extern vmCvar_t		openrp_adminControl;

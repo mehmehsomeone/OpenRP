@@ -1876,7 +1876,7 @@ void Cmd_amSlap_F(gentity_t *ent)
 
 void Cmd_info_F( gentity_t *ent )
 {
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5OpenRP Pre-alpha 1 - info\n ------------------------------------------\nWebsite:http://code.google.com/p/openrp/\n ------------------------------------------\n\nPlayer Commands:\nqwinfo\nme\n\"" ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5OpenRP Pre-alpha 1 - info\nOpenRP Website:http://code.google.com/p/openrp/ \nServer Website: %s \nPlayer Commands:\nqwinfo\nme\n\"",openrp_website.string ) );
 	
 	if( ent->client->sess.isAdmin )
 	{

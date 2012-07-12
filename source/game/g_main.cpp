@@ -681,6 +681,8 @@ vmCvar_t	ojp_modelscaleEnabled;//[ModelScale]
 //[OpenRP Admin]
 vmCvar_t		openrp_maxWarnings; 
 
+//Website link
+vmCvar_t		openrp_website;
 //Bitvalues for Admins
 vmCvar_t		openrp_admin1Bitvalues;
 vmCvar_t		openrp_admin2Bitvalues; 
@@ -1143,7 +1145,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_admin10Bitvalues, "openrp_admin10Bitvalues", "1", 0 , 0, qtrue  },
 
 	{ &openrp_adminControl, "openrp_adminControl", "1", CVAR_ARCHIVE, 0, qtrue  },
-
+	
+	//openRP website
+	{ &openrp_website, "openrp_website", " ", 0 , 0, qtrue  },
 	
 	//[/OpenRP Admin]
 
