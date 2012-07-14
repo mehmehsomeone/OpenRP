@@ -29,9 +29,9 @@ void CheckAdmin(gentity_t * ent){
 	int userID = ent->client->sess.userID;
 
 	//Checks if the user is admin
-	int isAdmin = q.get_num( va( "SELECT admin FROM users WHERE ID='%i'", userID ) );
+	int isAdmin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", userID ) );
 	//Check their adminlevel
-	int adminLevel = q.get_num( va( "SELECT adminlevel FROM users WHERE ID='%i'", userID ) );
+	int adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", userID ) );
 	if( isAdmin )
 	{//The user is an admin.
 		ent->client->sess.isAdmin = qtrue;
@@ -80,13 +80,13 @@ void LoadAttributes(gentity_t * ent)
 	trap_GetUserinfo( ent->client->ps.clientNum, userinfo, MAX_INFO_STRING );
 
     //Model
-	string model = q.get_string( va( "SELECT model FROM characters WHERE ID='%i'", ent->client->sess.characterID ) );
+	string model = q.get_string( va( "SELECT Model FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	Info_SetValueForKey( userinfo, "model", model.c_str() );
 	trap_SetUserinfo( ent->client->ps.clientNum, userinfo );
 	ClientUserinfoChanged( ent->client->ps.clientNum );
 
 	//Model scale
-	int modelScale = q.get_num( va( "SELECT modelscale FROM characters WHERE ID='%i'", ent->client->sess.characterID ) );
+	int modelScale = q.get_num( va( "SELECT ModelScale FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	ent->client->ps.iModelScale = modelScale;
 	ent->client->sess.modelScale = modelScale;
 
@@ -138,7 +138,7 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	//Check if this username exists
 	Query q(db);
 	transform(userNameSTR.begin(), userNameSTR.end(),userNameSTR.begin(),::tolower);
-	string DBname = q.get_string( va( "SELECT name FROM users WHERE name='%s'", userNameSTR.c_str() ) );
+	string DBname = q.get_string( va( "SELECT UserName FROM Users WHERE UserName='%s'", userNameSTR.c_str() ) );
 	if( DBname.empty() )
 	{
 		//The username does not exist, thus, the error does.
@@ -148,7 +148,7 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	}
 
 	//Check password
-	string DBpassword = q.get_string( va( "SELECT password FROM users WHERE name='%s'", userNameSTR.c_str() ) );
+	string DBpassword = q.get_string( va( "SELECT Password FROM Users WHERE UserName='%s'", userNameSTR.c_str() ) );
 	if( DBpassword.empty() || strcmp(DBpassword.c_str(), userPassword) != 0 )
 	{
 		//Just as there is an incorrect password (and an error), does it tell you.
@@ -157,7 +157,7 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	}
 
 	//Log the user in
-	int userID = q.get_num( va( "SELECT ID FROM users WHERE name='%s'",userNameSTR.c_str() ) );
+	int userID = q.get_num( va( "SELECT UserID FROM Users WHERE Username='%s'",userNameSTR.c_str() ) );
 	ent->client->sess.userID = userID;
 	ent->client->sess.loggedinAccount = qtrue;
 
@@ -304,7 +304,7 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	//Check if that user exists already
 	Query q(db);
 	transform( userNameSTR.begin(), userNameSTR.end(), userNameSTR.begin(), ::tolower );
-	string DBname = q.get_string( va( "SELECT name FROM users WHERE name='%s'",userNameSTR.c_str() ) );
+	string DBname = q.get_string( va( "SELECT Name FROM Users WHERE Name='%s'",userNameSTR.c_str() ) );
 	if(!DBname.empty())
 	{
 		trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^1Error: Username %s is already in use.\n\"",DBname.c_str() ) );
@@ -312,11 +312,11 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	}
 
 	//Create the account
-	q.execute(va("INSERT INTO users(name,password,currentClientID) VALUES('%s','%s','NULL')", userNameSTR.c_str(), userPassword ) );
+	q.execute(va("INSERT INTO Users{Name,Password,ClientID) VALUES('%s','%s','NULL')", userNameSTR.c_str(), userPassword ) );
 
 	//Log them in automatically
-	int userID = q.get_num(va("SELECT ID FROM users WHERE name='%s'",userNameSTR.c_str()));
-
+	int userID = q.get_num(va("SELECT UserID FROM Users WHERE UserName='%s'",userNameSTR.c_str()));
+	U
 	ent->client->sess.userID = userID;
 	ent->client->sess.loggedinAccount = qtrue;
 
@@ -359,9 +359,9 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 			return;
 		}
 
-		string accountNameSTR = q.get_string( va( "SELECT name FROM users WHERE ID='%i'", ent->client->sess.userID ) );
+		string accountNameSTR = q.get_string( va( "SELECT Name FROM Users WHERE AccountID='%i'", ent->client->sess.userID ) );
 
-		int clientID = q.get_num( va( "SELECT currentclientid FROM users WHERE ID='%i'", ent->client->sess.userID ) );
+		int clientID = q.get_num( va( "SELECT Clientid FROM Users WHERE AccountID='%i'", ent->client->sess.userID ) );
 
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.userID, clientID ) );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.userID, clientID ) );
@@ -398,18 +398,18 @@ void Cmd_EditAccount_F(gentity_t * ent)
 		if ((!Q_stricmp(parameter, "username")))
 		{
 			transform( changeSTR.begin(), changeSTR.end(), changeSTR.begin(), ::tolower );
-			string DBname = q.get_string( va( "SELECT name FROM users WHERE name='%s'",changeSTR.c_str() ) );
+			string DBname = q.get_string( va( "SELECT Name FROM Users WHERE UserName='%s'",changeSTR.c_str() ) );
 			if(!DBname.empty())
 			{
 				trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^1Error: Username %s is already in use.\n\"",DBname.c_str() ) );
 				return;
 			}
-			q.execute( va( "UPDATE users set name='%s' WHERE ID= '%i'", changeSTR, ent->client->sess.userID));
+			q.execute( va( "UPDATE Users set Name='%s' WHERE AccountID= '%i'", changeSTR, ent->client->sess.userID));
 			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Username has been changed to ^7 %s\n\"",changeSTR.c_str() ) );
 		}
 		else if((!Q_stricmp(parameter, "password")))
 		{
-			q.execute( va( "UPDATE users set password='%s' WHERE ID='%i'", changeSTR, ent->client->sess.userID));
+			q.execute( va( "UPDATE Users set Password='%s' WHERE AccountID='%i'", changeSTR, ent->client->sess.userID));
 			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Password has been changed to ^7 %s\n\"",changeSTR.c_str() ) );
 			return;
 		}

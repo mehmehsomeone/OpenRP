@@ -1932,16 +1932,16 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"The admin level must be a number from 1-10. 1 is the highest level, 10 is the lowest.\n\"" );
 		return;
 	}
-	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountNameSTR.c_str() ) );
+	int valid = q.get_num( va( "SELECT ID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
 	if( !valid )
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Account %s does not exist\n\"", accountNameSTR.c_str() ) );
 		return;
 	}
 
-	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set Admin='1' WHERE Username='%s'", accountNameSTR.c_str() ) );
 
-	q.execute( va( "UPDATE users set adminlevel='%i' WHERE name='%s'", adminLevel, accountName ) );
+	q.execute( va( "UPDATE Users set adminlevel='%i' WHERE Username='%s'", adminLevel, accountName ) );
 
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Admin (level %i) granted to %s.\n\"", adminLevel, accountName ) );
 	return;
@@ -1986,16 +1986,16 @@ void Cmd_SVGrantAdmin_F()
 		return;
 	}
 	
-	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountNameSTR.c_str() ) );
+	int valid = q.get_num( va( "SELECT ID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
 	if(!valid)
 	{
 		G_Printf( "Account %s does not exist\n\"", accountNameSTR.c_str() );
 		return;
 	}
 
-	q.execute( va( "UPDATE users set admin='1' WHERE name='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set Admin='1' WHERE name='%s'", accountNameSTR.c_str() ) );
 
-	q.execute( va( "UPDATE users set adminlevel='%i' WHERE name='%s'", adminLevel, accountName ) );
+	q.execute( va( "UPDATE Users set AdminLevel='%i' WHERE name='%s'", adminLevel, accountName ) );
 
 	G_Printf( "Admin (level %i) granted to %s.\n", adminLevel, accountName );
 	return;
@@ -2036,16 +2036,16 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 	string accountNameSTR = accountName;
 	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
 	
-	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountNameSTR.c_str() ) );
+	int valid = q.get_num( va( "SELECT ID FROM uUsers WHERE Name='%s'", accountNameSTR.c_str() ) );
 	if( !valid )
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Account %s does not exist\n\"", accountNameSTR.c_str() ) );
 		return;
 	}
 
-	q.execute( va( "UPDATE users set admin='0' WHERE name='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set Admin='0' WHERE Username='%s'", accountNameSTR.c_str() ) );
 	//Set their adminlevel to 11 just to be safe.
-	q.execute( va( "UPDATE users set adminlevel='11' WHERE name='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set adminlevel='11' WHERE Username='%s'", accountNameSTR.c_str() ) );
 
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"Admin removed from account %s\n\"", accountNameSTR.c_str() ) );
 	return;
@@ -2079,16 +2079,16 @@ void Cmd_SVRemoveAdmin_F()
 	string accountNameSTR = accountName;
 	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
 
-	int valid = q.get_num( va( "SELECT ID FROM users WHERE name='%s'", accountNameSTR.c_str() ) );
+	int valid = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
 	if( !valid )
 	{
 		G_Printf( "Account %s does not exist\n\"", accountNameSTR.c_str() );
 		return;
 	}
 
-	q.execute( va( "UPDATE users set admin='0' WHERE name='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set Admin='0' WHERE Username='%s'", accountNameSTR.c_str() ) );
 	//Set their adminlevel to 11 just to be safe.
-	q.execute( va( "UPDATE users set adminlevel='11' WHERE name='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set AdminLevel='11' WHERE Username='%s'", accountNameSTR.c_str() ) );
 
 	G_Printf( "Admin removed from account %s.\n", accountNameSTR.c_str() );
 	return;
@@ -2142,7 +2142,7 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 	//Check if the character exists
 	transform( charNameSTR.begin(), charNameSTR.end(), charNameSTR.begin(), ::tolower );
 
-	int charID = q.get_num( va( "SELECT ID FROM characters WHERE name='%s'", charNameSTR.c_str() ) );
+	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
 	if(charID == 0)
 	{
@@ -2152,19 +2152,19 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 	}
 
 	//Get their userID
-	int userID = q.get_num( va( "SELECT userID FROM characters WHERE ID='%i'", charID ) );
+	int userID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
-	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
+	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", userID ) );
 
 	soundtarget = &g_entities[clientID];
 
-	int currentLevel = q.get_num( va( "SELECT level FROM characters WHERE ID='%i'", charID ) );
+	int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
 
-	int currentXP = q.get_num( va( "SELECT xp FROM characters WHERE ID='%i'", charID ) );
+	int currentXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", charID ) );
 
 	int newXPTotal = currentXP + changedXP;
 
-	q.execute( va( "UPDATE characters set xp='%i' WHERE ID='%i'", newXPTotal, charID ) );
+	q.execute( va( "UPDATE Characters set experience='%i' WHERE CharID='%i'", newXPTotal, charID ) );
 
 	switch( currentLevel )
 	{
@@ -2234,7 +2234,7 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 	//Check if the character exists
 	transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
 
-	int charID = q.get_num( va( "SELECT ID FROM characters WHERE name='%s'", charNameSTR.c_str() ) );
+	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
 	if(charID == 0)
 	{
@@ -2244,17 +2244,17 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 	}
 
 	//Get their userID
-	int userID = q.get_num( va( "SELECT userID FROM characters WHERE ID='%i'", charID ) );
+	int userID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
-	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
+	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", userID ) );
 
 	soundtarget = &g_entities[clientID];
 
-	int currentCredits = q.get_num( va( "SELECT credits FROM characters WHERE ID='%i'", charID ) );
+	int currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE ID='%i'", charID ) );
 
 	int newCreditsTotal = currentCredits + changedCredits;
 
-	q.execute( va( "UPDATE characters set credits='%i' WHERE ID='%i'", newCreditsTotal, charID ) );
+	q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newCreditsTotal, charID ) );
 
 	trap_SendServerCommand( clientID, va( "print \"^2You received %i credits from an admin! You now have %i credits.\n\"", changedCredits, newCreditsTotal ) );
 	trap_SendServerCommand( clientID, va( "cp \"^2You received %i credits from an admin! You now have %i credits.\n\"", changedCredits, newCreditsTotal ) );
@@ -2296,8 +2296,8 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 		return;
 	}
 
-	string currentFactionSTR = q.get_string( va( "SELECT faction FROM characters WHERE ID='%i'", ent->client->sess.characterID ) );
-	string characterNameSTR = q.get_string( va( "SELECT name FROM characters WHERE ID='%i'", ent->client->sess.characterID ) );
+	string currentFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+	string characterNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 
 	char factionName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
 	int forceRestrictions;
@@ -2310,7 +2310,7 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: CreateFaction <factionName> <forceRestrictions>\nForce Restrictions: 0 - Only non FS people can join, 1 - Only Force Sensitive people can join, 2 - Anyone can join.\n\"" );
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: CreateFaction <factionName>\n\"" );
 		return;
 	}
 
@@ -2323,11 +2323,11 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	switch( forceRestrictions )
 	{
 	case 0:
-		q.execute(va("INSERT INTO factions(name,leader,credits,forcerestrictions) VALUES('%s','%s', '0')", factionNameSTR.c_str(), characterNameSTR.c_str(), 0 ) );
+		q.execute(va("INSERT INTO Factions(Name,Leader,Credits,) VALUES('%s','%s', '0')", factionNameSTR.c_str(), characterNameSTR.c_str(), 0 ) );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
 		break;
 	case 1:
-		q.execute(va("INSERT INTO factions(name,leader,credits,forcerestrictions) VALUES('%s','%s', '1')", factionNameSTR.c_str(), characterNameSTR.c_str(), 0 ) );
+		q.execute(va("INSERT INTO factions(name,leader,credits,) VALUES('%s','%s', '1')", factionNameSTR.c_str(), characterNameSTR.c_str(), 0 ) );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
 		break;
 	case 2:
@@ -2377,7 +2377,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	//Check if the character exists
 	transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
 
-	int charID = q.get_num( va( "SELECT ID FROM characters WHERE name='%s'", charNameSTR.c_str() ) );
+	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
 	if(charID == 0)
 	{
@@ -2386,20 +2386,20 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	}
 
 	//Get their userID
-	int userID = q.get_num( va( "SELECT userID FROM characters WHERE ID='%i'", charID ) );
+	int userID = q.get_num( va( "SELECT UserID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
-	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
+	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", userID ) );
 	if (!Q_stricmp(factionName, "none"))
 	{
-		q.execute( va( "UPDATE characters set faction='none' WHERE ID='%i'", charID ) );
-		q.execute( va( "UPDATE characters set factionrank='none'WHERE ID='%i'", charID ) );
+		q.execute( va( "UPDATE Characters set Faction='none' WHERE CharID='%i'", charID ) );
+		q.execute( va( "UPDATE Characters set FactionRank='none'WHERE ID='%i'", charID ) );
 		trap_SendServerCommand( clientID,  "print \"^2You have been removed from your faction.\n\"" );
 		trap_SendServerCommand( clientID,  "cp \"^2You have been removed from your faction.\n\"" );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Character %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
 	}
 	else {
-		q.execute( va( "UPDATE characters set faction='%s' WHERE ID='%i'", factionNameSTR.c_str(), charID ) );
-		q.execute( va( "UPDATE characters set factionrank='Member' WHERE ID='%i'", charID ) );
+		q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", factionNameSTR.c_str(), charID ) );
+		q.execute( va( "UPDATE Characters set FactionRank='Member' WHERE CharID='%i'", charID ) );
 
 		trap_SendServerCommand( clientID, va( "print \"^2You have been put in the %s faction! Type /Faction to view info about it.\n\"", factionNameSTR.c_str() ) );
 		trap_SendServerCommand( clientID, va( "cp \"^2You have been put in the %s faction! Type /Faction to view info about it.\n\"", factionNameSTR.c_str() ) );
@@ -2444,7 +2444,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 	//Check if the character exists
 	transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
 
-	int charID = q.get_num( va( "SELECT ID FROM characters WHERE name='%s'", charNameSTR.c_str() ) );
+	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
 	if(charID == 0)
 	{
@@ -2453,13 +2453,13 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 	}
 
 	//Get their userID
-	int userID = q.get_num( va( "SELECT userID FROM characters WHERE ID='%i'", charID ) );
+	int userID = q.get_num( va( "SELECT UserID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
-	int clientID = q.get_num( va( "SELECT currentClientID FROM users WHERE ID='%i'", userID ) );
+	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", userID ) );
 
-	string charCurrentFactionSTR = q.get_string( va( "SELECT faction FROM characters WHERE ID='%i'", charID ) );
+	string charCurrentFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
 
-	q.execute( va( "UPDATE characters set factionrank='%s' WHERE ID='%i'", factionRankSTR.c_str(), charID ) );
+	q.execute( va( "UPDATE Characters set FactionRank='%s' WHERE CharID='%i'", factionRankSTR.c_str(), charID ) );
 
 	trap_SendServerCommand( clientID, va( "print \"^2You are now the %s rank in the %s faction!\n\"", factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
 	trap_SendServerCommand( clientID, va( "cp \"^2You are now the %s rank in the %s faction!\n\"", factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
@@ -2513,7 +2513,7 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 	changedCredits = atoi( temp2 );
 
 	//Check if the faction exists
-	string factionNameSTR = q.get_string( va( "SELECT name FROM factions WHERE ID='%s'", factionID ) );
+	string factionNameSTR = q.get_string( va( "SELECT Name FROM Factions WHERE FactionID='%i'", factionID ) );
 	if( factionNameSTR.empty() )
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: Faction with FactionID %i does not exist.\n\"", factionID ) );
@@ -2521,11 +2521,11 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 		return;
 	}
 
-	int currentCredits = q.get_num( va( "SELECT credits FROM factions WHERE ID='%i'", factionID ) );
+	int currentCredits = q.get_num( va( "SELECT Bank FROM Factions WHERE FactionID='%i'", factionID ) );
 
 	int newCreditsTotal = currentCredits + changedCredits;
 
-	q.execute( va( "UPDATE factions set credits='%i' WHERE ID='%i'", newCreditsTotal, factionID ) );
+	q.execute( va( "UPDATE Factions set Bank='%i' WHERE FactionID='%i'", newCreditsTotal, factionID ) );
 
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: %i credits have been generated and given to faction %s.\n\"", changedCredits, factionNameSTR.c_str() ) );
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Success: %i credits have been generated and given to faction %s.\n\"", changedCredits, factionNameSTR.c_str() ) );
