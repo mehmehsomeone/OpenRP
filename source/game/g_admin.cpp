@@ -2300,7 +2300,7 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	string characterNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 
 	char factionName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
-	int forceRestrictions;
+
 
 	if ( currentFactionSTR != "none" )
 	{
@@ -2317,26 +2317,9 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	trap_Argv( 1, factionName, MAX_STRING_CHARS );
 	string factionNameSTR = factionName;
 
-	trap_Argv( 2, temp, MAX_STRING_CHARS );
-	forceRestrictions = atoi( temp );
-
-	switch( forceRestrictions )
-	{
-	case 0:
 		q.execute(va("INSERT INTO Factions(Name,Leader,Credits,) VALUES('%s','%s', '0')", factionNameSTR.c_str(), characterNameSTR.c_str(), 0 ) );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
-		break;
-	case 1:
-		q.execute(va("INSERT INTO factions(name,leader,credits,) VALUES('%s','%s', '1')", factionNameSTR.c_str(), characterNameSTR.c_str(), 0 ) );
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
-		break;
-	case 2:
-		q.execute(va("INSERT INTO factions(name,leader,credits,forcerestrictions) VALUES('%s','%s', '2')", factionNameSTR.c_str(), characterNameSTR.c_str(), 0 ) );
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
-		break;
-	default:
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: Force Restrictions must be 0, 1, or 2.\n\"" );
-		break;
+		
 	}
 	return;
 }
