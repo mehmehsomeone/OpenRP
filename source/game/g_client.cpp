@@ -4789,6 +4789,10 @@ void ClientDisconnect( int clientNum ) {
 		return;
 	}
 
+	//[OpenRP - clear client ID for character]
+
+	//[/OpenRP - clear client ID for character]
+
 	i = 0;
 
 	while (i < NUM_FORCE_POWERS)

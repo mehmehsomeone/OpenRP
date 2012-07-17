@@ -343,29 +343,29 @@ Command: accountInfo
 */
 void Cmd_AccountInfo_F(gentity_t * ent)
 {
-		if( !ent->client->sess.loggedinAccount )
-		{
-			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You must be logged in, in order to view your account info.\n\"" );
-			trap_SendServerCommand( ent->client->ps.clientNum, "cp \"^1Error: You must be logged in, in order to view your account info.\n\"" );
-			return;
-		}
+	if( !ent->client->sess.loggedinAccount )
+	{
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You must be logged in, in order to view your account info.\n\"" );
+		trap_SendServerCommand( ent->client->ps.clientNum, "cp \"^1Error: You must be logged in, in order to view your account info.\n\"" );
+		return;
+	}
 		
-		Database db(DATABASE_PATH);
-		Query q(db);
+	Database db(DATABASE_PATH);
+	Query q(db);
 
-		if (!db.Connected())
-		{
-			G_Printf( "Database not connected, %s\n", DATABASE_PATH );
-			return;
-		}
+	if (!db.Connected())
+	{
+		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		return;
+	}
 
 		string accountNameSTR = q.get_string( va( "SELECT Name FROM Users WHERE AccountID='%i'", ent->client->sess.userID ) );
 
 		int clientID = q.get_num( va( "SELECT Clientid FROM Users WHERE AccountID='%i'", ent->client->sess.userID ) );
 
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.userID, clientID ) );
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.userID, clientID ) );
-		return;
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.userID, clientID ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.userID, clientID ) );
+	return;
 }
 
 void Cmd_EditAccount_F(gentity_t * ent)

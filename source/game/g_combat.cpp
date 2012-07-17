@@ -2161,6 +2161,17 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		return;
 	}
 
+	if (self && (self->s.eType == ET_NPC && self->s.NPC_class != CLASS_VEHICLE || self->s.eType != ET_NPC ) )
+	{
+		self->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
+		self->client->ps.forceDodgeAnim = 0;
+		self->client->ps.forceHandExtendTime = level.time + 10000;
+		self->client->ps.quickerGetup = qfalse;
+		trap_SendServerCommand( self->client->ps.clientNum, va( "print \"^1You were knocked out by %s. You will get up in 10 seconds.\n\"", attacker ) );
+		trap_SendServerCommand( self->client->ps.clientNum, va( "cp \"^1You were knocked out by %s. You will get up in 10 seconds.\n\"", attacker ) );
+		return;
+	}
+
 	//check player stuff
 	g_dontFrickinCheck = qfalse;
 	

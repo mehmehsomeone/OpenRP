@@ -2301,7 +2301,6 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 
 	char factionName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
 
-
 	if ( currentFactionSTR != "none" )
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error you must leave the %s faction first before creating one.\n\"", currentFactionSTR.c_str() ) );
@@ -2317,10 +2316,9 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	trap_Argv( 1, factionName, MAX_STRING_CHARS );
 	string factionNameSTR = factionName;
 
-		q.execute(va("INSERT INTO Factions(Name,Leader,Credits,) VALUES('%s','%s', '0')", factionNameSTR.c_str(), characterNameSTR.c_str(), 0 ) );
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
-		
-	}
+	q.execute(va("INSERT INTO Factions(Name,Leader,Credits) VALUES('%s','%s', '0')", factionNameSTR.c_str(), characterNameSTR.c_str() ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
+
 	return;
 }
 
@@ -2551,5 +2549,40 @@ void Cmd_CheatAccess_F( gentity_t *ent )
 			G_LogPrintf( "%s executed the cheatAccess command and they now no longer have cheat access (they had it but toggled it off).\n", ent->client->pers.netname );
 		}
 	}
+	return;
+}
+
+void Cmd_ShakeScreen_F( gentity_t * ent )
+{
+	int pids[MAX_CLIENTS];
+	char err[MAX_STRING_CHARS];
+	gentity_t *tent;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_SHAKE))
+	{
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5Command Usage: /amshakescreen <name/clientid>\n\""));
+		return;
+	}
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Player or clientid %s does not exist.\n\"", cmdTarget));
+		return;
+	}
+
+	tent = &g_entities[pids[0]];
+
+	G_ScreenShake( tent->s.origin, tent, 6.0f, 10000, qfalse );
+	
 	return;
 }

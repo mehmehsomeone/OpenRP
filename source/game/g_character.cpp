@@ -420,7 +420,8 @@ void LevelCheck(int charID)
 	//Get their userID
 	int userID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
-	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", userID ) );
+	//Commented out for now - this has some problems associated with it.
+	//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", userID ) );
 
 
 	for ( i=0; i <= 50; ++i )
@@ -437,8 +438,7 @@ void LevelCheck(int charID)
 			q.execute( va( "UPDATE Characters set Level='%i' WHERE CharID='%i'", nextLevel, charID ) );
 
 			//It uses nextLevel because their old level is still stored in currentLevel
-			trap_SendServerCommand( clientID, va( "print \"^3Level up! You are now level %i.\n\"", nextLevel ) );
-			trap_SendServerCommand( clientID, va( "cp \"^3Level up! You are now level %i.\n\"", nextLevel ) );
+			trap_SendServerCommand( -1, va( "chat \"^3Level up! You are now level %i.\n\"", nextLevel ) );
 		}
 		
 		else
@@ -1065,6 +1065,7 @@ void Cmd_ListFactions_F(gentity_t * ent)
 	Query q(db);
 	q.get_result( va( "SELECT FactionID, Name FROM Factions", ent->client->sess.userID ) );
 	trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Factions:\n\"" );
+	
 	while  ( q.fetch_row() )
 	{
 		int ID = q.getval();
@@ -1137,8 +1138,7 @@ void Cmd_BuyShop_F( gentity_t * ent )
 	}
 
 	char itemName[MAX_STRING_CHARS];
-	int itemCost, itemLevel;
-	string itemID;
+	int itemCost, itemLevel, newTotal;
 
 	int currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
@@ -1151,14 +1151,12 @@ void Cmd_BuyShop_F( gentity_t * ent )
 	{
 		itemCost = 250;
 		itemLevel = 1;
-		itemID = "wep00";
 	}
 		
 	else if ( !Q_stricmp( itemName, "blaster" ) || !Q_stricmp( itemName, "Blaster" ) )
 	{
 		itemCost = 400;
 		itemLevel = 6;
-		itemID = "wep01";
 	}
 
 	else
@@ -1189,27 +1187,51 @@ void Cmd_BuyShop_F( gentity_t * ent )
 		
 		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
 		{
-			ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_MELEE) | (1 << WP_BRYAR_PISTOL);
-			q.execute( va( "UPDATE characters set inventory='%s' WHERE ID='%i'", itemID, ent->client->sess.characterID ) );
+			int currentTotal = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
 		}
 		
 		else if ( !Q_stricmp( itemName, "blaster" ) || !Q_stricmp( itemName, "Blaster" ) )
 		{
-			ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_MELEE) | (1 << WP_BLASTER);
-			string currentInventory = q.get_string( va( "SELECT inventory FROM characters WHERE ID='%i'", ent->client->sess.characterID ) );
-			string newInventory = currentInventory + itemID + ' ';
-			q.execute( va( "UPDATE characters set inventory='%s' WHERE ID='%i'", newInventory, ent->client->sess.characterID ) );
+			int currentTotal = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set E11='%i' WHERE ID='%i'", newTotal, ent->client->sess.characterID ) );
 		}
 
-			
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You have purchased a %s for %s credits\n\"", itemNameSTR.c_str(), itemCost ) );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You have purchased a %s for %i credits\n\"", itemNameSTR.c_str(), itemCost ) );
 		return;
 	}
 }
 
+
+/*
+=================
+
+Cmd_CheckInventory_F
+
+Command: /checkInventory
+Check someone's inventory
+
+=================
+*/
 void CheckInventory( gentity_t * ent )
 {
-	return;
+	Database db(DATABASE_PATH);
+	Query q(db);
+
+	if ( !db.Connected() )
+	{
+		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		return;
+	}
+
+	if( ( !ent->client->sess.loggedinAccount ) || ( !ent->client->sess.characterChosen ) )
+	{
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
+		return;
+	}
+
 }
 
 /*
@@ -1239,8 +1261,10 @@ void Cmd_Inventory_F( gentity_t * ent )
 		return;
 	}
 
-	string inventory = q.get_string( va( "SELECT ItemBuild FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+	int pistol = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+	int e11 = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
 
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Your Inventory:\nPistols: %i\nE-11s: %i\n\"", pistol, e11 ) );
 	return;
 }
 
@@ -1263,65 +1287,72 @@ void Cmd_EditCharacter_F( gentity_t * ent)
 	Database db(DATABASE_PATH);
 	Query q(db);
 	
-		if (!db.Connected())
-		{
+	if (!db.Connected())
+	{
 			G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
 			return;
-		}
+	}
 
-		if (trap_Argc() != 3) //If the user doesn't specify both args.
+	if (trap_Argc() != 3) //If the user doesn't specify both args.
+	{
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: /editchar <name/model/modelscale> <value> \n\"" ) ;
+			return;
+	}
+	char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS];
+
+	trap_Argv( 1, parameter, MAX_STRING_CHARS );
+	string parameterSTR = parameter;
+
+	trap_Argv( 2, change, MAX_STRING_CHARS );
+	string changeSTR = change;
+
+	int modelscale = 0;
+
+	if ((!Q_stricmp(parameter, "name")))
+	{
+		transform( changeSTR.begin(), changeSTR.end(), changeSTR.begin(), ::tolower );
+		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE Name='%s'",changeSTR.c_str() ) );
+		if(!DBname.empty())
 		{
-				trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: /editchar <name/model/modelscale> <value> \n\"" ) ;
-				return;
-		}
-		char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS];
-		trap_Argv( 1, parameter, MAX_STRING_CHARS );
-		string parameterSTR = parameter;
-		trap_Argv( 2, change, MAX_STRING_CHARS );
-		string changeSTR = change;
-		int modelscale = 0;
-		if ((!Q_stricmp(parameter, "name")))
-		{
-			transform( changeSTR.begin(), changeSTR.end(), changeSTR.begin(), ::tolower );
-			string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE Name='%s'",changeSTR.c_str() ) );
-			if(!DBname.empty())
-			{
 				trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^1Error: Name %s is already in use.\n\"",DBname.c_str() ) );
 				return;
-			}
-			q.execute( va( "UPDATE Characters set Name='%s' WHERE CharID= '%i'", changeSTR, ent->client->sess.userID));
-			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Name has been changed to ^7 %s\n\"",changeSTR.c_str() ) );
 		}
-		else if((!Q_stricmp(parameter, "model")))
-		{
+		q.execute( va( "UPDATE Characters set Name='%s' WHERE CharID= '%i'", changeSTR, ent->client->sess.userID));
+		trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Name has been changed to ^7 %s\n\"",changeSTR.c_str() ) );
+	}
+	else if( !Q_stricmp( parameter, "model" ) )
+	{
 			q.execute( va( "UPDATE Characters set Model='%s' WHERE CharID='%i'", changeSTR, ent->client->sess.userID));
 			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Model has been changed to ^7 %s\n\"",changeSTR.c_str() ) );
 			return;
-		}
-		else if((!Q_stricmp(parameter, "modelscale")))
+	}
+	else if( !Q_stricmp(parameter, "modelscale" ) )
+	{
+		modelscale = atoi(change);
+		if(!G_CheckAdmin(ent, ADMIN_SEARCHCHAR))
 		{
-			modelscale = atoi(change);
-			if(!G_CheckAdmin(ent, ADMIN_SEARCHCHAR))
+			if (modelscale < 65 || modelscale > 140 )
 			{
-			q.execute( va( "UPDATE Characters set ModelScale='%i' WHERE CharID='%i'", modelscale, ent->client->sess.userID));
-			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Modelscale has been changed to ^7 %i\n\"",modelscale ) );
-			return;
+				q.execute( va( "UPDATE Characters set ModelScale='%i' WHERE CharID='%i'", modelscale, ent->client->sess.userID));
+				trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Modelscale has been changed to ^7 %i\n\"",modelscale ) );
 			}
 			else
 			{
-				if (modelscale < 65 || modelscale > 140 )
-				{
-					q.execute( va( "UPDATE Characters set ModelScale='%i' WHERE CharID='%i'", modelscale, ent->client->sess.userID));
-					trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Modelscale has been changed to ^7 %i\n\"",modelscale ) );
-				}
-				else
-				{
-					trap_SendServerCommand ( ent->client->ps.clientNum,  "print \"^1Error: Modelscale must be between 65 and 140\n\"" );
-					return;
+				trap_SendServerCommand ( ent->client->ps.clientNum,  "print \"^1Error: Modelscale must be between 65 and 140\n\"" );
+				return;
+			}
 		}
 		else
 		{
-			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: /editchar <name/model/modelscale> <value> \n\"" ) ;
+			q.execute( va( "UPDATE Characters set ModelScale='%i' WHERE CharID='%i'", modelscale, ent->client->sess.userID));
+			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^5Modelscale has been changed to ^7 %i\n\"",modelscale ) );
 			return;
 		}
+	}
+				
+	else
+	{
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: /editchar <name/model/modelscale> <value> \n\"" ) ;
+		return;
+	}
 }
