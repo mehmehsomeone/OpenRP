@@ -678,11 +678,20 @@ vmCvar_t		ojp_truebalance;//[TrueBalance]
 
 vmCvar_t	ojp_modelscaleEnabled;//[ModelScale]
 
-//[OpenRP Admin]
+//[OpenRP]
 vmCvar_t		openrp_maxWarnings; 
 
 //Website link
 vmCvar_t		openrp_website;
+
+//Shop stuff
+vmCvar_t		openrp_e11BuyCost;
+vmCvar_t		openrp_e11SellCost;
+vmCvar_t		openrp_e11Level;
+vmCvar_t		openrp_pistolBuyCost;
+vmCvar_t		openrp_pistolSellCost;
+vmCvar_t		openrp_pistolLevel;
+
 //Bitvalues for Admins
 vmCvar_t		openrp_admin1Bitvalues;
 vmCvar_t		openrp_admin2Bitvalues; 
@@ -697,7 +706,7 @@ vmCvar_t		openrp_admin10Bitvalues;
 
 //Determines whether admins can perform admin commands on higher admin levels
 vmCvar_t		openrp_adminControl;
-//[/OpenRP Admin]
+//[/OpenRP]
 
 //CVARS
 
@@ -1130,7 +1139,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_mPSayMode, "g_mPSayMode", "3", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_mAllowEmotes, "g_mAllowEmotes", "4", CVAR_ARCHIVE, 0, qtrue },
 
-	//[OpenRP Admin]
+	//[OpenRP]
 	{ &openrp_maxWarnings, "openrp_maxWarnings", "3", CVAR_ARCHIVE, 0, qtrue  },
 
 	{ &openrp_admin1Bitvalues, "openrp_admin1Bitvalues", "268435455", 0 , 0, qtrue  },
@@ -1148,8 +1157,16 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	//openRP website
 	{ &openrp_website, "openrp_website", " ", 0 , 0, qtrue  },
-	
-	//[/OpenRP Admin]
+
+	//Shop stuff
+	{ &openrp_e11BuyCost, "openrp_e11BuyCost", "400", 0 , 0, qtrue  },
+	{ &openrp_e11SellCost, "openrp_e11SellCost", "200", 0 , 0, qtrue  },
+	{ &openrp_e11Level, "openrp_e11Level", "5", 0 , 0, qtrue  },
+	{ &openrp_pistolBuyCost, "openrp_pistolBuyCost", "250", 0 , 0, qtrue  },
+	{ &openrp_pistolSellCost, "openrp_pistolSellCost", "100", 0 , 0, qtrue  },
+	{ &openrp_pistolLevel, "openrp_pistolLevel", "1", 0 , 0, qtrue  },
+
+	//[/OpenRP]
 
 };
 

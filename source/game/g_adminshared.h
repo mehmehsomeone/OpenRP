@@ -25,6 +25,7 @@
 #define ADMIN_RENAME				8388608 // /amrename
 #define	ADMIN_FACTION				16777216 // Faction related
 #define ADMIN_CREDITS				33554432 // Credits related
+#define ADMIN_ITEM					67108864 // Item related
 
 //OpenRP Bitvalues End Here.
 

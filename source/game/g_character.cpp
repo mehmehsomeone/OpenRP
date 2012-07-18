@@ -8,6 +8,7 @@
 #include "q_shared.h"
 #include "g_adminshared.h"
 #include "g_character.h"
+#include <time.h>
 
 using namespace std;
 
@@ -560,7 +561,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.userID,charNameSTR.c_str() ) );
 
 		//Create character
-		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,FactionRank,ForceSensitive) VALUES('%i','%s','%i','%i','%i','none','none','%i')", ent->client->sess.userID, charNameSTR.c_str(), 100, 1, 0, forceSensitive ) );
+		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,FactionRank,ForceSensitive,CheckInventory) VALUES('%i','%s','%i','%i','%i','none','none','%i','0')", ent->client->sess.userID, charNameSTR.c_str(), 100, 1, 0, forceSensitive ) );
 
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Sucess: Character %s (No Faction) created. Use /character %s to select it.\n\"", charNameSTR.c_str(), charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Sucess: Character %s (No Faction) created. Use /character %s to select it.\n\"", charNameSTR.c_str(), charNameSTR.c_str() ) );
@@ -583,7 +584,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.userID,charNameSTR.c_str() ) );
 
 		//Create character
-		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,FactionRank,ForceSensitive) VALUES('%i','%s','%i','%i','%i','%s','Member','%i')", ent->client->sess.userID, charNameSTR.c_str(), 100, 1, 0, factionNameSTR.c_str(), forceSensitive ) );
+		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,FactionRank,ForceSensitive,CheckInventory) VALUES('%i','%s','%i','%i','%i','%s','Member','%i','0')", ent->client->sess.userID, charNameSTR.c_str(), 100, 1, 0, factionNameSTR.c_str(), forceSensitive ) );
 
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Sucess: Character %s (Faction: %s) created. Use /character %s to select it.\n\"", charNameSTR.c_str(), factionNameSTR.c_str(), charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Sucess: Character %s (Faction: %s) created. Use /character %s to select it.\n\"", charNameSTR.c_str(), factionNameSTR.c_str(), charNameSTR.c_str() ) );
@@ -1103,10 +1104,10 @@ void Cmd_Shop_F( gentity_t * ent )
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 	}
 
-	int pistolCost = 250, blasterCost = 400;
-	int pistolLevel = 1, blasterLevel = 5;
+	int pistolCost = openrp_pistolBuyCost.integer, e11Cost = openrp_e11BuyCost.integer;
+	int pistolLevel = openrp_pistolLevel.integer, e11Level = openrp_e11Level.integer;
 
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5=======Shop========\nWeapons:\n^2Pistol (Level ^3%i^2) - ^3%i ^2credits\n^2Blaster(Level ^3%i^2) - ^3%i ^2credits\n\"", pistolLevel, pistolCost, blasterLevel, blasterCost ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5=======Shop========\nWeapons:\n^2Pistol (Level ^3%i^2) - ^3%i ^2credits\n^E-11(Level ^3%i^2) - ^3%i ^2credits\n\"", pistolLevel, pistolCost, e11Level, e11Cost ) );
 
 	return;
 }
@@ -1142,21 +1143,20 @@ void Cmd_BuyShop_F( gentity_t * ent )
 
 	int currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-	//int forceSensitive = q.get_num( va( "SELECT forcesensitive FROM characters WHERE ID='%i'", ent->client->sess.characterID ) );
 
 	trap_Argv( 1, itemName, MAX_STRING_CHARS );
 	string itemNameSTR = itemName;
 
 	if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
 	{
-		itemCost = 250;
-		itemLevel = 1;
+		itemCost = openrp_pistolBuyCost.integer;
+		itemLevel = openrp_pistolLevel.integer;
 	}
 		
-	else if ( !Q_stricmp( itemName, "blaster" ) || !Q_stricmp( itemName, "Blaster" ) )
+	else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
 	{
-		itemCost = 400;
-		itemLevel = 6;
+		itemCost = openrp_e11BuyCost.integer;
+		itemLevel = openrp_e11Level.integer;
 	}
 
 	else
@@ -1192,7 +1192,7 @@ void Cmd_BuyShop_F( gentity_t * ent )
 			q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
 		}
 		
-		else if ( !Q_stricmp( itemName, "blaster" ) || !Q_stricmp( itemName, "Blaster" ) )
+		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
 		{
 			int currentTotal = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
 			newTotal = currentTotal + 1;
@@ -1232,6 +1232,58 @@ void CheckInventory( gentity_t * ent )
 		return;
 	}
 
+	if ( trap_Argc() < 2 )
+	{
+		int checkInventory = q.get_num( va( "SELECT CheckInventory FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+
+		if ( checkInventory == 0 )
+		{
+			q.execute( va( "UPDATE Characters set CheckInventory='1' WHERE CharID='%i'", ent->client->sess.characterID ) );
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Others can ^2now check your inventory.\nTip: You can check others' inventories by using /checkInventory <name> if they allow it.\n\"" );
+			return;
+		}
+
+		else
+		{
+			q.execute( va( "UPDATE Characters set CheckInventory='0' WHERE CharID='%i'", ent->client->sess.characterID ) );
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Others can ^1no longer check your inventory.\nTip: You can check others' inventories by using /checkInventory <name> if they allow it.\n\"" );
+			return;
+		}
+	}
+
+	char charName[MAX_STRING_CHARS];
+	string charNameSTR = charName;
+
+	trap_Argv( 1, charName, MAX_STRING_CHARS );
+
+	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
+
+	if (!G_CheckAdmin( ent, ADMIN_ITEM ) )
+	{
+		int checkInventory = q.get_num( va( "SELECT CheckInventory FROM Characters WHERE CharID='%i'", charID ) );
+
+		if ( checkInventory == 1 )
+		{
+			int pistol = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", charID ) );
+			int e11 = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", charID ) );
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5%s's Inventory:\nPistols: %i\nE-11s: %i\n\"", pistol, e11 ) );
+		}
+		
+		else
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1This person is not allowing inventory checks. They can allow them by using /checkInventory\n\"" );
+			return;
+		}
+	}
+
+	else
+	{
+		int pistol = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", charID ) );
+		int e11 = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", charID ) );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5%s's Inventory:\nPistols: %i\nE-11s: %i\n\"", pistol, e11 ) );
+		return;
+	}
+
 }
 
 /*
@@ -1261,11 +1313,165 @@ void Cmd_Inventory_F( gentity_t * ent )
 		return;
 	}
 
+	int currentCredits = q.get_num( va ("SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+	
 	int pistol = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
 	int e11 = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
 
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Your Inventory:\nPistols: %i\nE-11s: %i\n\"", pistol, e11 ) );
-	return;
+	if ( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Your Inventory:\nPistols: %i\nE-11s: %i\n\"", pistol, e11 ) );
+		return;
+	}
+
+	else if ( trap_Argc() != 3 )
+	{
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: inventory <use/sell/delete> <item> or just inventory to see your own inventory.\n\"" );
+		return;
+	}
+
+	char parameter[MAX_STRING_CHARS], itemName[MAX_STRING_CHARS];
+
+	trap_Argv( 1, parameter, MAX_STRING_CHARS );
+	trap_Argv( 2, itemName, MAX_STRING_CHARS );
+
+	string itemNameSTR = itemName;
+
+	if ( !Q_stricmp( parameter, "use" ) )
+	{
+		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
+		{
+			if ( pistol < 1)
+			{
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You do not have any %ss.\n\"", itemNameSTR.c_str() ) );
+				return;
+			}
+
+			else
+			{
+				ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_BRYAR_PISTOL);
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2You have equipped a %s.\n\"", itemNameSTR.c_str() ) );
+				return;
+			}
+		}
+
+		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
+		{
+			if ( e11 < 1)
+			{
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You do not have any %ss.\n\"", itemNameSTR.c_str() ) );
+				return;
+			}
+
+			else
+			{
+				ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_BLASTER);
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2You have equipped a %s.\n\"", itemNameSTR.c_str() ) );
+				return;
+			}
+		}
+
+		else
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: Invalid item.\n\"" );
+			return;
+		}
+	}
+
+	else if ( !Q_stricmp( parameter, "sell" ) )
+	{
+		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
+		{
+			if ( pistol < 1)
+			{
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You do not have any %ss.\n\"", itemNameSTR.c_str() ) );
+				return;
+			}
+
+			else
+			{
+				int newTotalItems = pistol - 1;
+				q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotalItems, ent->client->sess.characterID ) );
+				int newTotalCredits = currentCredits + openrp_pistolSellCost.integer;
+				q.execute( va( "UPDATE Character set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2You have sold a(n) %s and got %s credits from selling it.\n\"", itemNameSTR.c_str(), openrp_pistolSellCost.integer ) );
+				return;
+			}
+		}
+
+		else if ( !Q_stricmp( itemName, "e-11" ) ||  !Q_stricmp( itemName, "E-11" ) )
+		{
+			if ( e11 < 1)
+			{
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You do not have any %ss.\n\"", itemNameSTR.c_str() ) );
+				return;
+			}
+
+			else
+			{
+				int newTotalItems = e11 - 1;
+				q.execute( va( "UPDATE Items set E11='%i' WHERE CharID='%i'", newTotalItems, ent->client->sess.characterID ) );
+				int newTotalCredits = currentCredits + openrp_e11SellCost.integer;
+				q.execute( va( "UPDATE Character set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2You have sold a(n) %s and got %s credits from selling it.\n\"", itemNameSTR.c_str(), openrp_e11SellCost.integer ) );
+			}
+		}
+
+		else
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: Invalid item.\n\"" );
+			return;
+		}
+	}
+
+	else if ( !Q_stricmp( parameter, "delete" ) )
+	{
+		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
+		{
+			if ( pistol < 1)
+			{
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You do not have any %ss.\n\"", itemNameSTR.c_str() ) );
+				return;
+			}
+
+			else
+			{
+				//remove their pistol
+				int newTotalItems = pistol - 1;
+				q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotalItems, ent->client->sess.characterID ) ); 
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2You have deleted a(n) %s.\n\"", itemNameSTR.c_str() ) );
+			}
+		}
+
+		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
+		{
+			if ( e11 < 1)
+			{
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You do not have any %ss.\n\"", itemNameSTR.c_str() ) );
+				return;
+			}
+
+			else
+			{
+				//remove their e-11
+				int newTotalItems = e11 - 1;
+				q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotalItems, ent->client->sess.characterID ) );
+				trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2You have deleted a(n) %s.\n\"", itemNameSTR.c_str() ) );
+			}
+		}
+
+		else
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: Invalid item.\n\"" );
+			return;
+		}
+	}
+
+	else
+	{
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: inventory <use/sell/delete> <item> or just inventory to see your own inventory.\n\"" );
+		return;
+	}
 }
 
 

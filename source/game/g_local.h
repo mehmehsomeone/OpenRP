@@ -372,6 +372,14 @@ extern vmCvar_t		openrp_maxWarnings;
 //OpenRP website
 extern vmCvar_t		openrp_website;
 
+//Shop stuff
+extern vmCvar_t		openrp_e11BuyCost;
+extern vmCvar_t		openrp_e11SellCost;
+extern vmCvar_t		openrp_e11Level;
+extern vmCvar_t		openrp_pistolBuyCost;
+extern vmCvar_t		openrp_pistolSellCost;
+extern vmCvar_t		openrp_pistolLevel;
+
 //Bitvalues for Admins
 extern vmCvar_t		openrp_admin1Bitvalues;
 extern vmCvar_t		openrp_admin2Bitvalues; 
