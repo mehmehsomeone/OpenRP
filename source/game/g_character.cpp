@@ -8,7 +8,6 @@
 #include "q_shared.h"
 #include "g_adminshared.h"
 #include "g_character.h"
-#include <time.h>
 
 using namespace std;
 
@@ -1104,106 +1103,115 @@ void Cmd_Shop_F( gentity_t * ent )
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 	}
 
-	int pistolCost = openrp_pistolBuyCost.integer, e11Cost = openrp_e11BuyCost.integer;
-	int pistolLevel = openrp_pistolLevel.integer, e11Level = openrp_e11Level.integer;
-
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5=======Shop========\nWeapons:\n^2Pistol (Level ^3%i^2) - ^3%i ^2credits\n^E-11(Level ^3%i^2) - ^3%i ^2credits\n\"", pistolLevel, pistolCost, e11Level, e11Cost ) );
-
-	return;
-}
-
-/*
-=================
-
-Cmd_BuyShop_F
-
-Command: Buy
-Buys an item from the shop (Shop)
-
-=================
-*/
-void Cmd_BuyShop_F( gentity_t * ent )
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-
-	if ( !db.Connected() )
+	if ( trap_Argc() < 2 )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5=======Shop========\nWeapons:\n^2Pistol (Level ^3%i^2) - ^3%i ^2credits\n^E-11(Level ^3%i^2) - ^3%i ^2credits\n\"", pistolLevel, pistolCost, e11Level, e11Cost ) );
 		return;
 	}
 
-	if( ( !ent->client->sess.loggedinAccount ) || ( !ent->client->sess.characterChosen ) )
+	else if ( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: shop <buy/examine> <item> or just shop to see all of the shop items.\n\"" );
+		return;
 	}
 
-	char itemName[MAX_STRING_CHARS];
+	char parameter[MAX_STRING_CHARS], itemName[MAX_STRING_CHARS];
 	int itemCost, itemLevel, newTotal;
 
 	int currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 
-	trap_Argv( 1, itemName, MAX_STRING_CHARS );
+	trap_Argv( 1, parameter, MAX_STRING_CHARS );
+	trap_Argv( 2, itemName, MAX_STRING_CHARS );
 	string itemNameSTR = itemName;
 
-	if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
+	if ( !Q_stricmp( parameter, "buy" ) )
 	{
-		itemCost = openrp_pistolBuyCost.integer;
-		itemLevel = openrp_pistolLevel.integer;
-	}
-		
-	else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
-	{
-		itemCost = openrp_e11BuyCost.integer;
-		itemLevel = openrp_e11Level.integer;
-	}
-
-	else
-	{
-		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: This item is not a valid item.\n\"" );
-		return;
-	}
-
-	int newTotalCredits = currentCredits - itemCost;
-		
-	//Trying to buy something while not having enough credits for it
-	if ( newTotalCredits < 0 )
-	{
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You don't have enough credits to buy a %s. You have %s credits and this costs %s credits.\n\"", itemNameSTR.c_str(), currentCredits, itemCost ) );
-		return;
-	}
-
-	//Trying to buy something they can't at their level
-	if ( currentLevel < itemLevel )
-	{
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You are not a high enough level to buy this. You are level %s and need to be level %s.\n\"", currentLevel, itemLevel ) );
-		return;
-	}
-
-	else
-	{
-		q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
 		
 		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
 		{
-			int currentTotal = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
-			newTotal = currentTotal + 1;
-			q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+			itemCost = openrp_pistolBuyCost.integer;
+			itemLevel = openrp_pistolLevel.integer;
 		}
 		
 		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
 		{
-			int currentTotal = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
-			newTotal = currentTotal + 1;
-			q.execute( va( "UPDATE Items set E11='%i' WHERE ID='%i'", newTotal, ent->client->sess.characterID ) );
+			itemCost = openrp_e11BuyCost.integer;
+			itemLevel = openrp_e11Level.integer;
 		}
 
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You have purchased a %s for %i credits\n\"", itemNameSTR.c_str(), itemCost ) );
+		else
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: This item is not a valid item.\n\"" );
+			return;
+		}
+
+		int newTotalCredits = currentCredits - itemCost;
+		
+		//Trying to buy something while not having enough credits for it
+		if ( newTotalCredits < 0 )
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You don't have enough credits to buy a %s. You have %s credits and this costs %s credits.\n\"", itemNameSTR.c_str(), currentCredits, itemCost ) );
+			return;
+		}
+
+		//Trying to buy something they can't at their level
+		if ( currentLevel < itemLevel )
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You are not a high enough level to buy this. You are level %s and need to be level %s.\n\"", currentLevel, itemLevel ) );
+			return;
+		}
+
+		else
+		{
+			q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
+		
+			if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
+			{
+				int currentTotal = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+				newTotal = currentTotal + 1;
+				q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+			}
+		
+			else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
+			{
+				int currentTotal = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+				newTotal = currentTotal + 1;
+				q.execute( va( "UPDATE Items set E11='%i' WHERE ID='%i'", newTotal, ent->client->sess.characterID ) );
+			}
+
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You have purchased a %s for %i credits\n\"", itemNameSTR.c_str(), itemCost ) );
+			return;
+		}
+	}
+
+	else if ( !Q_stricmp( parameter, "examine" ) )
+	{
+		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"%s\n\"", openrp_pistolDescription.string ) );
+			return;
+		}
+	
+		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"%s\n\"", openrp_e11Description.string ) );
+			return;
+		}
+
+		else
+		{
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: This item is not a valid item.\n\"" );
+			return;
+		}
+	}
+
+	else
+	{
+		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Command Usage: shop <buy/examine> <item> or just shop to see all of the shop items.\n\"" );
 		return;
 	}
 }
-
 
 /*
 =================

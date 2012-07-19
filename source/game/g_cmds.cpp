@@ -4099,10 +4099,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_Shop_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "buyshop") == 0) {
-		Cmd_BuyShop_F (ent);
-		return;
-	}
 	if (Q_stricmp (cmd, "inventory") == 0) {
 		Cmd_Inventory_F (ent);
 		return;

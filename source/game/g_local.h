@@ -376,9 +376,11 @@ extern vmCvar_t		openrp_website;
 extern vmCvar_t		openrp_e11BuyCost;
 extern vmCvar_t		openrp_e11SellCost;
 extern vmCvar_t		openrp_e11Level;
+extern vmCvar_t		openrp_e11Description;
 extern vmCvar_t		openrp_pistolBuyCost;
 extern vmCvar_t		openrp_pistolSellCost;
 extern vmCvar_t		openrp_pistolLevel;
+extern vmCvar_t		openrp_pistolDescription;
 
 //Bitvalues for Admins
 extern vmCvar_t		openrp_admin1Bitvalues;

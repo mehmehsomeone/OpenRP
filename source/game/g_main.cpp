@@ -688,9 +688,11 @@ vmCvar_t		openrp_website;
 vmCvar_t		openrp_e11BuyCost;
 vmCvar_t		openrp_e11SellCost;
 vmCvar_t		openrp_e11Level;
+vmCvar_t		openrp_e11Description;
 vmCvar_t		openrp_pistolBuyCost;
 vmCvar_t		openrp_pistolSellCost;
 vmCvar_t		openrp_pistolLevel;
+vmCvar_t		openrp_pistolDescription;
 
 //Bitvalues for Admins
 vmCvar_t		openrp_admin1Bitvalues;
@@ -1162,9 +1164,11 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_e11BuyCost, "openrp_e11BuyCost", "400", 0 , 0, qtrue  },
 	{ &openrp_e11SellCost, "openrp_e11SellCost", "200", 0 , 0, qtrue  },
 	{ &openrp_e11Level, "openrp_e11Level", "5", 0 , 0, qtrue  },
+	{ &openrp_e11Description, "openrp_e11Description", "An E-11 blaster.", 0 , 0, qtrue  },
 	{ &openrp_pistolBuyCost, "openrp_pistolBuyCost", "250", 0 , 0, qtrue  },
 	{ &openrp_pistolSellCost, "openrp_pistolSellCost", "100", 0 , 0, qtrue  },
 	{ &openrp_pistolLevel, "openrp_pistolLevel", "1", 0 , 0, qtrue  },
+	{ &openrp_pistolDescription, "openrp_pistolDescription", "A bryar pistol.", 0 , 0, qtrue  },
 
 	//[/OpenRP]
 

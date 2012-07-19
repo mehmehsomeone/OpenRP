@@ -33,6 +33,5 @@ void Cmd_FactionWithdraw_F( gentity_t * ent );
 void Cmd_FactionDeposit_F( gentity_t * ent );
 void Cmd_ListFactions_F( gentity_t * ent );
 void Cmd_Shop_F( gentity_t * ent );
-void Cmd_BuyShop_F( gentity_t * ent );
 void Cmd_Inventory_F( gentity_t * ent );
 void Cmd_EditCharacter_F( gentity_t * ent);
