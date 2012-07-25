@@ -1367,7 +1367,9 @@ int PM_SaberDeflectionForQuad( int quad )
 }
 
 
-
+//[FatigueSys]
+//moved to bg_saber.c
+/*
 qboolean PM_SaberInDeflect( int move )
 {
 	if ( move >= LS_D1_BR && move <= LS_D1_B_ )
@@ -1376,6 +1378,8 @@ qboolean PM_SaberInDeflect( int move )
 	}
 	return qfalse;
 }
+	*/
+//[/FatigueSys]
 
 qboolean PM_SaberInParry( int move )
 {
@@ -3275,7 +3279,13 @@ void PM_SetTorsoAnimTimer(int time )
 qboolean BG_BounceAnim( int anim );
 qboolean PM_SaberReturnAnim( int anim );
 //[/SaberSys]
-void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken )
+
+	//[FatigueSys]
+//Made it so saber moves go slower if your fatigued
+void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed,
+														int broken, int fatigued )
+//void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken )
+//[/FatigueSys]
 {
 	//[SaberSys]
 	//I don't like having to do this every time but it's the best I can think of for now.
@@ -3380,7 +3390,10 @@ void BG_SetAnimFinal(playerState_t *ps, animation_t *animations,
 	//NOTE: Setting blendTime here breaks actual blending..
 	blendTime = 0;
 
-	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, anim, &editAnimSpeed, ps->brokenLimbs);
+	//[FatigueSys]
+	BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, anim, &editAnimSpeed, ps->brokenLimbs, ps->userInt3);
+	//BG_SaberStartTransAnim(ps->clientNum, ps->fd.saberAnimLevel, ps->weapon, anim, &editAnimSpeed, ps->brokenLimbs);
+	//[/FatigueSys]
 
 	// Set torso anim
 	if (setAnimParts & SETANIM_TORSO)
@@ -3801,7 +3814,16 @@ float BG_GetLegsAnimPoint(playerState_t * ps, int AnimIndex)
 
 #include "../namespace_end.h"		// End of animation utilities
 
-
+//[DodgeSys]
+qboolean BG_HopAnim( int anim )
+{//check to see if anim is a hop animation.
+	if( BOTH_HOP_F <= anim && anim <= BOTH_HOP_R )
+	{
+		return qtrue;
+	}
+	return qfalse;
+}
+//[/DodgeSys]
 
 //[SaberSys]
 qboolean BG_BounceAnim( int anim )

@@ -418,7 +418,7 @@ void LevelCheck(int charID)
 	int nextLevel, i, neededXP;
 
 	//Get their userID
-	int userID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
+	//int userID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
 	//Commented out for now - this has some problems associated with it.
 	//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", userID ) );
@@ -1102,10 +1102,10 @@ void Cmd_Shop_F( gentity_t * ent )
 	{
 		trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 	}
-
+	
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5=======Shop========\nWeapons:\n^2Pistol (Level ^3%i^2) - ^3%i ^2credits\n^E-11(Level ^3%i^2) - ^3%i ^2credits\n\"", pistolLevel, pistolCost, e11Level, e11Cost ) );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5=======Shop========\nWeapons:\n^2Pistol (Level ^3%i^2) - ^3%i ^2credits\n^E-11(Level ^3%i^2) - ^3%i ^2credits\n\"", openrp_pistolLevel.integer, openrp_pistolBuyCost.integer, openrp_e11Level.integer, openrp_e11BuyCost.integer ) );
 		return;
 	}
 
@@ -1124,6 +1124,7 @@ void Cmd_Shop_F( gentity_t * ent )
 	trap_Argv( 1, parameter, MAX_STRING_CHARS );
 	trap_Argv( 2, itemName, MAX_STRING_CHARS );
 	string itemNameSTR = itemName;
+
 
 	if ( !Q_stricmp( parameter, "buy" ) )
 	{

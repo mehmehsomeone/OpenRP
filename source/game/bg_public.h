@@ -55,10 +55,83 @@
 
 #define MAX_CLIENT_SCORE_SEND 20
 
+//[DodgeSys]
+//[/DodgeDefines]
+//percentage of Dodge points remaining of the full amount required for a Partial Dodge.
+#define DODGE_PARTIAL		.5
+
+//Default amount of Maximum dodge
+#define	DODGE_MAX			100
+
+//The Fatigue (Force) Points to Dodge Points Ratio
+#define	DODGE_FATIGUE		6
+
+//The minimum damage level at which dodge works
+#define DODGE_MINDAM		20
+
+//Velocity at which you hop away from continued damage
+#define DODGE_HOP			g_speed.value
+
+//Distance at which Dodge Saber Blocks occur
+#define	DODGE_SABDIST		200
+//[/DodgeDefines]
+//[/DodgeSys]
+
+//[FatigueSys]
+//[FatigueDefines]
+//Fatigue for backflips
+#define FATIGUE_BACKFLIP		-FATIGUE_JUMP + 3
+#define FATIGUE_BACKFLIP_ATARU		-FATIGUE_JUMP + 1
+//#define FATIGUE_WALLFLIP		-FATIGUE_JUMP + 3 something that isnt working right
+
+//Fatigue for jumps (This is the basic cost of a jump, force jumps cost points in addition to this)
+#define FATIGUE_JUMP			2
+
+//Fatigue for standard melee moves
+#define FATIGUE_MELEE			1
+
+//Fatigue for standard saber attacks
+#define FATIGUE_SABERATTACK		1
+
+//Fatigue Cost for saber transition moves (spins)
+#define FATIGUE_SABERTRANS		1
+
+//percentage of max fatigue at which point your player starts acting fatigued.
+#define FATIGUEDTHRESHHOLD		.1
+
+//the fatigue caused by getting hit by a kick.
+#define FATIGUE_KICKHIT			5
+
+//the fatigue for doing cartwheels.
+#define FATIGUE_CARTWHEEL		-FATIGUE_JUMP + 3
+#define FATIGUE_CARTWHEEL_ATARU -FATIGUE_JUMP + 1
+
+//FP cost of saber ground attacks
+#define FATIGUE_GROUNDATTACK	3
+
+//FP cost of saber jump attacks
+#define FATIGUE_JUMPATTACK		-FATIGUE_JUMP + 3
+//[/FatigueDefines]
+//[/FatigueSys]
+
+//[SaberSys]
+#define MISHAPLEVEL_MAX			15  //the max possible amount of MP.  This is currently dictated by network variable size limits.
+#define MISHAPLEVEL_FULL		14  //the point at which full mishaps occur on the balance bar.
+#define MISHAPLEVEL_HEAVY		8
+#define MISHAPLEVEL_LIGHT		5
+#define MISHAPLEVEL_NONE		0
+//[/SaberSys]
+
 //[WeaponSys]
 #define MISHAP_MAXINACCURACY	7  //maximum possible offset angle for weapon accuracy. 
 //[/WeaponSys]
 
+//[DodgeSys]
+//[DodgeDefines]
+//the level below which DP is critical (for the DP meterand desperation regen, etc)
+#define	DODGE_CRITICALLEVEL	   15
+//[/DodgeDefines]
+//[/DodgeSys]
 
 //[ExpSys]
 //[ExpDefines]
@@ -564,7 +637,12 @@ typedef enum {
 	STAT_ARMOR,				
 	STAT_DEAD_YAW,					// look this direction when dead (FIXME: get rid of?)
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
-
+	//[DodgeSys]
+	STAT_MAX_HEALTH,					// health / armor limit, changable by handicap
+	STAT_DODGE,			//number of Dodge Points the player has.  DP is used for evading/blocking attacks before they hurt you.
+	STAT_MAX_DODGE,		//maximum number of dodge points allowed.
+	//STAT_MAX_HEALTH					// health / armor limit, changable by handicap
+	//[/DodgeSys]
 	STAT_AMMOPOOL//[Reload]
 } statIndex_t;
 
@@ -1740,7 +1818,12 @@ qboolean BG_InSaberLock( int anim );
 qboolean BG_InWalk( int anim );
 //[/SaberSys]
 
-void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken );
+//[FatigueSys]
+void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim,
+														float *animSpeed, int broken, int fatigued );
+//void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken );
+//[/FatigueSys]
+
 
 void BG_ForcePowerDrain( playerState_t *ps, forcePowers_t forcePower, int overrideAmt );
 

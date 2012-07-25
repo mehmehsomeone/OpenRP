@@ -838,7 +838,18 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &sv_privatepassword, "sv_privatePassword", "", CVAR_TEMP, 0, qfalse },
 	//[/PrivatePasswordFix]
 
-	{ &g_forceRegenTime, "g_forceRegenTime", "200", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
+	//[FatigueSys]
+	{ &g_forceRegenTime, "g_forceRegenTime", "500", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
+	//{ &g_forceRegenTime, "g_forceRegenTime", "200", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
+	//[/FatigueSys]
+
+	//[DodgeSys]
+	{ &g_dodgeRegenTime, "g_dodgeRegenTime", "1000", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
+	//[/DodgeSys]
+	
+	//[SaberSys]
+	{ &g_mishapRegenTime, "g_mishapRegenTime", "3000", CVAR_ARCHIVE, 0, qtrue  },
+	//[/SaberSys]
 
 	{ &g_spawnInvulnerability, "g_spawnInvulnerability", "3000", CVAR_ARCHIVE, 0, qtrue  },
 

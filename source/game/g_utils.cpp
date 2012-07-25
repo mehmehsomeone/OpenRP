@@ -1482,6 +1482,40 @@ void G_Sound( gentity_t *ent, int channel, int soundIndex ) {
 }
 
 /*
+void G_Sound2( gentity_t *ent, int channel, int soundIndex ) {
+	gentity_t	*te;
+	vec3_t origin;
+	origin[0] = origin[1] = origin[2] = 0;
+
+	assert(soundIndex);
+
+	te = G_SoundTempEntity( origin, EV_GLOBAL_SOUND, channel );
+	te->s.eventParm = soundIndex;
+	te->r.svFlags |= SVF_BROADCAST;
+	te->s.saberEntityNum = channel;
+
+	if (ent && ent->client && channel > TRACK_CHANNEL_NONE)
+	{ //let the client remember the index of the player entity so he can kill the most recent sound on request
+		if (g_entities[ent->client->ps.fd.killSoundEntIndex[channel-50]].inuse &&
+			ent->client->ps.fd.killSoundEntIndex[channel-50] > MAX_CLIENTS)
+		{
+			G_MuteSound(ent->client->ps.fd.killSoundEntIndex[channel-50], CHAN_VOICE);
+			if (ent->client->ps.fd.killSoundEntIndex[channel-50] > MAX_CLIENTS && g_entities[ent->client->ps.fd.killSoundEntIndex[channel-50]].inuse)
+			{
+				G_FreeEntity(&g_entities[ent->client->ps.fd.killSoundEntIndex[channel-50]]);
+			}
+			ent->client->ps.fd.killSoundEntIndex[channel-50] = 0;
+		}
+
+		ent->client->ps.fd.killSoundEntIndex[channel-50] = te->s.number;
+		te->s.trickedentindex = ent->s.number;
+		te->s.eFlags = EF_SOUNDTRACKER;
+		//te->freeAfterEvent = qfalse;
+	}
+}
+*/
+
+/*
 =============
 G_SoundAtLoc
 =============

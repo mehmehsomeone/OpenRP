@@ -16,6 +16,7 @@ void SP_fx_runner( gentity_t *ent );
 char	*ConcatArgs( int start );
 
 void LevelCheck( int charID );
+//void G_Sound2( gentity_t *ent, int channel, int soundIndex );
 
 /*
 ================
@@ -285,7 +286,7 @@ void Cmd_amBan_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_BAN))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -344,7 +345,7 @@ void Cmd_amKick_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_KICK))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -391,7 +392,7 @@ void Cmd_amWarn_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_WARN))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -450,7 +451,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -594,7 +595,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ANNOUNCE))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 		
@@ -638,7 +639,7 @@ void Cmd_amMute_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MUTE))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -688,7 +689,7 @@ void Cmd_amUnMute_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MUTE))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -745,7 +746,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -817,7 +818,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -888,7 +889,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_PROTECT))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -955,7 +956,7 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ADMINWHOIS))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -966,7 +967,7 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 
 		if(ent->inuse && ent->client)
 		{
-			if(ent->client->sess.isAdmin = qtrue)
+			if(ent->client->sess.isAdmin == qtrue)
 			{
 				{
 					trap_SendServerCommand(ent->client->ps.clientNum, va("print \"%s ^2Admin level %i\n\"", ent->client->pers.netname, (ent->client->sess.isAdmin-1)));
@@ -994,7 +995,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 	
 	if(!G_CheckAdmin(ent, ADMIN_EMPOWER))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1077,7 +1078,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MERC))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1218,7 +1219,7 @@ void Cmd_amResetScale_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SCALE))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1278,7 +1279,7 @@ void Cmd_amScale_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SCALE))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1339,7 +1340,7 @@ void Cmd_amBitvalues_F(gentity_t *ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_BITVALUES))
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5You are not allowed to use this command.\n\"" ) );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You are not allowed to use this command.\n\"" ) );
 		return;
 	}
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Here are the bitvalues assigned to each admin rank:\n\"" ) );
@@ -1361,7 +1362,7 @@ void Cmd_amEffect_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va( "print \"^5You are not allowed to use this command.\n\"" ));
+		trap_SendServerCommand(ent->client->ps.clientNum, va( "print \"^1Error: You are not allowed to use this command.\n\"" ));
 		return;
 	}
 	
@@ -1402,7 +1403,7 @@ void Cmd_amClearEffects_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5You are not allowed to use this command.\n\"" ) );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You are not allowed to use this command.\n\"" ) );
 		return;
 	}
 
@@ -1444,7 +1445,7 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_FORCETEAM))
 	{
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5You are not allowed to use this command.\n\"" ) );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You are not allowed to use this command.\n\"" ) );
 		return;
 	}
 		trap_Argv( 1, cmdTarget, sizeof (cmdTarget ) ); //The first command argument is the target's name.
@@ -1498,7 +1499,7 @@ void Cmd_amMap_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MAP))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 	else
@@ -1546,7 +1547,7 @@ void Cmd_amWeather_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}	
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Changing the weather...\n\"" ) );
@@ -1629,32 +1630,32 @@ void Cmd_amWeather_F(gentity_t *ent)
 void Cmd_amWeatherPlus_F(gentity_t *ent)
 {
 	char	weather[MAX_STRING_CHARS];
-	int		num;
+	int num;
 
 	trap_Argv( 1,  weather, sizeof( weather ) );
 
 	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}						
 	if (!Q_stricmp(weather, "snow"))
 	{
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*snow");
-			trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather: \nSnow\n\"" ) ;
+		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather: \nSnow\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "rain"))
 	{
 
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*rain 500");
 		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather: \nSnow\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "sandstorm"))
 	{
 
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*wind");
 		G_EffectIndex("*sand");
 		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nSand\nWind\n\"" ) ;
@@ -1662,7 +1663,7 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	else if (!Q_stricmp(weather, "blizzard"))
 	{
 ;
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*constantwind (100 100 -100)");
 		G_EffectIndex("*fog");
 		G_EffectIndex("*snow");
@@ -1672,7 +1673,7 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	{
 		
 		
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*heavyrainfog");
 		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nHeavy Fog\n\"" ) ;
 	}
@@ -1680,14 +1681,14 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	{
 		
 		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nSpace Dust\n\"" ) ;
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*spacedust 4000");
 	}
 	else if (!Q_stricmp(weather, "acidrain"))
 	{
 		
 		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nAcid Rain\n\"" ) ;
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*acidrain 500");
 	}
 	
@@ -1695,14 +1696,14 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	{
 		
 		
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*fog");
 		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nFog\n\"" ) ;
 	}
 		else if (!Q_stricmp(weather, "sand"))
 	{
 
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*sand");
 		trap_SendServerCommand( ent->client->ps.clientNum,  "print \"^5Adding weather:\nSand\n\"" ) ;
 	}
@@ -1733,7 +1734,7 @@ void Cmd_amStatus_F(gentity_t *ent)
 
   	if(!G_CheckAdmin(ent, ADMIN_STATUS))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1781,7 +1782,7 @@ void Cmd_amRename_F(gentity_t *ent)
 
    if(!G_CheckAdmin(ent, ADMIN_RENAME))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1834,7 +1835,7 @@ void Cmd_amSlap_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLAP))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1909,7 +1910,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2024,7 +2025,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2120,7 +2121,7 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_XP))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2198,7 +2199,7 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_CREDITS))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2278,7 +2279,7 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2299,7 +2300,7 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	string currentFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	string characterNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 
-	char factionName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
+	char factionName[MAX_STRING_CHARS];
 
 	if ( currentFactionSTR != "none" )
 	{
@@ -2334,7 +2335,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2401,7 +2402,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2462,7 +2463,7 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_CREDITS) && !G_CheckAdmin(ent, ADMIN_FACTION))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2526,13 +2527,13 @@ void Cmd_CheatAccess_F( gentity_t *ent )
 	//If the user of the command doesn't have the proper bitvalue
 	if(!G_CheckAdmin(ent, ADMIN_CHEATS) )
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 	}
 	//If the user of the command does have the proper bitvalue
 	else
 	{
 		//If they don't have cheat access
-		if( ent->client->pers.hasCheatAccess = qfalse )
+		if( ent->client->pers.hasCheatAccess == qfalse )
 		{
 			//They do now.
 			ent->client->pers.hasCheatAccess = qtrue;
@@ -2552,6 +2553,7 @@ void Cmd_CheatAccess_F( gentity_t *ent )
 	return;
 }
 
+/*
 void Cmd_ShakeScreen_F( gentity_t * ent )
 {
 	int pids[MAX_CLIENTS];
@@ -2561,7 +2563,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 
 	if(!G_CheckAdmin(ent, ADMIN_SHAKE))
 	{
-		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2586,3 +2588,28 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 	
 	return;
 }
+*/
+
+/*
+void Cmd_Music_F( gentity_t * ent )
+{
+	char musicPath[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_MUSIC))
+	{
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		return;
+	}
+
+	trap_Argv(1, musicPath, sizeof(musicPath));
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent->client->ps.clientNum, va("print \"^5Command Usage: /ammusic <path>\n\""));
+		return;
+	}
+
+	G_Sound2( ent, CHAN_MUSIC, G_SoundIndex("%s", musicPath) );
+	return;
+}
+*/

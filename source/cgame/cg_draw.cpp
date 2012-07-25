@@ -83,8 +83,19 @@ const char *forceTicName[MAX_OJPHUD_TICS] =
 //[/NewHud]
 };
 
-
-
+//[DodgeSys]
+const char *dodgeTicName[MAX_OJPHUD_TICS] =
+{
+"dodge_tic1",
+"dodge_tic2",
+"dodge_tic3",
+"dodge_tic4",
+"dodge_tic5",
+"dodge_tic6",
+"dodge_tic7",
+"dodge_tic8",
+};
+//[/DodgeSys]
 
 //[NewHud]
 const char *ammoTicName[MAX_OJPHUD_TICS] = 
@@ -1150,9 +1161,85 @@ static void CG_DrawAmmo( centity_t	*cent,menuDef_t *menuHUD)
 
 }
 
-
-
-
+//[DodgeSys]	1154	
+/*		
+================		
+CG_DrawForcePower		
+================		
+*/		
+//[NewHud]		
+#define DPBAR_H			65.0f		
+#define DPBAR_W			13.0f		
+#define DPBAR_X			538.0f		
+#define DPBAR_Y			367.0f		
+//[/NewHud]		
+void CG_DrawDodge( menuDef_t *menuHUD )		
+{		
+	//[NewHud]		
+	vec4_t			aColor;		
+	itemDef_t		*focusItem;		
+	float			percent = ((float)cg.snap->ps.stats[STAT_DODGE]/DODGE_MAX)*DPBAR_H;		
+			
+	//color of the bar		
+	aColor[0] = 0.0f;		
+	aColor[1] = .613f;		
+	aColor[2] = .097f;		
+	aColor[3] = 0.8f;		
+			
+	// Make the hud flash by setting forceHUDTotalFlashTime above cg.time		
+	if (cg.snap->ps.stats[STAT_MAX_DODGE] > DODGE_CRITICALLEVEL  //our maximum level is lower than the standard critical level.		
+		&& cg.snap->ps.stats[STAT_DODGE] < DODGE_CRITICALLEVEL)		
+	{		
+		//color of the bar		
+		aColor[0] = 1.0f;		
+		aColor[1] = 0.0f;		
+		aColor[2] = 0.0f;		
+		aColor[3] = 0.8f;		
+		if (cg.dodgeHUDNextFlashTime < cg.time)		
+		{		
+			cg.dodgeHUDNextFlashTime = cg.time + 400;		
+			trap_S_StartSound (NULL, 0, CHAN_LOCAL, cgs.media.noforceSound );		
+			
+		}		
+	}		
+	else	// turn HUD back on if it had just finished flashing time.		
+	{		
+		cg.dodgeHUDNextFlashTime = 0;		
+	}		
+			
+	if (percent > DPBAR_H)		
+	{//clamp to MAX_DODGE		
+		percent = DPBAR_H;		
+	}		
+			
+	if (percent < 0.1f)		
+	{		
+		percent = 0.1f;		
+	}		
+			
+	//now draw the part to show how much health there is in the color specified		
+	CG_FillRect(DPBAR_X, DPBAR_Y+(DPBAR_H-percent), DPBAR_W, DPBAR_H-(DPBAR_H-percent), aColor);		
+	//[/NewHud]		
+			
+	focusItem = Menu_FindItemByName(menuHUD, "dodgeamount");		
+			
+	if (focusItem)		
+	{		
+		// Print force amount		
+		trap_R_SetColor( focusItem->window.foreColor );		
+		
+		CG_DrawNumField (		
+			focusItem->window.rect.x,		
+			focusItem->window.rect.y,		
+			3,		
+			cg.snap->ps.stats[STAT_DODGE],		
+			focusItem->window.rect.w,		
+			focusItem->window.rect.h,		
+			NUM_FONT_SMALL,		
+			qfalse);		
+	}		
+}		
+//[/DodgeSys]
 
 /*
 ================
@@ -1178,8 +1265,9 @@ void CG_DrawForcePower( menuDef_t *menuHUD )
 	aColor[2] = 0.996f;
 	aColor[3] = 0.8f;
 
-	// Make the hud flash by setting forceHUDTotalFlashTime above cg.time
-	if (cg.forceHUDTotalFlashTime > cg.time )
+	if (cg.forceHUDTotalFlashTime > cg.time || (cg_entities[cg.snap->ps.clientNum].currentState.userInt3 &  ( 1 << FLAG_FATIGUED)))
+	//if (cg.forceHUDTotalFlashTime > cg.time )
+	//[/FatigueSys]
 	{
 		//color of the bar
 		aColor[0] = 1.0f;
@@ -1504,6 +1592,10 @@ void CG_DrawHUD(centity_t	*cent)
 		}
 
 		CG_DrawForcePower(menuHUD);
+
+		//[DodgeSys]
+		CG_DrawDodge(menuHUD);		
+		//[/DodgeSys]
 
 		//[SaberSys]
 		CG_DrawBalance(cent, menuHUD);

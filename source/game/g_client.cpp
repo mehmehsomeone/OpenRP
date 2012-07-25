@@ -3068,7 +3068,10 @@ tryTorso:
 
 		f = torsoAnim;
 
-		BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, f, &animSpeedScale, self->client->ps.brokenLimbs);
+		//[FatigueSys]
+		BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, f, &animSpeedScale, self->client->ps.brokenLimbs, self->client->ps.userInt3);
+		//BG_SaberStartTransAnim(self->s.number, self->client->ps.fd.saberAnimLevel, self->client->ps.weapon, f, &animSpeedScale, self->client->ps.brokenLimbs);
+		//[/FatigueSys]
 
 		animSpeed = 50.0f / bgAllAnims[self->localAnimIndex].anims[f].frameLerp;
 		lAnimSpeedScale = (animSpeed *= animSpeedScale);

@@ -1716,9 +1716,13 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 	if ( other->client->pers.connected != CON_CONNECTED ) {
 		return;
 	}
+	//OpenRP - remove the team check for team chat
+	//because team chat is now OOC
+	/*
 	if ( mode == SAY_TEAM  && !OnSameTeam(ent, other) ) {
 		return;
 	}
+	*/
 
 	if (g_gametype.integer == GT_SIEGE &&
 		ent->client && (ent->client->tempSpectate >= level.time || ent->client->sess.sessionTeam == TEAM_SPECTATOR) &&
@@ -1892,9 +1896,11 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	char		location[64];
 	char		*locMsg = NULL;
 
+	/*
 	if ( g_gametype.integer < GT_TEAM && mode == SAY_TEAM ) {
 		mode = SAY_ALL;
 	}
+	*/
 
 	//[AdminSys][ChatSpamProtection]
 	if(!(ent->r.svFlags & SVF_BOT))
@@ -1941,10 +1947,10 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		}
 		else
 		{
-			Com_sprintf (name, sizeof(name), EC"(%s%c%c"EC")"EC": ", 
+			Com_sprintf (name, sizeof(name), EC"(OOC - %s%c%c"EC")"EC": ", 
 				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		}
-		color = COLOR_CYAN;
+		color = COLOR_RED;
 		break;
 	case SAY_TELL:
 		if (target && g_gametype.integer >= GT_TEAM &&
@@ -3998,10 +4004,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_AccountLogin_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "gimmenpc") == 0) {
-		Cmd_GetNPC_F (ent);
-		return;
-	}
 	if (Q_stricmp (cmd, "logout") == 0) {
 		Cmd_AccountLogout_F (ent);
 		return;
@@ -4010,15 +4012,15 @@ void ClientCommand( int clientNum ) {
 		Cmd_AccountCreate_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "character") == 0) {
+	if (Q_stricmp (cmd, "char") == 0) {
 		Cmd_SelectCharacter_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "mycharacters") == 0) {
+	if (Q_stricmp (cmd, "mychars") == 0) {
 		Cmd_ListCharacters_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "createcharacter") == 0) {
+	if (Q_stricmp (cmd, "createchar") == 0) {
 		Cmd_CreateCharacter_F (ent);
 		return;
 	}
@@ -4051,11 +4053,11 @@ void ClientCommand( int clientNum ) {
 		Cmd_GenerateCredits_F (ent);
 		return;
 	}
-		if (Q_stricmp (cmd, "editaccount") == 0) {
+	if (Q_stricmp (cmd, "editaccount") == 0) {
 		Cmd_EditAccount_F (ent);
 		return;
 	}
-		if (Q_stricmp (cmd, "editchar") == 0) {
+	if (Q_stricmp (cmd, "editchar") == 0) {
 		Cmd_EditCharacter_F (ent);
 		return;
 	}
@@ -4185,7 +4187,7 @@ void ClientCommand( int clientNum ) {
 		return;
 	}
 	if(Q_stricmp(cmd, "amweatherplus") == 0) {
-		Cmd_amWeatherPlus_f (ent);
+		Cmd_amWeatherPlus_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "ammap") == 0) {
@@ -4334,14 +4336,15 @@ void ClientCommand( int clientNum ) {
 		return;
 	}
 	if (Q_stricmp (cmd, "say_team") == 0) {
-		if (g_gametype.integer < GT_TEAM)
+		/*if (g_gametype.integer < GT_TEAM)
 		{ //not a team game, just refer to regular say.
 			Cmd_Say_f (ent, SAY_ALL, qfalse);
 		}
 		else
-		{
+		*/
+		//{
 			Cmd_Say_f (ent, SAY_TEAM, qfalse);
-		}
+		//}
 		return;
 	}
 	if (Q_stricmp (cmd, "tell") == 0) {

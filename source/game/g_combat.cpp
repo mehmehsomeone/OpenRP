@@ -2094,6 +2094,9 @@ void G_CheckForblowingup (gentity_t *ent, gentity_t *enemy, vec3_t point, int da
 //[CoOp]
 extern void BubbleShield_TurnOff(gentity_t *self);
 //[/CoOp]
+//[SaberSys]
+void AddFatigueKillBonus( gentity_t *attacker, gentity_t *victim );
+//[/SaberSys]
 void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath ) {
 
 	int			anim;
@@ -2741,6 +2744,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 					(self->client && self->client->ps.isJediMaster))
 				{//racc - killed the JM or JM who killed someone
 					AddScore( attacker, self->r.currentOrigin, 1 );
+					//[SaberSys]
+					AddFatigueKillBonus( attacker, self );
+					//[SaberSys]
 					
 					if (self->client && self->client->ps.isJediMaster)
 					{
@@ -2761,6 +2767,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 			else
 			{
 				AddScore( attacker, self->r.currentOrigin, 1 );
+				//[SaberSys]
+				AddFatigueKillBonus( attacker, self );
+				//[SaberSys]
 			}
 
 			if( meansOfDeath == MOD_STUN_BATON ) {
@@ -6607,6 +6616,34 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 	return hitClient;
 }
 
+//[SaberSys]
+#define DODGE_KILLBONUS 20 //the DP bonus you get for killing another player
+#define FATIGUE_KILLBONUS 20 //the FP bonus you get for killing another player
+extern void WP_ForcePowerRegenerate( gentity_t *self, int overrideAmt );
+void AddFatigueKillBonus( gentity_t *attacker, gentity_t *victim )
+{//get a small bonus for killing an enemy
+	if(!attacker || !attacker->client || !victim  || !victim->client)
+	{
+		return;
+	}
+
+	if(victim->NPC)
+	{//don't get kill bonus for axing NPCs
+		return;
+	}
+
+	//add bonus
+	WP_ForcePowerRegenerate(attacker, FATIGUE_KILLBONUS);
+	attacker->client->ps.stats[STAT_DODGE] += DODGE_KILLBONUS;
+
+	if(attacker->client->ps.stats[STAT_DODGE] > attacker->client->ps.stats[STAT_MAX_DODGE])
+	{
+		attacker->client->ps.stats[STAT_DODGE] = attacker->client->ps.stats[STAT_MAX_DODGE];
+	}
+}
+//[/SaberSys]
+
+
 //[ExpSys]
 void AddSkill(gentity_t *self, float amount)
 {//add skill points to self
@@ -6631,6 +6668,52 @@ void AddSkill(gentity_t *self, float amount)
 	{
 		self->client->sess.skillPoints = g_maxForceRank.value;
 	}
+}
+
+void G_DodgeDrain(gentity_t *victim, gentity_t *attacker, int amount)
+{//drains DP from victim.  Also awards experience points to the attacker.
+	if ( !g_friendlyFire.integer && OnSameTeam(victim, attacker))
+	{//don't drain DP if we're hit by a team member
+		return;
+	}
+	
+	if(victim->flags &FL_GODMODE)
+		return;
+	
+	if(victim->client && victim->client->ps.fd.forcePowersActive & (1 << FP_MANIPULATE))
+	{
+		amount /= 2;
+		if(amount < 1)
+				amount=1;
+	}
+	
+	victim->client->ps.stats[STAT_DODGE] -= amount;
+
+	if(attacker->client && (attacker->client->ps.torsoAnim == saberMoveData[16].animToUse
+		|| attacker->client->ps.torsoAnim == 1252) )
+	{//In DFA?
+		victim->client->ps.saberAttackChainCount+=16;
+	}
+	
+	if(victim->client->ps.stats[STAT_DODGE] < 0)
+	{
+		victim->client->ps.stats[STAT_DODGE] = 0;
+	}
+	
+	if(attacker && attacker->client)
+	{//attacker gets experience for causing damage.
+
+		//don't want a divide by zero errors
+			//Bug fix: double negitive here, was firing only if skillPoints is NOT equal to zero.
+		assert(attacker->client->sess.skillPoints);
+		//assert(!attacker->client->sess.skillPoints);
+
+		//scale skill points based on the ratio between skills
+			//AddSkill(attacker,
+			//	(float) amount / SKILL_DP_PER_SKILL * (victim->client->sess.skillPoints / attacker->client->sess.skillPoints));
+	}
+
+	//G_Printf("%i: %i: %i Points of Dodge Drained\n", level.time, victim->s.number, amount);
 }
 //[/ExpSys]
 

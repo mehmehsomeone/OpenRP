@@ -316,7 +316,6 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 
 	//Log them in automatically
 	int userID = q.get_num(va("SELECT UserID FROM Users WHERE UserName='%s'",userNameSTR.c_str()));
-	U
 	ent->client->sess.userID = userID;
 	ent->client->sess.loggedinAccount = qtrue;
 
