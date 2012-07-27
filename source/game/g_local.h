@@ -867,7 +867,7 @@ typedef struct {
 	float		skillPoints;		//number of skill points this player currently has.
 	//[/ExpSys]
 	qboolean    loggedinAccount;    // Logged into a player Account
-	int			userID;     // Account ID
+	int			accountID;     // Account ID
 	qboolean    characterChosen;    // Character chosen
 	int			characterID;	// Character ID
 	int			modelScale; // Model Scale

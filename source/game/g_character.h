@@ -22,6 +22,7 @@ void UpdateFP(int charid, int forcepower, int level);
 //--Misc Functions--
 qboolean isInCharacter(gentity_t* ent);
 int GetForceLevel(int level);
+void SanitizeString2( char *in, char *out );
 //--Ingame commands--
 void Cmd_ListCharacters_F(gentity_t * ent);
 void Cmd_SelectCharacter_F(gentity_t * ent);
@@ -32,6 +33,9 @@ void Cmd_Faction_F( gentity_t * ent );
 void Cmd_FactionWithdraw_F( gentity_t * ent );
 void Cmd_FactionDeposit_F( gentity_t * ent );
 void Cmd_ListFactions_F( gentity_t * ent );
+void Cmd_TransferLeader_F( gentity_t * ent );
 void Cmd_Shop_F( gentity_t * ent );
 void Cmd_Inventory_F( gentity_t * ent );
-void Cmd_EditCharacter_F( gentity_t * ent);
+void Cmd_EditCharacter_F( gentity_t * ent );
+void Cmd_Bounty_F( gentity_t * ent );
+void Cmd_CharName_F( gentity_t * ent );

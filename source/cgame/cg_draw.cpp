@@ -1161,7 +1161,7 @@ static void CG_DrawAmmo( centity_t	*cent,menuDef_t *menuHUD)
 
 }
 
-//[DodgeSys]	1154	
+//[DodgeSys]
 /*		
 ================		
 CG_DrawForcePower		

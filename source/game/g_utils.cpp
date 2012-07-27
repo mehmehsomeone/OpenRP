@@ -143,6 +143,12 @@ int G_SoundIndex( const char *name ) {
 	return G_FindConfigstringIndex (name, CS_SOUNDS, MAX_SOUNDS, qtrue);
 }
 
+int G_SoundIndex2( const char *name, ...  ) {
+	assert(name && name[0]);
+	return G_FindConfigstringIndex (name, CS_SOUNDS, MAX_SOUNDS, qtrue);
+}
+
+
 int G_SoundSetIndex(const char *name)
 {
 	return G_FindConfigstringIndex (name, CS_AMBIENT_SET, MAX_AMBIENT_SETS, qtrue);
@@ -1481,8 +1487,8 @@ void G_Sound( gentity_t *ent, int channel, int soundIndex ) {
 	}
 }
 
-/*
-void G_Sound2( gentity_t *ent, int channel, int soundIndex ) {
+void G_Sound2( gentity_t *ent, int channel, int soundIndex )
+{
 	gentity_t	*te;
 	vec3_t origin;
 	origin[0] = origin[1] = origin[2] = 0;
@@ -1513,7 +1519,6 @@ void G_Sound2( gentity_t *ent, int channel, int soundIndex ) {
 		//te->freeAfterEvent = qfalse;
 	}
 }
-*/
 
 /*
 =============

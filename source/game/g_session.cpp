@@ -96,7 +96,7 @@ void G_WriteClientSessionData( gclient_t *client ) {
 		//saber2Type
 		//[/ExpSys]
 		//[Account System]
-		client->sess.userID,
+		client->sess.accountID,
 		client->sess.loggedinAccount,
 		client->sess.isAdmin
 		//[/Account System]
@@ -150,7 +150,7 @@ void G_ReadSessionData( gclient_t *client ) {
 		//&client->sess.saber2Type
 		//[ExpSys]
 		//[Account System]
-		&client->sess.userID,
+		&client->sess.accountID,
 		&client->sess.loggedinAccount,
 		&client->sess.isAdmin
 		//[/Account System]
@@ -356,7 +356,7 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot, qbool
 			&tempChar,
 			&client->sess.skillPoints,
 			//[Account System]
-			&client->sess.userID,
+			&client->sess.accountID,
 			&client->sess.loggedinAccount,
 			&client->sess.isAdmin
 			//[/Account System]

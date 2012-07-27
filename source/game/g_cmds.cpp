@@ -2854,7 +2854,7 @@ void Cmd_SetViewpos_f( gentity_t *ent ) {
 		return;
 	}
 	if ( trap_Argc() != 5 ) {
-		trap_SendServerCommand( ent-g_entities, va("print \"^5Command Usage: setviewpos x y z yaw\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"^4Command Usage: setviewpos x y z yaw\n\""));
 		return;
 	}
 
@@ -4057,6 +4057,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_EditAccount_F (ent);
 		return;
 	}
+	if (Q_stricmp(cmd, "accountName") == 0) {
+		Cmd_AccountName_F (ent);
+		return;
+	}
 	if (Q_stricmp (cmd, "editchar") == 0) {
 		Cmd_EditCharacter_F (ent);
 		return;
@@ -4097,6 +4101,14 @@ void ClientCommand( int clientNum ) {
 		Cmd_ListFactions_F (ent);
 		return;
 	}
+	if (Q_stricmp (cmd, "transferleader") == 0) {
+		Cmd_TransferLeader_F(ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "bounty") == 0) {
+		 Cmd_Bounty_F(ent);
+		return;
+	}
 	if (Q_stricmp (cmd, "shop") == 0) {
 		Cmd_Shop_F (ent);
 		return;
@@ -4107,6 +4119,10 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp(cmd, "amlistadmins") == 0) {
 		Cmd_amListAdmins_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "charName") == 0) {
+		Cmd_CharName_F (ent);
 		return;
 	}
 	if (Q_stricmp(cmd, "amkick") == 0) {
@@ -4204,6 +4220,14 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp(cmd, "amcheataccess") == 0) {
 		Cmd_CheatAccess_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "amshakescreen") == 0) {
+		Cmd_ShakeScreen_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "ammusic") == 0) {
+		Cmd_Music_F (ent);
 		return;
 	}
 	if( Q_stricmp (cmd, "emsit") == 0) {

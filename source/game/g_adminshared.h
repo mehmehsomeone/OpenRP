@@ -26,6 +26,9 @@
 #define	ADMIN_FACTION				16777216 // Faction related
 #define ADMIN_CREDITS				33554432 // Credits related
 #define ADMIN_ITEM					67108864 // Item related
+#define ADMIN_MUSIC					134217728 // /ammusic
+#define ADMIN_BOUNTY				268435456 // /bounty remove
+#define ADMIN_SHAKE					536870912 // /amshakescreen
 
 //OpenRP Bitvalues End Here.
 
