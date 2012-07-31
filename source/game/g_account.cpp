@@ -165,8 +165,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	ent->client->sess.loggedinAccount = qtrue;
 
 	//You are now logged in as <username>. Congratulations, you can type.
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You are now logged in as %s!\nPlease create a character (/createChar) or select one (/char)\n\"", userName ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Success: You are now logged in as %s!\nPlease create a character (/createChar) or select one (/char)\n\"", userName ) );
 	//Update the ui
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "lui_login" ) );
 
@@ -316,15 +316,15 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	}
 
 	//Create the account
-	q.execute(va("INSERT INTO Users(Username,Password,ClientID,Admin,AdminLevel) VALUES('%s','%s','NULL','0','11')", userNameSTR.c_str(), userPassword ) );
+	q.execute(va("INSERT INTO Users(Username,Password,ClientID,Admin,AdminLevel) VALUES('%s','%s','0','0','11')", userNameSTR.c_str(), userPassword ) );
 
 	//Log them in automatically
 	int accountID = q.get_num(va("SELECT AccountID FROM Users WHERE Username='%s'",userNameSTR.c_str()));
 	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
 
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
-	trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createChar) or select one (/char)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
+	trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createChar) or select one (/char)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
 
 	//Update the ui
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "lui_login" ) );

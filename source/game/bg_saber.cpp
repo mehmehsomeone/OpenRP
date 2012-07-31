@@ -61,13 +61,13 @@ void BG_ForcePowerDrain( playerState_t *ps, forcePowers_t forcePower, int overri
 	}
 
 	//[FatigueSys]
-//check for fatigued state.  I'm putting this here in addition to BG_AddFatigue
-//because a lot of the code uses this function for draining instead.
-if(ps->fd.forcePower <= (ps->fd.forcePowerMax * FATIGUEDTHRESHHOLD))
-{//Pop the Fatigued flag
-	ps->userInt3 |= ( 1 << FLAG_FATIGUED );
-}
-//[/FatigueSys]
+	//check for fatigued state.  I'm putting this here in addition to BG_AddFatigue
+	//because a lot of the code uses this function for draining instead.
+	if(ps->fd.forcePower <= (ps->fd.forcePowerMax * FATIGUEDTHRESHHOLD))
+	{//Pop the Fatigued flag
+		ps->userInt3 |= ( 1 << FLAG_FATIGUED );
+	}
+	//[/FatigueSys]
 }
 
 qboolean BG_EnoughForcePowerForMove( int cost )
@@ -1936,18 +1936,19 @@ saberMoveName_t PM_SaberFlipOverAttackMove(void)
 	}
 }
 
+
 //[FatigueSys]
 //Moved from bg_panimate.c
 qboolean PM_SaberInDeflect( int move )
 {
-if ( move >= LS_D1_BR && move <= LS_D1_B_ )
-{
-return qtrue;
-}
-return qfalse;
+	if ( move >= LS_D1_BR && move <= LS_D1_B_ )
+	{
+		return qtrue;
+	}
+	return qfalse;
 }
 
-	//BG version of SaberAttacking
+//BG version of SaberAttacking
 qboolean BG_SaberAttacking( playerState_t *ps )
 {
 	if (PM_SaberInParry(ps->saberMove))
@@ -1970,7 +1971,7 @@ qboolean BG_SaberAttacking( playerState_t *ps )
 	{
 		return qfalse;
 	}
-	
+
 	if (BG_SaberInAttack(ps->saberMove))
 	{
 		if (ps->weaponstate == WEAPON_FIRING && ps->saberBlocked == BLOCKED_NONE)
@@ -1978,7 +1979,7 @@ qboolean BG_SaberAttacking( playerState_t *ps )
 			return qtrue;
 		}
 	}
-	
+
 	if (BG_SaberInSpecial(ps->saberMove))
 	{
 		return qtrue;
@@ -1987,6 +1988,7 @@ qboolean BG_SaberAttacking( playerState_t *ps )
 	return qfalse;
 }
 //[/FatigueSys]
+
 
 int PM_SaberBackflipAttackMove( void )
 {
@@ -2803,19 +2805,19 @@ saberMoveName_t PM_SaberAttackForMovement(saberMoveName_t curmove)
 				}
 			}
 			*/
-		//[/SaberSys]
-		//[SaberSys]
-		//all single saber styles can now do lunges.
-		else if (
-		//else if ((pm->ps->fd.saberAnimLevel == SS_FAST || pm->ps->fd.saberAnimLevel == SS_DUAL || pm->ps->fd.saberAnimLevel == SS_STAFF) &&
-		//[/SaberSys]
+			//[/SaberSys]
+			//[SaberSys]
+			//all single saber styles can now do lunges.
+			else if (
+			//else if ((pm->ps->fd.saberAnimLevel == SS_FAST || pm->ps->fd.saberAnimLevel == SS_DUAL || pm->ps->fd.saberAnimLevel == SS_STAFF) &&
+			//[/SaberSys]
 				pm->ps->groundEntityNum != ENTITYNUM_NONE &&
 				(pm->ps->pm_flags & PMF_DUCKED) &&
 				pm->ps->weaponTime <= 0 &&
 				!BG_SaberInSpecialAttack(pm->ps->torsoAnim)&&
 				//[SaberSys]
 				BG_EnoughForcePowerForMove(FATIGUE_GROUNDATTACK) &&
-				!PM_SaberInBounce(curmove)) //can't combo into a lunge move
+				!PM_SaberInBounce(curmove)) //can't combo into a lunge move 
 				//BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB))
 				//[/SaberSys]
 			{ //LUNGE (weak)
@@ -2834,10 +2836,10 @@ saberMoveName_t PM_SaberAttackForMovement(saberMoveName_t curmove)
 				saberMoveName_t stabDownMove = PM_CheckStabDown();
 				if (stabDownMove != LS_NONE 
 					//[SaberSys]
-				&& BG_EnoughForcePowerForMove(FATIGUE_GROUNDATTACK) )
-				//&& BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB) )
-				//[/SaberSys]
-				{//racc - stab down at someone on the ground
+					&& BG_EnoughForcePowerForMove(FATIGUE_GROUNDATTACK) )
+					//&& BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB) )
+					//[/SaberSys]
+				{//racc - stab down at someone on the ground.
 					newmove = stabDownMove;
 					//[SaberSys]
 					BG_ForcePowerDrain(pm->ps, FP_GRIP, FATIGUE_GROUNDATTACK);
@@ -3369,7 +3371,7 @@ qboolean PM_CanDoRollStab( void )
 		{
 			return qfalse;
 		}
-	
+
 		return qtrue;
 	}
 	//you shouldn't be able to roll stab with a non-saber weapon selected.
@@ -3377,7 +3379,8 @@ qboolean PM_CanDoRollStab( void )
 	{
 		return qfalse;
 	}
-//[/DodgeSys]
+	//[/DodgeSys]
+	
 }
 
 
@@ -3693,7 +3696,6 @@ qboolean InSaberDelayAnimation(int move)
 //[SaberSys]
 void BG_AddFatigue( playerState_t * ps, int Fatigue);
 //[/SaberSys]
-
 void PM_WeaponLightsaber(void)
 {
 	int			addTime,amount;
@@ -3727,10 +3729,10 @@ void PM_WeaponLightsaber(void)
 		{
 			if ( (pm->cmd.buttons&BUTTON_ATTACK) )
 			{
-			//[SaberSys]
-			if ( BG_EnoughForcePowerForMove(FATIGUE_GROUNDATTACK) && !pm->ps->saberInFlight )
-			//if ( BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB) && !pm->ps->saberInFlight )
-			//[SaberSys]
+				//[SaberSys]
+				if ( BG_EnoughForcePowerForMove(FATIGUE_GROUNDATTACK) && !pm->ps->saberInFlight )
+				//if ( BG_EnoughForcePowerForMove(SABER_ALT_ATTACK_POWER_FB) && !pm->ps->saberInFlight )
+				//[SaberSys]
 				{
 					if ( PM_CanDoRollStab() )
 					{
@@ -4662,8 +4664,16 @@ weapChecks:
 			newmove = LS_R_T2B;
 		}
 		// check for fire
-		else if ( !(pm->cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK)) )
+		//[SaberSys]
+		//Cleaning up the faking code.  This section dictates want happens when you
+		//quit holding down attack.
+		else if ( !(pm->cmd.buttons & (BUTTON_ATTACK)) )
+		//else if ( !(pm->cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK)) )
+		//[/SaberSys]
 		{//not attacking
+			//[SaberSys]
+			if ( pm->ps->weaponstate != WEAPON_READY )
+			/* redundant code?  We already know that the weaponTime is 0.
 			pm->ps->weaponTime = 0;
 			
 			if ( pm->ps->weaponTime > 0 )
@@ -4671,13 +4681,30 @@ weapChecks:
 				pm->ps->weaponstate = WEAPON_FIRING;
 			}
 			else if ( pm->ps->weaponstate != WEAPON_READY )
+			*/
+			//[/SaberSys]
 			{
 				pm->ps->weaponstate = WEAPON_IDLE;
 			}
+
+			//[SaberSys]
+			//return to ready if not pressing button
 			//Check for finishing an anim if necc.
 			if ( curmove >= LS_S_TL2BR && curmove <= LS_S_T2B )
 			{//started a swing, must continue from here
-				newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
+#ifdef QAGAME
+				if(pm_entSelf->s.NPC_class != CLASS_NONE)
+				{//NPCs never do attack fakes, just follow thru with attack.
+					newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
+				}
+				else
+#endif
+				{//perform attack fake
+					newmove = PM_ReturnforQuad(saberMoveData[curmove].endQuad);
+					//attack fakes now cost FP
+					BG_AddFatigue(pm->ps, 1);
+				}
+				//newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
 			}
 			else if ( curmove >= LS_A_TL2BR && curmove <= LS_A_T2B )
 			{//finished an attack, must continue from here
@@ -4685,13 +4712,24 @@ weapChecks:
 			}
 			else if ( PM_SaberInTransition( curmove ) )
 			{//in a transition, must play sequential attack
-				newmove = saberMoveData[curmove].chain_attack;
+#ifdef QAGAME
+				if(pm_entSelf->s.NPC_class != CLASS_NONE)
+				{//NPCs never stop attacking mid-attack, just follow thru with attack.
+					newmove = saberMoveData[curmove].chain_attack;
+				}
+				else
+#endif
+				{//exit out of transition without attacking
+					newmove = PM_ReturnforQuad(saberMoveData[curmove].endQuad);
+				}
+				//newmove = saberMoveData[curmove].chain_attack;
+			//[/SaberSys]
 			}
 			else if ( PM_SaberInBounce( curmove ) )
 			{//in a bounce
 				newmove = saberMoveData[curmove].chain_idle;//oops, not attacking, so don't chain
 			}
-			else
+			else 
 			{//FIXME: what about returning from a parry?
 				//PM_SetSaberMove( LS_READY );
 				//if ( pm->ps->saberBlockingTime > pm->cmd.serverTime )
@@ -4701,7 +4739,42 @@ weapChecks:
 				return;
 			}
 		}
+		//[SaberSys]
+		else if( (pm->cmd.buttons & BUTTON_ALT_ATTACK) && (pm->cmd.buttons & BUTTON_ATTACK))
+		{//do some fancy faking stuff.
+			if ( pm->ps->weaponstate != WEAPON_READY )
+			{
+				pm->ps->weaponstate = WEAPON_IDLE;
+			}
 
+			//Check for finishing an anim if necc.
+			if ( curmove >= LS_S_TL2BR && curmove <= LS_S_T2B )
+			{//allow the player to fake into another transition
+				newmove = PM_DoFake(curmove);
+				if(newmove == LS_NONE)
+				{//no movement, just do the attack
+					newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
+				}
+			}
+			else if ( curmove >= LS_A_TL2BR && curmove <= LS_A_T2B )
+			{//finished attack, let attack code handle the next step.
+			}
+			else if ( PM_SaberInTransition( curmove ) )
+			{//in a transition, must play sequential attack
+				newmove = PM_DoFake(curmove);
+				if(newmove == LS_NONE)
+				{//no movement, just let the normal attack code handle it
+					newmove = saberMoveData[curmove].chain_attack;
+				}
+			}
+			else if ( PM_SaberInBounce( curmove ) )
+			{//in a bounce
+			}
+			else
+			{//returning from a parry I think.
+			}
+		}
+		//[/SaberSys]
 
 
 		// ***************************************************
@@ -4772,47 +4845,47 @@ weapChecks:
 				else if ( curmove >= LS_S_TL2BR && curmove <= LS_S_T2B )
 				{//started a swing, must continue from here
 					//[SaberSys]
-					//moved the DFA code to here so we can require the
+					//moved the DFA code to here so we can require the 
 					if (curmove == LS_S_T2B &&//need to be winding up for a T2B attack
-							(pm->ps->fd.saberAnimLevel == SS_STRONG ||
+						(pm->ps->fd.saberAnimLevel == SS_STRONG ||
 						pm->ps->fd.saberAnimLevel == SS_DESANN) &&
 						!pm->cmd.rightmove &&
 						pm->cmd.forwardmove > 0 &&
 						pm->ps->velocity[2] > 100 &&
 						VectorLengthSquared(pm->ps->velocity)>=40000 &&
-							//PM_GroundDistance() < 32 &&
+						//PM_GroundDistance() < 32 &&
 						!BG_InSpecialJump(pm->ps->legsAnim) &&
 						!BG_SaberInSpecialAttack(pm->ps->torsoAnim)&&
 						//[SaberSys]
 						BG_EnoughForcePowerForMove( FATIGUE_JUMPATTACK ))
  						//BG_EnoughForcePowerForMove( SABER_ALT_ATTACK_POWER_FB ))
-							//[SaberSys]
+						//[SaberSys]
 					{ //attempt to do a DFA
-							newmove = PM_SaberJumpAttackMove();
-							if ( newmove != LS_A_T2B
+						newmove = PM_SaberJumpAttackMove();
+						if ( newmove != LS_A_T2B
 							&& newmove != LS_NONE )
 						{
-								//[SaberSys]
+							//[SaberSys]
 							BG_ForcePowerDrain(pm->ps, FP_GRIP, FATIGUE_JUMPATTACK);
 							//BG_ForcePowerDrain(pm->ps, FP_GRIP, SABER_ALT_ATTACK_POWER_FB);
-								//[/SaberSys]
+							//[/SaberSys]
 						}
 					}
 					else
 					{
 						newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
 					}
-						//newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
-						//[/SaberSys]
+					//newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
+					//[/SaberSys]
 				}
 				//[SaberSys]
 				else if ( PM_SaberInBounce( curmove ) && pm->ps->userInt3 & (1 << FLAG_PARRIED) )
 				{//can't combo if we were parried.
 					newmove = LS_READY;
 				}
-					/*
-					else if ( PM_SaberInParry( curmove ) )
-					{//can't attack straight from a block animation.
+				/*
+				else if ( PM_SaberInParry( curmove ) )
+				{//can't attack straight from a block animation.
 					newmove = LS_READY;
 				}
 				else if ( PM_SaberInBrokenParry( curmove ) )
@@ -4971,11 +5044,11 @@ weapChecks:
 	pm->ps->weaponTime = addTime;
 }
 
+
 //[FatigueSys]
 //Add Fatigue to a player
 void BG_AddFatigue( playerState_t * ps, int Fatigue)
 {
-	/*
 	//For now, all saber attacks cost one FP.
 	if(ps->fd.forcePower > Fatigue)
 	{
@@ -4985,31 +5058,31 @@ void BG_AddFatigue( playerState_t * ps, int Fatigue)
 	{//don't have enough so just completely drain FP then.
 		ps->fd.forcePower = 0;
 	}
-	*/
-
+	
 	if(ps->fd.forcePower <= (ps->fd.forcePowerMax * FATIGUEDTHRESHHOLD))
 	{//Pop the Fatigued flag
 		ps->userInt3 |= ( 1 << FLAG_FATIGUED );
 	}
-	
 }
+
 
 int Fatigue_SaberAttack( playerState_t * ps )
 {//returns the FP cost for a saber attack by this player.
-/* racc - all saber styles use 1 fp for attacks.
-if( ps->fd.saberAnimLevel == SS_DUAL )
-{//duals cost more to attack
-	return 2*FATIGUE_SABERATTACK;
-}
+	/* racc - all saber styles use 1 fp for attacks.
+	if( ps->fd.saberAnimLevel == SS_DUAL )
+	{//duals cost more to attack
+		return 2*FATIGUE_SABERATTACK;
+	}
 
-if( ps->fd.saberAnimLevel == SS_STAFF )
-{//doubles cost more to attack
-return 2*FATIGUE_SABERATTACK;
-}
-*/
+	if( ps->fd.saberAnimLevel == SS_STAFF )
+	{//doubles cost more to attack
+		return 2*FATIGUE_SABERATTACK;
+	}
+	*/
+
 	return FATIGUE_SABERATTACK;
 }
-	
+
 
 extern qboolean BG_SaberInAttackPure( int move );
 //Add Fatigue for all the sabermoves.
@@ -5027,7 +5100,7 @@ void BG_SaberFatigue( playerState_t * ps, int newMove, int anim )
 		}
 		else if( PM_SaberInTransition( newMove ) && pm->ps->userInt3 & (1 << FLAG_ATTACKFAKE) )
 		{//attack fakes cost FP as well
-			if( ps->fd.saberAnimLevel == SS_DUAL )
+			if( ps->fd.saberAnimLevel == SS_DUAL ) 
 			{//dual sabers don't have transition/FP costs.
 			}
 			else
@@ -5036,6 +5109,7 @@ void BG_SaberFatigue( playerState_t * ps, int newMove, int anim )
 			}
 		}
 	}
+
 	return;
 }
 //[/FatigueSys]
@@ -5501,6 +5575,7 @@ saberInfo_t *BG_MySaber( int clientNum, int saberNum )
 
 #include "../namespace_end.h"
 
+
 //[MELEE]
 //converted all the convulted kick code into one function for easy upgrading.
 qboolean PM_DoKick(void)
@@ -5641,3 +5716,6 @@ qboolean BG_InSlowBounce(playerState_t *ps)
 	return qfalse;
 }
 //[/SaberSys]
+
+
+

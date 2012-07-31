@@ -5148,4 +5148,3 @@ void SP_NPC_Droid_Assassin( gentity_t *self)
 	SP_NPC_spawner( self );
 }
 //[/CoOp]
-
