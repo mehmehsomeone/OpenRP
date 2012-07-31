@@ -1,11 +1,11 @@
 #include "g_local.h"
 #include "g_account.h"
-#include "string.h"
-#include <stdlib.h>
+//#include "string.h"
+//#include <stdlib.h>
 #include <algorithm>
 #include "sqlite3/sqlite3.h"
 #include "sqlite3/libsqlitewrapped.h"
-#include "q_shared.h"
+//#include "q_shared.h"
 #include "g_adminshared.h"
 #include "g_character.h"
 
@@ -14,6 +14,7 @@ using namespace std;
 qboolean G_CheckAdmin(gentity_t *ent, int command);
 int ClientNumbersFromString( char *s, int *plist);
 qboolean G_MatchOnePlayer(int *plist, char *err, int len);
+void SanitizeString2( char *in, char *out );
 
 /*
 =================
@@ -419,17 +420,19 @@ void LevelCheck(int charID)
 
 	int nextLevel, i, neededXP;
 
-	//Get their userID
-	//int userID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
+	//Get their accountID
+	//int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", accountID ) );
 	//Get their clientID so we can send them messages
 	//Commented out for now - this has some problems associated with it.
-	//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", userID ) );
+	//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
 
+	string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", charID ) );
+		
 
 	for ( i=0; i <= 50; ++i )
 	{
 		int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
-		int currentXP = q.get_num( va( "SELECT experience FROM Characters WHERE CharID='%i'", charID ) );
+		int currentXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", charID ) );
 		
 		nextLevel = currentLevel + 1;
 
@@ -440,60 +443,15 @@ void LevelCheck(int charID)
 			q.execute( va( "UPDATE Characters set Level='%i' WHERE CharID='%i'", nextLevel, charID ) );
 
 			//It uses nextLevel because their old level is still stored in currentLevel
-			trap_SendServerCommand( -1, va( "chat \"^3Level up! You are now level %i.\n\"", nextLevel ) );
+			trap_SendServerCommand( -1, va( "chat \"^3Level up! %s is now a level %i!\n\"", charNameSTR.c_str(), nextLevel ) );
 		}
 		
 		else
+		{
 			return;
+		}
 	}
 	return;
-}
-
-/*
-==================
-SanitizeString2
-
-Rich's revised version of SanitizeString
-==================
-*/
-void SanitizeString2( char *in, char *out )
-{
-	int i = 0;
-	int r = 0;
-
-	while (in[i])
-	{
-		if (i >= MAX_NAME_LENGTH-1)
-		{ //the ui truncates the name here..
-			break;
-		}
-
-		if (in[i] == '^')
-		{
-			if (in[i+1] >= 48 && //'0'
-				in[i+1] <= 57) //'9'
-			{ //only skip it if there's a number after it for the color
-				i += 2;
-				continue;
-			}
-			else
-			{ //just skip the ^
-				i++;
-				continue;
-			}
-		}
-
-		if (in[i] < 32)
-		{
-			i++;
-			continue;
-		}
-
-		out[r] = in[i];
-		r++;
-		i++;
-	}
-	out[r] = 0;
 }
 
 /*
@@ -526,7 +484,7 @@ void Cmd_ListCharacters_F(gentity_t * ent)
 	}
 
 	Query q(db);
-	q.get_result( va( "SELECT CharID, name FROM characters WHERE AccountID='%i'",ent->client->sess.accountID ) );
+	q.get_result( va( "SELECT CharID, Name FROM Characters WHERE AccountID='%i'",ent->client->sess.accountID ) );
 	trap_SendServerCommand( ent->client->ps.clientNum, "print \"^5Characters:\n\"" );
 	while  (q.fetch_row() )
 	{
@@ -610,7 +568,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str() ) );
 
 		//Create character
-		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,FactionRank,ForceSensitive,CheckInventory) VALUES('%i','%s','%i','%i','%i','none','none','%i','0')", ent->client->sess.accountID, charNameSTR.c_str(), 100, 1, 0, forceSensitive ) );
+		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory) VALUES('%i','%s','100','1','0','none','none','%i','0')", ent->client->sess.accountID, charNameSTR.c_str(), forceSensitive ) );
 
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Character %s (No Faction) created. Use /character %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Success: Character %s (No Faction) created. Use /character %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), charNameSTR.c_str() ) );
@@ -633,7 +591,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str() ) );
 
 		//Create character
-		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,FactionRank,ForceSensitive,CheckInventory) VALUES('%i','%s','%i','%i','%i','%s','Member','%i','0')", ent->client->sess.accountID, charNameSTR.c_str(), 100, 1, 0, factionNameSTR.c_str(), forceSensitive ) );
+		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory) VALUES('%i','%s','100','1','0','%s','Member','%i','0')", ent->client->sess.accountID, charNameSTR.c_str(), factionNameSTR.c_str(), forceSensitive ) );
 
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Character %s (Faction: %s) created. Use /character %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), factionNameSTR.c_str(), charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Success: Character %s (Faction: %s) created. Use /character %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), factionNameSTR.c_str(), charNameSTR.c_str() ) );
@@ -775,10 +733,10 @@ void Cmd_GiveCredits_F(gentity_t * ent)
 		return;
 	}
 
-	//Get the recipient's userID
-	int userID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
+	//Get the recipient's accountID
+	//int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get the recipient's clientID so we can send them messages
-	int clientID = q.get_num( va( "SELECT ClientID FROM users WHERE AccountID='%i'", userID ) );
+	//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
 
 	int recipientCurrentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", charID ) );
 	
@@ -787,8 +745,7 @@ void Cmd_GiveCredits_F(gentity_t * ent)
 	q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newSenderCreditsTotal,  ent->client->sess.characterID ) );
 	q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newRecipientCreditsTotal, charID ) );
 
-	trap_SendServerCommand( clientID, va( "print \"^2You received %i credits from %s! You now have %i credits.\n\"", changedCredits, senderCharNameSTR.c_str(), newRecipientCreditsTotal ) );
-	trap_SendServerCommand( clientID, va( "cp \"^2You received %i credits from %s! You now have %i credits.\n\"", changedCredits, senderCharNameSTR.c_str(), newRecipientCreditsTotal ) );
+	trap_SendServerCommand( -1, va( "chat \"^2 %s received %i credits from %s!\n\"", recipientCharNameSTR.c_str(), changedCredits, senderCharNameSTR.c_str() ) );
 
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: %i of your credits have been given to character %s. You now have %i credits.\n\"", changedCredits, recipientCharNameSTR.c_str(), newSenderCreditsTotal ) );
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^2Success: %i of your credits have been given to character %s. You now have %i credits.\n\"", changedCredits, recipientCharNameSTR.c_str(), newSenderCreditsTotal ) );
@@ -840,7 +797,7 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 			//Faction
 			string charFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 			//Faction Rank
-			string charFactionRankSTR = q.get_string( va( "SELECT FactionRank FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+			string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 			//Level
 			int charLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 			//XP
@@ -863,9 +820,8 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 		if(!G_CheckAdmin(ent, ADMIN_SEARCHCHAR))
 		{
 			int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
-			string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", charID ) );
 			string charFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
-			string charFactionRankSTR = q.get_string( va( "SELECT FactionRank FROM Characters WHERE CharID='%i'", charID ) );
+			string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", charID ) );
 
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Character Info:\nName: %s\nFaction: %s\nRank: %s\n\"", charNameSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str() ) );
 
@@ -884,11 +840,11 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 			//Faction
 			string charFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
 			//Faction Rank
-			string charFactionRankSTR = q.get_string( va( "SELECT FactionRank FROM Characters WHERE CharID='%i'", charID ) );
+			string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", charID ) );
 			//Level
-			int charLevel = q.get_num( va( "SELECT level FROM Characters WHERE CharID='%i'", charID ) );
+			int charLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
 			//XP
-			int charXP = q.get_num( va( "SELECT experience FROM Characters WHERE CharID='%i'", charID ) );
+			int charXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", charID ) );
 			//Credits
 			int charCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", charID ) );
 	
@@ -944,9 +900,9 @@ void Cmd_Faction_F( gentity_t * ent )
 		//Leader
 		string factionLeaderSTR = q.get_string( va( "SELECT Leader FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
 		//Credits
-		int factionCredits = q.get_num( va( "SELECT Credits FROM Faction WHERE Name='%i'", factionNameSTR.c_str() ) );
+		int factionCredits = q.get_num( va( "SELECT Bank FROM Faction WHERE Name='%i'", factionNameSTR.c_str() ) );
 		//Their Rank
-		string charFactionRankSTR = q.get_string( va( "SELECT FactionRank FROM Characters WHERE FactionID='%i'", ent->client->sess.characterID ) );
+		string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE FactionID='%i'", ent->client->sess.characterID ) );
 
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^4Faction Information:\n^3Name: ^6 %s\n^3Leader: ^6 %s\n^3Credits: ^6 %i\n^3Your Rank: ^6 %s\n\"", factionNameSTR.c_str(), factionLeaderSTR.c_str(), factionCredits, charFactionRankSTR.c_str() ) );
 	}
@@ -990,9 +946,9 @@ void Cmd_FactionWithdraw_F( gentity_t * ent )
 		return;
 	}
 
-	string characterNameSTR = q.get_string( va( "SELECT name FROM characters WHERE ID='%i'", ent->client->sess.characterID ) );
-	string factionLeaderSTR = q.get_string( va( "SELECT leader FROM factions WHERE name='%s'", factionNameSTR.c_str() ) );
-	int factionCredits = q.get_num( va( "SELECT Credits FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
+	string characterNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+	string factionLeaderSTR = q.get_string( va( "SELECT Leader FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
+	int factionCredits = q.get_num( va( "SELECT Bank FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
 
 	if ( characterNameSTR != factionLeaderSTR )
 	{
@@ -1020,7 +976,7 @@ void Cmd_FactionWithdraw_F( gentity_t * ent )
 	int characterCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	int newTotalFactionCredits = factionCredits - changedCredits, newTotalCharacterCredits = characterCredits + changedCredits;
 
-	q.execute( va( "UPDATE Factions set Credits='%i' WHERE Name='%s'", newTotalFactionCredits, factionNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Factions set Bank='%i' WHERE Name='%s'", newTotalFactionCredits, factionNameSTR.c_str() ) );
 	q.execute( va( "UPDATE Characters set Credits='%i' WHERE FactionID='%i'", newTotalCharacterCredits, ent->client->sess.characterID ) );
 
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You have withdrawn ^6 %i ^2credits from your faction's bank.\n\"", changedCredits ) );
@@ -1083,11 +1039,11 @@ void Cmd_FactionDeposit_F( gentity_t * ent )
 		return;
 	}
 
-	int factionCredits = q.get_num( va( "SELECT Credits FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
+	int factionCredits = q.get_num( va( "SELECT Bank FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
 	int newTotalCharacterCredits = characterCredits - changedCredits, newTotalFactionCredits = factionCredits + changedCredits;
 
 	q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCharacterCredits, ent->client->sess.characterID ) );
-	q.execute( va( "UPDATE Factions set Credits='%i' WHERE Name='%s'", newTotalFactionCredits, factionNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Factions set Bank='%i' WHERE Name='%s'", newTotalFactionCredits, factionNameSTR.c_str() ) );
 
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You have deposited ^6 %i ^2credits into your faction's bank.\n\"", changedCredits ) );
 	return;
@@ -1711,32 +1667,70 @@ void Cmd_Bounty_F( gentity_t * ent )
 	{	
 		if ( !G_CheckAdmin( ent, ADMIN_BOUNTY ) )
 		{
-			q.get_result( va( "SELECT BountyName, Reward FROM Bounties",ent->client->sess.accountID ) );
+			q.get_result( va( "SELECT BountyName, Reward, Wanted FROM Bounties",ent->client->sess.accountID ) );
 			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^4Bounties:\n\"" );
 			while  (q.fetch_row() )
 			{
 				string bountyName = q.getstr();
 				int bountyReward = q.getval();
-				trap_SendServerCommand( ent->client->ps.clientNum, va("print \"^3Name: ^6%s ^3Reward: ^6%i\n\"", bountyName.c_str(), bountyReward ) );
+				int aliveDeadTemp = q.getval();
+				string aliveDeadSTR;
+
+				switch ( aliveDeadTemp )
+				{
+				case 0:
+					aliveDeadSTR = "Dead";
+					break;
+				case 1:
+					aliveDeadSTR = "Alive";
+					break;
+				case 2:
+					aliveDeadSTR = "Dead or Alive";
+				default:
+					trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: Wanted must be 0 (dead), 1 (alive), or 2 (dead or alive).\n\"" );
+					return;
+				}
+
+
+				trap_SendServerCommand( ent->client->ps.clientNum, va("print \"^3Name: ^6%s ^3Reward: ^6%i ^3Wanted: ^6%s\n\"", bountyName.c_str(), bountyReward, aliveDeadSTR.c_str() ) );
 			}
 			q.free_result();
-			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^3Remember: You can add a bounty with ^2bounty add <charName> <reward>\n\"" );
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^3Remember: You can add a bounty with ^2bounty add <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
 			return;
 		}
 		
 		else
 		{
-			q.get_result( va( "SELECT BountyCreator, BountyName, Reward FROM Bounties",ent->client->sess.accountID ) );
+			q.get_result( va( "SELECT BountyCreator, BountyName, Reward, Wanted FROM Bounties",ent->client->sess.accountID ) );
 			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^4Bounties:\n\"" );
 			while  (q.fetch_row() )
 			{
 				string bountyCreator = q.getstr();
 				string bountyName = q.getstr();
 				int bountyReward = q.getval();
-				trap_SendServerCommand( ent->client->ps.clientNum, va("print \"^3Bounty Creator: ^6%s ^3Bounty Target: ^6%s ^3Reward: ^6%i\n\"", bountyCreator.c_str(), bountyName.c_str(), bountyReward ) );
+				int aliveDeadTemp = q.getval();
+				string aliveDeadSTR;
+
+				switch ( aliveDeadTemp )
+				{
+				case 0:
+					aliveDeadSTR = "Dead";
+					break;
+				case 1:
+					aliveDeadSTR = "Alive";
+					break;
+				case 2:
+					aliveDeadSTR = "Dead or Alive";
+					break;
+				default:
+					trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: Wanted must be 0 (dead), 1 (alive), or 2 (dead or alive).\n\"" );
+					return;
+				}
+
+				trap_SendServerCommand( ent->client->ps.clientNum, va("print \"^3Bounty Creator: ^6%s ^3Bounty Target: ^6%s ^3Reward: ^6%i ^3Wanted: ^6%s\n\"", bountyCreator.c_str(), bountyName.c_str(), bountyReward, aliveDeadSTR.c_str() ) );
 			}
 			q.free_result();
-			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^3Remember: You can add a bounty with ^2bounty add <charName> <reward>\n\"" );
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^3Remember: You can add a bounty with ^2bounty add <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
 			return;
 		}
 	}
@@ -1749,31 +1743,53 @@ void Cmd_Bounty_F( gentity_t * ent )
 	}
 	*/
 
-	char parameter[MAX_STRING_CHARS], bountyName[MAX_STRING_CHARS], rewardTemp[MAX_STRING_CHARS];
+	char parameter[MAX_STRING_CHARS], bountyName[MAX_STRING_CHARS], rewardTemp[MAX_STRING_CHARS], aliveDeadTemp[MAX_STRING_CHARS];
 
 	trap_Argv( 1, parameter, MAX_STRING_CHARS );
 	trap_Argv( 2, bountyName, MAX_STRING_CHARS );
 	string bountyNameSTR = bountyName;
 	trap_Argv( 3, rewardTemp, MAX_STRING_CHARS );
 	int reward = atoi( rewardTemp );
+	trap_Argv( 4, aliveDeadTemp, MAX_STRING_CHARS );
+	int aliveDead = atoi( aliveDeadTemp );
 
 	if ( !Q_stricmp( parameter, "add" ) )
 	{
-		if ( trap_Argc() != 3 )
+		if ( trap_Argc() != 5 )
 		{
-			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^4Command Usage: bounty <add/remove> <charName> <reward> or just bounty to view a list of current bounties.\n\"" );
+			trap_SendServerCommand( ent->client->ps.clientNum, "print \"^4Command Usage: bounty <add/remove> <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\nor just bounty to view a list of current bounties.\n\"" );
 			return;
 		}
 
 		string bountyCreator = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 		int currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 		int newTotalCredits;
+		string aliveDeadSTR;
 
 		if ( reward < 500 )
 		{
 			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^1Error: You must have a bounty reward of at least ^6500^1. Your reward was ^6%i^1.\n\"", reward ) );
 			return;
 		}
+
+			switch ( aliveDead )
+				{
+				case 0:
+					aliveDead = 0;
+					aliveDeadSTR = "Dead";
+					break;
+				case 1:
+					aliveDead = 1;
+					aliveDeadSTR = "Alive";
+					break;
+				case 2:
+					aliveDead = 2;
+					aliveDeadSTR = "Dead or Alive";
+					break;
+				default:
+					trap_SendServerCommand( ent->client->ps.clientNum, "print \"^1Error: Wanted must be 0 (dead), 1 (alive), or 2 (dead or alive).\n\"" );
+					return;
+				}
 
 		newTotalCredits = currentCredits - reward;
 
@@ -1783,8 +1799,8 @@ void Cmd_Bounty_F( gentity_t * ent )
 			return;
 		}
 		q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
-		q.execute( va( "INSERT INTO Bounties(BountyCreator,BountyName,Reward) VALUES('%i','%s', '%i')", bountyCreator.c_str(), bountyNameSTR.c_str(), reward ) );
-		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You put a bounty on ^6%s ^2with a reward of ^6%i ^2credits.\n\"", bountyName, reward ) );
+		q.execute( va( "INSERT INTO Bounties(BountyCreator,BountyName,Reward,Wanted) VALUES('%i','%s','%i','%i')", bountyCreator.c_str(), bountyNameSTR.c_str(), reward, aliveDead ) );
+		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You put a bounty on ^6%s (%s)^2with a reward of ^6%i ^2credits.\n\"", bountyName, aliveDeadSTR.c_str(), reward ) );
 		return;
 	}
 
@@ -1799,8 +1815,26 @@ void Cmd_Bounty_F( gentity_t * ent )
 		else
 		{
 			string bountyCreator = q.get_string( va( "SELECT BountyCreator FROM Bounties WHERE BountyName='%s'", bountyNameSTR.c_str() ) );
+			int reward = q.get_num( va( "SELECT Reward FROM Bounties WHERE BountyName='%s'", bountyNameSTR.c_str() ) );
+			int aliveDead =  q.get_num( va( "SELECT Wanted FROM Bounties WHERE BountyName='%s'", bountyNameSTR.c_str() ) );
+			string aliveDeadSTR;
+			switch ( aliveDead )
+				{
+				case 0:
+					aliveDeadSTR = "Dead";
+					break;
+				case 1:
+					aliveDeadSTR = "Alive";
+					break;
+				case 2:
+					aliveDeadSTR = "Dead or Alive";
+					break;
+				default:
+					aliveDeadSTR = "Invalid Wanted Number";
+					return;
+				}
 			q.execute( va( "DELETE FROM Bounties WHERE BountyName='%s'", bountyNameSTR.c_str() ) );
-			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You have removed the bounty on ^6 %s ^2which had a reward of ^6 %i ^2credits.\nThe bounty was put up by ^6 %s ^2.\n\"", bountyNameSTR.c_str(), reward, bountyCreator.c_str() ) ); 
+			trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: You have removed the bounty on ^6 %s (%s) ^2which had a reward of ^6 %i ^2credits.\nThe bounty was put up by ^6 %s ^2.\n\"", bountyNameSTR.c_str(), aliveDeadSTR.c_str(), reward, bountyCreator.c_str() ) ); 
 			return;
 		}
 	}

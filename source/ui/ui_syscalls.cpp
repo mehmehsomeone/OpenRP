@@ -415,8 +415,15 @@ void trap_CIN_SetExtents (int handle, int x, int y, int w, int h) {
 }
 
 
-void	trap_R_RemapShader( const char *oldShader, const char *newShader, const char *timeOffset ) {
-	syscall( UI_R_REMAP_SHADER, oldShader, newShader, timeOffset );
+void	trap_R_RemapShader( const char *oldShader, const char *newShader, const char *timeOffset )
+{
+	char oldShaderTMP[MAX_QPATH];
+	char newShaderTMP[MAX_QPATH];
+	Q_strncpyz(oldShaderTMP, oldShader, sizeof(oldShaderTMP));
+	Q_strncpyz(newShaderTMP, newShader, sizeof(newShaderTMP));
+	COM_StripExtensionSafe(oldShaderTMP, oldShaderTMP, sizeof(oldShaderTMP));
+	COM_StripExtensionSafe(newShaderTMP, newShaderTMP, sizeof(newShaderTMP));
+	syscall( UI_R_REMAP_SHADER, oldShaderTMP, newShaderTMP, timeOffset );
 }
 
 int trap_SP_GetNumLanguages( void )

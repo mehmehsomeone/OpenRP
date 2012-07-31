@@ -1,13 +1,13 @@
 #include "g_local.h"
 #include "g_account.h"
-#include "string.h"
-#include <stdlib.h>
+//#include "string.h"
+//#include <stdlib.h>
 #include <algorithm>
 #include "sqlite3/sqlite3.h"
 #include "sqlite3/libsqlitewrapped.h"
-#include "q_shared.h"
+//#include "q_shared.h"
 #include "g_adminshared.h"
-#include "g_character.h"
+//#include "g_character.h"
 
 using namespace std;
 
@@ -29,12 +29,12 @@ void CheckAdmin(gentity_t * ent){
 	Database db(DATABASE_PATH);
 	Query q(db);
 	
-	int userID = ent->client->sess.accountID;
+	int accountID = ent->client->sess.accountID;
 
 	//Checks if the user is admin
-	int isAdmin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", userID ) );
+	int isAdmin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", accountID ) );
 	//Check their adminlevel
-	int adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", userID ) );
+	int adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", accountID ) );
 	if( isAdmin )
 	{//The user is an admin.
 		ent->client->sess.isAdmin = qtrue;
@@ -141,7 +141,7 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	//Check if this username exists
 	Query q(db);
 	transform(userNameSTR.begin(), userNameSTR.end(),userNameSTR.begin(),::tolower);
-	string DBname = q.get_string( va( "SELECT UserName FROM Users WHERE UserName='%s'", userNameSTR.c_str() ) );
+	string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
 	if( DBname.empty() )
 	{
 		//The username does not exist, thus, the error does.
@@ -151,7 +151,7 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	}
 
 	//Check password
-	string DBpassword = q.get_string( va( "SELECT Password FROM Users WHERE UserName='%s'", userNameSTR.c_str() ) );
+	string DBpassword = q.get_string( va( "SELECT Password FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
 	if( DBpassword.empty() || strcmp(DBpassword.c_str(), userPassword) != 0 )
 	{
 		//Just as there is an incorrect password (and an error), does it tell you.
@@ -160,8 +160,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	}
 
 	//Log the user in
-	int userID = q.get_num( va( "SELECT UserID FROM Users WHERE Username='%s'",userNameSTR.c_str() ) );
-	ent->client->sess.accountID = userID;
+	int accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'",userNameSTR.c_str() ) );
+	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
 
 	//You are now logged in as <username>. Congratulations, you can type.
@@ -308,7 +308,7 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	//Check if that user exists already
 	Query q(db);
 	transform( userNameSTR.begin(), userNameSTR.end(), userNameSTR.begin(), ::tolower );
-	string DBname = q.get_string( va( "SELECT Name FROM Users WHERE Name='%s'",userNameSTR.c_str() ) );
+	string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'",userNameSTR.c_str() ) );
 	if(!DBname.empty())
 	{
 		trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^1Error: Username %s is already in use.\n\"",DBname.c_str() ) );
@@ -316,11 +316,11 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	}
 
 	//Create the account
-	q.execute(va("INSERT INTO Users{Name,Password,ClientID) VALUES('%s','%s','NULL')", userNameSTR.c_str(), userPassword ) );
+	q.execute(va("INSERT INTO Users(Username,Password,ClientID,Admin,AdminLevel) VALUES('%s','%s','NULL','0','11')", userNameSTR.c_str(), userPassword ) );
 
 	//Log them in automatically
-	int userID = q.get_num(va("SELECT UserID FROM Users WHERE UserName='%s'",userNameSTR.c_str()));
-	ent->client->sess.accountID = userID;
+	int accountID = q.get_num(va("SELECT AccountID FROM Users WHERE Username='%s'",userNameSTR.c_str()));
+	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
 
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
@@ -362,9 +362,9 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 		return;
 	}
 
-		string accountNameSTR = q.get_string( va( "SELECT Name FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+		string accountNameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
 
-		int clientID = q.get_num( va( "SELECT Clientid FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+		int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
 
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.accountID, clientID ) );
 	trap_SendServerCommand( ent->client->ps.clientNum, va( "cp \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.accountID, clientID ) );
@@ -403,13 +403,13 @@ void Cmd_EditAccount_F(gentity_t * ent)
 			SanitizeString2( change, changeCleaned );
 			changeSTR = changeCleaned;
 			transform( changeSTR.begin(), changeSTR.end(), changeSTR.begin(), ::tolower );
-			string DBname = q.get_string( va( "SELECT Name FROM Users WHERE UserName='%s'",changeSTR.c_str() ) );
+			string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'",changeSTR.c_str() ) );
 			if(!DBname.empty())
 			{
 				trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^1Error: Username %s is already in use.\n\"", DBname.c_str() ) );
 				return;
 			}
-			q.execute( va( "UPDATE Users set Name='%s' WHERE AccountID= '%i'", changeSTR, ent->client->sess.accountID));
+			q.execute( va( "UPDATE Users set Username='%s' WHERE AccountID= '%i'", changeSTR, ent->client->sess.accountID));
 			trap_SendServerCommand ( ent->client->ps.clientNum, va( "print \"^2Success: Username has been changed to ^6 %s ^2If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
 		}
 		else if(!Q_stricmp(parameter, "password"))
@@ -464,7 +464,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 
 	if ( tent->client->sess.loggedinAccount )
 	{
-		string usernameSTR = q.get_string( va( "SELECT Username FROM Characters WHERE CharID='%i'", tent->client->sess.accountID ) );
+		string usernameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", tent->client->sess.accountID ) );
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^3Account Name: ^6 %s ^3.\n\"", usernameSTR.c_str() ) );
 		return;
 	}

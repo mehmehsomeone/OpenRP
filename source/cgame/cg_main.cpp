@@ -1799,12 +1799,13 @@ static void CG_RegisterSounds( void ) {
 			cgs.media.redTookFlagSound = trap_S_RegisterSound( "sound/chars/protocol/misc/40MOM040" );
 			cgs.media.blueTookFlagSound = trap_S_RegisterSound( "sound/chars/protocol/misc/40MOM039" );
 		}
-		if ( cgs.gametype == GT_CTY /*|| cg_buildScript.integer*/ ) {
+		/*if ( cgs.gametype == GT_CTY */ /*|| cg_buildScript.integer*//* ) {
 			cgs.media.redYsalReturnedSound = trap_S_RegisterSound( "sound/chars/protocol/misc/40MOM050" );
 			cgs.media.blueYsalReturnedSound = trap_S_RegisterSound( "sound/chars/protocol/misc/40MOM049" );
 			cgs.media.redTookYsalSound = trap_S_RegisterSound( "sound/chars/protocol/misc/40MOM048" );
 			cgs.media.blueTookYsalSound = trap_S_RegisterSound( "sound/chars/protocol/misc/40MOM047" );
 		}
+		*/
 	}
 
 	cgs.media.drainSound = trap_S_RegisterSound("sound/weapons/force/drained.mp3");

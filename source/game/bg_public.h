@@ -1906,6 +1906,8 @@ extern int WeaponAttackAnim2[WP_NUM_WEAPONS];
 
 extern int forcePowerDarkLight[NUM_FORCE_POWERS];
 
+void COM_StripExtensionSafe( const char *in, char *out, int destsize );
+
 #include "../namespace_end.h"
 
 //[KnockdownSys]

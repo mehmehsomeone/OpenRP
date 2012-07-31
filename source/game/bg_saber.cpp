@@ -3329,9 +3329,7 @@ int bg_parryDebounce[NUM_FORCE_POWER_LEVELS] =
 	500,//if don't even have defense, can't use defense!
 	300,
 	150,
-	50,
-	25,
-	15
+	50
 };
 
 //[RACC] - PM check to make sure you have force power to do a saber throw.

@@ -130,48 +130,6 @@ const int forcePowerMinRank[NUM_FORCE_POWER_LEVELS][NUM_FORCE_POWERS] = //0 == n
 		10,//FP_SABER_DEFENSE,
 		10//FP_SABERTHROW,
 		//NUM_FORCE_POWERS
-	},
-		{
-		10,//FP_HEAL,//instant
-		0,//FP_LEVITATION,//hold/duration
-		0,//FP_SPEED,//duration
-		0,//FP_PUSH,//hold/duration
-		0,//FP_PULL,//hold/duration
-		10,//FP_MINDTRICK,//instant
-		15,//FP_GRIP,//hold/duration
-		10,//FP_LIGHTNING,//hold/duration
-		15,//FP_RAGE,//duration
-		15,//FP_MANIPULATE,//duration
-		15,//FP_ABSORB,//duration
-		10,//FP_TEAM_HEAL,//instant
-		10,//FP_LIFT,//instant
-		10,//FP_DRAIN,//hold/duration
-		5,//FP_SEE,//duration
-		10,//FP_SABER_OFFENSE,
-		10,//FP_SABER_DEFENSE,
-		10//FP_SABERTHROW,
-		//NUM_FORCE_POWERS
-	},
-		{
-		10,//FP_HEAL,//instant
-		0,//FP_LEVITATION,//hold/duration
-		0,//FP_SPEED,//duration
-		0,//FP_PUSH,//hold/duration
-		0,//FP_PULL,//hold/duration
-		10,//FP_MINDTRICK,//instant
-		15,//FP_GRIP,//hold/duration
-		10,//FP_LIGHTNING,//hold/duration
-		15,//FP_RAGE,//duration
-		15,//FP_MANIPULATE,//duration
-		15,//FP_ABSORB,//duration
-		10,//FP_TEAM_HEAL,//instant
-		10,//FP_LIFT,//instant
-		10,//FP_DRAIN,//hold/duration
-		5,//FP_SEE,//duration
-		10,//FP_SABER_OFFENSE,
-		10,//FP_SABER_DEFENSE,
-		10//FP_SABERTHROW,
-		//NUM_FORCE_POWERS
 	}
 };
 
@@ -1489,9 +1447,7 @@ float forcePushPullRadius[NUM_FORCE_POWER_LEVELS] =
 	0,//none
 	384,//256,
 	448,//384,
-	512,
-	576,
-	640
+	512
 };
 //rwwFIXMEFIXME: incorporate this into the below function? Currently it's only being used by jedi AI
 
@@ -3430,7 +3386,7 @@ qboolean Jedi_DodgeEvasion( gentity_t *self, gentity_t *shooter, trace_t *tr, in
 		return qfalse;
 	}
 
-	if ( self->client->ps.weaponTime > 0 || self->client->ps.forceHandExtend != HANDEXTEND_NONE )
+	if ( self->client->ps.weaponTime > 0 || self->client->ps.forceHandExtend != HANDEXTEND_NONE || self->client->ps.rocketLockTime > 0 )
 	{//in some effect that stops me from moving on my own
 		return qfalse;
 	}

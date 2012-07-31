@@ -128,6 +128,111 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 		string ) );
 }
 
+// G_SendScore_Add
+// 
+// Add score with clientNum at index i of level.sortedClients[]
+// to the string buf.
+// 
+// returns qtrue if the score was appended to buf, qfalse otherwise.
+qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize) 
+{
+	gclient_t *cl;
+	int ping, scoreFlags=0, accuracy, perfect;
+	char entry[256];
+
+	entry[0] = '\0';
+
+	cl = &level.clients[level.sortedClients[i]];
+
+	if ( cl->pers.connected == CON_CONNECTING ) {
+		ping = -1;
+	} else {
+		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
+	}
+
+	if( cl->accuracy_shots ) {
+		accuracy = cl->accuracy_hits * 100 / cl->accuracy_shots;
+	} else {
+		accuracy = 0;
+	}
+	perfect = ( cl->ps.persistant[PERS_RANK] == 0 && cl->ps.persistant[PERS_KILLED] == 0 ) ? 1 : 0;
+
+	Com_sprintf (entry, sizeof(entry),
+		" %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", 
+		level.sortedClients[i],
+		cl->ps.persistant[PERS_SCORE], 
+		ping, 
+		(level.time - cl->pers.enterTime)/60000,
+		scoreFlags,
+		g_entities[level.sortedClients[i]].s.powerups, 
+		accuracy, 
+		cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
+		cl->ps.persistant[PERS_EXCELLENT_COUNT],
+		cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT], 
+		cl->ps.persistant[PERS_DEFEND_COUNT], 
+		cl->ps.persistant[PERS_ASSIST_COUNT], 
+		perfect,
+		cl->ps.persistant[PERS_CAPTURES]);
+
+	if((strlen(buf) + strlen(entry) + 1) > bufsize) {
+		return qfalse;
+	}
+	Q_strcat(buf, bufsize, entry);
+	return qtrue;
+}
+
+/*
+==================
+G_SendScore
+
+==================
+*/
+void G_SendScore( gentity_t *ent ) {
+	int i;
+	int numSorted;
+	int count;
+	// tjw: commands over 1022 will crash the client so they're
+	//      pruned in trap_SendServerCommand()
+	//      1022 -32 for the startbuffer
+	char		buffer[990];
+	char		startbuffer[32];
+
+	numSorted = level.numConnectedClients;
+	
+	if (numSorted > MAX_CLIENTS)
+	{
+		numSorted = MAX_CLIENTS;
+	}
+
+	count = 0;
+	*buffer = '\0';
+	*startbuffer = '\0';
+
+	Q_strncpyz(startbuffer, va(
+		"scores %i %i %i",
+		level.numConnectedClients,
+		level.teamScores[TEAM_RED],
+		level.teamScores[TEAM_BLUE]),
+		sizeof(startbuffer));
+
+	// tjw: keep adding scores to the scores command until we fill 
+	//      up the buffer.  
+	for(i=0 ; i < numSorted ; i++) {
+		// tjw: the old version of SendScore() did this.  I removed it
+		//      originally because it seemed like an unneccessary hack.
+		//      perhaps it is necessary for compat with CG_Argv()?
+		if(!G_SendScore_Add(ent, i, buffer, sizeof(buffer))) {
+			break;
+		}
+		count++;
+	}
+	if(!count) {
+		return;
+	}
+	trap_SendServerCommand(ent-g_entities, va(
+		"%s%s", startbuffer, buffer));
+}
+
 
 /*
 ==================
@@ -137,7 +242,7 @@ Request current scoreboard information
 ==================
 */
 void Cmd_Score_f( gentity_t *ent ) {
-	DeathmatchScoreboardMessage( ent );
+	G_SendScore( ent );
 }
 
 
@@ -587,9 +692,9 @@ void G_CheckTKAutoKickBan( gentity_t *ent )
 		if ( g_autoBanTKSpammers.integer > 0
 			&& ent->client->sess.TKCount >= g_autoBanTKSpammers.integer )
 		{
-			if ( ent->client->sess.IPstring )
+			if ( ent->client->sess.IP )
 			{//ban their IP
-				AddIP( ent->client->sess.IPstring );
+				AddIP( ent->client->sess.IP );
 			}
 
 			trap_SendServerCommand( -1, va("print \"%s %s\n\"", ent->client->pers.netname, G_GetStringEdString("MP_SVGAME_ADMIN", "TKBAN")) );
@@ -659,9 +764,9 @@ void Cmd_Kill_f( gentity_t *ent ) {
 		if ( g_autoBanKillSpammers.integer > 0
 			&& ent->client->sess.killCount >= g_autoBanKillSpammers.integer )
 		{
-			if ( ent->client->sess.IPstring )
+			if ( ent->client->sess.IP )
 			{//ban their IP
-				AddIP( ent->client->sess.IPstring );
+				AddIP( ent->client->sess.IP );
 			}
 
 			trap_SendServerCommand( -1, va("print \"%s %s\n\"", ent->client->pers.netname, G_GetStringEdString("MP_SVGAME_ADMIN", "SUICIDEBAN")) );
@@ -1719,7 +1824,6 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 	//OpenRP - remove the team check for team chat
 	//because team chat is now OOC
 	/*
-	if ( mode == SAY_TEAM  && !OnSameTeam(ent, other) ) {
 		return;
 	}
 	*/
@@ -1730,6 +1834,17 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 		other->client->tempSpectate < level.time)
 	{ //siege temp spectators should not communicate to ingame players
 		return;
+	}
+
+	int i;
+
+	for (i=0; i<strlen(name); i++)
+	{
+		if (name[i] == '.')
+			continue;
+		if (name[i] == '*' && name[i-1] == '.')
+			return;
+		break;
 	}
 
 	if (locMsg)
@@ -1929,6 +2044,12 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	//Scan for bot orders
 	BotOrderParser(ent, target, mode, chatText);
 	//[/TABBot]
+
+	if ( !Info_Validate(text) )
+	{
+		trap_SendServerCommand(ent->s.number, "cp \""S_COLOR_RED"Error: You tried to use a line break, carriage return, quotation mark, or semicolon in your message.\nThey aren't allowed because they can be used for an exploit.\n\"" );
+		return;
+	}
 
 	switch ( mode ) {
 	default:
@@ -2288,9 +2409,10 @@ void Cmd_CallTeamVote_f( gentity_t *ent );
 extern void SiegeClearSwitchData(void); //g_saga.c
 const char *G_GetArenaInfoByMap( const char *map );
 void Cmd_CallVote_f( gentity_t *ent ) {
-	int		i;
-	char	arg1[MAX_STRING_TOKENS];
-	char	arg2[MAX_STRING_TOKENS];
+   int      i;
+   char   arg1[MAX_STRING_TOKENS];
+   //char   arg2[MAX_STRING_TOKENS];
+   char   arg2[MAX_CVAR_VALUE_STRING];
 //	int		n = 0;
 //	char*	type = NULL;
 	char*		mapName = 0;
@@ -2335,10 +2457,14 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
 
-	if( strchr( arg1, ';' ) || strchr( arg2, ';' ) ) {
-		trap_SendServerCommand( ent-g_entities, "print \"Invalid vote string.\n\"" );
-		return;
-	}
+	if ( strchr( arg1, ';' ) || strchr( arg2, ';' ) ||
+       strchr( arg1, '\r' ) || strchr( arg2, '\r' ) ||
+       strchr( arg1, '\n' ) || strchr( arg2, '\n' ) )
+   {
+	  G_LogPrintf( "Invalid vote string from %d. They may have attempted to exploit and change your rconpassword. If they did attempt to exploit, they failed.\n", ent->client->pers.netname );
+      trap_SendServerCommand( ent-g_entities, "print \"Invalid vote string.\n\"" );
+      return;
+   }
 
 	if ( !Q_stricmp( arg1, "map_restart" ) ) {
 	} else if ( !Q_stricmp( arg1, "nextmap" ) ) {
@@ -4073,10 +4199,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_SetFaction_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "kickfaction") == 0) {
-		Cmd_KickFaction_F (ent);
-		return;
-	}
 	if (Q_stricmp (cmd, "setfactionrank") == 0) {
 		Cmd_SetFactionRank_F (ent);
 		return;
@@ -4188,10 +4310,6 @@ void ClientCommand( int clientNum ) {
 	}
 	if(Q_stricmp(cmd, "amforceteam") == 0) {
 		Cmd_amForceTeam_F (ent);
-		return;
-	}
-	if(Q_stricmp(cmd, "amip") == 0) {
-		Cmd_amIP_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amstatus") == 0) {

@@ -2166,6 +2166,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 
 	if (self && (self->s.eType == ET_NPC && self->s.NPC_class != CLASS_VEHICLE || self->s.eType != ET_NPC ) )
 	{
+		self->health = 50;
 		self->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
 		self->client->ps.forceDodgeAnim = 0;
 		self->client->ps.forceHandExtendTime = level.time + Q3_INFINITE;

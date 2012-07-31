@@ -22,7 +22,7 @@ void UpdateFP(int charid, int forcepower, int level);
 //--Misc Functions--
 qboolean isInCharacter(gentity_t* ent);
 int GetForceLevel(int level);
-void SanitizeString2( char *in, char *out );
+
 //--Ingame commands--
 void Cmd_ListCharacters_F(gentity_t * ent);
 void Cmd_SelectCharacter_F(gentity_t * ent);

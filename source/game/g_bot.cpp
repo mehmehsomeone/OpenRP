@@ -761,7 +761,7 @@ int G_RemoveRandomBot( int team ) {
 		//players
 		//trap_DropClient( cl->ps.clientNum, va(S_COLOR_WHITE "%s\n", G_GetStringEdString("MP_SVGAME", "DISCONNECTED")) );
 		//[/test]
-		trap_SendConsoleCommand( EXEC_INSERT, va("kick \"%s\"\n", netname) );
+		trap_SendConsoleCommand( EXEC_INSERT, va("clientkick \"%d\"\n", cl->ps.clientNum));
 		return qtrue;
 	}
 	return qfalse;

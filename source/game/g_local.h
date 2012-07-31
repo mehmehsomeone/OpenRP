@@ -861,7 +861,6 @@ typedef struct {
 	//[Asteroids]
 	int			killCount;
 	int			TKCount;
-	char		IPstring[32];		// yeah, I know, could be 16, but, just in case...
 	//[Asteroids]
 	//[ExpSys]
 	float		skillPoints;		//number of skill points this player currently has.
@@ -878,7 +877,7 @@ typedef struct {
 	int state;						//The current state of the player
 	int Scale;						//The players new scale
 	int warnings;					//The current amount of warnings the player has
-	char IP[16];					//The players IP Address is stored here
+	char IP[32];					//The players IP Address is stored here
 	qboolean Scaled;
 	int pids[MAX_CLIENTS];			//Client IDs
 
@@ -1952,6 +1951,9 @@ void BlowDetpacks(gentity_t *ent);
 void MoveClientToIntermission (gentity_t *client);
 void G_SetStats (gentity_t *ent);
 void DeathmatchScoreboardMessage (gentity_t *client);
+
+qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize);
+void G_SendScore( gentity_t *ent );
 
 //
 // g_cmds.c

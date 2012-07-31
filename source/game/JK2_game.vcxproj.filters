@@ -151,9 +151,6 @@
     <ClCompile Include="g_roff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="g_saberbeh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="g_saga.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -448,6 +445,9 @@
     <ClCompile Include="g_character.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="g_saberbeh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ai.h">
@@ -564,9 +564,6 @@
     <ClInclude Include="g_roff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="g_saberbeh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="g_team.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -631,6 +628,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="g_character.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g_saberbeh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

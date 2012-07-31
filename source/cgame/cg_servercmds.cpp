@@ -1795,17 +1795,22 @@ static void CG_ServerCommand( void ) {
 	//[OverflowProtection]
 	//this command was vulnerable to buffer overflow and could cause problems due to not properly returning 
 	//after processing the command.
-	if ( Q_strncmp (cmd, "remapShader", 11) == 0 ) 
+	if ( Q_stricmp (cmd, "remapShader") == 0 )
 	{
-		if (trap_Argc() == 4) 
+		if (trap_Argc() == 4)
 		{
 			char shader1[MAX_QPATH];
 			char shader2[MAX_QPATH];
+			char shader3[MAX_QPATH];
+
 			Q_strncpyz(shader1, CG_Argv(1), sizeof(shader1));
 			Q_strncpyz(shader2, CG_Argv(2), sizeof(shader2));
-			trap_R_RemapShader(shader1, shader2, CG_Argv(3));
-			return;
+			Q_strncpyz(shader3, CG_Argv(3), sizeof(shader3));
+
+			trap_R_RemapShader(shader1, shader2, shader3);
 		}
+		
+		return;
 	}
 
 	/* basejka code
