@@ -54,7 +54,7 @@
 
 		onOpen 
 		{
-			exec				"music music/mp/Legacymodtheme.mp3" ;
+			exec				"music music/mp/tlkbuzsong.mp3" ;
 		}
 									
 		onESC 
@@ -103,7 +103,7 @@
 			type				ITEM_TYPE_BUTTON
 			rect				50 155 100 25 
 			text				@MENUS_PLAY					
-			descText			"Play the Legacy Mod"
+			descText			"Play OpenRP"
 			font				4
 			textscale			1
 			textaligny			0
@@ -241,7 +241,7 @@
 			name				exitgamebutton
 			group				none
 			text				@MENUS_EXIT
-			descText			"Exit Legacy Mod"
+			descText			"Exit OpenRP"
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
 			rect				50 335 100 25  
