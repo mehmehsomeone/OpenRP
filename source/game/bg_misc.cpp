@@ -354,8 +354,8 @@ int WeaponAttackAnim[WP_NUM_WEAPONS] =
 	BOTH_THERMAL_THROW,//WP_THERMAL,
 	BOTH_ATTACK3,//BOTH_ATTACK11,//WP_GRENADE,
 	BOTH_ATTACK3,//BOTH_ATTACK12,//WP_DET_PACK,
-	BOTH_ATTACK3,//WP_CONCUSSION, //OpenRP - Fixed bryar pistol animation - Thanks to Raz0r
 	BOTH_ATTACK2,//WP_BRYAR_OLD,
+
 
 	//NOT VALID (e.g. should never really be used):
 	BOTH_STAND1,//WP_EMPLACED_GUN,
@@ -3685,27 +3685,6 @@ qboolean BG_IsLMSGametype(int gametype)
 }
 //[/LastManStanding]
 
-
-/*
-============
-COM_StripExtensionSafe
-============
-*/
-void COM_StripExtensionSafe( const char *in, char *out, int destsize ) {
-	int             length;
-
-	Q_strncpyz(out, in, destsize);
-
-	length = strlen(out)-1;
-	while (length > 0 && out[length] != '.')
-	{
-		length--;
-		if (out[length] == '/')
-			return;		// no extension
-	}
-	if (length)
-		out[length] = 0;
-}
 
 //[ForceSys]
 qboolean BG_IsUsingMediumWeap (playerState_t *ps)

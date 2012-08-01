@@ -163,17 +163,17 @@ int ReloadTime(gentity_t *ent)
 	case WP_DISRUPTOR:
 	case WP_REPEATER:
 	case WP_FLECHETTE:
-		return 2500; //Orig: 6000
+		return 5000; //Orig: 6000
 	case WP_BOWCASTER:
-		return 2000; //Orig: 5000
+		return 5000; //Orig: 5000
 	case WP_BLASTER:
-		return 1500; //Orig: 3000
+		return 2000; //Orig: 3000
 	case WP_BRYAR_PISTOL:
 		return 500; //Orig: 3000
 	case WP_TUSKEN_RIFLE:
 		return 3000; //Orig: 10000
 	case WP_ROCKET_LAUNCHER:
-		return 4000;
+		return 6000;
 	}
 	return -1;
 }

@@ -72,7 +72,7 @@ void AOTCTC_Holocron_Add ( gentity_t *ent )
 	if (g_gametype.integer != GT_HOLOCRON)
 		return;
 
-	if (number_of_holocronpositions >= MAX_HOLOCRON_POSITIONS)
+	if (number_of_holocronpositions > MAX_HOLOCRON_POSITIONS)
 	{
 		G_Printf("^3Warning! ^5Hit maximum holocron positions (^7%i^5)!\n", MAX_HOLOCRON_POSITIONS);
 		return;

@@ -404,15 +404,9 @@ void trap_R_SetRefractProp(float alpha, float stretch, qboolean prepost, qboolea
 	syscall(CG_R_SETREFRACTIONPROP, PASSFLOAT(alpha), PASSFLOAT(stretch), prepost, negate);
 }
 
-void	trap_R_RemapShader( const char *oldShader, const char *newShader, const char *timeOffset )
+void	trap_R_RemapShader( const char *oldShader, const char *newShader, const char *timeOffset ) 
 {
-	char oldShaderTMP[MAX_QPATH];
-	char newShaderTMP[MAX_QPATH];
-	Q_strncpyz(oldShaderTMP, oldShader, sizeof(oldShaderTMP));
-	Q_strncpyz(newShaderTMP, newShader, sizeof(newShaderTMP));
-	COM_StripExtensionSafe(oldShaderTMP, oldShaderTMP, sizeof(oldShaderTMP));
-	COM_StripExtensionSafe(newShaderTMP, newShaderTMP, sizeof(newShaderTMP));
-	syscall( CG_R_REMAP_SHADER, oldShaderTMP, newShaderTMP, timeOffset );
+	syscall( CG_R_REMAP_SHADER, oldShader, newShader, timeOffset );
 }
 
 void	trap_R_GetLightStyle(int style, color4ub_t color)

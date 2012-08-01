@@ -16,13 +16,13 @@ vec3_t  muzzle2;//[DualPistols]
 // ATST Main Gun
 //--------------
 #define ATST_MAIN_VEL				4000	// 
-#define ATST_MAIN_DAMAGE			50		// 
+#define ATST_MAIN_DAMAGE			25		// 
 #define ATST_MAIN_SIZE				3		// make it easier to hit things
 
 // ATST Side Gun
 //---------------
-#define ATST_SIDE_MAIN_DAMAGE				100
-#define ATST_SIDE_MAIN_VELOCITY				4000
+#define ATST_SIDE_MAIN_DAMAGE				75
+#define ATST_SIDE_MAIN_VELOCITY				1300
 #define ATST_SIDE_MAIN_NPC_DAMAGE_EASY		30
 #define ATST_SIDE_MAIN_NPC_DAMAGE_NORMAL	40
 #define ATST_SIDE_MAIN_NPC_DAMAGE_HARD		50
@@ -30,15 +30,15 @@ vec3_t  muzzle2;//[DualPistols]
 #define ATST_SIDE_MAIN_SPLASH_DAMAGE		10	// yeah, pretty small, either zero out or make it worth having?
 #define ATST_SIDE_MAIN_SPLASH_RADIUS		16	// yeah, pretty small, either zero out or make it worth having?
 
-#define ATST_SIDE_ALT_VELOCITY				3000
-#define ATST_SIDE_ALT_NPC_VELOCITY			1000
-#define ATST_SIDE_ALT_DAMAGE				150
+#define ATST_SIDE_ALT_VELOCITY				1100
+#define ATST_SIDE_ALT_NPC_VELOCITY			600
+#define ATST_SIDE_ALT_DAMAGE				130
 
 #define ATST_SIDE_ROCKET_NPC_DAMAGE_EASY	30
 #define ATST_SIDE_ROCKET_NPC_DAMAGE_NORMAL	50
 #define ATST_SIDE_ROCKET_NPC_DAMAGE_HARD	90
 
-#define	ATST_SIDE_ALT_SPLASH_DAMAGE			100
+#define	ATST_SIDE_ALT_SPLASH_DAMAGE			130
 #define	ATST_SIDE_ALT_SPLASH_RADIUS			200
 #define ATST_SIDE_ALT_ROCKET_SIZE			5
 #define ATST_SIDE_ALT_ROCKET_SPLASH_SCALE	0.5f	// scales splash for NPC's

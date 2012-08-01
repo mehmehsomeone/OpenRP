@@ -2275,7 +2275,7 @@ int ForceFallBrakeRate[NUM_FORCE_POWER_LEVELS] =
 	0, //Can't brake with zero Force Jump skills
 	50,
 	60,
-	70
+	70,
 };
 
 //time between Force Fall braking actions.
@@ -5691,7 +5691,7 @@ static qboolean PM_CanStand ( void )
 
 static void PM_CheckDuck (void)
 {
-	trace_t	trace;
+	//trace_t	trace;
 
 	if ( pm->ps->m_iVehicleNum > 0 && pm->ps->m_iVehicleNum < ENTITYNUM_NONE )
 	{//riding a vehicle or are a vehicle
@@ -8389,15 +8389,6 @@ static void PM_Weapon( void )
 	qboolean vehicleRocketLock = qfalse;
 	int weap = pm->ps->weapon;
 
-#ifndef QAGAME
-			//Raz: Hacky fix here
-			if ( pm->ps->weapon == WP_CONCUSSION || pm->ps->weapon == WP_BRYAR_OLD )
-				weap++;
-			PM_StartTorsoAnim( WeaponAttackAnim[weap] );
-#else
-		PM_StartTorsoAnim( WeaponAttackAnim[pm->ps->weapon] );
-#endif
-
 	if(pm->ps->userInt3 & (1<<FLAG_FROZEN))
 		return;
 
@@ -10161,19 +10152,19 @@ void PM_AdjustAttackStates( pmove_t *pm )
 //[SPPortComplete]
 void BG_CmdForRoll( playerState_t *ps, int anim, usercmd_t *pCmd )
 {
-	//[DodgeSys]
-	#ifdef QAGAME
-		if(ps->userInt3 & (1 << FLAG_DODGEROLL))
-		{//remove the FLAG_DODGEROLL at the end of the rolls
-			float animationpoint = BG_GetLegsAnimPoint(ps, pm_entSelf->localAnimIndex);
+//[DodgeSys]
+#ifdef QAGAME
+	if(ps->userInt3 & (1 << FLAG_DODGEROLL))
+	{//remove the FLAG_DODGEROLL at the end of the rolls
+		float animationpoint = BG_GetLegsAnimPoint(ps, pm_entSelf->localAnimIndex);
 
-			if(animationpoint <= .1)
-			{
-				ps->userInt3 &= ~(1 << FLAG_DODGEROLL);
-			}
+		if(animationpoint <= .1)
+		{
+			ps->userInt3 &= ~(1 << FLAG_DODGEROLL);
 		}
-	#endif
-	//[/DodgeSys]
+	}
+#endif
+//[/DodgeSys]
 
 	switch ( (anim) )
 	{
@@ -10557,7 +10548,7 @@ void BG_AdjustClientSpeed(playerState_t *ps, usercmd_t *cmd, int svTime)
 		//Automatically slow down as the roll ends.
 	}
 
-		//[MoveSys]
+	//[MoveSys]
 	if( ((ps->userInt3 & FLAG_FATIGUED) || (ps->stats[STAT_DODGE] < DODGE_CRITICALLEVEL)) 
 		&& !(cmd->buttons&BUTTON_WALKING) && pm->ps->groundEntityNum != ENTITYNUM_NONE)
 	{//run slower when tired
@@ -12101,7 +12092,7 @@ static ID_INLINE void PM_CmdForSaberMoves(usercmd_t *ucmd)
 	else if(pm->ps->torsoAnim == BOTH_HOP_R)
 	{
 		ucmd->forwardmove = 0;
-			ucmd->rightmove = 75;
+		ucmd->rightmove = 75;
 	}
 	else if(pm->ps->torsoAnim == BOTH_HOP_L)
 	{
@@ -12113,7 +12104,8 @@ static ID_INLINE void PM_CmdForSaberMoves(usercmd_t *ucmd)
 		ucmd->forwardmove = -127;
 		ucmd->rightmove = 0;
 	}
-//[/DodgeSys]
+	//[/DodgeSys]
+
 }
 
 //constrain him based on the angles of his vehicle and the caps

@@ -107,8 +107,8 @@
 #define FATIGUE_CARTWHEEL_ATARU -FATIGUE_JUMP + 1
 
 //FP cost of saber ground attacks
-#define FATIGUE_GROUNDATTACK	3
-
+#define FATIGUE_GROUNDATTACK	3	
+	
 //FP cost of saber jump attacks
 #define FATIGUE_JUMPATTACK		-FATIGUE_JUMP + 3
 //[/FatigueDefines]
@@ -1819,11 +1819,10 @@ qboolean BG_InWalk( int anim );
 //[/SaberSys]
 
 //[FatigueSys]
-void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim,
-														float *animSpeed, int broken, int fatigued );
+void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, 
+							float *animSpeed, int broken, int fatigued );
 //void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken );
 //[/FatigueSys]
-
 
 void BG_ForcePowerDrain( playerState_t *ps, forcePowers_t forcePower, int overrideAmt );
 
@@ -1905,8 +1904,6 @@ extern int WeaponAttackAnim2[WP_NUM_WEAPONS];
 //[/DualPistols]
 
 extern int forcePowerDarkLight[NUM_FORCE_POWERS];
-
-void COM_StripExtensionSafe( const char *in, char *out, int destsize );
 
 #include "../namespace_end.h"
 

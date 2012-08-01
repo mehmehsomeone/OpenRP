@@ -1082,7 +1082,7 @@ sfxHandle_t	CG_CustomSound( int clientNum, const char *soundName ) {
 		return trap_S_RegisterSound( soundName );
 	}
 
-	COM_StripExtensionSafe(soundName, lSoundName, sizeof( lSoundName ) );
+	COM_StripExtension(soundName, lSoundName);
 
 	if ( clientNum < 0 )
 	{
@@ -1853,7 +1853,7 @@ void CG_LoadCISounds(clientInfo_t *ci, qboolean modelloaded)
 		}
 
 		Com_sprintf(soundName, sizeof(soundName), "%s", s+1);
-		COM_StripExtensionSafe(soundName, soundName, sizeof( soundName) );
+		COM_StripExtension(soundName, soundName);
 		//strip the extension because we might want .mp3's
 
 		ci->sounds[i] = 0;
@@ -1894,7 +1894,7 @@ void CG_LoadCISounds(clientInfo_t *ci, qboolean modelloaded)
 			}
 
 			Com_sprintf(soundName, sizeof(soundName), "%s", s+1);
-			COM_StripExtensionSafe(soundName, soundName, sizeof( soundName ) );
+			COM_StripExtension(soundName, soundName);
 			//strip the extension because we might want .mp3's
 
 			ci->siegeSounds[i] = 0;
@@ -1943,7 +1943,7 @@ void CG_LoadCISounds(clientInfo_t *ci, qboolean modelloaded)
 			}
 
 			Com_sprintf(soundName, sizeof(soundName), "%s", s+1);
-			COM_StripExtensionSafe(soundName, soundName, sizeof( soundName ) );
+			COM_StripExtension(soundName, soundName);
 			//strip the extension because we might want .mp3's
 
 			ci->duelSounds[i] = 0;
@@ -4088,12 +4088,12 @@ static void CG_SetLerpFrameAnimation( centity_t *cent, clientInfo_t *ci, lerpFra
 		animSpeed *= animSpeedMult;
 
 		//[FatigueSys]
-		BG_SaberStartTransAnim(cent->currentState.number, cent->currentState.fireflag,
-			cent->currentState.weapon, newAnimation, &animSpeed,
+		BG_SaberStartTransAnim(cent->currentState.number, cent->currentState.fireflag, 
+			cent->currentState.weapon, newAnimation, &animSpeed, 
 			cent->currentState.brokenLimbs, cent->currentState.userInt3);
 		//BG_SaberStartTransAnim(cent->currentState.number, cent->currentState.fireflag, cent->currentState.weapon, newAnimation, &animSpeed, cent->currentState.brokenLimbs);
 		//[/FatigueSys]
-		
+
 		if (torsoOnly)
 		{
 			if (lf->animationTorsoSpeed != animSpeedMult && newAnimation == oldAnim &&
@@ -10711,19 +10711,19 @@ CheckTrail:
 	//[/SFXSabers]
 		saberTrail->duration = saberMoveData[cent->currentState.saberMove].trailLength;
 
-	//[SaberSys]
-	if(cent->currentState.userInt3 & (1 << FLAG_ATTACKFAKE))
-	{//attack faking, have a longer saber trail
-		saberTrail->duration *= 2;
-	}
+		//[SaberSys]
+		if(cent->currentState.userInt3 & (1 << FLAG_ATTACKFAKE))
+		{//attack faking, have a longer saber trail
+			saberTrail->duration *= 2;
+		}
 
-	if( cent->currentState.userInt3 & (1 << FLAG_FATIGUED) )
-	{//fatigued players have slightly shorter saber trails since they're moving slower.
-		saberTrail->duration *= .5;
-	}
-	//[/SaberSys]
+		if( cent->currentState.userInt3 & (1 << FLAG_FATIGUED) )
+		{//fatigued players have slightly shorter saber trails since they're moving slower.
+			saberTrail->duration *= .5;
+		}
+		//[/SaberSys]
 
-	trailDur = (saberTrail->duration/5.0f);
+		trailDur = (saberTrail->duration/5.0f);
 		if (!trailDur)
 		{ //hmm.. ok, default
 			if ( BG_SuperBreakWinAnim(cent->currentState.torsoAnim) )

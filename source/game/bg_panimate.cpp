@@ -1369,6 +1369,7 @@ int PM_SaberDeflectionForQuad( int quad )
 
 //[FatigueSys]
 //moved to bg_saber.c
+
 /*
 qboolean PM_SaberInDeflect( int move )
 {
@@ -1378,7 +1379,7 @@ qboolean PM_SaberInDeflect( int move )
 	}
 	return qfalse;
 }
-	*/
+*/
 //[/FatigueSys]
 
 qboolean PM_SaberInParry( int move )
