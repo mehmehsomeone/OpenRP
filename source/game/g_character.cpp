@@ -174,10 +174,6 @@ int GetForceLevel(int level)
 			return FORCE_LEVEL_2;
 		case 3:
 			return FORCE_LEVEL_3;
-		case 4:
-			return FORCE_LEVEL_4;
-		case 5:
-			return FORCE_LEVEL_5;
 		default:
 			return FORCE_LEVEL_0;
 	}

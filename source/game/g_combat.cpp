@@ -2164,6 +2164,8 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		return;
 	}
 
+	/*
+	[OpenRP - knock out]
 	if (self && (self->s.eType == ET_NPC && self->s.NPC_class != CLASS_VEHICLE || self->s.eType != ET_NPC ) )
 	{
 		self->health = 50;
@@ -2175,6 +2177,8 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 		trap_SendServerCommand( self->client->ps.clientNum, va( "cp \"^1You were knocked out by %s. You can get up by jumping.\n\"", attacker ) );
 		return;
 	}
+	[/OpenRP - knock out]
+	*/
 
 	//check player stuff
 	g_dontFrickinCheck = qfalse;
