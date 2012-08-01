@@ -23,6 +23,8 @@ qboolean saberCheckKnockdown_DuelLoss(gentity_t *saberent, gentity_t *saberOwner
 
 extern vmCvar_t g_saberLockRandomNess;
 
+extern qboolean G_CheckState(gentity_t * tent, int state);
+
 void P_SetTwitchInfo(gclient_t	*client)
 {
 	client->ps.painTime = level.time;
@@ -1889,7 +1891,7 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 	}
 	
 	// MJN - Check Sleeping
-	if( ent->client->sess.state & PLAYER_SLEEPING ){
+	if( G_CheckState( ent, PLAYER_SLEEPING ) ){
 		return;
 	}
 
@@ -2468,8 +2470,9 @@ void ClientThink_real( gentity_t *ent ) {
 		if (ent->client->ps.torsoAnim != BOTH_CONSOLE1)
 		{
 			G_SetAnim( ent, NULL, SETANIM_TORSO, BOTH_CONSOLE1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0 );
-			//OpenRP - reloading sound
+			//[OpenRP - reloading sound]
 			G_SoundOnEnt(ent, CHAN_WEAPON,"sound/weapons/reload.mp3");
+			//[/OpenRP - reloading sound]
 		}
 		else
 		{/*

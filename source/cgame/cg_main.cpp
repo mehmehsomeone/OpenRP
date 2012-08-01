@@ -1816,7 +1816,9 @@ static void CG_RegisterSounds( void ) {
 	//PRECACHE ALL MUSIC HERE (don't need to precache normally because it's streamed off the disk)
 	if (cg_buildScript.integer)
 	{
+		//[OpenRP - disabling duel music]
 		//trap_S_StartBackgroundTrack( "music/mp/duel.mp3", "music/mp/duel.mp3", qfalse );
+		//[/OpenRP - disabling duel music]
 	}
 
 	cg.loadLCARSStage = 1;

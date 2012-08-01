@@ -11,10 +11,10 @@
 
 using namespace std;
 
-qboolean G_CheckAdmin(gentity_t *ent, int command);
-int ClientNumbersFromString( char *s, int *plist);
-qboolean G_MatchOnePlayer(int *plist, char *err, int len);
-void SanitizeString2( char *in, char *out );
+extern qboolean G_CheckAdmin(gentity_t *ent, int command);
+extern int ClientNumbersFromString( char *s, int *plist);
+extern qboolean G_MatchOnePlayer(int *plist, char *err, int len);
+extern void SanitizeString2( char *in, char *out );
 
 /*
 =================
@@ -569,8 +569,6 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str() ) );
 
 		//Create character
-		q.execute(va("INSERT INTO Users(Username,Password,ClientID,Admin,AdminLevel) VALUES('%s','%s','0','0','11')", userNameSTR.c_str(), userPassword ) );
-
 		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory) VALUES('%i','%s','100','1','0','none','none','%i','0')", ent->client->sess.accountID, charNameSTR.c_str(), forceSensitive ) );
 
 		trap_SendServerCommand( ent->client->ps.clientNum, va( "print \"^2Success: Character %s (No Faction) created. Use /char %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), charNameSTR.c_str() ) );

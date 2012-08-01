@@ -10711,6 +10711,18 @@ CheckTrail:
 	//[/SFXSabers]
 		saberTrail->duration = saberMoveData[cent->currentState.saberMove].trailLength;
 
+	//[SaberSys]
+	if(cent->currentState.userInt3 & (1 << FLAG_ATTACKFAKE))
+	{//attack faking, have a longer saber trail
+		saberTrail->duration *= 2;
+	}
+
+	if( cent->currentState.userInt3 & (1 << FLAG_FATIGUED) )
+	{//fatigued players have slightly shorter saber trails since they're moving slower.
+		saberTrail->duration *= .5;
+	}
+	//[/SaberSys]
+
 	trailDur = (saberTrail->duration/5.0f);
 		if (!trailDur)
 		{ //hmm.. ok, default
@@ -10723,18 +10735,6 @@ CheckTrail:
 				trailDur = SABER_TRAIL_TIME;
 			}
 		}
-
-		//[SaberSys]
-		if(cent->currentState.userInt3 & (1 << FLAG_ATTACKFAKE))
-		{//attack faking, have a longer saber trail
-			saberTrail->duration *= 2;
-		}
-
-		if( cent->currentState.userInt3 & (1 << FLAG_FATIGUED) )
-		{//fatigued players have slightly shorter saber trails since they're moving slower.
-			saberTrail->duration *= .5;
-		}
-		//[/SaberSys]
 
 		// if we happen to be timescaled or running in a high framerate situation, we don't want to flood
 		//	the system with very small trail slices...but perhaps doing it by distance would yield better results?

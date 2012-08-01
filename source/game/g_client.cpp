@@ -16,7 +16,7 @@ extern int ojp_ffaRespawnTimerCheck;//[FFARespawnTimer]
 void WP_SaberAddG2Model( gentity_t *saberent, const char *saberModel, qhandle_t saberSkin );
 void WP_SaberRemoveG2Model( gentity_t *saberent );
 
-qboolean G_CheckState(gentity_t * tent, int state);
+extern qboolean G_CheckState(gentity_t * tent, int state);
 
 //[StanceSelection]
 //extern qboolean WP_SaberStyleValidForSaber( saberInfo_t *saber1, saberInfo_t *saber2, int saberHolstered, int saberAnimLevel );
@@ -4771,25 +4771,26 @@ void ClientSpawn(gentity_t *ent) {
 	//Keep Modelscale persistent
 	if(ent->client->sess.modelScale != 100)
 	{
-		ent->client->ps.iModelScale= ent->client->sess.modelScale;
+		ent->client->ps.iModelScale = ent->client->sess.modelScale;
 	}
 
 	if( G_CheckState( ent, PLAYER_MERCD ) )
 	{
-	//Give them every item.
-	ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
-	//Take away saber and melee. We'll give it back in the next line along with the other weapons.
-	ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
-	//Give them every weapon.
-	ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_SABER) | (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
-	| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
-	| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_GRENADE) | (1 << WP_BRYAR_PISTOL);
+		//Give them every item.
+		ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
+		//Take away saber and melee. We'll give it back in the next line along with the other weapons.
+		ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
+		//Give them every weapon.
+		ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_SABER) | (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+		| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
+		| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_GRENADE) | (1 << WP_BRYAR_PISTOL);
 
 		{
 			int num = 999;
 			int	i;
 
-			for ( i = 0 ; i < MAX_WEAPONS ; i++ ) { //Give them max ammo
+			for ( i = 0 ; i < MAX_WEAPONS ; i++ )
+			{ //Give them max ammo
 				ent->client->ps.ammo[i] = num;
 			}
 		}

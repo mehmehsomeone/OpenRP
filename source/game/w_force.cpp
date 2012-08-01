@@ -1109,14 +1109,6 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		{
 			duration = 20000;
 		}
-		else if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_4)
-		{
-			duration = 25000;
-		}
-		else if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_5)
-		{
-			duration = 30000;
-		}
 		else //shouldn't get here
 		{
 			break;
@@ -1139,7 +1131,7 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		hearable = qtrue;
 		hearDist = 256;
 		break;
-	case FP_MINDTRICK:
+		case FP_MINDTRICK:
 		hearable = qtrue;
 		hearDist = 256;
 		if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_1)
@@ -1147,11 +1139,7 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		else if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_2)
 			duration += 5000;
 		else if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_3)
-			duration += 5000;
-		else if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_4)
-			duration += 5000;
-		else if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_5)
-			duration = 40000;
+			duration = 30000;
 		else //shouldn't get here
 			break;
 

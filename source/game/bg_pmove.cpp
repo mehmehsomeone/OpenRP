@@ -184,7 +184,7 @@ int forcePowerNeeded[NUM_FORCE_POWER_LEVELS][NUM_FORCE_POWERS] =
 		0,//FP_SABER_DEFENSE,
 		20//FP_SABERTHROW,
 		//NUM_FORCE_POWERS
-	},
+	}
 };
 
 float forceJumpHeight[NUM_FORCE_POWER_LEVELS] = 
@@ -192,7 +192,7 @@ float forceJumpHeight[NUM_FORCE_POWER_LEVELS] =
 	32,//normal jump (+stepheight+crouchdiff = 66) 
 	440,//(+stepheight+crouchdiff = 130) -- 96 was 150
 	1000,//(+stepheight+crouchdiff = 226) -- 192 was 350
-	1560,//(+stepheight+crouchdiff = 418)  -- 384	was 550
+	1560//(+stepheight+crouchdiff = 418)  -- 384	was 550
 };
 
 float forceJumpStrength[NUM_FORCE_POWER_LEVELS] = 
@@ -2482,11 +2482,24 @@ static qboolean PM_CheckJump( void )
 	{
 		pm->ps->fd.forcePowersActive &= ~(1<<FP_LEVITATION);
 	}
-		if (pm->ps->fd.forcePowersActive & (1 << FP_LEVITATION))
+	if (pm->ps->fd.forcePowersActive & (1 << FP_LEVITATION))
 	{ //Force jump is already active.. continue draining power appropriately until we land.
 		if (pm->ps->fd.forcePowerDebounce[FP_LEVITATION] < pm->cmd.serverTime)
 		{
-			if ( pm->gametype == GT_DUEL 
+			//[FatigueSys]
+			//backflips don't constantly drain force power.
+			if( BG_InBackFlip( pm->ps->legsAnim ) )
+			{
+			}
+			else
+			{
+				if(!BG_InLedgeMove(pm->ps->legsAnim))
+ 				BG_ForcePowerDrain( pm->ps, FP_LEVITATION, 1 );
+			}
+			/*
+			else if ( pm->gametype == GT_DUEL 
+			//if ( pm->gametype == GT_DUEL 
+			//[/FatigueSys]
 				|| pm->gametype == GT_POWERDUEL )
 			{//jump takes less power
 				BG_ForcePowerDrain( pm->ps, FP_LEVITATION, 1 );
@@ -2495,7 +2508,10 @@ static qboolean PM_CheckJump( void )
 			{
 				BG_ForcePowerDrain( pm->ps, FP_LEVITATION, 5 );
 			}
-
+			*/
+			if(!BG_InLedgeMove( pm->ps->legsAnim ))
+			//pm->ps->velocity[2]+=100;//[JumpIncrease]
+			//[/FatigueSys]
 			if (pm->ps->fd.forcePowerLevel[FP_LEVITATION] >= FORCE_LEVEL_2)
 			{
 				pm->ps->fd.forcePowerDebounce[FP_LEVITATION] = pm->cmd.serverTime + 300;

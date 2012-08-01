@@ -128,111 +128,6 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 		string ) );
 }
 
-// G_SendScore_Add
-// 
-// Add score with clientNum at index i of level.sortedClients[]
-// to the string buf.
-// 
-// returns qtrue if the score was appended to buf, qfalse otherwise.
-qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize) 
-{
-	gclient_t *cl;
-	int ping, scoreFlags=0, accuracy, perfect;
-	char entry[256];
-
-	entry[0] = '\0';
-
-	cl = &level.clients[level.sortedClients[i]];
-
-	if ( cl->pers.connected == CON_CONNECTING ) {
-		ping = -1;
-	} else {
-		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
-	}
-
-	if( cl->accuracy_shots ) {
-		accuracy = cl->accuracy_hits * 100 / cl->accuracy_shots;
-	} else {
-		accuracy = 0;
-	}
-	perfect = ( cl->ps.persistant[PERS_RANK] == 0 && cl->ps.persistant[PERS_KILLED] == 0 ) ? 1 : 0;
-
-	Com_sprintf (entry, sizeof(entry),
-		" %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", 
-		level.sortedClients[i],
-		cl->ps.persistant[PERS_SCORE], 
-		ping, 
-		(level.time - cl->pers.enterTime)/60000,
-		scoreFlags,
-		g_entities[level.sortedClients[i]].s.powerups, 
-		accuracy, 
-		cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
-		cl->ps.persistant[PERS_EXCELLENT_COUNT],
-		cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT], 
-		cl->ps.persistant[PERS_DEFEND_COUNT], 
-		cl->ps.persistant[PERS_ASSIST_COUNT], 
-		perfect,
-		cl->ps.persistant[PERS_CAPTURES]);
-
-	if((strlen(buf) + strlen(entry) + 1) > bufsize) {
-		return qfalse;
-	}
-	Q_strcat(buf, bufsize, entry);
-	return qtrue;
-}
-
-/*
-==================
-G_SendScore
-
-==================
-*/
-void G_SendScore( gentity_t *ent ) {
-	int i;
-	int numSorted;
-	int count;
-	// tjw: commands over 1022 will crash the client so they're
-	//      pruned in trap_SendServerCommand()
-	//      1022 -32 for the startbuffer
-	char		buffer[990];
-	char		startbuffer[32];
-
-	numSorted = level.numConnectedClients;
-	
-	if (numSorted > MAX_CLIENTS)
-	{
-		numSorted = MAX_CLIENTS;
-	}
-
-	count = 0;
-	*buffer = '\0';
-	*startbuffer = '\0';
-
-	Q_strncpyz(startbuffer, va(
-		"scores %i %i %i",
-		level.numConnectedClients,
-		level.teamScores[TEAM_RED],
-		level.teamScores[TEAM_BLUE]),
-		sizeof(startbuffer));
-
-	// tjw: keep adding scores to the scores command until we fill 
-	//      up the buffer.  
-	for(i=0 ; i < numSorted ; i++) {
-		// tjw: the old version of SendScore() did this.  I removed it
-		//      originally because it seemed like an unneccessary hack.
-		//      perhaps it is necessary for compat with CG_Argv()?
-		if(!G_SendScore_Add(ent, i, buffer, sizeof(buffer))) {
-			break;
-		}
-		count++;
-	}
-	if(!count) {
-		return;
-	}
-	trap_SendServerCommand(ent-g_entities, va(
-		"%s%s", startbuffer, buffer));
-}
-
 
 /*
 ==================
@@ -242,7 +137,7 @@ Request current scoreboard information
 ==================
 */
 void Cmd_Score_f( gentity_t *ent ) {
-	G_SendScore( ent );
+	DeathmatchScoreboardMessage( ent );
 }
 
 
@@ -2011,11 +1906,13 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	char		location[64];
 	char		*locMsg = NULL;
 
+	//[OpenRP - OOC]
 	/*
 	if ( g_gametype.integer < GT_TEAM && mode == SAY_TEAM ) {
 		mode = SAY_ALL;
 	}
 	*/
+	//[/OpenRP - OOC]
 
 	//[AdminSys][ChatSpamProtection]
 	if(!(ent->r.svFlags & SVF_BOT))
@@ -2068,10 +1965,12 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		}
 		else
 		{
+			//[OpenRP - OOC]
 			Com_sprintf (name, sizeof(name), EC"(OOC - %s%c%c"EC")"EC": ", 
 				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		}
 		color = COLOR_RED;
+		//[/OpenRP - OOC]
 		break;
 	case SAY_TELL:
 		if (target && g_gametype.integer >= GT_TEAM &&
@@ -4079,7 +3978,7 @@ extern void SetupReload(gentity_t *ent);
 
 void ClientCommand( int clientNum ) {
 	gentity_t *ent;
-//	gentity_t *ent;
+//	gentity_t *targetplayer;
 	char	cmd[MAX_TOKEN_CHARS];
 	char	cmd2[MAX_TOKEN_CHARS];
 	//char	cmd3[MAX_TOKEN_CHARS];
@@ -4478,6 +4377,7 @@ void ClientCommand( int clientNum ) {
 		return;
 	}
 	if (Q_stricmp (cmd, "say_team") == 0) {
+		//[OpenRP - OOC]
 		/*if (g_gametype.integer < GT_TEAM)
 		{ //not a team game, just refer to regular say.
 			Cmd_Say_f (ent, SAY_ALL, qfalse);
@@ -4487,6 +4387,7 @@ void ClientCommand( int clientNum ) {
 		//{
 			Cmd_Say_f (ent, SAY_TEAM, qfalse);
 		//}
+		//[/OpenRP - OOC]
 		return;
 	}
 	if (Q_stricmp (cmd, "tell") == 0) {

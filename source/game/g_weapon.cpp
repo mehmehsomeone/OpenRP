@@ -1374,8 +1374,9 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 			CalcMuzzlePoint2 ( ent, forward, vright, up, muzzle2 );
 		//[/DualPistols]
 
-		//[WeapAccuracy]
+		//[OpenRP - disabled the inaccuracy]
 		/*
+		//[WeapAccuracy]
 		//bump accuracy based on MP level.
 		if(ent && ent->client)
 		{
@@ -1417,8 +1418,9 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 					G_AddMercBalance(ent, Q_irand(1, 2));// 1 was not enough
 			}
 		}
-		*/
 		//[/WeapAccuracy]
+		*/
+		//[/OpenRP - disabled the inaccuracy]
 
 		if(ent->client && ent->client->ps.ammo[weaponData[ent->s.weapon].ammoIndex] == 0)
 		{/*

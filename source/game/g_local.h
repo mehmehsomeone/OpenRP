@@ -1952,9 +1952,6 @@ void MoveClientToIntermission (gentity_t *client);
 void G_SetStats (gentity_t *ent);
 void DeathmatchScoreboardMessage (gentity_t *client);
 
-qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize);
-void G_SendScore( gentity_t *ent );
-
 //
 // g_cmds.c
 //

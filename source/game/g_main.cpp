@@ -2356,7 +2356,7 @@ void SendScoreboardMessageToAllClients( void ) {
 
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
 		if ( level.clients[ i ].pers.connected == CON_CONNECTED ) {
-			G_SendScore( g_entities + i );
+			DeathmatchScoreboardMessage( g_entities + i );
 		}
 	}
 }

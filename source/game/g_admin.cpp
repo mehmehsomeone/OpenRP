@@ -11,16 +11,16 @@
 
 using namespace std;
 
-void AddSpawnField(char *field, char *value);
-void SP_fx_runner( gentity_t *ent );
-char	*ConcatArgs( int start );
+extern void AddSpawnField(char *field, char *value);
+extern void SP_fx_runner( gentity_t *ent );
+extern char	*ConcatArgs( int start );
 
-void LevelCheck( int charID );
-void G_Sound2( gentity_t *ent, int channel, int soundIndex );
-int G_SoundIndex2( const char *name, ...  );
-int InEmote( int anim );
-int InSpecialEmote( int anim );
-void G_SetTauntAnim( gentity_t *ent, int taunt );
+extern void LevelCheck( int charID );
+extern void G_Sound2( gentity_t *ent, int channel, int soundIndex );
+extern int G_SoundIndex2( const char *name, ...  );
+extern int InEmote( int anim );
+extern int InSpecialEmote( int anim );
+extern void G_SetTauntAnim( gentity_t *ent, int taunt );
 
 /*
 ================

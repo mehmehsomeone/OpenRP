@@ -202,6 +202,7 @@ int bgForcePowerCost[NUM_TOTAL_SKILLS][NUM_FORCE_POWER_LEVELS] = //0 == neutral
 	{	0,  5,  0,  0	},	//SK_DETPACK,		//detpack skill -- 1.3 was 0,5,5
 	{   0,  10, 7,  8	},  //SK_REPEATER,      // repeater/clone rifle skill
 	{   0,  9,  7,  7   },	//SK_DISRUPTOR,      // Disruptor/sniper rifle skill
+	//[StanceSelection]
 	{	0,	8,	8,	0	},	//SK_BLUESTYLE,	//Yellow lightsaber style
 	{	0,	8,	8,	0	},	//SK_REDSTYLE,	//Red lightsaber style
 	{	0,	8,	8,	0	},	//SK_PURPLESTYLE,	//Purple lightsaber style
@@ -3691,6 +3692,27 @@ qboolean BG_IsLMSGametype(int gametype)
 //[/LastManStanding]
 
 
+/*
+============
+COM_StripExtensionSafe
+============
+*/
+void COM_StripExtensionSafe( const char *in, char *out, int destsize ) {
+	int             length;
+
+	Q_strncpyz(out, in, destsize);
+
+	length = strlen(out)-1;
+	while (length > 0 && out[length] != '.')
+	{
+		length--;
+		if (out[length] == '/')
+			return;		// no extension
+	}
+	if (length)
+		out[length] = 0;
+}
+
 //[ForceSys]
 qboolean BG_IsUsingMediumWeap (playerState_t *ps)
 {//checks to see if the player is using a "medium" class weapon, which prevent offensive Force powers, but not defensive ones.
@@ -3728,24 +3750,3 @@ qboolean BG_IsUsingHeavyWeap (playerState_t *ps)
 }
 //[/ForceSys]
 #include "../namespace_end.h"
-
-/*
-============
-COM_StripExtensionSafe
-============
-*/
-void COM_StripExtensionSafe( const char *in, char *out, int destsize ) {
-	int             length;
-
-	Q_strncpyz(out, in, destsize);
-
-	length = strlen(out)-1;
-	while (length > 0 && out[length] != '.')
-	{
-		length--;
-		if (out[length] == '/')
-			return;		// no extension
-	}
-	if (length)
-		out[length] = 0;
-}

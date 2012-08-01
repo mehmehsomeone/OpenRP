@@ -11,10 +11,10 @@
 
 using namespace std;
 
-void SaveCharacter(gentity_t * ent);
-int ClientNumbersFromString( char *s, int *plist);
-qboolean G_MatchOnePlayer(int *plist, char *err, int len);
-void SanitizeString2( char *in, char *out );
+extern void SaveCharacter(gentity_t * ent);
+extern int ClientNumbersFromString( char *s, int *plist);
+extern qboolean G_MatchOnePlayer(int *plist, char *err, int len);
+extern void SanitizeString2( char *in, char *out );
 
 /*
 =================
