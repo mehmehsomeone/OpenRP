@@ -3363,6 +3363,80 @@ void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int 
 	if(ent && ent->client && (ent->client->pers.cmd.buttons & BUTTON_15))
 		*animSpeed*=0.8f;
 #endif
+
+		//[SaberSys]
+	//slow down the saber speeds
+	if ( anim >= BOTH_A1_T__B_ && anim <= BOTH_ROLL_STAB  && !BG_SaberInSpecialAttack(anim) 
+		&& !PM_SaberReturnAnim(anim) && anim != BOTH_FORCEWALLRELEASE_FORWARD
+		&& anim != BOTH_FORCEWALLRUNFLIP_START && anim != BOTH_FORCEWALLRUNFLIP_END)
+	{
+		*animSpeed *= saberanimscale;
+	}
+
+	if((anim >= BOTH_H1_S1_T_ && anim <= BOTH_H1_S1_BR)
+		|| (anim >= BOTH_H6_S6_T_ && anim <= BOTH_H6_S6_BR)
+		|| (anim >= BOTH_H7_S7_T_ && anim <= BOTH_H7_S7_BR) )
+	{//slow down broken parries
+		//*animSpeed *= .5f;
+		//match broken parry speeds for balance
+		if(anim >= BOTH_H6_S6_T_ && anim <= BOTH_H6_S6_BR)
+		{//dual broken parries are 1/3 the frames of the single broken parries
+			*animSpeed *= .33f;
+		}
+		else if(anim >= BOTH_H7_S7_T_ && anim <= BOTH_H7_S7_BR)
+		{//doubles are 1/2 the frames of single broken parries
+			*animSpeed *= .5f;
+		}	
+	}
+	//[/SaberSys]
+
+	//[FatigueSys]
+	if( (fatigued & (1 << FLAG_FATIGUED)) && anim >= BOTH_A1_T__B_ && anim <= BOTH_ROLL_STAB
+		//not a wall run move
+		&& anim != BOTH_FORCEWALLRELEASE_FORWARD && anim != BOTH_FORCEWALLRUNFLIP_START 
+		&& anim != BOTH_FORCEWALLRUNFLIP_END
+		//not a overhead flip move
+		&& anim != BOTH_JUMPFLIPSTABDOWN  
+		&& anim != BOTH_JUMPFLIPSLASHDOWN1
+		//don't slow down the lunge attack because it has movement associated with it
+		&& anim != BOTH_LUNGE2_B__T_
+		)
+	{//You're pooped.  Move slower
+		*animSpeed *= .5f;
+	}
+	//[/FatigueSys]
+
+	//[SaberSys]
+	if( (fatigued & (1 << FLAG_SLOWBOUNCE)) )
+	{//slow animation for slow bounces
+		if(BG_BounceAnim(anim))
+		{
+			*animSpeed *= .15f;
+		}
+		else if(PM_SaberReturnAnim(anim))
+		{
+			*animSpeed *= .3f;
+		}
+	}
+	
+	else if( (fatigued & (1 << FLAG_PARRIED)) )
+	{//getting parried slows down your reaction
+		if(BG_BounceAnim(anim) || PM_SaberReturnAnim(anim))
+		{//only apply to bounce and returns since this flag is technically turned off immediately after the animation is set.  
+			//IE this ends up appling to the animation set after this flag is supposed to end unless we specifically target certain animations.
+			*animSpeed *= .5f;
+		}
+	}
+	//[QuickParry]
+	else if ( (fatigued & (1 << FLAG_QUICKPARRY)))
+	{
+		if(BG_BounceAnim(anim) || PM_SaberReturnAnim(anim))
+		{
+			*animSpeed *= 1.0f;
+		}
+	}
+	//[/QuickParry]
+	//[/SaberSys]
 }
 
 /*

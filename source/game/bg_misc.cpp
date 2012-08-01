@@ -686,12 +686,6 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 
 		countDown = final_Powers[i];
 
-		//[MBQ3FILLFIX]
-		if(countDown > 3) {
-			return qfalse; //-1
-		}
-		//[/MBQ3FILLFIX]
-
 		while (countDown > 0)
 		{
 			usedPoints += bgForcePowerCost[i][countDown]; //[fp index][fp level]

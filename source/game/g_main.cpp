@@ -1155,7 +1155,7 @@ static cvarTable_t		gameCvarTable[] = {
 	//[OpenRP]
 	{ &openrp_maxWarnings, "openrp_maxWarnings", "3", CVAR_ARCHIVE, 0, qtrue  },
 
-	{ &openrp_admin1Bitvalues, "openrp_admin1Bitvalues", "268435455", 0 , 0, qtrue  },
+	{ &openrp_admin1Bitvalues, "openrp_admin1Bitvalues", "536870911", 0 , 0, qtrue  },
 	{ &openrp_admin2Bitvalues, "openrp_admin2Bitvalues", "1", 0 , 0, qtrue  },
 	{ &openrp_admin3Bitvalues, "openrp_admin3Bitvalues", "1", 0 , 0, qtrue  },
 	{ &openrp_admin4Bitvalues, "openrp_admin4Bitvalues", "1", 0 , 0, qtrue  },

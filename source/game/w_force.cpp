@@ -1094,9 +1094,9 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		hearable = qtrue;
 		hearDist = 256;
 		//[ForceSys]
-		//duration = 500;
+		duration = 500;
 		self->client->forceSpeedStartTime = level.time;
-		
+		/*
 		if (self->client->ps.fd.forcePowerLevel[FP_SPEED] == FORCE_LEVEL_1)
 		{
 			duration = 10000;
@@ -1118,7 +1118,7 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		{
 			duration = overrideAmt;
 		}
-		
+		*/
 		//[/ForceSys]
 
 		self->client->ps.fd.forcePowersActive |= ( 1 << forcePower );
@@ -3374,7 +3374,7 @@ qboolean Jedi_DodgeEvasion( gentity_t *self, gentity_t *shooter, trace_t *tr, in
 		return qfalse;
 	}
 
-	if ( self->client->ps.weaponTime > 0 || self->client->ps.forceHandExtend != HANDEXTEND_NONE || self->client->ps.rocketLockTime > 0 )
+	if ( self->client->ps.weaponTime > 0 || self->client->ps.forceHandExtend != HANDEXTEND_NONE )
 	{//in some effect that stops me from moving on my own
 		return qfalse;
 	}

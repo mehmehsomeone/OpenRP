@@ -37,10 +37,10 @@ void UI_FreeMem(void *ptr);
 void UI_ReaAllocMem(char **ptr, int sze, int count);
 int saberSingleHiltCount;
 //char **saberSingleHiltInfo;
-vector<char*> saberSingleHiltInfo;
+std::vector<char*> saberSingleHiltInfo;
 int saberStaffHiltCount;
 //char **saberStaffHiltInfo;
-vector<char*> saberStaffHiltInfo;
+std::vector<char*> saberStaffHiltInfo;
 
 //[/DynamicMemory_Sabers]
 

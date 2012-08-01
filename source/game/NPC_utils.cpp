@@ -124,20 +124,16 @@ void CalcEntitySpot ( const gentity_t *ent, const spot_t spot, vec3_t point )
 		break;
 
 	case SPOT_WEAPON:
-		if( ent->client )
+		if( ent->NPC && !VectorCompare( ent->NPC->shootAngles, vec3_origin ) && !VectorCompare( ent->NPC->shootAngles, ent->client->ps.viewangles ))
 		{
-			//NOTE: automatically takes leaning into account!
-			if( ent->NPC && !VectorCompare( ent->NPC->shootAngles, vec3_origin ) && !VectorCompare( ent->NPC->shootAngles, ent->client->ps.viewangles ))
-			{
-				AngleVectors( ent->NPC->shootAngles, forward, right, up );
-			}
-			else
-			{
-				AngleVectors( ent->client->ps.viewangles, forward, right, up );
-			}
-			CalcMuzzlePoint( (gentity_t*)ent, forward, right, up, point );
-		} else
-			return;
+			AngleVectors( ent->NPC->shootAngles, forward, right, up );
+		}
+		else if(ent->client)
+		{
+			AngleVectors( ent->client->ps.viewangles, forward, right, up );
+		}
+		CalcMuzzlePoint( (gentity_t*)ent, forward, right, up, point );
+		//NOTE: automatically takes leaning into account!
 		break;
 
 	case SPOT_GROUND:

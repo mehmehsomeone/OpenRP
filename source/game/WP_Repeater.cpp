@@ -34,7 +34,7 @@ void WP_RepeaterMainFire( gentity_t *ent )
 	missile->clipmask = MASK_SHOT | CONTENTS_LIGHTSABER;
 
 	// we don't want it to bounce forever
-	missile->bounceCount = 0;
+	missile->bounceCount = 8;
 }
 
 void WP_RepeaterAltFire( gentity_t *ent )

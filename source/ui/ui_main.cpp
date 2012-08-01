@@ -6810,6 +6810,7 @@ static void UI_RunMenuScript(char **args)
 		}
 		//[/Account System]
 		//OpenRP - Character menus
+		/*
 		else if (Q_stricmp(name, "characterSelect") == 0)
 		{
 			char charName[256];
@@ -6826,6 +6827,7 @@ static void UI_RunMenuScript(char **args)
 			trap_Cvar_VariableStringBuffer("ui_character_forceSideNumber", forceSensitive, sizeof( forceSensitive ) );
 			trap_Cmd_ExecuteText(EXEC_APPEND, va( "createcharacter %s %s\n", charName, forceSensitive ) );
 		}
+		*/
 		else if (Q_stricmp(name, "saber_color") == 0) 
 		{
 			UI_UpdateSaberColor( qfalse );
@@ -10819,10 +10821,12 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 			Menus_ActivateByName("ingame_login");
 			UpdateForceUsed();
 		  return;
+		  /*
 		case UIMENU_CHARACTER:
 			trap_Key_SetCatcher( KEYCATCH_UI );
 			Menus_CloseAll();
 			Menus_ActivateByName("ingame_character");
+		 */
 		//[/CoOp]
 		//[Commander]
 			/*

@@ -15639,30 +15639,15 @@ SkipTrueView:
 		}
 		else
 		{
-			if ( cent->currentState.torsoAnim == BOTH_FORCE_2HANDEDLIGHTNING_HOLD )
-			{//find mid point between two bolts
-				mdxaBone_t 	rHandMatrix;
-				trap_G2API_GetBoltMatrix(cent->ghoul2, 0, ci->bolt_rhand, &rHandMatrix, cent->turAngles, cent->lerpOrigin, cg.time, cgs.gameModels, cent->modelScale);
-				if (!gotLHandMatrix)
-				{
-					trap_G2API_GetBoltMatrix(cent->ghoul2, 0, ci->bolt_lhand, &lHandMatrix, cent->turAngles, cent->lerpOrigin, cg.time, cgs.gameModels, cent->modelScale);
-					gotLHandMatrix = qtrue;
-				}
-				efOrg[0] = ((lHandMatrix.matrix[0][3] + rHandMatrix.matrix[0][3]) * 0.5f);
-				efOrg[1] = ((lHandMatrix.matrix[1][3] + rHandMatrix.matrix[1][3]) * 0.5f);
-				efOrg[2] = ((lHandMatrix.matrix[2][3] + rHandMatrix.matrix[2][3]) * 0.5f);
-			}
-			else
+			//trap_G2API_GetBoltMatrix(cent->ghoul2, 0, ci->bolt_lhand, &boltMatrix, tAng, cent->lerpOrigin, cg.time, cgs.gameModels, cent->modelScale);
+			if (!gotLHandMatrix)
 			{
-				if (!gotLHandMatrix)
-				{
-					trap_G2API_GetBoltMatrix(cent->ghoul2, 0, ci->bolt_lhand, &lHandMatrix, cent->turAngles, cent->lerpOrigin, cg.time, cgs.gameModels, cent->modelScale);
-					gotLHandMatrix = qtrue;
-				}
-				efOrg[0] = lHandMatrix.matrix[0][3];
-				efOrg[1] = lHandMatrix.matrix[1][3];
-				efOrg[2] = lHandMatrix.matrix[2][3];
+				trap_G2API_GetBoltMatrix(cent->ghoul2, 0, ci->bolt_lhand, &lHandMatrix, cent->turAngles, cent->lerpOrigin, cg.time, cgs.gameModels, cent->modelScale);
+				gotLHandMatrix = qtrue;
 			}
+			efOrg[0] = lHandMatrix.matrix[0][3];
+			efOrg[1] = lHandMatrix.matrix[1][3];
+			efOrg[2] = lHandMatrix.matrix[2][3];
 		}
 
 		AnglesToAxis( fAng, axis );
