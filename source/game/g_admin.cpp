@@ -189,6 +189,8 @@ qboolean G_CheckAdmin(gentity_t *ent, int command)
 {
 	int Bitvalues = 0;
 
+	CheckAdmin( ent );
+
 	if ( ent->client->sess.isAdmin == qfalse )
 	{
 		return qfalse;
@@ -441,13 +443,13 @@ void Cmd_amWarn_F(gentity_t *ent)
 
 	tent->client->sess.warnings += 1;
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Player %s was warned.\nThey have %i/%i warnings.\"", tent->client->pers.netname, tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
-	trap_SendServerCommand( tent-g_entities, va( "cp \"^5You have been warned by an admin.\nYou have %i/%i warnings.\"", tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^5Player %s was warned.\nThey have %i/%i warnings.\n\"", tent->client->pers.netname, tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
+	trap_SendServerCommand( tent-g_entities, va( "cp \"^5You have been warned by an admin.\nYou have %i/%i warnings.\n\"", tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
 	G_LogPrintf("Warn admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 
 	if( tent->client->sess.warnings == atoi( openrp_maxWarnings.string ) )
 	{
-		trap_DropClient(pids[0], "^1was kicked because they received the maximum number of warnings from admins.\n.");
+		trap_DropClient(pids[0], "^1was kicked because they received the maximum number of warnings from admins.\n");
 		G_LogPrintf("%s was kicked because they received the maximum number of warnings from admins.\n", tent->client->pers.netname);
 		return;
 	}
@@ -930,15 +932,15 @@ void Cmd_amProtect_F(gentity_t *ent)
 		if((ent->client->ps.eFlags & EF_INVULNERABLE) > 0)
 		{
 			ent->client->ps.eFlags |= EF_INVULNERABLE;
-			ent->client->invulnerableTimer = 0;
-			trap_SendServerCommand(ent-g_entities, va("print \"^5You are no longer protected.\n\""));
+			ent->client->invulnerableTimer = level.time + Q3_INFINITE;
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You have been protected.\n\""));
+			G_LogPrintf("Protect admin command executed by %s on themself.\n", ent->client->pers.netname);
 		}
 		else
 		{
 			ent->client->ps.eFlags |= EF_INVULNERABLE;
-			ent->client->invulnerableTimer = level.time + Q3_INFINITE;
-			trap_SendServerCommand(ent-g_entities, va("print \"^5You have been protected.\n\""));
-			G_LogPrintf("Protect admin command executed by %s on themself.\n", ent->client->pers.netname);
+			ent->client->invulnerableTimer = 0;
+			trap_SendServerCommand(ent-g_entities, va("print \"^5You are no longer protected.\n\""));
 		}
 		return;
 	}
@@ -961,16 +963,16 @@ void Cmd_amProtect_F(gentity_t *ent)
 	if((tent->client->ps.eFlags & EF_INVULNERABLE) > 0)
 	{
 		tent->client->ps.eFlags |= EF_INVULNERABLE;
-		tent->client->invulnerableTimer = 0;
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer protected.\""));
+		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been protected.\""));
+		G_LogPrintf("Protect admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);	
 		return;
 	}
 	else
 	{
 		tent->client->ps.eFlags |= EF_INVULNERABLE;
-		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been protected.\""));
-		G_LogPrintf("Protect admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);	
+		tent->client->invulnerableTimer = 0;
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer protected.\""));
 		return;
 	}
 }
@@ -1945,17 +1947,16 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	char accountName[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS];
 	int adminLevel;
 
-	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
-	if( trap_Argc() < 2 )
+	if( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: GrantAdmin <accountname>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: GrantAdmin <accountname>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: grantAdmin <accountname> <adminLevel>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: grantAdmin <accountname> <adminLevel>\n\"" );
 		return;
 	}
 
@@ -1971,8 +1972,8 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 		trap_SendServerCommand( ent-g_entities, "print \"The admin level must be a number from 1-10. 1 is the highest level, 10 is the lowest.\n\"" );
 		return;
 	}
-	int valid = q.get_num( va( "SELECT ID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
-	if( !valid )
+	int accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
+	if( !accountID )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"Account %s does not exist\n\"", accountNameSTR.c_str() ) );
 		return;
@@ -1980,7 +1981,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 
 	q.execute( va( "UPDATE Users set Admin='1' WHERE Username='%s'", accountNameSTR.c_str() ) );
 
-	q.execute( va( "UPDATE Users set adminlevel='%i' WHERE Username='%s'", adminLevel, accountName ) );
+	q.execute( va( "UPDATE Users set AdminLevel='%i' WHERE Username='%s'", adminLevel, accountName ) );
 
 	trap_SendServerCommand( ent-g_entities, va( "print \"^5Admin (level %i) granted to %s.\n\"", adminLevel, accountName ) );
 	return;
@@ -2007,8 +2008,8 @@ void Cmd_SVGrantAdmin_F()
 	char accountName[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS];
 	int adminLevel;
 
-	if( trap_Argc() < 2 ){
-		G_Printf( "Usage: GrantAdmin <accountName>\n" );
+	if( trap_Argc() != 3 ){
+		G_Printf( "Command Usage: grantAdmin <accountName> <adminLevel>\n" );
 		return;
 	}
 
@@ -2025,16 +2026,16 @@ void Cmd_SVGrantAdmin_F()
 		return;
 	}
 	
-	int valid = q.get_num( va( "SELECT ID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
+	int valid = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
 	if(!valid)
 	{
 		G_Printf( "Account %s does not exist\n\"", accountNameSTR.c_str() );
 		return;
 	}
 
-	q.execute( va( "UPDATE Users set Admin='1' WHERE name='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set Admin='1' WHERE Username='%s'", accountNameSTR.c_str() ) );
 
-	q.execute( va( "UPDATE Users set AdminLevel='%i' WHERE name='%s'", adminLevel, accountName ) );
+	q.execute( va( "UPDATE Users set AdminLevel='%i' WHERE Username='%s'", adminLevel, accountName ) );
 
 	G_Printf( "Admin (level %i) granted to %s.\n", adminLevel, accountName );
 	return;
@@ -2060,7 +2061,6 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 
 	char accountName[MAX_TOKEN_CHARS];
 
-	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
@@ -2075,7 +2075,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 	string accountNameSTR = accountName;
 	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
 	
-	int valid = q.get_num( va( "SELECT ID FROM uUsers WHERE Name='%s'", accountNameSTR.c_str() ) );
+	int valid = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
 	if( !valid )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"Account %s does not exist\n\"", accountNameSTR.c_str() ) );
@@ -2156,7 +2156,6 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 	char charName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
 	int changedXP;
 	
-	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_XP))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
@@ -2232,7 +2231,6 @@ Generate Credits
 */
 void Cmd_GenerateCredits_F(gentity_t * ent)
 {
-	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_CREDITS))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
@@ -2311,7 +2309,6 @@ Create Faction
 */
 void Cmd_CreateFaction_F(gentity_t * ent)
 {
-	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
@@ -2345,15 +2342,17 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: CreateFaction <factionName>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: createFaction <factionName>\n\"" );
 		return;
 	}
 
 	trap_Argv( 1, factionName, MAX_STRING_CHARS );
 	string factionNameSTR = factionName;
 
-	q.execute(va("INSERT INTO Factions(Name,Leader,Credits) VALUES('%s','%s', '0')", factionNameSTR.c_str(), characterNameSTR.c_str() ) );
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Faction %s has been created. To add people to it, use /SetFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
+	q.execute(va("INSERT INTO Factions(Name,Leader,Bank) VALUES('%s','%s','0')", factionNameSTR.c_str(), characterNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", factionNameSTR.c_str(), ent->client->sess.characterID ) );
+	q.execute( va( "UPDATE Characters set Rank='Leader' WHERE CharID='%i'", ent->client->sess.characterID ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Faction %s has been created. To add people to it, use /setFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
 
 	return;
 }
@@ -2367,7 +2366,6 @@ Set Faction
 */
 void Cmd_SetFaction_F( gentity_t * ent )
 {
-	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
@@ -2410,13 +2408,13 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	if (!Q_stricmp(factionName, "none"))
 	{
 		q.execute( va( "UPDATE Characters set Faction='none' WHERE CharID='%i'", charID ) );
-		q.execute( va( "UPDATE Characters set FactionRank='none'WHERE ID='%i'", charID ) );
+		q.execute( va( "UPDATE Characters set Rank='none'WHERE ID='%i'", charID ) );
 		trap_SendServerCommand( -1, va( "print \"^2 %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
 	}
 	else {
 		q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", factionNameSTR.c_str(), charID ) );
-		q.execute( va( "UPDATE Characters set FactionRank='Member' WHERE CharID='%i'", charID ) );
+		q.execute( va( "UPDATE Characters set Rank='Member' WHERE CharID='%i'", charID ) );
 
 		trap_SendServerCommand( -1, va( "chat \"^2 %s has been put in the %s faction! They can use /faction to view info about it.\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
 
@@ -2433,7 +2431,6 @@ Set Faction Rank
 */
 void Cmd_SetFactionRank_F( gentity_t * ent )
 {
-	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
@@ -2475,7 +2472,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 	string charCurrentFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
 
-	q.execute( va( "UPDATE Characters set FactionRank='%s' WHERE CharID='%i'", factionRankSTR.c_str(), charID ) );
+	q.execute( va( "UPDATE Characters set Rank='%s' WHERE CharID='%i'", factionRankSTR.c_str(), charID ) );
 
 	trap_SendServerCommand( -1, va( "chat \"^2 %s is now the %s rank in the %s faction!\n\"", charNameSTR.c_str(), factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
 
@@ -2493,7 +2490,6 @@ Faction Generate Credits
 */
 void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 {
-	CheckAdmin( ent );
 	if(!G_CheckAdmin(ent, ADMIN_CREDITS) && !G_CheckAdmin(ent, ADMIN_FACTION))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));

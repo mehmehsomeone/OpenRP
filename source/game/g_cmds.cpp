@@ -4037,7 +4037,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_AccountCreate_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "char") == 0) {
+	if (Q_stricmp (cmd, "character") == 0) {
 		Cmd_SelectCharacter_F (ent);
 		return;
 	}
@@ -4045,7 +4045,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_ListCharacters_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "createchar") == 0) {
+	if (Q_stricmp (cmd, "createcharacter") == 0) {
 		Cmd_CreateCharacter_F (ent);
 		return;
 	}
@@ -4053,10 +4053,9 @@ void ClientCommand( int clientNum ) {
 		Cmd_AccountInfo_F (ent);
 		return;
 	}
-	if (!Q_stricmp (cmd, "charinfo")) {
+	if (!Q_stricmp (cmd, "characterinfo")) {
 		Cmd_CharacterInfo_F (ent);
 		return;
-		//g_account.cpp ln 850
 	}
 	if (Q_stricmp (cmd, "grantadmin") == 0) {
 		Cmd_GrantAdmin_F (ent);
@@ -4086,7 +4085,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_AccountName_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "editchar") == 0) {
+	if (Q_stricmp (cmd, "editcharacter") == 0) {
 		Cmd_EditCharacter_F (ent);
 		return;
 	}

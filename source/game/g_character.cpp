@@ -565,10 +565,10 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str() ) );
 
 		//Create character
-		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory) VALUES('%i','%s','100','1','0','none','none','%i','0')", ent->client->sess.accountID, charNameSTR.c_str(), forceSensitive ) );
+		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory,InFaction,Credits) VALUES('%i','%s','100','1','0','none','none','%i','0','0','250')", ent->client->sess.accountID, charNameSTR.c_str(), forceSensitive ) );
 
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s (No Faction) created. Use /char %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), charNameSTR.c_str() ) );
-		trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Character %s (No Faction) created. Use /char %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s (No Faction) created. Use /character %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Character %s (No Faction) created. Use /character %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), charNameSTR.c_str() ) );
 
 		return;
 	}
@@ -588,7 +588,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str() ) );
 
 		//Create character
-		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory) VALUES('%i','%s','100','1','0','%s','Member','%i','0')", ent->client->sess.accountID, charNameSTR.c_str(), factionNameSTR.c_str(), forceSensitive ) );
+		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory,InFaction,Credits) VALUES('%i','%s','100','1','0','%s','Member','%i','0','1','250')", ent->client->sess.accountID, charNameSTR.c_str(), factionNameSTR.c_str(), forceSensitive ) );
 
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s (Faction: %s) created. Use /character %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), factionNameSTR.c_str(), charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Character %s (Faction: %s) created. Use /character %s to select it.\nIf you had colors in the name, they were removed.\n\"", charNameSTR.c_str(), factionNameSTR.c_str(), charNameSTR.c_str() ) );
@@ -653,8 +653,8 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	ent->client->sess.characterID = charID;
 	SetTeam(ent,"f");
 	LoadCharacter(ent);
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Your character is selected as: %s!\nYou can use /characterInfo to view everything about your character.\"", charName ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Your character is selected as: %s!\nYou can use /characterInfo to view everything about your character.\"", charName ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Your character is selected as: %s!\nYou can use /characterInfo to view everything about your character.\n\"", charName ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Your character is selected as: %s!\nYou can use /characterInfo to view everything about your character.\n\"", charName ) );
 	ent->flags &= ~FL_GODMODE;
 	ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
 	player_die (ent, ent, ent, 100000, MOD_SUICIDE);
@@ -757,7 +757,7 @@ Cmd_CharacterInfo_F
 
 Spits out the character information
 
-Command: charInfo
+Command: characterInfo
 =====
 */
 void Cmd_CharacterInfo_F(gentity_t * ent)
@@ -897,7 +897,7 @@ void Cmd_Faction_F( gentity_t * ent )
 		//Leader
 		string factionLeaderSTR = q.get_string( va( "SELECT Leader FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
 		//Credits
-		int factionCredits = q.get_num( va( "SELECT Bank FROM Faction WHERE Name='%i'", factionNameSTR.c_str() ) );
+		int factionCredits = q.get_num( va( "SELECT Bank FROM Factions WHERE Name='%i'", factionNameSTR.c_str() ) );
 		//Their Rank
 		string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE FactionID='%i'", ent->client->sess.characterID ) );
 
@@ -1189,7 +1189,7 @@ void Cmd_Shop_F( gentity_t * ent )
 
 	int currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-
+	int forceSensitive = q.get_num( va( "SELECT ForceSensitive FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	trap_Argv( 1, parameter, MAX_STRING_CHARS );
 	trap_Argv( 2, itemName, MAX_STRING_CHARS );
 	string itemNameSTR = itemName;
@@ -1197,15 +1197,26 @@ void Cmd_Shop_F( gentity_t * ent )
 
 	if ( !Q_stricmp( parameter, "buy" ) )
 	{
-		
 		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
 		{
+			if ( forceSensitive == 1 )
+			{
+				trap_SendServerCommand( ent-g_entities, "print \"^1Error: You cannot buy guns as a force sensitive.\n\"" );
+				return;
+			}
+
 			itemCost = openrp_pistolBuyCost.integer;
 			itemLevel = openrp_pistolLevel.integer;
 		}
 		
 		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
 		{
+			if ( forceSensitive == 1 )
+			{
+				trap_SendServerCommand( ent-g_entities, "print \"^1Error: You cannot buy guns as a force sensitive.\n\"" );
+				return;
+			}
+
 			itemCost = openrp_e11BuyCost.integer;
 			itemLevel = openrp_e11Level.integer;
 		}
@@ -1692,7 +1703,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 				trap_SendServerCommand( ent-g_entities, va("print \"^3Name: ^6%s ^3Reward: ^6%i ^3Wanted: ^6%s\n\"", bountyName.c_str(), bountyReward, aliveDeadSTR.c_str() ) );
 			}
 			q.free_result();
-			trap_SendServerCommand( ent-g_entities, "print \"^3Remember: You can add a bounty with ^2bounty add <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"\n^3Remember: You can add a bounty with ^2bounty add <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
 			return;
 		}
 		
@@ -1765,7 +1776,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 
 		if ( reward < 500 )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You must have a bounty reward of at least ^6500^1. Your reward was ^6%i^1.\n\"", reward ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You must put a bounty reward of at least ^6500^1. Your reward was ^6%i^1.\n\"", reward ) );
 			return;
 		}
 
@@ -1887,5 +1898,9 @@ void Cmd_CharName_F( gentity_t * ent )
 		return;
 	}
 
+	else
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: % does not have a character selected.\n\"", tent->client->pers.netname ) );
+	}
 	return;
 }

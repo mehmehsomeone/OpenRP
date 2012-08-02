@@ -41,7 +41,7 @@ void CheckAdmin(gentity_t * ent){
 		ent->client->sess.adminLevel = adminLevel;
 	}
 	
-	//If they're not an admin, make them a admin level 11, which isn't really an admin level, and it's below all other levels.
+	//If they're not an admin, make them an admin level 11, which isn't really an admin level, and it's below all other levels.
 	//This is for use with functions like G_AdminControl()
 	else
 	{
@@ -165,8 +165,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	ent->client->sess.loggedinAccount = qtrue;
 
 	//You are now logged in as <username>. Congratulations, you can type.
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You are now logged in as %s!\nPlease create a character (/createChar) or select one (/char)\n\"", userName ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: You are now logged in as %s!\nPlease create a character (/createChar) or select one (/char)\n\"", userName ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
 
@@ -205,6 +205,8 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		//Logout of Account
 		ent->client->sess.loggedinAccount = qfalse;
 		ent->client->sess.accountID = NULL;
+		ent->client->sess.isAdmin = qfalse;
+		ent->client->sess.adminLevel = 11;
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;
@@ -323,8 +325,8 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createChar) or select one (/char)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createChar) or select one (/char)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
 
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
@@ -362,22 +364,42 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 		return;
 	}
 
-		string accountNameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+	string accountNameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+	int admin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+	int adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+	string adminSTR, adminLevelSTR;
 
-		int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+	switch( admin )
+	{
+	case 0:
+		adminSTR = "No";
+		break;
+	case 1:
+		adminSTR = "Yes";
+		break;
+	default:
+		adminSTR = "Unknown";
+		break;
+	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.accountID, clientID ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^5Account Name: %s\nAccount ID: %i \nClient ID: %i \n\"", accountNameSTR.c_str(), ent->client->sess.accountID, clientID ) );
+	if ( adminLevel < 11 )
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Account Name: %s\nAccount ID: %i\nAdmin: %s\nAdmin Level: %i\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str(), adminLevel ) );
+	}
+	else
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Account Name: %s\nAccount ID: %i\nAdmin: %s\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str() ) );
+	}
 	return;
 }
 
 void Cmd_EditAccount_F(gentity_t * ent)
 {
 	if( !ent->client->sess.loggedinAccount )
-		{
-			trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in to edit your account.\n\"");
-			return;
-		}
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in to edit your account.\n\"");
+		return;
+	}
 	Database db(DATABASE_PATH);
 	Query q(db);
 	
@@ -387,16 +409,16 @@ void Cmd_EditAccount_F(gentity_t * ent)
 			return;
 		}
 		
-			if(trap_Argc() != 3) //If the user doesn't specify both args.
-				{
-				trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /editaccount <username/password> <value> \n\"" ) ;
-				return;
-				}
-			char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS], changeCleaned[MAX_STRING_CHARS];
-			trap_Argv( 1, parameter, MAX_STRING_CHARS );
-			string parameterSTR = parameter;
-			trap_Argv( 2, change, MAX_STRING_CHARS );
-			string changeSTR = change;
+		if(trap_Argc() != 3) //If the user doesn't specify both args.
+		{
+			trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /editaccount <username/password> <value> \n\"" ) ;
+			return;
+		}
+		char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS], changeCleaned[MAX_STRING_CHARS];
+		trap_Argv( 1, parameter, MAX_STRING_CHARS );
+		string parameterSTR = parameter;
+		trap_Argv( 2, change, MAX_STRING_CHARS );
+		string changeSTR = change;
 
 		if (!Q_stricmp(parameter, "username"))
 		{
@@ -467,6 +489,11 @@ void Cmd_AccountName_F( gentity_t * ent )
 		string usernameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", tent->client->sess.accountID ) );
 		trap_SendServerCommand( ent-g_entities, va( "print \"^3Account Name: ^6 %s ^3.\n\"", usernameSTR.c_str() ) );
 		return;
+	}
+	
+	else
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: % is not logged in.\n\"", tent->client->pers.netname ) );
 	}
 
 	return;
