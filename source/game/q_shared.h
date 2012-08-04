@@ -1318,6 +1318,9 @@ float Q_rsqrt( float f );		// reciprocal square root
 signed char ClampChar( int i );
 signed short ClampShort( int i );
 
+
+float Q_powf ( float x, int y );
+/*
 //[Linux]
 //[VS2005]
 #if defined(_WIN32) && !defined(VS2005) && !defined(__GNUC__)
@@ -1329,6 +1332,7 @@ signed short ClampShort( int i );
 //float powf ( float x, int y );
 #endif
 //[/Linux]
+*/
 
 // this isn't a real cheap function to call!
 int DirToByte( vec3_t dir );

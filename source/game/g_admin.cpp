@@ -1242,148 +1242,6 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 /*
 ============
-amresetscale Function
-============
-*/
-void Cmd_amResetScale_F(gentity_t *ent)
-{
-	int pids[MAX_CLIENTS];
-	char err[MAX_STRING_CHARS], cmdTarget[MAX_STRING_CHARS];
-	gentity_t *tent; 
-
-	if(!G_CheckAdmin(ent, ADMIN_SCALE))
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
-		return;
-	}
-
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
-	if(trap_Argc() < 2)
-	{
-		{
-			ent->client->ps.iModelScale = 0;
-			ent->client->sess.Scale = 0;
-			ent->client->sess.Scaled = qfalse;
-
-			VectorSet(ent->modelScale, (ent->client->ps.iModelScale), (ent->client->ps.iModelScale), (ent->client->ps.iModelScale));
-		}
-		trap_SendServerCommand(ent-g_entities, va("print \"^5Your scale has been reset.\n\""));
-		G_LogPrintf("Reset Scale admin command executed by %s on themself.\n", ent->client->pers.netname);
-		return;
-	}
-
-	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
-	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", cmdTarget));
-		return;
-	}
-
-	tent = &g_entities[pids[0]];
-
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
-	}
-
-	tent->client->ps.iModelScale = 0;
-	tent->client->sess.Scale = 0;
-	tent->client->sess.Scaled = qfalse;
-
-	VectorSet(tent->modelScale, (tent->client->ps.iModelScale), (tent->client->ps.iModelScale), (tent->client->ps.iModelScale));
-
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5Your scale has been reset.\""));
-
-	G_LogPrintf("Reset Scale admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
-	return;
-}
-
-/*
-============
-amscale Function
-============
-*/
-void Cmd_amScale_F(gentity_t *ent)
-{
-	int pids[MAX_CLIENTS];
-	char err[MAX_STRING_CHARS], scale[999], cmdTarget[MAX_STRING_CHARS];
-	gentity_t *tent;
-
-	if(!G_CheckAdmin(ent, ADMIN_SCALE))
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
-		return;
-	}
-
-//	char vert[MAX_STRING_CHARS];
-//	char range[MAX_STRING_CHARS];
-
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-	trap_Argv(2, scale, sizeof(scale));
-
-		if(atoi(scale) > 999 || atoi(scale) < 0)
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^5Please choose a number between 0 and 999.\n\""));
-		return;
-	}
-
-	if(trap_Argc() < 2)
-	{
-		ent->client->ps.iModelScale = atoi(scale);
-		VectorSet(ent->modelScale, (ent->client->ps.iModelScale), (ent->client->ps.iModelScale), (ent->client->ps.iModelScale));
-		ent->client->sess.Scaled = qtrue;
-		ent->client->sess.Scale = atoi(scale);
-
-		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been scaled.\n\""));
-		return;
-	}
-
-	if(ClientNumbersFromString(cmdTarget, pids) != 1)
-	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", cmdTarget));
-		return;
-	}
-
-	tent = &g_entities[pids[0]];
-
-	tent->client->ps.iModelScale = atoi(scale);
-	VectorSet(tent->modelScale, (tent->client->ps.iModelScale), (tent->client->ps.iModelScale), (tent->client->ps.iModelScale));
-
-	tent->client->sess.Scaled = qtrue;
-	tent->client->sess.Scale = atoi(scale);
-
-	//vert = va("%f", 16 * (tent->client->ps.iModelScale / 100.f));
-	//range = va("%f", 80 * (tent->client->ps.iModelScale / 100.f));
-
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been scaled.\""));
-
-	G_LogPrintf("Scale admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
-	return;
-}
-
-
-/*
-============
-ambitvalues Function
-============
-*/
-void Cmd_amBitvalues_F(gentity_t *ent)
-{
-	if(!G_CheckAdmin(ent, ADMIN_BITVALUES))
-	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You are not allowed to use this command.\n\"" ) );
-		return;
-	}
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Here are the bitvalues assigned to each admin rank:\n\"" ) );
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Admin 1: %i\nAdmin 2: %i\nAdmin 3 %i\nAdmin 4: %i\nAdmin 5: %i\n\"", openrp_admin1Bitvalues.integer, openrp_admin2Bitvalues.integer, openrp_admin3Bitvalues.integer, openrp_admin4Bitvalues.integer, openrp_admin5Bitvalues.integer ) );
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Admin 6: %i\nAdmin 7: %i\nAdmin 8: %i\nAdmin 9: %i\nAdmin 10:%i\n\"", openrp_admin6Bitvalues.integer, openrp_admin7Bitvalues.integer, openrp_admin8Bitvalues.integer, openrp_admin9Bitvalues.integer, openrp_admin10Bitvalues.integer ) );
-	return;
-}
-/*
-============
 amaddeffect Function
 ============
 */
@@ -1917,11 +1775,11 @@ void Cmd_amSlap_F(gentity_t *ent)
 
 void Cmd_info_F( gentity_t *ent )
 {
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5OpenRP %s - info\nOpenRP Website:http://code.google.com/p/openrp/ \nServer Website: %s \nPlayer Commands:\nqwinfo\nme\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^5OpenRP %s - info\nOpenRP Website: http://code.google.com/p/openrp/ \nServer Website: %s \nPlayer Commands:\nqwinfo\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
 	
 	if( ent->client->sess.isAdmin )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^5Admin Commands:\nqwaddeffect\nqwannounce\nqwban\nqwbitvalues\nqwcleareffects\nqwempower\nqwforceteam\nqwgranttemp\nqwip\nqwkick\nqwkill\nqwlogin\nqwlogout\nqwmap\nqwmerc\nqwmute\nqwunmute\nqwprotect\nqwresetscale\nqwscale\nqwsleep\nqwstatus\nqwtele\nqwunsleep\nqwwarn\nqwweather\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^5Admin Commands:\nqwaddeffect\nqwannounce\nqwban\nqwbitvalues\nqwcleareffects\nqwempower\nqwforceteam\nqwgranttemp\nqwkick\nqwlogin\nqwlogout\nqwmap\nqwmerc\nqwmute\nqwunmute\nqwprotect\nqwresetscale\nqwscale\nqwsleep\nqwstatus\nqwtele\nqwunsleep\nqwwarn\nqwweather\n\"" ) );
 	}
 	return;
 }
@@ -1944,7 +1802,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 		return;
 	}
 
-	char accountName[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS];
+	char username[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS];
 	int adminLevel;
 
 	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
@@ -1955,14 +1813,23 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 
 	if( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: grantAdmin <accountname> <adminLevel>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: grantAdmin <accountname> <adminLevel>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: GrantAdmin <username> <adminLevel>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: GrantAdmin <username> <adminLevel>\n\"" );
 		return;
 	}
 
-	trap_Argv( 1, accountName, MAX_STRING_CHARS );
-	string accountNameSTR = accountName;
-	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
+	trap_Argv( 1, username, MAX_STRING_CHARS );
+	string userNameSTR = username;
+	//Check if this username exists
+	transform(userNameSTR.begin(), userNameSTR.end(),userNameSTR.begin(),::tolower);
+	string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
+	if( DBname.empty() )
+	{
+		//The username does not exist, thus, the error does.
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() ) );
+		return;
+	}
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
 
 	adminLevel = atoi( temp );
@@ -1972,18 +1839,18 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 		trap_SendServerCommand( ent-g_entities, "print \"The admin level must be a number from 1-10. 1 is the highest level, 10 is the lowest.\n\"" );
 		return;
 	}
-	int accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
+	int accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
 	if( !accountID )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"Account %s does not exist\n\"", accountNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"Account %s does not exist\n\"", userNameSTR.c_str() ) );
 		return;
 	}
 
-	q.execute( va( "UPDATE Users set Admin='1' WHERE Username='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set Admin='1' WHERE Username='%s'", userNameSTR.c_str() ) );
 
-	q.execute( va( "UPDATE Users set AdminLevel='%i' WHERE Username='%s'", adminLevel, accountName ) );
+	q.execute( va( "UPDATE Users set AdminLevel='%i' WHERE Username='%s'", adminLevel, userNameSTR.c_str() ) );
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Admin (level %i) granted to %s.\n\"", adminLevel, accountName ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^5Admin (level %i) granted to %s.\n\"", adminLevel, userNameSTR.c_str() ) );
 	return;
 }
 
@@ -2005,17 +1872,26 @@ void Cmd_SVGrantAdmin_F()
 		return;
 	}
 
-	char accountName[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS];
+	char username[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS];
 	int adminLevel;
 
 	if( trap_Argc() != 3 ){
-		G_Printf( "Command Usage: grantAdmin <accountName> <adminLevel>\n" );
+		G_Printf( "Command Usage: GrantAdmin <username> <adminLevel>\n" );
 		return;
 	}
 
-	trap_Argv( 1, accountName, MAX_STRING_CHARS );
-	string accountNameSTR = accountName;
-	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
+	trap_Argv( 1, username, MAX_STRING_CHARS );
+	string userNameSTR = username;
+	//Check if this username exists
+	transform(userNameSTR.begin(), userNameSTR.end(),userNameSTR.begin(),::tolower);
+	string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
+	if( DBname.empty() )
+	{
+		//The username does not exist, thus, the error does.
+		G_Printf( "print \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() );
+		G_Printf( "cp \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() );
+		return;
+	}
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
 
 	adminLevel = atoi( temp );
@@ -2025,19 +1901,12 @@ void Cmd_SVGrantAdmin_F()
 		G_Printf( "Error: The admin level must be a number from 1-10.\n" );
 		return;
 	}
-	
-	int valid = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
-	if(!valid)
-	{
-		G_Printf( "Account %s does not exist\n\"", accountNameSTR.c_str() );
-		return;
-	}
 
-	q.execute( va( "UPDATE Users set Admin='1' WHERE Username='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set Admin='1' WHERE Username='%s'", userNameSTR.c_str() ) );
 
-	q.execute( va( "UPDATE Users set AdminLevel='%i' WHERE Username='%s'", adminLevel, accountName ) );
+	q.execute( va( "UPDATE Users set AdminLevel='%i' WHERE Username='%s'", adminLevel, userNameSTR.c_str() ) );
 
-	G_Printf( "Admin (level %i) granted to %s.\n", adminLevel, accountName );
+	G_Printf( "Admin (level %i) granted to %s.\n", adminLevel, userNameSTR.c_str() );
 	return;
 }
 
@@ -2059,7 +1928,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 		return;
 	}
 
-	char accountName[MAX_TOKEN_CHARS];
+	char username[MAX_TOKEN_CHARS];
 
 	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
 	{
@@ -2068,25 +1937,25 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 	}
 
 	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: removeAdmin <accountname>\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: RemoveAdmin <accountname>\n\"");
 		return;
 	}
-	trap_Argv( 1, accountName, MAX_STRING_CHARS );
-	string accountNameSTR = accountName;
-	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
+	trap_Argv( 1, username, MAX_STRING_CHARS );
+	string usernameSTR = username;
+	transform( usernameSTR.begin(), usernameSTR.end(), usernameSTR.begin(), ::tolower );
 	
-	int valid = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
+	int valid = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", usernameSTR.c_str() ) );
 	if( !valid )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"Account %s does not exist\n\"", accountNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"Account %s does not exist\n\"", usernameSTR.c_str() ) );
 		return;
 	}
 
-	q.execute( va( "UPDATE Users set Admin='0' WHERE Username='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set Admin='0' WHERE Username='%s'", usernameSTR.c_str() ) );
 	//Set their adminlevel to 11 just to be safe.
-	q.execute( va( "UPDATE Users set adminlevel='11' WHERE Username='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set adminlevel='11' WHERE Username='%s'", usernameSTR.c_str() ) );
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"Admin removed from account %s\n\"", accountNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"Admin removed from account %s\n\"", usernameSTR.c_str() ) );
 	return;
 }
 
@@ -2108,28 +1977,28 @@ void Cmd_SVRemoveAdmin_F()
 		return;
 	}
 
-	char accountName[MAX_TOKEN_CHARS];
+	char username[MAX_TOKEN_CHARS];
 
 	if( trap_Argc() < 2 ){
-		G_Printf( "Usage: RemoveAdmin <accountname>\n" );
+		G_Printf( "Command Usage: RemoveAdmin <accountname>\n" );
 		return;
 	}
-	trap_Argv( 1, accountName, MAX_STRING_CHARS );
-	string accountNameSTR = accountName;
-	transform( accountNameSTR.begin(), accountNameSTR.end(), accountNameSTR.begin(), ::tolower );
+	trap_Argv( 1, username, MAX_STRING_CHARS );
+	string usernameSTR = username;
+	transform( usernameSTR.begin(), usernameSTR.end(), usernameSTR.begin(), ::tolower );
 
-	int valid = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
+	int valid = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", usernameSTR.c_str() ) );
 	if( !valid )
 	{
-		G_Printf( "Account %s does not exist\n\"", accountNameSTR.c_str() );
+		G_Printf( "Account %s does not exist\n\"", usernameSTR.c_str() );
 		return;
 	}
 
-	q.execute( va( "UPDATE Users set Admin='0' WHERE Username='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set Admin='0' WHERE Username='%s'", usernameSTR.c_str() ) );
 	//Set their adminlevel to 11 just to be safe.
-	q.execute( va( "UPDATE Users set AdminLevel='11' WHERE Username='%s'", accountNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set AdminLevel='11' WHERE Username='%s'", usernameSTR.c_str() ) );
 
-	G_Printf( "Admin removed from account %s.\n", accountNameSTR.c_str() );
+	G_Printf( "Admin removed from account %s.\n", usernameSTR.c_str() );
 	return;
 }
 
@@ -2164,8 +2033,8 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: GrantXP <characterName> <XP>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: GrantXP <characterName> <XP>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: GenXP <characterName> <XP>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: GenXP <characterName> <XP>\n\"" );
 		return;
 	}
 
@@ -2202,7 +2071,7 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 
 	int newXPTotal = currentXP + changedXP;
 
-	q.execute( va( "UPDATE Characters set experience='%i' WHERE CharID='%i'", newXPTotal, charID ) );
+	q.execute( va( "UPDATE Characters set Experience='%i' WHERE CharID='%i'", newXPTotal, charID ) );
 
 	switch( currentLevel )
 	{
@@ -2253,8 +2122,8 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: genCredits <characterName> <amount>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: genCredits <characterName> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: GenCredits <characterName> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: GenCredits <characterName> <amount>\n\"" );
 		return;
 	}
 
@@ -2318,6 +2187,7 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	if( !ent->client->sess.characterChosen )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
+		return;
 	}
 
 	Database db(DATABASE_PATH);
@@ -2336,18 +2206,27 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 
 	if ( currentFactionSTR != "none" )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error you must leave the %s faction first before creating one.\n\"", currentFactionSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You must leave the %s faction first before creating one.\n\"", currentFactionSTR.c_str() ) );
 		return;
 	}
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: createFaction <factionName>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: CreateFaction <factionName>\n\"" );
 		return;
 	}
 
 	trap_Argv( 1, factionName, MAX_STRING_CHARS );
 	string factionNameSTR = factionName;
+
+	transform(factionNameSTR.begin(), factionNameSTR.end(),factionNameSTR.begin(),::tolower);
+	string DBname = q.get_string( va( "SELECT Name FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
+	if( !DBname.empty() )
+	{
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Faction %s already exists.\n\"", DBname.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Error: Faction %s already exists.\n\"", DBname.c_str() ) );
+		return;
+	}
 
 	q.execute(va("INSERT INTO Factions(Name,Leader,Bank) VALUES('%s','%s','0')", factionNameSTR.c_str(), characterNameSTR.c_str() ) );
 	q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", factionNameSTR.c_str(), ent->client->sess.characterID ) );
@@ -2510,12 +2389,12 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: factionGen <factionID> <amount>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: factionGen <factionID> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: FactionGenCredits <factionID> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: FactionGenCredits <factionID> <amount>\n\"" );
 		return;
 	}
 
-	//Faction name
+	//Faction ID
 	trap_Argv( 1, temp, MAX_STRING_CHARS );
 	factionID = atoi( temp );
 
@@ -2600,7 +2479,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amshakescreen <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: amshakescreen <name/clientid>\n\""));
 		return;
 	}
 

@@ -1138,7 +1138,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &ojp_allowBodyDodge, "ojp_allowBodyDodge", "1", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qtrue },
 	//[/DodgeSys]
 	//[FFARespawnTimer]
-	{ &ojp_ffaRespawnTimer, "ojp_ffaRespawnTimer","1",CVAR_ARCHIVE,0,qtrue},
+	{ &ojp_ffaRespawnTimer, "ojp_ffaRespawnTimer","0",CVAR_ARCHIVE,0,qtrue},
 	//[/FFARespawnTimer]
 	{ &ojp_truebalance, "ojp_trueBalance","1",CVAR_ARCHIVE|CVAR_LATCH,0,qtrue},  //[TrueBalance]
 

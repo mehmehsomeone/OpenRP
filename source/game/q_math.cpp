@@ -1406,6 +1406,15 @@ int Q_irand(int value1, int value2)
 {
 	return irand(value1, value2);
 }
+
+float Q_powf ( float x, int y )
+{
+    float r = x;
+    for ( y--; y>0; y-- )
+        r = r * r;
+    return r;
+}
+/*
 //[Linux]
 //[VS2005]
 #if defined(_WIN32) && !defined(VS2005) && !defined(__GNUC__)
@@ -1420,6 +1429,7 @@ float powf ( float x, int y )
 }
 //[Linux]
 #endif
+*/
 //[/Linux]
 #ifdef Q3_VM 
 //rwwRMG - needed for HandleEntityAdjustment

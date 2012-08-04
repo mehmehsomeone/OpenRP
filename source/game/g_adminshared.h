@@ -17,7 +17,7 @@
 #define ADMIN_CHEATS				32768 // Cheat commands related
 #define	ADMIN_ADMINWHOIS			65536 // /amadminwhois
 #define ADMIN_SCALE					131072 // amscale
-#define ADMIN_BITVALUES				262144 // ambitvalues
+#define ADMIN_SHAKE					262144 // ambitvalues
 #define ADMIN_ADDEFFECT				524288 // /amaddeffect
 #define ADMIN_FORCETEAM				1048576 // /amforceteam
 #define ADMIN_WEATHER				2097152 // /amweather
@@ -28,7 +28,6 @@
 #define ADMIN_ITEM					67108864 // Item related
 #define ADMIN_MUSIC					134217728 // /ammusic
 #define ADMIN_BOUNTY				268435456 // /bounty remove
-#define ADMIN_SHAKE					536870912 // /amshakescreen
 
 //OpenRP Bitvalues End Here.
 

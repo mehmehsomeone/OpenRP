@@ -11,7 +11,6 @@ void Cmd_amProtect_F(gentity_t *ent);
 void Cmd_amListAdmins_F(gentity_t *ent);
 void Cmd_amEmpower_F(gentity_t *ent);
 void Cmd_amMerc_F(gentity_t *ent);
-void Cmd_amBitvalues_F(gentity_t *ent);
 void Cmd_amEffect_F(gentity_t *ent);
 void Cmd_amClearEffects_F(gentity_t *ent);
 void Cmd_amForceTeam_F(gentity_t *ent);

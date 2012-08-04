@@ -1941,12 +1941,13 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	//Scan for bot orders
 	BotOrderParser(ent, target, mode, chatText);
 	//[/TABBot]
-
+	/*
 	if ( !Info_Validate(text) )
 	{
 		trap_SendServerCommand(ent->s.number, "cp \""S_COLOR_RED"Error: You tried to use a line break, carriage return, quotation mark, or semicolon in your message.\nThey aren't allowed because they can be used for an exploit.\n\"" );
 		return;
 	}
+	*/
 
 	switch ( mode ) {
 	default:
@@ -3998,33 +3999,6 @@ void ClientCommand( int clientNum ) {
 		return;
 	}
 	//end rww
-	if(!Q_stricmp(cmd,"modelscale"))
-	{
-		int size;
-//		int temp,temp2;
-		if(!ojp_modelscaleEnabled.integer)
-		{
-			trap_SendServerCommand( ent-g_entities, va("print \"Modelscale is disabled!\n\"") );
-			return;
-		}
-		if(trap_Argc()!=2)
-		{
-			trap_SendServerCommand( ent-g_entities, va("print \"Current modelscale is %i.\n\"", (ent->client->ps.iModelScale ? ent->client->ps.iModelScale : 100)) );
-			return;
-		}
-		trap_Argv(1,cmd2,sizeof(cmd2));
-		size=atoi(cmd2);
-		if(size <= 0)
-			size = 100;
-
-		ent->client->ps.iModelScale=size;
-		ent->client->sess.modelScale=size;
-		//ent->client->ps.viewheight = (size/2.7f);
-		//ent->client->ps.viewheight *= 0.1f;
-		//ent->client->ps.stats[STAT_MAX_DODGE] = ((100-size)*(ent->client->ps.stats[STAT_DODGE]/100))/2;
- 
-		return;
-	}
 	if (Q_stricmp (cmd, "login") == 0) {
 		Cmd_AccountLogin_F (ent);
 		return;
@@ -4065,7 +4039,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_RemoveAdmin_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "genexp") == 0) {
+	if (Q_stricmp (cmd, "genxp") == 0) {
 		Cmd_GenerateXP_F (ent);
 		return;
 	}
@@ -4186,10 +4160,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_amEmpower_F (ent);
 		return;
 	}
-	if(Q_stricmp(cmd, "ambitvalues") == 0) {
-		Cmd_amBitvalues_F (ent);
-		return;
-	}
 	if(Q_stricmp(cmd, "ammerc") == 0) {
 		Cmd_amMerc_F (ent);
 		return;
@@ -4220,6 +4190,10 @@ void ClientCommand( int clientNum ) {
 	}
 	if(Q_stricmp(cmd, "amweatherplus") == 0) {
 		Cmd_amWeatherPlus_F (ent);
+		return;
+	}
+	if(Q_stricmp(cmd, "info") == 0) {
+		Cmd_info_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "ammap") == 0) {

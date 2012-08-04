@@ -70,35 +70,6 @@ qboolean isLoggedIn(gentity_t* ent){
 /*
 =================
 
-Load Attributes
-
-=====
-*/
-void LoadAttributes(gentity_t * ent)
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-	
-	char userinfo[MAX_INFO_STRING];
-	trap_GetUserinfo( ent-g_entities, userinfo, MAX_INFO_STRING );
-
-    //Model
-	string model = q.get_string( va( "SELECT Model FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-	Info_SetValueForKey( userinfo, "model", model.c_str() );
-	trap_SetUserinfo( ent-g_entities, userinfo );
-	ClientUserinfoChanged( ent-g_entities );
-
-	//Model scale
-	int modelScale = q.get_num( va( "SELECT ModelScale FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-	ent->client->ps.iModelScale = modelScale;
-	ent->client->sess.modelScale = modelScale;
-
-	return;
-}
-
-/*
-=================
-
 Cmd_AccountLogin_f
 
 Command: login <user> <password>
@@ -145,8 +116,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	if( DBname.empty() )
 	{
 		//The username does not exist, thus, the error does.
-		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Username %s does not exist.\n\"", userName ) );
-		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Error: Username %s does not exist.\n\"", userName ) );
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() ) );
 		return;
 	}
 
