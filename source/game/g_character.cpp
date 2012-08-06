@@ -15,6 +15,7 @@ extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern int ClientNumbersFromString( char *s, int *plist);
 extern qboolean G_MatchOnePlayer(int *plist, char *err, int len);
 extern void SanitizeString2( char *in, char *out );
+extern char	*ConcatArgs( int start );
 
 /*
 =================
@@ -608,8 +609,8 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		string factionNameSTR = q.get_string( va( "SELECT Name FROM Factions WHERE FactionID='%i'", factionID ) );
 		if( factionNameSTR.empty() )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Faction with factionID ^6 %i ^1does not exist.\n\"", factionID ) );
-			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Faction with factionID ^6 %i ^1does not exist.\n\"", factionID ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Faction with factionID ^6%i ^1does not exist.\n\"", factionID ) );
+			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Faction with factionID ^6%i ^1does not exist.\n\"", factionID ) );
 			return;
 		}
 
@@ -851,7 +852,7 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 			}
 
 			//Show them the info.
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^5Character Info:\nName: %s\nForce Sensitive: %s\nFaction: %s\nFaction Rank: %s\nLevel: %i/50\nXP: %i\nCredits: %i\nModelscale: %i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, charCredits, charModelScale ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^4Character Info:\n^3Name: ^6%s\n^3Force Sensitive: ^6%s\n^3Faction: ^6%s\n^3Faction Rank: ^6%s\n^3Level: ^6%i/50\n^3XP: ^6%i\n^3Credits: ^6%i\n^3Modelscale: ^6%i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, charCredits, charModelScale ) );
 			return;
 		}
 
@@ -873,7 +874,7 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 			string charFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
 			string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", charID ) );
 
-			trap_SendServerCommand( ent-g_entities, va( "print \"^5Character Info:\nName: %s\nFaction: %s\nRank: %s\n\"", charNameSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str() ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^4Character Info:\n^3Name: ^6%s\n^3Faction: ^6%s\n^3Rank: ^6%s\n\"", charNameSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str() ) );
 
 			return;
 		}
@@ -914,7 +915,7 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 			}
 	
 			//Show them the info.
-			trap_SendServerCommand( ent-g_entities, va( "print \"^5Character Info:\nName: %s\nForce Sensitive: %s\nFaction: %s\nFaction Rank: %s\nLevel: %i/50\nXP: %i\nCredits: %i\nModelscale: %i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, charCredits, charModelScale ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^4Character Info:\n^3Name: ^6%s\n^3Force Sensitive: ^6%s\n^3Faction: ^6%s\n^3Faction Rank: ^6%s\n^3Level: ^6%i/50\n^3XP: ^6%i\n^3Credits: ^6%i\n^3Modelscale: ^6%i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, charCredits, charModelScale ) );
 			return;
 		}
 		return;
@@ -969,7 +970,7 @@ void Cmd_Faction_F( gentity_t * ent )
 		//Their Rank
 		string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Faction Information:\n^3Name: ^6 %s\n^3ID: ^6 %i\n^3Leader: ^6 %s\n^3Bank: ^6 %i\n^3Your Rank: ^6 %s\n\"", factionNameSTR.c_str(), factionID, factionLeaderSTR.c_str(), factionBank, charFactionRankSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^4Faction Information:\n^3Name: ^6%s\n^3ID: ^6%i\n^3Leader: ^6%s\n^3Bank: ^6%i\n^3Your Rank: ^6%s\n\"", factionNameSTR.c_str(), factionID, factionLeaderSTR.c_str(), factionBank, charFactionRankSTR.c_str() ) );
 	}
 	return;
 }
@@ -1034,17 +1035,17 @@ void Cmd_FactionWithdraw_F( gentity_t * ent )
 	//Trying to withdraw more than what the faction bank has.
 	if ( changedCredits > factionBank )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: The faction does not have ^6 %i ^1credits to withdraw.\n\"", changedCredits ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: The faction does not have ^6%i ^1credits to withdraw.\n\"", changedCredits ) );
 		return;
 	}
 
 	int characterCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-	int newTotalFactionCredits = factionBank - changedCredits, newTotalCharacterCredits = characterCredits + changedCredits;
+	int newTotalFactionBank = factionBank - changedCredits, newTotalCharacterCredits = characterCredits + changedCredits;
 
-	q.execute( va( "UPDATE Factions set Bank='%i' WHERE Name='%s'", newTotalFactionCredits, factionNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Factions set Bank='%i' WHERE Name='%s'", newTotalFactionBank, factionNameSTR.c_str() ) );
 	q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCharacterCredits, ent->client->sess.characterID ) );
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have withdrawn ^6 %i ^2credits from your faction's bank.\n\"", changedCredits ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have withdrawn ^6%i ^2credits from your faction's bank.\n\"", changedCredits ) );
 	return;
 }
 
@@ -1100,17 +1101,17 @@ void Cmd_FactionDeposit_F( gentity_t * ent )
 	///Trying to deposit more than what they have.
 	if ( changedCredits > characterCredits )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You don't have ^6 %i ^1credits to withdraw.\n\"", changedCredits ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You don't have ^6%i ^1credits to withdraw.\n\"", changedCredits ) );
 		return;
 	}
 
 	int factionBank = q.get_num( va( "SELECT Bank FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
-	int newTotalCharacterCredits = characterCredits - changedCredits, newTotalFactionCredits = factionBank + changedCredits;
+	int newTotalCharacterCredits = characterCredits - changedCredits, newTotalFactionBank = factionBank + changedCredits;
 
 	q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCharacterCredits, ent->client->sess.characterID ) );
-	q.execute( va( "UPDATE Factions set Bank='%i' WHERE Name='%s'", newTotalFactionCredits, factionNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Factions set Bank='%i' WHERE Name='%s'", newTotalFactionBank, factionNameSTR.c_str() ) );
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have deposited ^6 %i ^2credits into your faction's bank.\n\"", changedCredits ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have deposited ^6%i ^2credits into your faction's bank.\n\"", changedCredits ) );
 	return;
 }
 
@@ -1143,7 +1144,7 @@ void Cmd_ListFactions_F(gentity_t * ent)
 	{
 		int ID = q.getval();
 		string name = q.getstr();
-		trap_SendServerCommand( ent-g_entities, va("print \"^3ID: ^6 %i ^3Name: ^6 %s\n\"", ID, name.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"^3ID: ^6%i ^3Name: ^6%s\n\"", ID, name.c_str() ) );
 	}
 	q.free_result();
 
@@ -1209,7 +1210,7 @@ void Cmd_TransferLeader_F( gentity_t * ent )
 		}
 
 		q.execute( va( "UPDATE Factions set Leader='%s' WHERE FactionID='%i'", newLeaderSTR.c_str(), factionID ) );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: ^6 %s ^2has been made the new leader of the faction.\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: ^6%s ^2has been made the new leader of the faction.\n\"" ) );
 		return;
 	}
 
@@ -1236,7 +1237,7 @@ void Cmd_TransferLeader_F( gentity_t * ent )
 		}
 
 		q.execute( va( "UPDATE Factions set Leader='%s' WHERE FactionID='%i'", newLeaderSTR.c_str(), factionID ) );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: ^6 %s ^2has been made the new leader of the faction.\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: ^6%s ^2has been made the new leader of the faction.\n\"" ) );
 		return;
 	}
 }
@@ -1269,7 +1270,7 @@ void Cmd_Shop_F( gentity_t * ent )
 	
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Shop:\nWeapons:\n^3Pistol (Level ^6 %i ^3) - ^6 %i ^3credits\n^3E-11(Level ^6%i ^3) - ^6 %i ^3credits\n\"", openrp_pistolLevel.integer, openrp_pistolBuyCost.integer, openrp_e11Level.integer, openrp_e11BuyCost.integer ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^4Shop:\nWeapons:\n^3Pistol (Level ^6%i ^3) - ^6%i ^3credits\n^3E-11(Level ^6%i ^3) - ^6%i ^3credits\n\"", openrp_pistolLevel.integer, openrp_pistolBuyCost.integer, openrp_e11Level.integer, openrp_e11BuyCost.integer ) );
 		return;
 	}
 
@@ -1327,14 +1328,14 @@ void Cmd_Shop_F( gentity_t * ent )
 		//Trying to buy something while not having enough credits for it
 		if ( newTotalCredits < 0 )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You don't have enough credits to buy a ^6 %s ^1. You have ^6 %s ^1credits and this costs ^6 %s ^1credits.\n\"", itemNameSTR.c_str(), currentCredits, itemCost ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You don't have enough credits to buy a ^6%s ^1. You have ^6%s ^1credits and this costs ^6%s ^1credits.\n\"", itemNameSTR.c_str(), currentCredits, itemCost ) );
 			return;
 		}
 
 		//Trying to buy something they can't at their level
 		if ( currentLevel < itemLevel )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You are not a high enough level to buy this. You are level ^6 %s ^1and need to be level ^6 %s ^1.\n\"", currentLevel, itemLevel ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You are not a high enough level to buy this. You are level ^6%s ^1and need to be level ^6%s ^1.\n\"", currentLevel, itemLevel ) );
 			return;
 		}
 
@@ -1356,7 +1357,7 @@ void Cmd_Shop_F( gentity_t * ent )
 				q.execute( va( "UPDATE Items set E11='%i' WHERE ID='%i'", newTotal, ent->client->sess.characterID ) );
 			}
 
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have purchased a ^6 %s ^2for ^6 %i ^2credits.\n\"", itemNameSTR.c_str(), itemCost ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have purchased a ^6%s ^2for ^6%i ^2credits.\n\"", itemNameSTR.c_str(), itemCost ) );
 			return;
 		}
 	}
@@ -1460,7 +1461,7 @@ void CheckInventory( gentity_t * ent )
 		{
 			int pistol = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", charID ) );
 			int e11 = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", charID ) );
-			trap_SendServerCommand( ent-g_entities, va( "print \"^6 %s's ^4Inventory:\nPistols: ^6 %i\n^4E-11s: ^6 %i\n\"", pistol, e11 ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^6%s's ^4Inventory:\nPistols: ^6%i\n^4E-11s: ^6%i\n\"", pistol, e11 ) );
 		}
 		
 		else
@@ -1474,7 +1475,7 @@ void CheckInventory( gentity_t * ent )
 	{
 		int pistol = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", charID ) );
 		int e11 = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", charID ) );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^6 %s's ^4Inventory:\nPistols: ^6 %i\n^4E-11s: ^6 %i\n\"", pistol, e11 ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^6%s's ^4Inventory:\nPistols: ^6%i\n^4E-11s: ^6%i\n\"", pistol, e11 ) );
 		return;
 	}
 
@@ -1514,7 +1515,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Your Inventory:\nPistols: ^6 %i\n^4E-11s: ^6%i\n\"", pistol, e11 ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^4Your Inventory:\nPistols: ^6%i\n^4E-11s: ^6%i\n\"", pistol, e11 ) );
 		return;
 	}
 
@@ -1588,7 +1589,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 				q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotalItems, ent->client->sess.characterID ) );
 				int newTotalCredits = currentCredits + openrp_pistolSellCost.integer;
 				q.execute( va( "UPDATE Character set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have sold a(n) ^6 %s ^2and got ^6 %s ^2credits from selling it.\n\"", itemNameSTR.c_str(), openrp_pistolSellCost.integer ) );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have sold a(n) ^6%s ^2and got ^6%s ^2credits from selling it.\n\"", itemNameSTR.c_str(), openrp_pistolSellCost.integer ) );
 				return;
 			}
 		}
@@ -1597,7 +1598,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 		{
 			if ( e11 < 1)
 			{
-				trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You do not have any ^6 %ss ^2.\n\"", itemNameSTR.c_str() ) );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You do not have any ^6%ss ^2.\n\"", itemNameSTR.c_str() ) );
 				return;
 			}
 
@@ -1607,7 +1608,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 				q.execute( va( "UPDATE Items set E11='%i' WHERE CharID='%i'", newTotalItems, ent->client->sess.characterID ) );
 				int newTotalCredits = currentCredits + openrp_e11SellCost.integer;
 				q.execute( va( "UPDATE Character set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have sold a(n) ^6 %s ^1and got ^6%s ^2credits from selling it.\n\"", itemNameSTR.c_str(), openrp_e11SellCost.integer ) );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have sold a(n) ^6%s ^1and got ^6%s ^2credits from selling it.\n\"", itemNameSTR.c_str(), openrp_e11SellCost.integer ) );
 			}
 		}
 
@@ -1624,7 +1625,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 		{
 			if ( pistol < 1)
 			{
-				trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You do not have any ^6 %ss ^1.\n\"", itemNameSTR.c_str() ) );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You do not have any ^6%ss ^1.\n\"", itemNameSTR.c_str() ) );
 				return;
 			}
 
@@ -1633,7 +1634,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 				//remove their pistol
 				int newTotalItems = pistol - 1;
 				q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotalItems, ent->client->sess.characterID ) ); 
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have deleted a(n) ^6 %s ^2.\n\"", itemNameSTR.c_str() ) );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have deleted a(n) ^6%s ^2.\n\"", itemNameSTR.c_str() ) );
 			}
 		}
 
@@ -1641,7 +1642,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 		{
 			if ( e11 < 1)
 			{
-				trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You do not have any ^6 %ss ^1.\n\"", itemNameSTR.c_str() ) );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You do not have any ^6%ss ^1.\n\"", itemNameSTR.c_str() ) );
 				return;
 			}
 
@@ -1650,7 +1651,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 				//remove their e-11
 				int newTotalItems = e11 - 1;
 				q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotalItems, ent->client->sess.characterID ) );
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have deleted a(n) ^6 %s ^2.\n\"", itemNameSTR.c_str() ) );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have deleted a(n) ^6%s ^2.\n\"", itemNameSTR.c_str() ) );
 			}
 		}
 
@@ -1695,7 +1696,7 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 
 	if (trap_Argc() != 3) //If the user doesn't specify both args.
 	{
-			trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /editchar <name/model/modelscale> <value> \n\"" ) ;
+			trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /editcharacter <name/model/modelscale> <value> \n\"" ) ;
 			return;
 	}
 	char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS], changeCleaned[MAX_STRING_CHARS];
@@ -1719,12 +1720,12 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 				return;
 		}
 		q.execute( va( "UPDATE Characters set Name='%s' WHERE CharID= '%i'", changeSTR, ent->client->sess.characterID));
-		trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Name has been changed to ^6 %s^2. If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Name has been changed to ^6%s^2. If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
 	}
 	else if( !Q_stricmp( parameter, "model" ) )
 	{
 			q.execute( va( "UPDATE Characters set Model='%s' WHERE CharID='%i'", changeSTR, ent->client->sess.characterID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Model has been changed to ^6 %s^2.\n\"",changeSTR.c_str() ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Model has been changed to ^6%s^2.\n\"",changeSTR.c_str() ) );
 			return;
 	}
 	else if( !Q_stricmp(parameter, "modelscale" ) )
@@ -1737,11 +1738,11 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 				ent->client->ps.iModelScale = modelscale;
 				ent->client->sess.modelScale = modelscale;
 				q.execute( va( "UPDATE Characters set ModelScale='%i' WHERE CharID='%i'", modelscale, ent->client->sess.characterID));
-				trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Modelscale has been changed to ^6 %i ^2.\n\"",modelscale ) );
+				trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Modelscale has been changed to ^6%i ^2.\n\"",modelscale ) );
 			}
 			else
 			{
-				trap_SendServerCommand ( ent-g_entities,  "print \"^1Error: Modelscale must be between ^6 65 ^1and ^6 140^1.\n\"" );
+				trap_SendServerCommand ( ent-g_entities,  "print \"^1Error: Modelscale must be between ^665 ^1and ^6140^1.\n\"" );
 				return;
 			}
 		}
@@ -1755,7 +1756,7 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 			ent->client->ps.iModelScale = modelscale;
 			ent->client->sess.modelScale = modelscale;
 			q.execute( va( "UPDATE Characters set ModelScale='%i' WHERE CharID='%i'", modelscale, ent->client->sess.characterID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Modelscale has been changed to ^6 %i ^2.\n\"",modelscale ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Modelscale has been changed to ^6%i ^2.\n\"",modelscale ) );
 			return;
 		}
 	}
@@ -1909,15 +1910,12 @@ void Cmd_Bounty_F( gentity_t * ent )
 			switch ( aliveDead )
 				{
 				case 0:
-					aliveDead = 0;
 					aliveDeadSTR = "Dead";
 					break;
 				case 1:
-					aliveDead = 1;
 					aliveDeadSTR = "Alive";
 					break;
 				case 2:
-					aliveDead = 2;
 					aliveDeadSTR = "Dead or Alive";
 					break;
 				default:
@@ -1933,7 +1931,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 			return;
 		}
 		q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
-		q.execute( va( "INSERT INTO Bounties(BountyCreator,BountyName,Reward,Wanted) VALUES('%i','%s','%i','%i')", bountyCreator.c_str(), bountyNameSTR.c_str(), reward, aliveDead ) );
+		q.execute( va( "INSERT INTO Bounties(BountyCreator,BountyName,Reward,Wanted) VALUES('%s','%s','%i','%i')", bountyCreator.c_str(), bountyNameSTR.c_str(), reward, aliveDead ) );
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You put a bounty on ^6%s (%s)^2with a reward of ^6%i ^2credits.\n\"", bountyName, aliveDeadSTR.c_str(), reward ) );
 		return;
 	}
@@ -1948,6 +1946,12 @@ void Cmd_Bounty_F( gentity_t * ent )
 		
 		else
 		{
+			if ( trap_Argc() != 5 )
+			{
+				trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: bounty <add/remove> <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\nor just bounty to view a list of current bounties.\n\"" );
+				return;
+			}
+
 			string bountyCreator = q.get_string( va( "SELECT BountyCreator FROM Bounties WHERE BountyName='%s'", bountyNameSTR.c_str() ) );
 			int reward = q.get_num( va( "SELECT Reward FROM Bounties WHERE BountyName='%s'", bountyNameSTR.c_str() ) );
 			int aliveDead =  q.get_num( va( "SELECT Wanted FROM Bounties WHERE BountyName='%s'", bountyNameSTR.c_str() ) );
@@ -1968,7 +1972,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 					return;
 				}
 			q.execute( va( "DELETE FROM Bounties WHERE BountyName='%s'", bountyNameSTR.c_str() ) );
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have removed the bounty on ^6 %s (%s) ^2which had a reward of ^6 %i ^2credits.\nThe bounty was put up by ^6 %s ^2.\n\"", bountyNameSTR.c_str(), aliveDeadSTR.c_str(), reward, bountyCreator.c_str() ) ); 
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have removed the bounty on ^6%s (%s) ^2which had a reward of ^6%i ^2credits.\nThe bounty was put up by ^6%s ^2.\n\"", bountyNameSTR.c_str(), aliveDeadSTR.c_str(), reward, bountyCreator.c_str() ) ); 
 			return;
 		}
 	}
@@ -1979,6 +1983,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 		return;
 	}
 }
+
 void Cmd_CharName_F( gentity_t * ent )
 {
 	Database db(DATABASE_PATH);
@@ -2020,7 +2025,7 @@ void Cmd_CharName_F( gentity_t * ent )
 	if ( tent->client->sess.characterChosen )
 	{
 		string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", tent->client->sess.characterID ) );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^3Char Name: ^6 %s ^3.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^3Char Name: ^6%s ^3.\n\"", charNameSTR.c_str() ) );
 		return;
 	}
 
@@ -2028,5 +2033,37 @@ void Cmd_CharName_F( gentity_t * ent )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: % does not have a character selected.\n\"", tent->client->pers.netname ) );
 	}
+	return;
+}
+
+void Cmd_Me_F( gentity_t *ent )
+{ 
+	int pos = 0;
+	char real_msg[MAX_STRING_CHARS];
+	char *msg = ConcatArgs(1);
+
+	while(*msg)
+	{ 
+		if(msg[0] == '\\' && msg[1] == 'n')
+		{ 
+			msg++;
+			real_msg[pos++] = '\n';
+		} 
+		else
+		{
+			real_msg[pos++] = *msg;
+		} 
+		msg++;
+	}
+
+	real_msg[pos] = 0;
+
+	if ( trap_Argc() < 2 )
+	{ 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^4Command Usage: me <action> (You can use spaces such as /me opens the door.)\n\"" ) ); 
+		return;
+	}
+
+	trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
 	return;
 }

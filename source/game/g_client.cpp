@@ -4774,7 +4774,7 @@ void ClientSpawn(gentity_t *ent) {
 		ent->client->ps.iModelScale = ent->client->sess.modelScale;
 	}
 
-	if( G_CheckState( ent, PLAYER_MERCD ) )
+	if( G_CheckState( ent, PLAYER_MERC ) )
 	{
 		//Give them every item.
 		ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);

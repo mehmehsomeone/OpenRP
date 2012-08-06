@@ -355,11 +355,11 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 
 	if ( adminLevel < 11 )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^5Account Name: %s\nAccount ID: %i\nAdmin: %s\nAdmin Level: %i\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str(), adminLevel ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^4Account Info:\n^3Account Name: ^6%s\n^3Account ID: ^6%i\n^3Admin: ^6%s\n^3Admin Level: ^6%i\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str(), adminLevel ) );
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^5Account Name: %s\nAccount ID: %i\nAdmin: %s\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^4Account Info:\n^3Account Name: ^6%s\n^3Account ID: ^6%i\n^3Admin: ^6%s\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str() ) );
 	}
 	return;
 }
@@ -403,17 +403,17 @@ void Cmd_EditAccount_F(gentity_t * ent)
 				return;
 			}
 			q.execute( va( "UPDATE Users set Username='%s' WHERE AccountID= '%i'", changeSTR, ent->client->sess.accountID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Username has been changed to ^6 %s ^2If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Username has been changed to ^6%s ^2If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
 		}
 		else if(!Q_stricmp(parameter, "password"))
 		{
 			q.execute( va( "UPDATE Users set Password='%s' WHERE AccountID='%i'", changeSTR, ent->client->sess.accountID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Password has been changed to ^6 %s\n\"",changeSTR.c_str() ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Password has been changed to ^6%s\n\"",changeSTR.c_str() ) );
 			return;
 		}
 		else
 		{
-			trap_SendServerCommand ( ent-g_entities, "print \"^4Command Usage: /editaccount <username/password> <value> \n\"" ) ;
+			trap_SendServerCommand ( ent-g_entities, "print \"^4Command Usage: /editaccount <username/password> <value>\n\"" ) ;
 		}
 }
 
@@ -458,7 +458,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 	if ( tent->client->sess.loggedinAccount )
 	{
 		string usernameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", tent->client->sess.accountID ) );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^3Account Name: ^6 %s ^3.\n\"", usernameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^3Account Name: ^6%s ^3.\n\"", usernameSTR.c_str() ) );
 		return;
 	}
 	

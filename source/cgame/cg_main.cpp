@@ -1039,7 +1039,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_truemoveroll,	"cg_truemoveroll",	"0", CVAR_ARCHIVE },
 	{ &cg_truesaberonly,	"cg_truesaberonly",	"0", CVAR_ARCHIVE },
 	{ &cg_trueeyeposition,	"cg_trueeyeposition",	"0.0", 0},
-	{ &cg_trueinvertsaber,	"cg_trueinvertsaber",	"1", CVAR_ARCHIVE},
+	{ &cg_trueinvertsaber,	"cg_trueinvertsaber",	"0", CVAR_ARCHIVE},
 	{ &cg_truefov,	"cg_truefov",	"80", CVAR_ARCHIVE},
 	//[/TrueView]
 

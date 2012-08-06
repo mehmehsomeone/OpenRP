@@ -16,7 +16,7 @@
 #define ADMIN_MERC				    16384 // /ammerc
 #define ADMIN_CHEATS				32768 // Cheat commands related
 #define	ADMIN_ADMINWHOIS			65536 // /amadminwhois
-#define ADMIN_SCALE					131072 // amscale
+#define ADMIN_SCALE					131072 // modelscaling
 #define ADMIN_SHAKE					262144 // ambitvalues
 #define ADMIN_ADDEFFECT				524288 // /amaddeffect
 #define ADMIN_FORCETEAM				1048576 // /amforceteam
@@ -36,6 +36,6 @@
 #define PLAYER_SLEEPING					2 //This player has been put to sleep.
 #define PLAYER_MUTED					4 //This player has been muted.
 #define PLAYER_EMPOWERED				8 //This player is empowered.
-#define PLAYER_MERCD					16 //This player is mercd.
+#define PLAYER_MERC					16 //This player is merc'd.
 
 void M_HolsterThoseSabers(gentity_t *ent);

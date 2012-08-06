@@ -13072,10 +13072,16 @@ void PmoveSingle (pmove_t *pmove) {
 	// set the talk balloon flag
 	if ( pm->cmd.buttons & BUTTON_TALK ) {
 		pm->ps->eFlags |= EF_TALK;
-		pm->ps->eFlags |= EF_INVULNERABLE;
+		if ( !pm->ps->duelInProgress )
+		{
+			pm->ps->eFlags |= EF_INVULNERABLE;
+		}
 	} else {
 		pm->ps->eFlags &= ~EF_TALK;
-		pm->ps->eFlags &= ~EF_INVULNERABLE;
+		if ( !pm->ps->duelInProgress )
+		{
+			pm->ps->eFlags &= ~EF_INVULNERABLE;
+		}
 	}
 	// [Grapple]
 	if (pm->cmd.buttons & BUTTON_FORCE_DRAIN )

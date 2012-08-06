@@ -582,7 +582,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		player2->client->ps.eFlags ^= EF_TELEPORT_BIT;
 	}
 	trap_SendServerCommand(ent-g_entities, va("print \"^5You teleported %s to %s.\n\"",  player2->client->pers.netname, player->client->pers.netname));
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were teleported to %s by an admin.\"", player2->client->pers.netname));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were teleported to %s by an admin.\n\"", player2->client->pers.netname));
 	G_LogPrintf("Teleport admin command executed by %s. This caused %s to teleport to %s.\n", player->client->pers.netname, player2->client->pers.netname);
 	return;
 }
@@ -697,7 +697,7 @@ void Cmd_amMute_F(gentity_t *ent)
 	{
 		tent->client->sess.state |= PLAYER_MUTED;
 	}
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were muted by an admin.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were muted by an admin.\n\""));
 	G_LogPrintf("Mute admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
 }
@@ -753,7 +753,7 @@ void Cmd_amUnMute_F(gentity_t *ent)
 	{
 		tent->client->sess.state -= PLAYER_MUTED; //bad way of doing it but it should work
 	}
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were unmuted by an admin.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were unmuted by an admin.\n\""));
 	G_LogPrintf("Unmute admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
 }
@@ -823,6 +823,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 	tent2 = G_TempEntity( tent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
 	tent2->s.clientNum = tent->s.clientNum;
 
+	tent->client->ps.pm_type = PM_FREEZE;
 	tent->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
 	tent->client->ps.forceDodgeAnim = 0;
 	tent->client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
@@ -830,7 +831,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 
 	G_SetAnim(tent, NULL, SETANIM_BOTH, BOTH_STUMBLEDEATH1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
 
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You are now sleeping.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You are now sleeping.\n\""));
 
 	G_LogPrintf("Sleep admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
@@ -895,6 +896,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 		tent->client->sess.state -= PLAYER_SLEEPING;
 	}
 
+	tent->client->ps.pm_type = PM_NORMAL;
 	tent->client->ps.forceDodgeAnim = 0;
 	tent->client->ps.forceHandExtendTime = 0;
 	tent->client->ps.quickerGetup = qfalse;
@@ -902,7 +904,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 	//Play a nice healing sound... Ahh
 	//G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
 
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer sleeping.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer sleeping. You can get up by using a movement key.\n\""));
 
 	G_LogPrintf("Unsleep admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
@@ -928,19 +930,21 @@ void Cmd_amProtect_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
-	if(trap_Argc() < 2){ //If no name is given protect the user of the command.
-		if((ent->client->ps.eFlags & EF_INVULNERABLE) > 0)
+	if(trap_Argc() < 2)
+	{ //If no name is given protect the user of the command.
+		if ( !(ent->client->ps.eFlags & EF_INVULNERABLE) )
 		{
 			ent->client->ps.eFlags |= EF_INVULNERABLE;
 			ent->client->invulnerableTimer = level.time + Q3_INFINITE;
 			trap_SendServerCommand(ent-g_entities, va("print \"^5You have been protected.\n\""));
-			G_LogPrintf("Protect admin command executed by %s on themself.\n", ent->client->pers.netname);
+			G_LogPrintf("Protect admin command executed by %s on themself to protect themself.\n", ent->client->pers.netname);
 		}
 		else
 		{
-			ent->client->ps.eFlags |= EF_INVULNERABLE;
+			ent->client->ps.eFlags &= ~EF_INVULNERABLE;
 			ent->client->invulnerableTimer = 0;
 			trap_SendServerCommand(ent-g_entities, va("print \"^5You are no longer protected.\n\""));
+			G_LogPrintf("Protect admin command executed by %s on themself to unprotect themself.\n", ent->client->pers.netname);
 		}
 		return;
 	}
@@ -960,23 +964,23 @@ void Cmd_amProtect_F(gentity_t *ent)
 		return;
 	}
 
-	if((tent->client->ps.eFlags & EF_INVULNERABLE) > 0)
+	if ( !(tent->client->ps.eFlags & EF_INVULNERABLE) )
 	{
 		tent->client->ps.eFlags |= EF_INVULNERABLE;
 		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been protected.\""));
-		G_LogPrintf("Protect admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);	
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been protected.\n\""));
+		G_LogPrintf("Protect admin command executed by %s on %s to protect them.\n", ent->client->pers.netname, tent->client->pers.netname);	
 		return;
 	}
 	else
 	{
-		tent->client->ps.eFlags |= EF_INVULNERABLE;
+		tent->client->ps.eFlags &= ~EF_INVULNERABLE;
 		tent->client->invulnerableTimer = 0;
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer protected.\""));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer protected.\n\""));
+		G_LogPrintf("Protect admin command executed by %s on %s to unprotect them.\n", ent->client->pers.netname, tent->client->pers.netname);	
 		return;
 	}
 }
-
 
 /*
 ============
@@ -1003,7 +1007,7 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 			if(ent->client->sess.isAdmin == qtrue)
 			{
 				{
-					trap_SendServerCommand(ent-g_entities, va("print \"%s ^2Admin level %i\n\"", ent->client->pers.netname, (ent->client->sess.isAdmin-1)));
+					trap_SendServerCommand(ent-g_entities, va("print \"^3Name: ^6%s ^3Admin level: ^6%i\n\"", ent->client->pers.netname, ent->client->sess.adminLevel ) );
 				}
 			}
 		}
@@ -1091,7 +1095,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 		tent->client->sess.state |= PLAYER_EMPOWERED;
 	}
 
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been empowered.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been empowered.\n\""));
 
 	G_LogPrintf("Empower admin command executed by %s.\n", ent->client->pers.netname);
 	return;
@@ -1118,14 +1122,14 @@ void Cmd_amMerc_F(gentity_t *ent)
 	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	//Mercing yourself
-	if( ( trap_Argc() < 2 ) && ( !G_CheckState( ent, PLAYER_MERCD ) ) ) //If the person who used the command did not specify a name, and if they are not currently a merc, then merc them.
+	if( ( trap_Argc() < 2 ) && ( !G_CheckState( ent, PLAYER_MERC ) ) ) //If the person who used the command did not specify a name, and if they are not currently a merc, then merc them.
 	{
 			//Give them every item.
 			ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
 			//Take away saber and melee. We'll give it back in the next line along with the other weapons.
-			ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
+			//ent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
 			//Give them every weapon.
-			ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_SABER) | (1 << WP_MELEE) | (1 << WP_TUSKEN_RIFLE) |(1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+			ent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_TUSKEN_RIFLE) |(1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
 			| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
 			| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_GRENADE) | (1 << WP_BRYAR_PISTOL);
 		{
@@ -1140,7 +1144,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 		ent->client->ps.weapon = WP_BLASTER; //Switch their active weapon to the E-11.
 
-		ent->client->sess.state |= PLAYER_MERCD; //Give them merc flags, which says that they are a merc.
+		ent->client->sess.state |= PLAYER_MERC; //Give them merc flags, which says that they are a merc.
 
 		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been merc'd.\n\""));
 		G_LogPrintf("Merc admin command executed by %s on themself.\n", ent->client->pers.netname);
@@ -1148,7 +1152,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 	}
 
 	//Unmercing yourself
-	if(trap_Argc() < 2 && !G_CheckState( ent, PLAYER_MERCD ) ) //If the user is already a merc and they use the command again on themself, then unmerc them.
+	if(trap_Argc() < 2 && !G_CheckState( ent, PLAYER_MERC ) ) //If the user is already a merc and they use the command again on themself, then unmerc them.
 	{
 		//Take away every item.
 		ent->client->ps.eFlags &= ~EF_SEEKERDRONE;
@@ -1163,7 +1167,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 		ent->client->ps.weapon = WP_SABER; //Switch their active weapon to the saber.
 
-		ent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
+		ent->client->sess.state -= PLAYER_MERC; //Take away merc flags.
 
 		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been unmerc'd.\n\""));
 		G_LogPrintf("Unmerc admin command executed by %s on themself.\n", ent->client->pers.netname);
@@ -1186,14 +1190,14 @@ void Cmd_amMerc_F(gentity_t *ent)
 		return;
 	}
 
-	if( !G_CheckState( tent, PLAYER_MERCD ) ) //If the target is not currently a merc, then merc them.
+	if( !G_CheckState( tent, PLAYER_MERC ) ) //If the target is not currently a merc, then merc them.
 	{
 		//Give them every item.
 		tent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << HI_BINOCULARS) | (1 << HI_SEEKER) | (1 << HI_CLOAK) | (1 << HI_EWEB) | (1 << HI_SENTRY_GUN);
 		//Take away saber and melee. We'll give it back in the next line along with the other weapons.
-		tent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
+		//tent->client->ps.stats[STAT_WEAPONS] &= ~(1 << WP_SABER) & ~(1 << WP_MELEE);
 		//Give them every weapon.
-		tent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_SABER) | (1 << WP_MELEE) | (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
+		tent->client->ps.stats[STAT_WEAPONS] |= (1 << WP_BLASTER) | (1 << WP_DISRUPTOR) | (1 << WP_BOWCASTER)
 		| (1 << WP_REPEATER) | (1 << WP_DEMP2) | (1 << WP_FLECHETTE) | (1 << WP_ROCKET_LAUNCHER) | (1 << WP_THERMAL) | (1 << WP_DET_PACK)
 		| (1 << WP_BRYAR_OLD) | (1 << WP_CONCUSSION) | (1 << WP_GRENADE) | (1 << WP_BRYAR_PISTOL);
 
@@ -1208,15 +1212,15 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 		tent->client->ps.weapon = WP_BLASTER; //Switch their active weapon to the E-11.
 
-		tent->client->sess.state |= PLAYER_MERCD; //Give them merc flags, which says that they are a merc.
+		tent->client->sess.state |= PLAYER_MERC; //Give them merc flags, which says that they are a merc.
 
 		trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s was merc'd.\n\"", tent->client->pers.netname));
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been merc'd.\""));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been merc'd.\n\""));
 		G_LogPrintf("Merc admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		return;
 	}
 
-	if( !G_CheckState( tent, PLAYER_MERCD ) ) //If the target is currently a merc, then unmerc them.
+	if( !G_CheckState( tent, PLAYER_MERC ) ) //If the target is currently a merc, then unmerc them.
 	{
 		//Take away every item.
 		tent->client->ps.eFlags &= ~EF_SEEKERDRONE;
@@ -1231,10 +1235,10 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 		tent->client->ps.weapon = WP_SABER; //Switch their active weapon to the saber.
 
-		tent->client->sess.state -= PLAYER_MERCD; //Take away merc flags.
+		tent->client->sess.state -= PLAYER_MERC; //Take away merc flags.
 
 		trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s was unmerc'd.\n\"", tent->client->pers.netname));
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been unmerc'd.\""));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been unmerc'd.\n\""));
 		G_LogPrintf("Unmerc admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		return;
 	}
@@ -1358,7 +1362,8 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 		}
 
 		tent = &g_entities[pids[0]];
-
+		
+		/*
 		if ( !Q_stricmp( teamname, "red" ) || !Q_stricmp( teamname, "r" ) ) {
 			SetTeam( tent, "red" );
 			G_LogPrintf("ForceTeam [RED] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
@@ -1367,7 +1372,8 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 			SetTeam( tent, "blue" );
 			G_LogPrintf("ForceTeam [BLUE] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		}
-		else if ( !Q_stricmp( teamname, "spectate" ) || !Q_stricmp( teamname, "spectator" )  || !Q_stricmp( teamname, "spec" ) || !Q_stricmp( teamname, "s" ) ) {
+		*/
+		if ( !Q_stricmp( teamname, "spectate" ) || !Q_stricmp( teamname, "spectator" )  || !Q_stricmp( teamname, "spec" ) || !Q_stricmp( teamname, "s" ) ) {
 			SetTeam( tent, "spectator" );
 			G_LogPrintf("ForceTeam [SPECTATOR] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		}
@@ -1539,14 +1545,12 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	}
 	else if (!Q_stricmp(weather, "rain"))
 	{
-
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*rain 500");
 		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather: \nSnow\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "sandstorm"))
 	{
-
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*wind");
 		G_EffectIndex("*sand");
@@ -1554,7 +1558,6 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	}
 	else if (!Q_stricmp(weather, "blizzard"))
 	{
-;
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*constantwind (100 100 -100)");
 		G_EffectIndex("*fog");
@@ -1563,22 +1566,18 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	}
 	else if (!Q_stricmp(weather, "heavyfog"))
 	{
-		
-		
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*heavyrainfog");
 		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nHeavy Fog\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "spacedust"))
 	{
-		
 		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nSpace Dust\n\"" ) ;
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*spacedust 4000");
 	}
 	else if (!Q_stricmp(weather, "acidrain"))
 	{
-		
 		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nAcid Rain\n\"" ) ;
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*acidrain 500");
@@ -1586,15 +1585,12 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	
 	else if (!Q_stricmp(weather, "fog"))
 	{
-		
-		
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*fog");
 		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nFog\n\"" ) ;
 	}
 		else if (!Q_stricmp(weather, "sand"))
 	{
-
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*sand");
 		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nSand\n\"" ) ;
@@ -1767,7 +1763,7 @@ void Cmd_amSlap_F(gentity_t *ent)
 	tent->client->ps.quickerGetup = qfalse;
 		
 	trap_SendServerCommand(ent-g_entities, va("print \"^5You Successfully slapped %s.\n\"", tent->client->pers.netname));
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been slapped.\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been slapped.\n\""));
 
 	G_LogPrintf("Slap admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
@@ -2493,7 +2489,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 	tent = &g_entities[pids[0]];
 
 	G_ScreenShake( tent->s.origin, tent, 6.0f, 10000, qfalse );
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You shook the screen of ^6 %s ^2.\n\"", tent->client->pers.netname ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You shook the screen of ^6%s ^2.\n\"", tent->client->pers.netname ) );
 	//Don't do a center print for the target - it would distract from the shaking screen.
 	trap_SendServerCommand( tent-g_entities, "print \"^3An admin has shaken your screen.\n\"" );
 	
@@ -2512,6 +2508,7 @@ void Cmd_Music_F( gentity_t * ent )
 	}
 
 	trap_Argv(1, musicPath, sizeof(musicPath));
+	string musicPathSTR = musicPath;
 
 	if(trap_Argc() < 2)
 	{
@@ -2520,7 +2517,7 @@ void Cmd_Music_F( gentity_t * ent )
 	}
 
 	//Put this message above G_Sound2 because the file they choose may not exist, so that message should display last.
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing ^6 %s\n\"", musicPath ) );
-	G_Sound2( ent, CHAN_MUSIC, G_SoundIndex2("%s", musicPath) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing ^6%s\n\"", musicPath ) );
+	G_Sound2( ent, CHAN_MUSIC, G_SoundIndex2( "%s", musicPathSTR.c_str() ) );
 	return;
 }

@@ -1960,15 +1960,15 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		G_LogPrintf( "sayteam: %s: %s\n", ent->client->pers.netname, chatText );
 		if (Team_GetLocationMsg(ent, location, sizeof(location)))
 		{
-			Com_sprintf (name, sizeof(name), EC"(%s%c%c"EC")"EC": ", 
+			Com_sprintf (name, sizeof(name), EC"^1<OOC> - %s%c%c"EC": ", 
 				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 			locMsg = location;
 		}
 		else
 		{
 			//[OpenRP - OOC]
-			Com_sprintf (name, sizeof(name), EC"(OOC - %s%c%c"EC")"EC": ", 
-				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+			Com_sprintf (name, sizeof(name), EC"^1<OOC> - %s%c%c"EC": ", 
+				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_RED );
 		}
 		color = COLOR_RED;
 		//[/OpenRP - OOC]
@@ -3981,7 +3981,7 @@ void ClientCommand( int clientNum ) {
 	gentity_t *ent;
 //	gentity_t *targetplayer;
 	char	cmd[MAX_TOKEN_CHARS];
-	char	cmd2[MAX_TOKEN_CHARS];
+//	char	cmd2[MAX_TOKEN_CHARS];
 	//char	cmd3[MAX_TOKEN_CHARS];
 //	float		bounty;
 
@@ -4117,6 +4117,10 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp(cmd, "charName") == 0) {
 		Cmd_CharName_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "me") == 0) {
+		Cmd_Me_F (ent);
 		return;
 	}
 	if (Q_stricmp(cmd, "amkick") == 0) {

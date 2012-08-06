@@ -39,3 +39,4 @@ void Cmd_Inventory_F( gentity_t * ent );
 void Cmd_EditCharacter_F( gentity_t * ent );
 void Cmd_Bounty_F( gentity_t * ent );
 void Cmd_CharName_F( gentity_t * ent );
+void Cmd_Me_F( gentity_t *ent );
