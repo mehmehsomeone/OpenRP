@@ -183,6 +183,10 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		ent->client->sess.characterChosen = qfalse;
 		ent->client->sess.characterID = NULL;
 
+		//Reset modelscale
+		ent->client->ps.iModelScale = 100;
+		ent->client->sess.modelScale = 100;
+
 		//Remove all feats
 		for(int k = 0; k < NUM_FEATS-1; k++)
 		{
@@ -220,6 +224,18 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		//Logout of Account
 		ent->client->sess.loggedinAccount = qfalse;
 		ent->client->sess.accountID = NULL;
+
+		//Remove all feats
+		for(int k = 0; k < NUM_FEATS-1; k++)
+		{
+			ent->client->featLevel[k] = FORCE_LEVEL_0;
+		}
+
+		//Remove all character skills
+		for(int i = 0; i < NUM_SKILLS-1; i++)
+		{
+			ent->client->skillLevel[i] = FORCE_LEVEL_0;
+		}
 
 		//Remove all force powers
 		ent->client->ps.fd.forcePowersKnown = 0;

@@ -4015,7 +4015,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_SelectCharacter_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "mychars") == 0) {
+	if (Q_stricmp (cmd, "mycharacters") == 0) {
 		Cmd_ListCharacters_F (ent);
 		return;
 	}

@@ -395,7 +395,8 @@ extern vmCvar_t		openrp_admin9Bitvalues;
 extern vmCvar_t		openrp_admin10Bitvalues;
 
 
-//Determines whether admins can perform admin commands on higher admin levels
+//Determines whether admins can perform admin commands on higher admin levels.
+//If it's on (set to 1), then lower level admins can't use cmds like sleep on higher level admins.
 extern vmCvar_t		openrp_adminControl;
 //[/OpenRP Admin]
 

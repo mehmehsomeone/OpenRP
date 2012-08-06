@@ -283,7 +283,7 @@ qboolean G_AdminControl(int UserAdmin, int TargetAdmin)
 		return qtrue;
 	}
 
-	//Less then is used instead of greater than because admin level 1 is higher than admin level 2
+	//Less than is used instead of greater than because admin level 1 is higher than admin level 2
 	if(openrp_adminControl.integer == 1 && UserAdmin <= TargetAdmin)
 	{					
 		return qtrue;
@@ -388,7 +388,7 @@ void Cmd_amKick_F(gentity_t *ent)
 
 	tent = &g_entities[pids[0]];
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -435,7 +435,7 @@ void Cmd_amWarn_F(gentity_t *ent)
 
 	tent = &g_entities[pids[0]];
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -484,7 +484,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 	//as the below if(!player1->client) check should stop it anyway.
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amtele (name1) (name2)\nThe amtele command works by teleporting name1 to name2.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amtele <name1/clientid1> <name2/clientid2>\nThe amtele command works by teleporting name1 to name2.\n\""));
 		return;
 	}
 
@@ -505,7 +505,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 			return;
 		}
 
-		if(!G_AdminControl(ent->client->sess.isAdmin, player2->client->sess.isAdmin))
+		if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 		{
 			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 			return;
@@ -557,7 +557,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 			return;
 		}
 
-		if(!G_AdminControl(ent->client->sess.isAdmin, player2->client->sess.isAdmin))
+		if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 		{
 			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 			return;
@@ -627,7 +627,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 	
 	if ( trap_Argc() < 2 )
 	{ 
-		trap_SendServerCommand( ent-g_entities, va ( "print \"^4Command Usage: /amannounce (name) (message)\nUse all or -1 for the clientid if you want to announce something to all players.\n\"" ) ); 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^4Command Usage: /amannounce <name/clientid> <message>\nUse all or -1 for the clientid if you want to announce something to all players.\n\"" ) ); 
 		return;
 	}
 
@@ -687,7 +687,7 @@ void Cmd_amMute_F(gentity_t *ent)
 
 	tent = &g_entities[pids[0]];
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -743,7 +743,7 @@ void Cmd_amUnMute_F(gentity_t *ent)
 		return;
 	}
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -800,7 +800,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 	//	return;
 	//}
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -885,7 +885,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 		return;
 	}
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -958,7 +958,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 
 	tent = &g_entities[pids[0]];
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -1071,7 +1071,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 
 	tent = &g_entities[pids[0]];
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -1184,7 +1184,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 	tent = &g_entities[pids[0]];
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -1265,7 +1265,7 @@ void Cmd_amEffect_F(gentity_t *ent)
 
 	if ( trap_Argc() != 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amaddeffect (effect) Example: /amaddeffect env/small_fire\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amaddeffect <effect> Example: /amaddeffect env/small_fire\n\"" ) );
 		return;
 	}
 	AddSpawnField("fxFile", effect);
@@ -1350,7 +1350,7 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 
 	if(trap_Argc() != 3) //If the user doesn't specify both args.
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amforceteam (name) (newteam)\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amforceteam <name/clientid> <newteam>\n\"" ) );
 		return;
 	}
 
@@ -1503,21 +1503,32 @@ void Cmd_amWeather_F(gentity_t *ent)
 		G_EffectIndex("*acidrain 500");
 	}
 
-	else
-	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Invalid type of weather.\n\"" );
-		return;
-	}
-			
-	if (!Q_stricmp(weather, "clear"))
+	else if (!Q_stricmp(weather, "clear"))
 	{
 		G_RemoveWeather();
 		num = G_EffectIndex("*clear");
 		trap_SetConfigstring( CS_EFFECTS + num, "");
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Weather changed. To change it back, use /amweather clear\n\"" ) );
-	G_LogPrintf("Weather command executed by %s. The weather is now %s.\n", ent->client->pers.netname, weather);
+	else
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Invalid type of weather.\n\"" );
+		return;
+	}
+
+	if (!Q_stricmp(weather, "clear"))
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Weather cleared.\n\"" ) );
+		G_LogPrintf("Weather cleared by %s.\n", ent->client->pers.netname);
+		return;
+	}
+
+	else
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Weather changed to %s. To change it back, use /amweather clear\n\"", weather ) );
+		G_LogPrintf("Weather command executed by %s. The weather is now %s.\n", ent->client->pers.netname, weather);
+		return;
+	}
 }
 
 //-----------
@@ -1589,27 +1600,37 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 		G_EffectIndex("*fog");
 		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nFog\n\"" ) ;
 	}
-		else if (!Q_stricmp(weather, "sand"))
+	else if (!Q_stricmp(weather, "sand"))
 	{
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*sand");
 		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nSand\n\"" ) ;
+	}	
+	else if (!Q_stricmp(weather, "clear"))
+	{
+		G_RemoveWeather();
+		num = G_EffectIndex("*clear");
+		trap_SetConfigstring( CS_EFFECTS + num, "");
 	}
 	else
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Invalid type of weather.\n\"" );
 		return;
 	}
-			
+
 	if (!Q_stricmp(weather, "clear"))
 	{
-		G_RemoveWeather();
-		num = G_EffectIndex("*clear");
-		trap_SetConfigstring( CS_EFFECTS + num, "");
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Weather cleared.\n\"" ) );
+		G_LogPrintf("Weather cleared by %s.\n", ent->client->pers.netname);
+		return;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Weather changed. To change it back, use /amweather clear\n\"" ) );
-	G_LogPrintf("Weather command executed by %s. The weather is now %s.\n", ent->client->pers.netname, weather);
+	else
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Weather %s added. To clear the weather, use /amweatherplus clear\n\"", weather ) );
+		G_LogPrintf("Weatherplus command executed by %s. The weather added was %s.\n", ent->client->pers.netname, weather);
+		return;
+	}
 }
 /*
 ============
@@ -1682,29 +1703,29 @@ void Cmd_amRename_F(gentity_t *ent)
    trap_Argv( 1, currentname, sizeof( currentname ) );
    clientid = atoi( currentname );
    if (clientid == -1) 
-         { 
-            trap_SendServerCommand( ent-g_entities, va("print \"^5Can't find client ID for %s\n\"", currentname ) ); 
-            return; 
-         } 
-         if (clientid == -2) 
-         { 
-            trap_SendServerCommand( ent-g_entities, va("print \"^5Ambiguous client ID for %s\n\"", currentname ) ); 
-            return; 
-         }
-		 if (clientid >= MAX_CLIENTS || clientid < 0)  
-         { 
-            trap_SendServerCommand( ent-g_entities, va("print \"^5Bad client ID for %s\n\"", currentname ) ); 
-            return;
-         }
-         if (!g_entities[clientid].inuse) 
-         { // check to make sure client slot is in use 
-            trap_SendServerCommand( ent-g_entities, va("print \"^5Client %s is not active\n\"", currentname ) ); 
-            return; 
-         }
-   trap_Argv( 2, newname, sizeof( newname ) );
-		G_LogPrintf("Rename admin command executed by %s on %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
-		trap_SendServerCommand(clientid, va("cvar name %s", newname));
-		uwRename(&g_entities[clientid], newname);
+   {
+		trap_SendServerCommand( ent-g_entities, va("print \"^5Can't find client ID for %s\n\"", currentname ) ); 
+	return; 
+	}
+	if (clientid == -2) 
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"^5Ambiguous client ID for %s\n\"", currentname ) ); 
+		return; 
+	}
+	if (clientid >= MAX_CLIENTS || clientid < 0)  
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"^5Bad client ID for %s\n\"", currentname ) ); 
+		return;
+	}
+	if (!g_entities[clientid].inuse) 
+	{ // check to make sure client slot is in use 
+		trap_SendServerCommand( ent-g_entities, va("print \"^5Client %s is not active\n\"", currentname ) ); 
+		return; 
+	}
+	trap_Argv( 2, newname, sizeof( newname ) );
+	G_LogPrintf("Rename admin command executed by %s on %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
+	trap_SendServerCommand(clientid, va("cvar name %s", newname));
+	uwRename(&g_entities[clientid], newname);
 
 	G_LogPrintf("Rename admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
 	return;
@@ -1744,7 +1765,7 @@ void Cmd_amSlap_F(gentity_t *ent)
 
 	tent = &g_entities[pids[0]];
 
-	if(!G_AdminControl(ent->client->sess.isAdmin, tent->client->sess.isAdmin))
+	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -1771,12 +1792,7 @@ void Cmd_amSlap_F(gentity_t *ent)
 
 void Cmd_info_F( gentity_t *ent )
 {
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5OpenRP %s - info\nOpenRP Website: http://code.google.com/p/openrp/ \nServer Website: %s \nPlayer Commands:\nqwinfo\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
-	
-	if( ent->client->sess.isAdmin )
-	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^5Admin Commands:\nqwaddeffect\nqwannounce\nqwban\nqwbitvalues\nqwcleareffects\nqwempower\nqwforceteam\nqwgranttemp\nqwkick\nqwlogin\nqwlogout\nqwmap\nqwmerc\nqwmute\nqwunmute\nqwprotect\nqwresetscale\nqwscale\nqwsleep\nqwstatus\nqwtele\nqwunsleep\nqwwarn\nqwweather\n\"" ) );
-	}
+	trap_SendServerCommand( ent-g_entities, va( "print \"^4OpenRP %s - info\n^3OpenRP Website: ^6 http://code.google.com/p/openrp/ \n^3Server Website: ^6 %s\n^3View a list of commands at ^6cmds.newagerpg.com\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
 	return;
 }
 
@@ -1809,8 +1825,8 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 
 	if( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: GrantAdmin <username> <adminLevel>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: GrantAdmin <username> <adminLevel>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /grantAdmin <username> <adminLevel>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /grantAdmin <username> <adminLevel>\n\"" );
 		return;
 	}
 
@@ -1872,7 +1888,7 @@ void Cmd_SVGrantAdmin_F()
 	int adminLevel;
 
 	if( trap_Argc() != 3 ){
-		G_Printf( "Command Usage: GrantAdmin <username> <adminLevel>\n" );
+		G_Printf( "Command Usage: grantAdmin <username> <adminLevel>\n" );
 		return;
 	}
 
@@ -1933,7 +1949,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 	}
 
 	if( trap_Argc() < 2 ){
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: RemoveAdmin <accountname>\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /removeAdmin <accountname>\n\"");
 		return;
 	}
 	trap_Argv( 1, username, MAX_STRING_CHARS );
@@ -1976,7 +1992,7 @@ void Cmd_SVRemoveAdmin_F()
 	char username[MAX_TOKEN_CHARS];
 
 	if( trap_Argc() < 2 ){
-		G_Printf( "Command Usage: RemoveAdmin <accountname>\n" );
+		G_Printf( "Command Usage: removeAdmin <accountname>\n" );
 		return;
 	}
 	trap_Argv( 1, username, MAX_STRING_CHARS );
@@ -2029,8 +2045,8 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: GenXP <characterName> <XP>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: GenXP <characterName> <XP>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /genXP <characterName> <XP>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /genXP <characterName> <XP>\n\"" );
 		return;
 	}
 
@@ -2118,8 +2134,8 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: GenCredits <characterName> <amount>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: GenCredits <characterName> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /genCredits <characterName> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /genCredits <characterName> <amount>\n\"" );
 		return;
 	}
 
@@ -2208,7 +2224,7 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: CreateFaction <factionName>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /createFaction <factionName>\n\"" );
 		return;
 	}
 
@@ -2385,8 +2401,8 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: FactionGenCredits <factionID> <amount>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: FactionGenCredits <factionID> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /factionGenCredits <factionID> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /factionGenCredits <factionID> <amount>\n\"" );
 		return;
 	}
 
@@ -2475,7 +2491,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: amshakescreen <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amshakescreen <name/clientid>\n\""));
 		return;
 	}
 
