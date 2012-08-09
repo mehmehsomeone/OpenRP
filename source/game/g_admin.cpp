@@ -753,6 +753,7 @@ void Cmd_amUnMute_F(gentity_t *ent)
 	{
 		tent->client->sess.state -= PLAYER_MUTED; //bad way of doing it but it should work
 	}
+	trap_SendServerCommand(ent-g_entities, va("print \"^5Player unmuted.\n\""));
 	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were unmuted by an admin.\n\""));
 	G_LogPrintf("Unmute admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
@@ -2342,6 +2343,12 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 	}
 
 	char charName[MAX_STRING_CHARS], factionRank[MAX_STRING_CHARS];
+
+	if ( trap_Argc() != 3 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /setFactionRank <charName> <rank>\n\"" );
+		return;
+	}
 
 	trap_Argv( 1, charName, MAX_STRING_CHARS );
 	string charNameSTR = charName;

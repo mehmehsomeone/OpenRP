@@ -190,181 +190,6 @@ void LoadAttributes(gentity_t * ent)
 /*
 =================
 
-GetForceLevel
-
-Takes the level stored in the database and returns force power value
-
-=================
-*/
-int GetForceLevel(int level)
-{
-	switch(level)
-	{
-		case 1:
-			return FORCE_LEVEL_1;
-		case 2:
-			return FORCE_LEVEL_2;
-		case 3:
-			return FORCE_LEVEL_3;
-		default:
-			return FORCE_LEVEL_0;
-	}
-}
-
-/*
-=================
-
-GrantSkill
-
-Grants the appropriate skill with default level to the player
-=====
-*/
-void GrantSkill(int charID, int skill)
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-
-	q.execute( va( "INSERT INTO SkillBuild(CharID,Skill,Level) VALUES('%i','%i','%i')", charID, skill, 1 ) );
-	return;
-}
-
-/*
-=================
-
-UpdateSkill
-
-Updates the appropriate skill with new level
-=====
-*/
-void UpdateSkill(int charid, int skill, int level)
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-	
-	int skillID = q.get_num( va( "SELECT ID FROM skills WHERE charID='%i' AND skill='%i'", charid, skill ) );
-	q.execute( va( "UPDATE skills set level='%i' WHERE ID='%i'", level, skillID ) );
-	return;
-}
-
-/*
-=================
-
-GrantFP
-
-Grants the appropriate forcepower with default level to the player
-=====
-*/
-void GrantFP(int charID, int forcepower)
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-
-	q.execute( va( "INSERT INTO forcepowers(charID,forcepower,level) VALUES('%i','%i','%i')", charID, forcepower, 1 ) );
-	return;
-}
-
-/*
-=================
-
-UpdateFP
-
-Updates the appropriate forcepower with new level
-=====
-*/
-void UpdateFP(int charid, int forcepower, int level)
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-	
-	int fpID = q.get_num( va( "SELECT ID FROM forcepowers WHERE charID='%i' AND forcepower='%i'", charid, forcepower ) );
-	q.execute( va( "UPDATE forcepowers set level='%i' WHERE ID='%i'", level, fpID ) );
-	return;
-}
-
-/*
-=================
-
-HasForcePower
-
-Checks if the character has this forcepower
-=====
-*/
-qboolean HasForcePower(int charid, int power)
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-
-	q.get_result( va( "SELECT * FROM forcepower WHERE charID='%i' AND forcepower='%i'", charid, power ) );
-	int forcepower = q.num_rows();
-	if(forcepower)
-		return qtrue;
-	else
-		return qfalse;
-}
-
-/*
-=================
-
-HasSkill
-
-Checks if the character has this skill
-=====
-*/
-qboolean HasSkill(int charid, int skill)
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-
-	q.get_result( va( "SELECT * FROM skills WHERE charID='%i' AND skill='%i'", charid, skill ) );
-	int valid = q.num_rows();
-	if(valid)
-		return qtrue;
-	else
-		return qfalse;
-}
-
-/*
-=================
-
-HasFeat
-
-Checks if the character has this feat
-=====
-*/
-qboolean HasFeat(int charid, int featID)
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-	/*if(featID == FT_NONE)
-	{
-		return qtrue;
-	}*/
-	q.get_result( va( "SELECT * FROM feats WHERE charID='%i' AND featID='%i'", charid, featID ) );
-	int feat = q.num_rows();
-	if(feat)
-		return qtrue;
-	else
-		return qfalse;
-}
-/*
-=================
-
-InsertFeat
-
-Inserts feat into the database
-=====
-*/
-void InsertFeat(int charID,int featID)
-{
-	Database db(DATABASE_PATH);
-	Query q(db);
-	q.execute( va( "INSERT INTO feats(charID,featID) VALUES('%i','%i')", charID, featID ) );
-	return;
-}
-
-/*
-=================
-
 isInCharacter
 
 
@@ -447,7 +272,8 @@ void LevelCheck(int charID)
 	Query q(db);
 
 	int i;
-	int nextLevel, neededXP;
+	int nextLevel, neededXP, timesLeveled = 0;
+	qboolean leveledUp;
 
 	//Get their accountID
 	//int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", accountID ) );
@@ -457,10 +283,15 @@ void LevelCheck(int charID)
 
 	string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", charID ) );
 
-	for ( i=0; i <= 50; ++i )
+	for ( i=0; i < 49; ++i )
 	{
 		int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
 		int currentXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", charID ) );
+
+		if ( currentLevel == 50 )
+		{
+			break;
+		}
 		
 		nextLevel = currentLevel + 1;
 		neededXP = Q_powf( nextLevel, 2 ) * 2;
@@ -468,17 +299,32 @@ void LevelCheck(int charID)
 		if ( currentXP > neededXP )
 		{
 			q.execute( va( "UPDATE Characters set Level='%i' WHERE CharID='%i'", nextLevel, charID ) );
-
-			//It uses nextLevel because their old level is still stored in currentLevel
-			trap_SendServerCommand( -1, va( "chat \"^3Level up! %s is now a level %i!\n\"", charNameSTR.c_str(), nextLevel ) );
+			leveledUp = qtrue;
+			timesLeveled += 1;
 		}
-		
+	}
+
+	if ( leveledUp )
+	{
+		int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
+
+		if ( timesLeveled > 1 )
+		{
+			trap_SendServerCommand( -1, va( "chat \"^3Level up! %s leveled up %i times and is now a level %i!\n\"", charNameSTR.c_str(), timesLeveled, currentLevel ) );
+			return;
+		}
+
 		else
 		{
+			trap_SendServerCommand( -1, va( "chat \"^3Level up! %s is now a level %i!\n\"", charNameSTR.c_str(), currentLevel ) );
 			return;
 		}
 	}
-	return;
+
+	else
+	{
+		return;
+	}
 }
 
 /*
@@ -1369,6 +1215,7 @@ void Cmd_TransferLeader_F( gentity_t * ent )
 			return;
 		}
 
+		q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", transferFactionNameSTR.c_str(), ent->client->sess.characterID ) );
 		q.execute( va( "UPDATE Factions set Leader='%s' WHERE FactionID='%i'", newLeaderSTR.c_str(), factionID ) );
 		q.execute( va( "UPDATE Characters set Rank='Leader' WHERE CharID='%i'", charID ) );
 		q.execute( va( "UPDATE Characters set Rank='Member' WHERE CharID='%i'", ent->client->sess.characterID ) );
@@ -2176,7 +2023,7 @@ void Cmd_CharName_F( gentity_t * ent )
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /charName <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /characterName <name/clientid>\n\""));
 		return;
 	}
 
@@ -2194,13 +2041,13 @@ void Cmd_CharName_F( gentity_t * ent )
 	if ( tent->client->sess.characterChosen )
 	{
 		string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", tent->client->sess.characterID ) );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^3Char Name: ^6%s ^3.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^3Character Name: ^6%s ^3.\n\"", charNameSTR.c_str() ) );
 		return;
 	}
 
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: % does not have a character selected.\n\"", tent->client->pers.netname ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: %s does not have a character selected.\n\"", tent->client->pers.netname ) );
 	}
 	return;
 }

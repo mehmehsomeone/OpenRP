@@ -4115,7 +4115,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_amListAdmins_F (ent);
 		return;
 	}
-	if (Q_stricmp(cmd, "charName") == 0) {
+	if (Q_stricmp(cmd, "charactername") == 0) {
 		Cmd_CharName_F (ent);
 		return;
 	}

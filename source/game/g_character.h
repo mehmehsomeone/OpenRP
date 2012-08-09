@@ -7,21 +7,9 @@ void LoadAttributes(gentity_t * ent );
 void LevelCheck( int charID );
 void CheckInventory( gentity_t * ent );
 void SaveCharacter(gentity_t * ent);
-//--Feat Functions--
-void AddFeat(int charID, int featID, int level);
-void InsertFeat(int charID, int featID);
-qboolean HasFeat(int charid, int featID);
-qboolean HasForcePower(int charid, int power);
-qboolean HasSkill(int charid, int skill);
-//--Skill functions--
-void GrantSkill(int charID, int skill);
-void UpdateSkill(int charid, int skill, int level);
-//--Force powers--
-void GrantFP(int charID, int forcepower);
-void UpdateFP(int charid, int forcepower, int level);
+
 //--Misc Functions--
 qboolean isInCharacter(gentity_t* ent);
-int GetForceLevel(int level);
 
 //--Ingame commands--
 void Cmd_ListCharacters_F(gentity_t * ent);
