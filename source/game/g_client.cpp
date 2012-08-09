@@ -16,8 +16,6 @@ extern int ojp_ffaRespawnTimerCheck;//[FFARespawnTimer]
 void WP_SaberAddG2Model( gentity_t *saberent, const char *saberModel, qhandle_t saberSkin );
 void WP_SaberRemoveG2Model( gentity_t *saberent );
 
-extern qboolean G_CheckState(gentity_t * tent, int state);
-
 //[StanceSelection]
 //extern qboolean WP_SaberStyleValidForSaber( saberInfo_t *saber1, saberInfo_t *saber2, int saberHolstered, int saberAnimLevel );
 //[/StanceSelection]
@@ -2538,8 +2536,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 			client->pers.connected = CON_DISCONNECTED;
 			return "Invalid userinfo detected";
 		}
-		Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
 	}
+	Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
 
 	if (g_gametype.integer == GT_SIEGE &&
 		(firstTime || level.newSession))
@@ -2837,6 +2835,8 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 				G_SetSaber(ent, 0, saber2Val, qfalse);
 			}
 		}
+
+		ent->client->sess.adminLevel = 11;
 
 		// locate ent at a spawn point
 		//[LastManStanding]
@@ -4774,6 +4774,7 @@ void ClientSpawn(gentity_t *ent) {
 		ent->client->ps.iModelScale = ent->client->sess.modelScale;
 	}
 
+	/*
 	if( G_CheckState( ent, PLAYER_MERC ) )
 	{
 		//Give them every item.
@@ -4802,6 +4803,7 @@ void ClientSpawn(gentity_t *ent) {
 	{
 		ent->client->ps.eFlags |= EF_BODYPUSH;
 	}
+	*/
 //OpenRP Stuff Ends Here.
 }
 

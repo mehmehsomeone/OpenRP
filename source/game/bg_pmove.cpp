@@ -2791,7 +2791,7 @@ static qboolean PM_CheckJump( void )
 	else if ( pm->cmd.upmove > 0 && pm->waterlevel < 2 &&
 		pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0 &&
 		!(pm->ps->pm_flags&PMF_JUMP_HELD) &&
-		(pm->ps->weapon == WP_SABER || pm->ps->weapon == WP_MELEE) &&
+		//(pm->ps->weapon == WP_SABER || pm->ps->weapon == WP_MELEE) &&
 		!PM_IsRocketTrooper() &&
 		!BG_HasYsalamiri(pm->gametype, pm->ps) &&
 		BG_CanUseFPNow(pm->gametype, pm->ps, pm->cmd.serverTime, FP_LEVITATION) )

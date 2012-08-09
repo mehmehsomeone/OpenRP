@@ -25,7 +25,8 @@ Checks if the user is an admin
 
 =====
 */
-void CheckAdmin(gentity_t * ent){
+void CheckAdmin(gentity_t * ent)
+{
 	Database db(DATABASE_PATH);
 	Query q(db);
 	
@@ -135,6 +136,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
 
+	CheckAdmin(ent);
+
 	//You are now logged in as <username>. Congratulations, you can type.
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
 	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
@@ -171,7 +174,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 	if(ent->client->sess.characterChosen == qtrue)
 	{
 		//Save their character
-		SaveCharacter( ent );
+		//SaveCharacter( ent );
 
 		//Logout of Account
 		ent->client->sess.loggedinAccount = qfalse;

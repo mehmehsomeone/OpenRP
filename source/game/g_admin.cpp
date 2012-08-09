@@ -21,6 +21,7 @@ extern int G_SoundIndex2( const char *name, ...  );
 extern int InEmote( int anim );
 extern int InSpecialEmote( int anim );
 extern void G_SetTauntAnim( gentity_t *ent, int taunt );
+extern void AddIP( char *str );
 
 /*
 ================
@@ -340,11 +341,9 @@ void Cmd_amBan_F(gentity_t *ent)
 		return;
 	}
 
-
-	trap_SendConsoleCommand( EXEC_INSERT, va("addip %s", tent->client->sess.IP));
-	
-
-	if (!(tent->r.svFlags & SVF_BOT)){
+	AddIP( tent->client->sess.IP );
+	if (!(tent->r.svFlags & SVF_BOT))
+	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^5The IP of the person you banned is %s\n\"", tent->client->sess.IP));
 	}
 	trap_DropClient(pids[0], "^1was permanently banned.\n");
@@ -395,7 +394,7 @@ void Cmd_amKick_F(gentity_t *ent)
 	}
 
 	trap_SendServerCommand(ent-g_entities, va("print \"^5The IP of the person you kicked is %s\n\"", tent->client->sess.IP));
-	trap_DropClient(pids[0], "^1was kicked.");
+	trap_DropClient(pids[0], "^1was ^1kicked.");
 	G_LogPrintf("Kick admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
 }
@@ -505,7 +504,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 			return;
 		}
 
-		if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
+		if(!G_AdminControl(ent->client->sess.adminLevel, player2->client->sess.adminLevel))
 		{
 			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 			return;
@@ -557,7 +556,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 			return;
 		}
 
-		if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
+		if(!G_AdminControl(ent->client->sess.adminLevel, player2->client->sess.adminLevel))
 		{
 			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
 			return;
@@ -647,6 +646,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 
 	tent = &g_entities[pids[0]];
 
+	trap_SendServerCommand(tent-g_entities, va("print \"%s\"", real_msg));
 	trap_SendServerCommand(tent-g_entities, va("cp \"%s\"", real_msg));
 	G_LogPrintf("Announce admin command executed by %s. It was sent to %s. The announcement was: %s\n", ent->client->pers.netname, tent->client->pers.netname, real_msg);
 	return;
@@ -1023,6 +1023,7 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 amempower Function
 ============
 */
+/*
 void Cmd_amEmpower_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS], i;
@@ -1100,12 +1101,13 @@ void Cmd_amEmpower_F(gentity_t *ent)
 	G_LogPrintf("Empower admin command executed by %s.\n", ent->client->pers.netname);
 	return;
 }
-
+*/
 /*
 ============
 ammerc Function
 ============
 */
+/*
 void Cmd_amMerc_F(gentity_t *ent)
 {
 	int pids[MAX_CLIENTS];
@@ -1243,6 +1245,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 		return;
 	}
 }
+*/
 
 /*
 ============
@@ -1403,7 +1406,8 @@ void Cmd_amMap_F(gentity_t *ent)
 	else
 	{
 		trap_Argv( 1, map, sizeof( map ) );
-		trap_SendServerCommand( -1, va("The map is being changed to %s", map));
+		trap_SendServerCommand( -1, va( "print \"The map is being changed to %s\n\"", map ) );
+		trap_SendServerCommand( -1, va( "cp \"The map is being changed to %s\n\"", map ) );
 		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
 		G_LogPrintf("Map changed to %s by %s.\n", map, ent->client->pers.netname);
 		return;
@@ -2476,10 +2480,12 @@ void Cmd_CheatAccess_F( gentity_t *ent )
 
 void Cmd_ShakeScreen_F( gentity_t * ent )
 {
+	/*
 	int pids[MAX_CLIENTS];
 	char err[MAX_STRING_CHARS];
 	gentity_t *tent;
 	char cmdTarget[MAX_STRING_CHARS];
+	*/
 
 	if(!G_CheckAdmin(ent, ADMIN_SHAKE))
 	{
@@ -2487,27 +2493,28 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
+	//trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+	/*
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amshakescreen <name/clientid>\n\""));
 		return;
 	}
-
+	*/
+	/*
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", cmdTarget));
 		return;
 	}
+	*/
+	//tent = &g_entities[pids[0]];
 
-	tent = &g_entities[pids[0]];
-
-	G_ScreenShake( tent->s.origin, tent, 6.0f, 10000, qfalse );
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You shook the screen of ^6%s ^2.\n\"", tent->client->pers.netname ) );
+	G_ScreenShake( ent->s.origin, ent, 6.0f, 10000, qtrue );
+	trap_SendServerCommand( ent-g_entities, "print \"^2Success: You shook everybody's screen.\n\"" );
 	//Don't do a center print for the target - it would distract from the shaking screen.
-	trap_SendServerCommand( tent-g_entities, "print \"^3An admin has shaken your screen.\n\"" );
+	//trap_SendServerCommand( tent-g_entities, "print \"^3An admin has shaken your screen.\n\"" );
 	
 	return;
 }

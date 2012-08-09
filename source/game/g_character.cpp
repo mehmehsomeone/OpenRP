@@ -2233,6 +2233,6 @@ void Cmd_Me_F( gentity_t *ent )
 		return;
 	}
 
-	trap_SendServerCommand( -1, va( "chat \"^3%s %s\"", ent->client->pers.netname, real_msg ) );
+	trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
 	return;
 }
