@@ -11,7 +11,7 @@
 
 using namespace std;
 
-extern void SaveCharacter(gentity_t * ent);
+//extern void SaveCharacter(gentity_t * ent);
 extern int ClientNumbersFromString( char *s, int *plist);
 extern qboolean G_MatchOnePlayer(int *plist, char *err, int len);
 extern void SanitizeString2( char *in, char *out );
@@ -190,6 +190,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		ent->client->ps.iModelScale = 100;
 		ent->client->sess.modelScale = 100;
 
+		/*
 		//Remove all feats
 		for(int k = 0; k < NUM_FEATS-1; k++)
 		{
@@ -208,6 +209,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		{
 			ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
 		}
+		*/
 
 		//Respawn client
 		ent->flags &= ~FL_GODMODE;
@@ -215,8 +217,8 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		SetTeam(ent,"s");
 
 		//Congratulations, you can type! Oh, and you've been logged out. Later.
-		trap_SendServerCommand( ent-g_entities, "print \"^2Success: You've been logged out and your character has been saved.\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^2Success: You've been logged out and your character has been saved.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Success: You've been logged out.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^2Success: You've been logged out.\n\"" );
 
 		//Update the ui
 		trap_SendServerCommand( ent-g_entities, va( "lui_logout" ) );
@@ -228,6 +230,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		ent->client->sess.loggedinAccount = qfalse;
 		ent->client->sess.accountID = NULL;
 
+		/*
 		//Remove all feats
 		for(int k = 0; k < NUM_FEATS-1; k++)
 		{
@@ -246,6 +249,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		{
 			ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
 		}
+		*/
 
 		//Respawn client
 		ent->flags &= ~FL_GODMODE;
