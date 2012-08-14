@@ -4107,6 +4107,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_Shop_F (ent);
 		return;
 	}
+	if (Q_stricmp (cmd, "checkinventory") == 0 ) {
+		Cmd_CheckInventory_F (ent);
+		return;
+	}
 	if (Q_stricmp (cmd, "inventory") == 0) {
 		Cmd_Inventory_F (ent);
 		return;

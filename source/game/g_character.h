@@ -1,12 +1,12 @@
 //--Database Functions--
 void LoadCharacter(gentity_t * ent);
-void LoadSkills(gentity_t * ent);
-void LoadForcePowers(gentity_t * ent);
-void LoadFeats(gentity_t * ent);
+//void LoadSkills(gentity_t * ent);
+//void LoadForcePowers(gentity_t * ent);
+//void LoadFeats(gentity_t * ent);
 void LoadAttributes(gentity_t * ent );
 void LevelCheck( int charID );
-void CheckInventory( gentity_t * ent );
-void SaveCharacter(gentity_t * ent);
+
+//void SaveCharacter(gentity_t * ent);
 
 //--Misc Functions--
 qboolean isInCharacter(gentity_t* ent);
@@ -23,6 +23,7 @@ void Cmd_FactionDeposit_F( gentity_t * ent );
 void Cmd_ListFactions_F( gentity_t * ent );
 void Cmd_TransferLeader_F( gentity_t * ent );
 void Cmd_Shop_F( gentity_t * ent );
+void Cmd_CheckInventory_F( gentity_t * ent );
 void Cmd_Inventory_F( gentity_t * ent );
 void Cmd_EditCharacter_F( gentity_t * ent );
 void Cmd_Bounty_F( gentity_t * ent );

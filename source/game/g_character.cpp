@@ -39,19 +39,19 @@ void LoadCharacter(gentity_t * ent)
 	string newForceString;
 	newForceString.append(va("%i-%i-",FORCE_MASTERY_JEDI_KNIGHT,FORCE_LIGHTSIDE));
 	int i;
-	for( i = 0; i < NUM_FORCE_POWERS-1; i++ )
+	for( i = 0; i < NUM_FORCE_POWERS; i++ )
 	{
 		char tempForce[2];
 		itoa( ent->client->ps.fd.forcePowerLevel[i], tempForce, 10 );
 		newForceString.append(tempForce);
 	}
-	for( i = 0; i < NUM_SKILLS-1; i++ )
+	for( i = 0; i < NUM_SKILLS; i++ )
 	{
 		char tempSkill[2];
 		itoa( ent->client->skillLevel[i], tempSkill, 10 );
 		newForceString.append(tempSkill);
 	}
-	for( i = 0; i < NUM_FEATS-1; i++ )
+	for( i = 0; i < NUM_FEATS; i++ )
 	{
 		char tempFeat[2];
 		itoa( ent->client->featLevel[i], tempFeat, 10 );
@@ -72,6 +72,7 @@ Loads the character feats
 
 =================
 */
+/*
 void LoadFeats(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
@@ -92,7 +93,7 @@ void LoadFeats(gentity_t * ent)
 	}
 	return;
 }
-
+*/
 
 /*
 =================
@@ -103,6 +104,7 @@ Loads the character skills
 
 =================
 */
+/*
 void LoadSkills(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
@@ -123,7 +125,7 @@ void LoadSkills(gentity_t * ent)
 	}
 	return;
 }
-
+*/
 
 /*
 =================
@@ -134,6 +136,7 @@ Loads the character force powers
 
 =================
 */
+/*
 void LoadForcePowers(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
@@ -156,6 +159,7 @@ void LoadForcePowers(gentity_t * ent)
 	}
 	return;
 }
+*/
 
 /*
 =================
@@ -213,6 +217,7 @@ Saves the character information to the database
 
 =====
 */
+/*
 void SaveCharacter(gentity_t * ent) 
 {
         Database db(DATABASE_PATH);
@@ -229,14 +234,14 @@ void SaveCharacter(gentity_t * ent)
 		string forceString;
 
         //Create feat string
-        for(int i = 0; i < NUM_FEATS-1; i++)
+        for(int i = 0; i < NUM_FEATS; i++)
         {
 		 char tempFeat[2];
 		 itoa(ent->client->featLevel[i],tempFeat,10);
 		 featString.append(tempFeat);
         }
         //Create skill string
-        for(int j = 0; j < NUM_SKILLS-1; j++)
+        for(int j = 0; j < NUM_SKILLS; j++)
         {
 		 char tempSkill[2];
          itoa(ent->client->skillLevel[j],tempSkill,10);
@@ -259,6 +264,7 @@ void SaveCharacter(gentity_t * ent)
 	  
 	  return;
 }
+*/
 
 /*
 =================
@@ -511,7 +517,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Character %s (No Faction) created. It is being selected as your current character.\nIf you had colors in the name, they were removed. ^3Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str() ) );
 		ent->flags &= ~FL_GODMODE;
 		ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
-		player_die(ent, ent, ent, 100000, MOD_SUICIDE);
+		player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 
 		return;
 	}
@@ -594,7 +600,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Character %s (Faction: %s) created. It is being selected as your current character.\nIf you had colors in the name, they were removed. ^3Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
 		ent->flags &= ~FL_GODMODE;
 		ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
-		player_die(ent, ent, ent, 100000, MOD_SUICIDE);
+		player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 
 		return;
 	}
@@ -666,7 +672,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 
 		/*
 		//Remove all feats
-		for(int k = 0; k < NUM_FEATS-1; k++)
+		for(int k = 0; k < NUM_FEATS; k++)
 		{
 			ent->client->featLevel[k] = FORCE_LEVEL_0;
 		}
@@ -1381,38 +1387,42 @@ void Cmd_Shop_F( gentity_t * ent )
 			return;
 		}
 
+		q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
+		
+		if ( !Q_stricmp( itemName, "pistol" ) )
+		{
+			int currentTotal = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+	
+		else if ( !Q_stricmp( itemName, "e-11" ) )
+		{
+			int currentTotal = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set E11='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+			
+		}
+
 		else
 		{
-			q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
-		
-			if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
-			{
-				int currentTotal = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
-				newTotal = currentTotal + 1;
-				q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
-			}
-		
-			else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
-			{
-				int currentTotal = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
-				newTotal = currentTotal + 1;
-				q.execute( va( "UPDATE Items set E11='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
-			}
-
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have purchased a ^6%s ^2for ^6%i ^2credits.\n\"", itemNameSTR.c_str(), itemCost ) );
+			trap_SendServerCommand( ent-g_entities, "print \"^1Error: This item is not a valid item.\n\"" );
 			return;
 		}
+
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You have purchased a ^6%s ^2for ^6%i ^2credits.\n\"", itemNameSTR.c_str(), itemCost ) );
+		return;
 	}
 
 	else if ( !Q_stricmp( parameter, "examine" ) )
 	{
-		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
+		if ( !Q_stricmp( itemName, "pistol" ) )
 		{
 			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_pistolDescription.string ) );
 			return;
 		}
 	
-		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
+		else if ( !Q_stricmp( itemName, "e-11" ) )
 		{
 			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_e11Description.string ) );
 			return;
@@ -1442,7 +1452,7 @@ Check someone's inventory
 
 =================
 */
-void CheckInventory( gentity_t * ent )
+void Cmd_CheckInventory_F( gentity_t * ent )
 {
 	Database db(DATABASE_PATH);
 	Query q(db);

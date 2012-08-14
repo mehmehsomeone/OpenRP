@@ -876,8 +876,10 @@ typedef struct {
 	int adminLevel;
 	vec3_t placeOfDeath;
 	int state;						//The current state of the player
+	int Scale;						//The players new scale
 	int warnings;					//The current amount of warnings the player has
 	char IP[32];					//The players IP Address is stored here
+	qboolean Scaled;
 	int pids[MAX_CLIENTS];			//Client IDs
 
 } clientSession_t;
