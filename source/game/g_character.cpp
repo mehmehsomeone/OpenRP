@@ -611,6 +611,7 @@ Loads the character data and executes the keys effects
 void Cmd_SelectCharacter_F(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
+	Query q(db);
 	//The database is not connected. Please do so.
 	if ( !db.Connected() )
 	{
@@ -629,8 +630,8 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	//Make sure they entered a character
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"Usage: character <name>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"Usage: character <name>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /character <name>\n\"" );
+		//trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /character <name>\n\"" );
 		return;
 	}
 
@@ -640,7 +641,6 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	string charNameSTR = charName;
 
 	//Check if the character exists
-	Query q(db);
 	transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
 	int charID = q.get_num(va("SELECT CharID FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str()));
 	if( charID == 0 )
@@ -731,10 +731,10 @@ void Cmd_GiveCredits_F(gentity_t * ent)
 	char recipientCharName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
 	int changedCredits;
 
-	if( trap_Argc() < 2 )
+	if( trap_Argc() != 3 )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /giveCredits <characterName> <amount>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /giveCredits <characterName> <amount>\n\"" );
+		//trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /giveCredits <characterName> <amount>\n\"" );
 		return;
 	}
 
@@ -1039,6 +1039,12 @@ void Cmd_FactionWithdraw_F( gentity_t * ent )
 		return;
 	}
 
+	if ( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: factionWithdraw <amount>\n\"" );
+		return;
+	}
+
 	trap_Argv( 1, temp, MAX_STRING_CHARS );
 	changedCredits = atoi( temp );
 
@@ -1100,6 +1106,12 @@ void Cmd_FactionDeposit_F( gentity_t * ent )
 	if ( factionNameSTR == "none" )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You are not in a faction.\n\"" );
+		return;
+	}
+
+	if ( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: factionDeposit <amount>\n\"" );
 		return;
 	}
 
@@ -1188,7 +1200,7 @@ void Cmd_TransferLeader_F( gentity_t * ent )
 
 	if ( !G_CheckAdmin( ent, ADMIN_FACTION ) )
 	{
-			if( ( !ent->client->sess.loggedinAccount ) || ( !ent->client->sess.characterChosen ) )
+		if( ( !ent->client->sess.loggedinAccount ) || ( !ent->client->sess.characterChosen ) )
 		{
 			trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
 			return;
@@ -1230,7 +1242,7 @@ void Cmd_TransferLeader_F( gentity_t * ent )
 			return;
 		}
 
-		q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", transferFactionNameSTR.c_str(), ent->client->sess.characterID ) );
+		q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", transferFactionNameSTR.c_str(), charID ) );
 		q.execute( va( "UPDATE Factions set Leader='%s' WHERE FactionID='%i'", newLeaderSTR.c_str(), factionID ) );
 		q.execute( va( "UPDATE Characters set Rank='Leader' WHERE CharID='%i'", charID ) );
 		q.execute( va( "UPDATE Characters set Rank='Member' WHERE CharID='%i'", ent->client->sess.characterID ) );
@@ -1261,6 +1273,7 @@ void Cmd_TransferLeader_F( gentity_t * ent )
 			return;
 		}
 
+		q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", transferFactionNameSTR.c_str(), newLeaderCharID ) );
 		q.execute( va( "UPDATE Factions set Leader='%s' WHERE FactionID='%i'", newLeaderSTR.c_str(), factionID ) );
 		q.execute( va( "UPDATE Characters set Rank='Leader' WHERE CharID='%i'", newLeaderCharID ) );
 		q.execute( va( "UPDATE Characters set Rank='Member' WHERE CharID='%i'", oldLeaderCharID ) );
@@ -1297,13 +1310,13 @@ void Cmd_Shop_F( gentity_t * ent )
 	
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Shop:\nWeapons:\n^3Pistol (Level ^6%i ^3) - ^6%i ^3credits\n^3E-11(Level ^6%i ^3) - ^6%i ^3credits\n\"", openrp_pistolLevel.integer, openrp_pistolBuyCost.integer, openrp_e11Level.integer, openrp_e11BuyCost.integer ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^4Shop:\nWeapons:\n^3Pistol (Level ^6%i ^3) - ^6%i ^3credits\n^3E-11(Level ^6%i ^3) - ^6%i ^3credits\n^3Remember: You can also use /shop <buy/examine> <item>\n\"", openrp_pistolLevel.integer, openrp_pistolBuyCost.integer, openrp_e11Level.integer, openrp_e11BuyCost.integer ) );
 		return;
 	}
 
 	else if ( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /shop <buy/examine> <item> or just shop to see all of the shop items.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /shop <buy/examine> <item> or just /shop to see all of the shop items.\n\"" );
 		return;
 	}
 
@@ -1451,14 +1464,14 @@ void CheckInventory( gentity_t * ent )
 		if ( checkInventory == 0 )
 		{
 			q.execute( va( "UPDATE Characters set CheckInventory='1' WHERE CharID='%i'", ent->client->sess.characterID ) );
-			trap_SendServerCommand( ent-g_entities, "print \"^2Success: Others ^6can ^2check your inventory.\n^3Tip: You can check others' inventories by using ^4checkInventory <name> ^3if they allow it.\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^2Success: Others ^6can ^2check your inventory.\n^3Tip: You can check others' inventories by using ^4/checkInventory <characterName> ^3if they allow it.\n\"" );
 			return;
 		}
 
 		else
 		{
 			q.execute( va( "UPDATE Characters set CheckInventory='0' WHERE CharID='%i'", ent->client->sess.characterID ) );
-			trap_SendServerCommand( ent-g_entities, "print \"^2Success: Others can ^6not ^2check your inventory.\n^3Tip: You can check others' inventories by using ^4checkInventory <name> ^3if they allow it.\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^2Success: Others ^6cannot ^2check your inventory.\n^3Tip: You can check others' inventories by using ^4/checkInventory <characterName> ^3if they allow it.\n\"" );
 			return;
 		}
 	}
@@ -1548,7 +1561,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 
 	else if ( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /inventory <use/sell/delete> <item> or just inventory to see your own inventory.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /inventory <use/sell/delete> <item> or just /inventory to see your own inventory.\n\"" );
 		return;
 	}
 
@@ -1708,7 +1721,7 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 {
 	if( ( !ent->client->sess.loggedinAccount ) || ( !ent->client->sess.characterChosen ) )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in and have a character selected in order to view your character's info.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in and have a character selected in order to edit your character's info.\n\"" );
 		return;
 	}
 	
@@ -1726,6 +1739,7 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /editCharacter <name/model/modelscale> <value> \n\"" ) ;
 		return;
 	}
+
 	char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS], changeCleaned[MAX_STRING_CHARS];
 
 	trap_Argv( 1, parameter, MAX_STRING_CHARS );
@@ -1845,7 +1859,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 				trap_SendServerCommand( ent-g_entities, va("print \"^3BountyID: ^6%i ^3Name: ^6%s ^3Reward: ^6%i ^3Wanted: ^6%s\n\"", bountyID, bountyName.c_str(), bountyReward, aliveDeadSTR.c_str() ) );
 			}
 			q.free_result();
-			trap_SendServerCommand( ent-g_entities, "print \"\n^3Remember: You can add a bounty with ^2bounty add <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"\n^3Remember: You can add a bounty with ^2bounty add <characterName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
 			return;
 		}
 		
@@ -1881,7 +1895,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 				trap_SendServerCommand( ent-g_entities, va("print \"^3BountyID: ^6%i ^3Bounty Target: ^6%s ^3Bounty Creator: ^6%s ^3Reward: ^6%i ^3Wanted: ^6%s\n\"", bountyID, bountyName.c_str(), bountyCreator.c_str(), bountyReward, aliveDeadSTR.c_str() ) );
 			}
 			q.free_result();
-			trap_SendServerCommand( ent-g_entities, "print \"^3Remember: You can add a bounty with ^2bounty add <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^3Remember: You can add a bounty with ^2bounty add <characterName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
 			return;
 		}
 	}
@@ -1902,7 +1916,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 	{
 		if ( trap_Argc() != 5 )
 		{
-			trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /bounty <add> <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\nor just /bounty to view a list of current bounties.\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /bounty <add> <characterName> <reward> <0(dead)/1(alive)/2(dead or alive)>\nor just /bounty to view a list of current bounties.\n\"" );
 			if ( G_CheckAdmin( ent, ADMIN_BOUNTY ) )
 			{
 				trap_SendServerCommand( ent-g_entities, "print \"^4There is also /bounty remove <bountyID>\n\"" );
@@ -1981,7 +1995,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 			if ( trap_Argc() != 3 )
 			{
 				trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /bounty remove <bountyID>\n\"" );
-				trap_SendServerCommand( ent-g_entities, "print \"^4There is also /bounty add <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\nor just /bounty to view a list of current bounties.\n\"" );
+				trap_SendServerCommand( ent-g_entities, "print \"^4There is also /bounty add <characterName> <reward> <0(dead)/1(alive)/2(dead or alive)>\nor just /bounty to view a list of current bounties.\n\"" );
 				return;
 			}
 
@@ -2012,10 +2026,10 @@ void Cmd_Bounty_F( gentity_t * ent )
 
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /bounty add <charName> <reward> <0(dead)/1(alive)/2(dead or alive)>\nor just /bounty to view a list of current bounties.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /bounty add <characterName> <reward> <0(dead)/1(alive)/2(dead or alive)>\nor just /bounty to view a list of current bounties.\n\"" );
 		if ( G_CheckAdmin( ent, ADMIN_BOUNTY ) )
 		{
-			trap_SendServerCommand( ent-g_entities, "print \"^4There is also /bounty remove <charName>\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^4There is also /bounty remove <characterName>\n\"" );
 		}
 		return;
 	}

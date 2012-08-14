@@ -91,10 +91,10 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	char userName[MAX_STRING_CHARS], userPassword[MAX_STRING_CHARS];
 
 	//Make sure they entered both a username and a password
-	if( trap_Argc() < 3 )
+	if( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: Login <username> <password>\n\"");
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: Login <username> <password>\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /login <username> <password>\n\"");
+		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /login <username> <password>\n\"");
 		return;
 	}
 
@@ -289,9 +289,10 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 
 	char userName[MAX_STRING_CHARS], userNameCleaned[MAX_STRING_CHARS], userPassword[MAX_STRING_CHARS];
 
-	//Make sure they entered both a user and a password
-	if( trap_Argc() != 3 ){
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: register <user> <password>\n\"");
+	//Make sure they entered both a username and a password
+	if( trap_Argc() != 3 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /register <username> <password>\n\"");
 		return;
 	}
 	
@@ -300,7 +301,6 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	SanitizeString2( userName, userNameCleaned );
 	string userNameSTR = userNameCleaned;
 	trap_Argv( 2, userPassword, MAX_STRING_CHARS );
-	
 
 	//Check if that user exists already
 	transform( userNameSTR.begin(), userNameSTR.end(), userNameSTR.begin(), ::tolower );

@@ -313,13 +313,14 @@ void Cmd_amBan_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amban <name/clientid>\n\""));
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
@@ -370,13 +371,13 @@ void Cmd_amKick_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amkick <name/clientid>\n\""));
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -417,13 +418,13 @@ void Cmd_amWarn_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amwarn <name/clientid>\n\""));
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1)
 	{
@@ -476,17 +477,17 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, name, sizeof(name)); //First Name
-	trap_Argv(2, name2, sizeof(name2)); //Second name
-
-	//Check if the argument is empty. If it is quit. If you don't errors occur. Don't know why
-	//as the below if(!player1->client) check should stop it anyway.
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amtele <name1/clientid1> <name2/clientid2>\nThe amtele command works by teleporting name1 to name2.\n\""));
 		return;
 	}
 
+	trap_Argv(1, name, sizeof(name)); //First Name
+	trap_Argv(2, name2, sizeof(name2)); //Second name
+
+	//Check if the argument is empty. If it is quit. If you don't errors occur. Don't know why
+	//as the below if(!player1->client) check should stop it anyway.
 	if(name2 == NULL)
 	{
 		if(ClientNumbersFromString(name2, pids) != 1) //If the name or clientid is not found
@@ -616,17 +617,17 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 
 	real_msg[pos] = 0;
 
+	if ( trap_Argc() < 2 )
+	{ 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^4Command Usage: /amannounce <name/clientid> <message>\nUse all or -1 for the clientid if you want to announce something to all players.\n\"" ) ); 
+		return;
+	}
+
 	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	if(!G_CheckAdmin(ent, ADMIN_ANNOUNCE))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
-		return;
-	}
-	
-	if ( trap_Argc() < 2 )
-	{ 
-		trap_SendServerCommand( ent-g_entities, va ( "print \"^4Command Usage: /amannounce <name/clientid> <message>\nUse all or -1 for the clientid if you want to announce something to all players.\n\"" ) ); 
 		return;
 	}
 
@@ -670,13 +671,13 @@ void Cmd_amMute_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /ammute <name/clientid>\n\""));
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -721,13 +722,13 @@ void Cmd_amUnMute_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amunmute <name/clientid>\n\""));
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -779,13 +780,13 @@ void Cmd_amSleep_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amsleep <name/clientid>\n\""));
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -861,13 +862,13 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amunsleep <name/clientid>\n\""));
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -936,8 +937,6 @@ void Cmd_amProtect_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{ //If no name is given protect the user of the command.
 		if ( !(ent->client->ps.eFlags & EF_INVULNERABLE) )
@@ -956,6 +955,8 @@ void Cmd_amProtect_F(gentity_t *ent)
 		}
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -992,7 +993,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 
 /*
 ============
-amadminwhois Function
+amlistadmins Function
 ============
 */
 void Cmd_amListAdmins_F(gentity_t *ent)
@@ -1034,8 +1035,6 @@ void Cmd_amEmpower_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{
 		{
@@ -1059,7 +1058,9 @@ void Cmd_amEmpower_F(gentity_t *ent)
 		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been empowered.\n\""));
 		return;
 	}
-	
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
@@ -1118,8 +1119,6 @@ void Cmd_amMerc_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	//Mercing yourself
 	if( ( trap_Argc() < 2 ) && ( !G_CheckState( ent, PLAYER_MERC ) ) ) //If the person who used the command did not specify a name, and if they are not currently a merc, then merc them.
 	{
@@ -1172,6 +1171,8 @@ void Cmd_amMerc_F(gentity_t *ent)
 		G_LogPrintf("Unmerc admin command executed by %s on themself.\n", ent->client->pers.netname);
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	//Mercing another player
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
@@ -1253,21 +1254,21 @@ void Cmd_amEffect_F(gentity_t *ent)
 {
 	char   effect[MAX_STRING_CHARS]; // 16k file size
 	gentity_t *fx_runner = G_Spawn();         
-		
-	trap_Argv( 1,  effect, sizeof( effect ) );
-
+	
 	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
 	{
 		trap_SendServerCommand(ent-g_entities, va( "print \"^1Error: You are not allowed to use this command.\n\"" ));
 		return;
 	}
-	
 
-	if ( trap_Argc() != 2 )
+	if ( trap_Argc() < 2 )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amaddeffect <effect> Example: /amaddeffect env/small_fire\n\"" ) );
 		return;
 	}
+
+	trap_Argv( 1,  effect, sizeof( effect ) );
+
 	AddSpawnField("fxFile", effect);
 #ifdef __LINUX__
 	fx_runner->s.origin[2] = (int) ent->client->ps.origin[2];
@@ -1338,15 +1339,11 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 	char err[MAX_STRING_CHARS], teamname[MAX_STRING_CHARS], cmdTarget[MAX_STRING_CHARS];
 	gentity_t *tent;
 	
-
 	if(!G_CheckAdmin(ent, ADMIN_FORCETEAM))
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You are not allowed to use this command.\n\"" ) );
 		return;
 	}
-		trap_Argv( 1, cmdTarget, sizeof (cmdTarget ) ); //The first command argument is the target's name.
-
-		trap_Argv( 2, teamname, sizeof( teamname ) ); //The second command argument is the team's name.
 
 	if(trap_Argc() != 3) //If the user doesn't specify both args.
 	{
@@ -1354,37 +1351,41 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 		return;
 	}
 
-		if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
-		{
-			G_MatchOnePlayer( pids, err, sizeof( err ) );
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", cmdTarget ) );
-			return;
-		}
+	trap_Argv( 1, cmdTarget, sizeof (cmdTarget ) ); //The first command argument is the target's name.
 
-		tent = &g_entities[pids[0]];
-		
-		/*
-		if ( !Q_stricmp( teamname, "red" ) || !Q_stricmp( teamname, "r" ) ) {
-			SetTeam( tent, "red" );
-			G_LogPrintf("ForceTeam [RED] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
-		}
-		else if ( !Q_stricmp( teamname, "blue" ) || !Q_stricmp( teamname, "b" ) ) {
-			SetTeam( tent, "blue" );
-			G_LogPrintf("ForceTeam [BLUE] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
-		}
-		*/
-		if ( !Q_stricmp( teamname, "spectate" ) || !Q_stricmp( teamname, "spectator" )  || !Q_stricmp( teamname, "spec" ) || !Q_stricmp( teamname, "s" ) ) {
-			SetTeam( tent, "spectator" );
-			G_LogPrintf("ForceTeam [SPECTATOR] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
-		}
-		else if ( !Q_stricmp( teamname, "enter" ) || !Q_stricmp( teamname, "free" ) || !Q_stricmp( teamname, "join" ) || !Q_stricmp( teamname, "j" )
-			 || !Q_stricmp( teamname, "f" ) ) {
-			SetTeam( tent, "free" );
-			G_LogPrintf( "ForceTeam [FREE] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname );
-		}
-		trap_SendServerCommand( ent-g_entities, va( "print \"^5Player %s was forceteamed Successfully.\n\"", tent->client->pers.netname ) );
+	trap_Argv( 2, teamname, sizeof( teamname ) ); //The second command argument is the team's name.
+
+	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
+	{
+		G_MatchOnePlayer( pids, err, sizeof( err ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", cmdTarget ) );
 		return;
 	}
+
+	tent = &g_entities[pids[0]];
+		
+	/*
+	if ( !Q_stricmp( teamname, "red" ) || !Q_stricmp( teamname, "r" ) ) {
+		SetTeam( tent, "red" );
+		G_LogPrintf("ForceTeam [RED] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	}
+	else if ( !Q_stricmp( teamname, "blue" ) || !Q_stricmp( teamname, "b" ) ) {
+		SetTeam( tent, "blue" );
+		G_LogPrintf("ForceTeam [BLUE] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	}
+	*/
+	if ( !Q_stricmp( teamname, "spectate" ) || !Q_stricmp( teamname, "spectator" )  || !Q_stricmp( teamname, "spec" ) || !Q_stricmp( teamname, "s" ) ) {
+		SetTeam( tent, "spectator" );
+		G_LogPrintf("ForceTeam [SPECTATOR] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
+	}
+	else if ( !Q_stricmp( teamname, "enter" ) || !Q_stricmp( teamname, "free" ) || !Q_stricmp( teamname, "join" ) || !Q_stricmp( teamname, "j" )
+		 || !Q_stricmp( teamname, "f" ) ) {
+		SetTeam( tent, "free" );
+		G_LogPrintf( "ForceTeam [FREE] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname );
+	}
+	trap_SendServerCommand( ent-g_entities, va( "print \"^5Player %s was forceteamed Successfully.\n\"", tent->client->pers.netname ) );
+	return;
+}
 
 /*
 ============
@@ -1400,15 +1401,20 @@ void Cmd_amMap_F(gentity_t *ent)
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
-	else
+
+	if ( trap_Argc() < 2 )
 	{
-		trap_Argv( 1, map, sizeof( map ) );
-		trap_SendServerCommand( -1, va( "print \"The map is being changed to %s\n\"", map ) );
-		trap_SendServerCommand( -1, va( "cp \"The map is being changed to %s\n\"", map ) );
-		trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
-		G_LogPrintf("Map changed to %s by %s.\n", map, ent->client->pers.netname);
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /amMap <mapName>\n\"" );
 		return;
 	}
+
+	trap_Argv( 1, map, sizeof( map ) );
+
+	trap_SendServerCommand( -1, va( "print \"The map is being changed to %s\n\"", map ) );
+	trap_SendServerCommand( -1, va( "cp \"The map is being changed to %s\n\"", map ) );
+	trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
+	G_LogPrintf("Map changed to %s by %s.\n", map, ent->client->pers.netname);
+	return;
 }
 
 /*
@@ -1441,6 +1447,12 @@ void Cmd_amWeather_F(gentity_t *ent)
 {
 	char	weather[MAX_STRING_CHARS];
 	int		num;
+
+	if ( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /amWeather <weather>\n\"" );
+		return;
+	}
 
 	trap_Argv( 1,  weather, sizeof( weather ) );
 
@@ -1541,6 +1553,12 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 {
 	char	weather[MAX_STRING_CHARS];
 	int num;
+
+	if ( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /amWeatherPlus <weather>\n\"" );
+		return;
+	}
 
 	trap_Argv( 1,  weather, sizeof( weather ) );
 
@@ -1648,15 +1666,15 @@ void Cmd_amStatus_F(gentity_t *ent)
 		return;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Status\n===================================\n\"" ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^4Status\n===================================\n\"" ) );
    for(i = 0; i < level.maxclients; i++)
    { 
       if(g_entities[i].client->pers.connected == CON_CONNECTED)
 	  { 
-		  trap_SendServerCommand( ent-g_entities, va( "print \"^5ID: %i ^5Name: %s ^5IP: %s\n\"", g_entities[i].client->sess.pids[0], g_entities[i].client->pers.netname, g_entities[i].client->sess.IP ) );
+		  trap_SendServerCommand( ent-g_entities, va( "print \"^3ID: ^6%i ^3Name: ^6%s ^3IP: ^6%s\n\"", g_entities[i].client->sess.pids[0], g_entities[i].client->pers.netname, g_entities[i].client->sess.IP ) );
 	  }
    }
-   trap_SendServerCommand( ent-g_entities, va( "print \"^5===================================\n\"" ) );
+   trap_SendServerCommand( ent-g_entities, va( "print \"^4===================================\n\"" ) );
    return;
 }
 
@@ -1703,19 +1721,21 @@ void Cmd_amRename_F(gentity_t *ent)
       trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amrename <currentname> <newname>\n\"" ) ); 
       return;
    }
+
    trap_Argv( 1, currentname, sizeof( currentname ) );
    clientid = atoi( currentname );
+
    if (clientid == -1) 
    {
 		trap_SendServerCommand( ent-g_entities, va("print \"^5Can't find client ID for %s\n\"", currentname ) ); 
-	return; 
+		return; 
 	}
-	if (clientid == -2) 
+	else if (clientid == -2) 
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"^5Ambiguous client ID for %s\n\"", currentname ) ); 
 		return; 
 	}
-	if (clientid >= MAX_CLIENTS || clientid < 0)  
+	else if (clientid >= MAX_CLIENTS || clientid < 0)  
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"^5Bad client ID for %s\n\"", currentname ) ); 
 		return;
@@ -1751,13 +1771,13 @@ void Cmd_amSlap_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
-
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amslap <name/clientid>\n\"" ) );
 		return;
 	}
+
+	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -1890,7 +1910,8 @@ void Cmd_SVGrantAdmin_F()
 	char username[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS];
 	int adminLevel;
 
-	if( trap_Argc() != 3 ){
+	if( trap_Argc() != 3 )
+	{
 		G_Printf( "Command Usage: grantAdmin <username> <adminLevel>\n" );
 		return;
 	}
@@ -1951,10 +1972,12 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 		return;
 	}
 
-	if( trap_Argc() < 2 ){
+	if( trap_Argc() < 2 )
+	{
 		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /removeAdmin <accountname>\n\"");
 		return;
 	}
+
 	trap_Argv( 1, username, MAX_STRING_CHARS );
 	string usernameSTR = username;
 	transform( usernameSTR.begin(), usernameSTR.end(), usernameSTR.begin(), ::tolower );
@@ -1994,10 +2017,12 @@ void Cmd_SVRemoveAdmin_F()
 
 	char username[MAX_TOKEN_CHARS];
 
-	if( trap_Argc() < 2 ){
+	if( trap_Argc() < 2 )
+	{
 		G_Printf( "Command Usage: removeAdmin <accountname>\n" );
 		return;
 	}
+
 	trap_Argv( 1, username, MAX_STRING_CHARS );
 	string usernameSTR = username;
 	transform( usernameSTR.begin(), usernameSTR.end(), usernameSTR.begin(), ::tolower );
@@ -2277,6 +2302,12 @@ void Cmd_SetFaction_F( gentity_t * ent )
 
 	char charName[MAX_STRING_CHARS], factionName[MAX_STRING_CHARS];
 
+	if ( trap_Argc() != 3 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /amSetFaction <characterName> <factionName>\n\"" );
+		return;
+	}
+
 	trap_Argv( 1, charName, MAX_STRING_CHARS );
 	string charNameSTR = charName;
 
@@ -2316,6 +2347,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	}
 	return;
 }
+
 /*
 =================
 
@@ -2339,7 +2371,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 	if ( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /setFactionRank <charName> <rank>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /setFactionRank <characterName> <rank>\n\"" );
 		return;
 	}
 
@@ -2532,7 +2564,6 @@ void Cmd_CheatAccess_F( gentity_t *ent )
 	return;
 }
 
-
 void Cmd_ShakeScreen_F( gentity_t * ent )
 {
 	/*
@@ -2548,7 +2579,6 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 		return;
 	}
 
-	//trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 	/*
 	if(trap_Argc() < 2)
 	{
@@ -2556,6 +2586,9 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 		return;
 	}
 	*/
+
+	//trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+	
 	/*
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
@@ -2564,6 +2597,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 		return;
 	}
 	*/
+
 	//tent = &g_entities[pids[0]];
 
 	G_ScreenShake( ent->s.origin, ent, 6.0f, 10000, qtrue );
@@ -2585,14 +2619,14 @@ void Cmd_Music_F( gentity_t * ent )
 		return;
 	}
 
-	trap_Argv(1, musicPath, sizeof(musicPath));
-	string musicPathSTR = musicPath;
-
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /ammusic <path>\n\""));
 		return;
 	}
+
+	trap_Argv(1, musicPath, sizeof(musicPath));
+	string musicPathSTR = musicPath;
 
 	//Put this message above G_Sound2 because the file they choose may not exist, so that message should display last.
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing ^6%s\n\"", musicPath ) );
