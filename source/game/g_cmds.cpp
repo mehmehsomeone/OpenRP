@@ -4103,6 +4103,7 @@ void ClientCommand( int clientNum ) {
 		 Cmd_Bounty_F(ent);
 		return;
 	}
+	/*
 	if (Q_stricmp (cmd, "shop") == 0) {
 		Cmd_Shop_F (ent);
 		return;
@@ -4115,6 +4116,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_Inventory_F (ent);
 		return;
 	}
+	*/
 	if (Q_stricmp(cmd, "amlistadmins") == 0) {
 		Cmd_amListAdmins_F (ent);
 		return;
@@ -4125,6 +4127,10 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp(cmd, "me") == 0) {
 		Cmd_Me_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "it") == 0) {
+		Cmd_It_F (ent);
 		return;
 	}
 	if (Q_stricmp(cmd, "amkick") == 0) {
@@ -4139,7 +4145,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_amWarn_F (ent);
 		return;
 	}
-
 	if (Q_stricmp(cmd, "amtele") == 0) {
 		Cmd_amTeleport_F (ent);
 		return;

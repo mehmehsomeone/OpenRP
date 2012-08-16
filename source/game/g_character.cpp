@@ -2130,3 +2130,35 @@ void Cmd_Me_F( gentity_t *ent )
 	trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
 	return;
 }
+
+void Cmd_It_F( gentity_t *ent )
+{ 
+	int pos = 0;
+	char real_msg[MAX_STRING_CHARS];
+	char *msg = ConcatArgs(1);
+
+	while(*msg)
+	{ 
+		if(msg[0] == '\\' && msg[1] == 'n')
+		{ 
+			msg++;
+			real_msg[pos++] = '\n';
+		} 
+		else
+		{
+			real_msg[pos++] = *msg;
+		} 
+		msg++;
+	}
+
+	real_msg[pos] = 0;
+
+	if ( trap_Argc() < 2 )
+	{ 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^4Command Usage: /it <action> (You can use spaces such as /it The tree falls down.)\n\"" ) ); 
+		return;
+	}
+
+	trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
+	return;
+}
