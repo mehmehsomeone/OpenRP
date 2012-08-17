@@ -1394,6 +1394,8 @@ ammap Function
 */
 void Cmd_amMap_F(gentity_t *ent)
 {
+	time_t start_time, cur_time;
+
 	char map[MAX_STRING_CHARS];
 
 	if(!G_CheckAdmin(ent, ADMIN_MAP))
@@ -1410,8 +1412,16 @@ void Cmd_amMap_F(gentity_t *ent)
 
 	trap_Argv( 1, map, sizeof( map ) );
 
-	trap_SendServerCommand( -1, va( "print \"The map is being changed to %s\n\"", map ) );
-	trap_SendServerCommand( -1, va( "cp \"The map is being changed to %s\n\"", map ) );
+	trap_SendServerCommand( -1, va( "print \"^3The map is being changed to %s\n\"", map ) );
+	trap_SendServerCommand( -1, va( "cp \"^3The map is being changed to %s\n\"", map ) );
+
+	time(&start_time);
+	do
+	{
+		time(&cur_time);
+	}
+	while((cur_time - start_time) < 3 );
+
 	trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
 	G_LogPrintf("Map changed to %s by %s.\n", map, ent->client->pers.netname);
 	return;
