@@ -530,11 +530,13 @@ void UpdateForceUsed()
 	char loggedIn[256];
 	trap_Cvar_VariableStringBuffer("ui_account_loggedin",loggedIn,sizeof(loggedIn));
 	
+	/*
 	if(strcmp(loggedIn,"false") == 0 || strcmp(loggedIn,"") == 0 )
 	{
 		for(int l = 0; l < NUM_TOTAL_SKILLS; l++)
 			uiRank[l].uiForcePowersRank = 0;
 	}
+	*/
 
 	//Feats
 	for(int i = 0; i < NUM_FEATS; i++)

@@ -6809,25 +6809,6 @@ static void UI_RunMenuScript(char **args)
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("register %s %s\n", username, password ) );
 		}
 		//[/Account System]
-		//OpenRP - Character menus
-		/*
-		else if (Q_stricmp(name, "characterSelect") == 0)
-		{
-			char charName[256];
-
-			trap_Cvar_VariableStringBuffer("ui_character_name", charName, sizeof( charName ) );
-			trap_Cmd_ExecuteText(EXEC_APPEND, va( "character %s", charName ) );
-		}
-		else if (Q_stricmp(name, "characterCreate") == 0)
-		{
-			char charName[256];
-			char forceSensitive[256];
-
-			trap_Cvar_VariableStringBuffer("ui_character_name", charName, sizeof( charName ) );
-			trap_Cvar_VariableStringBuffer("ui_character_forceSideNumber", forceSensitive, sizeof( forceSensitive ) );
-			trap_Cmd_ExecuteText(EXEC_APPEND, va( "createcharacter %s %s\n", charName, forceSensitive ) );
-		}
-		*/
 		else if (Q_stricmp(name, "saber_color") == 0) 
 		{
 			UI_UpdateSaberColor( qfalse );

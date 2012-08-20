@@ -1429,14 +1429,6 @@ static void CG_ServerCommand( void ) {
 		trap_Cvar_Set("ui_account_loggedIn", "false");
 		return;
 	}
-	//OpenRP - Character menus
-	/*
-	if ( !strcmp( cmd, "character") )
-	{
-		trap_OpenUIMenu(UIMENU_CHARACTER);
-		return;
-	}
-	*/
 	if(!strcmp(cmd, "addtext"))
 	{
 		if (trap_Argc() < 1)

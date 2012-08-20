@@ -1027,11 +1027,6 @@ void SetTeam( gentity_t *ent, char *s )
 			client->sess.spectatorTime = level.time;
 		}
 	}
-	//test
-	if(client->sess.characterChosen)
-	{
-		team = TEAM_FREE;
-	}
 
 	client->sess.sessionTeam = team;
 	client->sess.spectatorState = specState;

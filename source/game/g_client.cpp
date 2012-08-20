@@ -2536,8 +2536,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 			client->pers.connected = CON_DISCONNECTED;
 			return "Invalid userinfo detected";
 		}
+		Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
 	}
-	Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
 
 	if (g_gametype.integer == GT_SIEGE &&
 		(firstTime || level.newSession))
@@ -4836,10 +4836,6 @@ void ClientDisconnect( int clientNum ) {
 	if ( !ent->client ) {
 		return;
 	}
-
-	//[OpenRP - clear client ID for character]
-
-	//[/OpenRP - clear client ID for character]
 
 	i = 0;
 

@@ -26,7 +26,7 @@ Loads the character data
 
 =================
 */
-void DetermineDodgeMax(gentity_t *ent);
+//void DetermineDodgeMax(gentity_t *ent);
 void LoadCharacter(gentity_t * ent)
 {
 	//LoadSkills(ent);
@@ -375,7 +375,7 @@ void Cmd_ListCharacters_F(gentity_t * ent)
 	{
 		int ID = q.getval();
 		string name = q.getstr();
-		trap_SendServerCommand( ent-g_entities, va("print \"^3ID: ^7%i ^3Name: ^7%s\n\"", ID, name.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"^3ID: ^6%i ^3Name: ^6%s\n\"", ID, name.c_str() ) );
 	}
 	q.free_result();
 
@@ -437,10 +437,8 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	switch ( forceSensitive )
 	{
 	case 0:
-		forceSensitive = 0;
 		break;
 	case 1:
-		forceSensitive = 1;
 		break;
 	default:
 		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Force Sensitive must be either 1 or 0.\n\"" );
@@ -511,13 +509,9 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		//Update that we have a character selected
 		ent->client->sess.characterChosen = qtrue;
 		ent->client->sess.characterID = charID;
-		SetTeam(ent,"f");
 		LoadCharacter(ent);
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s (No Faction) created. It is being selected as your current character.\nIf you had colors in the name, they were removed. ^3Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Character %s (No Faction) created. It is being selected as your current character.\nIf you had colors in the name, they were removed. ^3Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str() ) );
-		ent->flags &= ~FL_GODMODE;
-		ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
-		player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 
 		return;
 	}
@@ -594,13 +588,9 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		//Update that we have a character selected
 		ent->client->sess.characterChosen = qtrue;
 		ent->client->sess.characterID = charID;
-		SetTeam(ent,"f");
 		LoadCharacter(ent);
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s (Faction: %s) created. It is being selected as your current character.\nIf you had colors in the name, they were removed. ^3Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
 		trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Character %s (Faction: %s) created. It is being selected as your current character.\nIf you had colors in the name, they were removed. ^3Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
-		ent->flags &= ~FL_GODMODE;
-		ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
-		player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 
 		return;
 	}
@@ -702,13 +692,9 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	//Update that we have a character selected
 	ent->client->sess.characterChosen = qtrue;
 	ent->client->sess.characterID = charID;
-	SetTeam(ent,"f");
 	LoadCharacter(ent);
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Your character is selected as: %s!\nYou can use /characterInfo to view everything about your character.\n\"", charName ) );
 	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Your character is selected as: %s!\nYou can use /characterInfo to view everything about your character.\n\"", charName ) );
-	ent->flags &= ~FL_GODMODE;
-	ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
-	player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 
 	return;
 }
