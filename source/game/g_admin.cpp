@@ -2150,7 +2150,7 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 
 	//soundtarget = &g_entities[clientID];
 
-	int currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE ID='%i'", charID ) );
+	int currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", charID ) );
 
 	int newCreditsTotal = currentCredits + changedCredits;
 
@@ -2289,7 +2289,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	if (!Q_stricmp(factionName, "none"))
 	{
 		q.execute( va( "UPDATE Characters set Faction='none' WHERE CharID='%i'", charID ) );
-		q.execute( va( "UPDATE Characters set Rank='none'WHERE ID='%i'", charID ) );
+		q.execute( va( "UPDATE Characters set Rank='none' WHERE CharID='%i'", charID ) );
 		trap_SendServerCommand( -1, va( "print \"^2 %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
 	}

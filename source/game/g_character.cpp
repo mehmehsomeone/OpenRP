@@ -1229,7 +1229,7 @@ void Cmd_TransferLeader_F( gentity_t * ent )
 			return;
 		}
 
-		string characterNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE ID='%i'", ent->client->sess.characterID ) );
+		string characterNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 		string factionLeaderSTR = q.get_string( va( "SELECT Leader FROM Factions WHERE FactionID='%i'", factionID ) );
 
 		if ( characterNameSTR != factionLeaderSTR )
