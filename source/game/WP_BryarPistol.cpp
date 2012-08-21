@@ -49,12 +49,12 @@ void WP_FireBryarPistolAlt(gentity_t*ent)
 		missile2 = CreateMissile(muzzle2,forward,BRYAR_PISTOL_VEL,10000,ent,qtrue);
 	//[/DualPistols]
 
-	/*
+	
 	if(ent->client->skillLevel[SK_PISTOL] != FORCE_LEVEL_3)
 	{
 		return;
 	}
-	*/
+	
 	missile->classname = "bryar_proj";
 	missile->s.weapon = WP_BRYAR_PISTOL;
 
