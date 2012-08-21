@@ -706,6 +706,7 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 		i++;
 	}
 
+	/*
 	if (usedPoints > allowedPoints)
 	{ //Time to do the fancy stuff. (meaning, slowly cut parts off while taking a guess at what is most or least important in the config)
 		int attemptedCycles = 0;
@@ -890,7 +891,7 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 			usedPoints = 0;
 		}
 	}
-
+	*/
 	if (freeSaber)
 	{
 		if (final_Powers[FP_SABER_OFFENSE] < 1)

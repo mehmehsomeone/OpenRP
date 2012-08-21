@@ -2875,7 +2875,7 @@ void Cmd_SetViewpos_f( gentity_t *ent ) {
 		return;
 	}
 	if ( trap_Argc() != 5 ) {
-		trap_SendServerCommand( ent-g_entities, va("print \"^4Command Usage: setviewpos x y z yaw\n\""));
+		trap_SendServerCommand( ent-g_entities, va("print \"Command Usage: setviewpos x y z yaw\n\""));
 		return;
 	}
 

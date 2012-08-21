@@ -315,7 +315,7 @@ void Cmd_amBan_F(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amban <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amban <name/clientid>\n\""));
 		return;
 	}
 
@@ -332,7 +332,7 @@ void Cmd_amBan_F(gentity_t *ent)
 
 	//if(ent == victim)
 	//{
-	//	trap_SendServerCommand(ent-g_entities, va("print \"^5You can't ban yourself.\n\""));
+	//	trap_SendServerCommand(ent-g_entities, va("print \"^2You can't ban yourself.\n\""));
 	//	return;
 	//}
 
@@ -342,10 +342,10 @@ void Cmd_amBan_F(gentity_t *ent)
 		return;
 	}
 
-	AddIP( tent->client->sess.IP );
 	if (!(tent->r.svFlags & SVF_BOT))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^5The IP of the person you banned is %s\n\"", tent->client->sess.IP));
+		trap_SendConsoleCommand( EXEC_INSERT, va("addip %s", tent->client->sess.IP));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2The IP of the person you banned is %s\n\"", tent->client->sess.IP));
 	}
 	trap_DropClient(pids[0], "^1was permanently banned.\n");
 
@@ -373,7 +373,7 @@ void Cmd_amKick_F(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amkick <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amkick <name/clientid>\n\""));
 		return;
 	}
 
@@ -394,7 +394,7 @@ void Cmd_amKick_F(gentity_t *ent)
 		return;
 	}
 
-	trap_SendServerCommand(ent-g_entities, va("print \"^5The IP of the person you kicked is %s\n\"", tent->client->sess.IP));
+	trap_SendServerCommand(ent-g_entities, va("print \"^2The IP of the person you kicked is %s\n\"", tent->client->sess.IP));
 	trap_DropClient(pids[0], "^1was ^1kicked.");
 	G_LogPrintf("Kick admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
@@ -420,7 +420,7 @@ void Cmd_amWarn_F(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amwarn <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amwarn <name/clientid>\n\""));
 		return;
 	}
 
@@ -443,8 +443,8 @@ void Cmd_amWarn_F(gentity_t *ent)
 
 	tent->client->sess.warnings++;
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Player %s was warned.\nThey have %i/%i warnings.\n\"", tent->client->pers.netname, tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
-	trap_SendServerCommand( tent-g_entities, va( "cp \"^5You have been warned by an admin.\nYou have %i/%i warnings.\n\"", tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Player %s was warned.\nThey have %i/%i warnings.\n\"", tent->client->pers.netname, tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
+	trap_SendServerCommand( tent-g_entities, va( "cp \"^2You have been warned by an admin.\nYou have %i/%i warnings.\n\"", tent->client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
 	G_LogPrintf("Warn admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 
 	if( tent->client->sess.warnings == atoi( openrp_maxWarnings.string ) )
@@ -477,112 +477,65 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		return;
 	}
 
-	if(trap_Argc() < 2)
+	if(trap_Argc() != 3 )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amtele <name1/clientid1> <name2/clientid2>\nThe amtele command works by teleporting name1 to name2.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amtele <name1/clientid1> <name2/clientid2>\nThe amtele command works by teleporting name1 to name2.\n\""));
 		return;
 	}
 
 	trap_Argv(1, name, sizeof(name)); //First Name
 	trap_Argv(2, name2, sizeof(name2)); //Second name
 
-	//Check if the argument is empty. If it is quit. If you don't errors occur. Don't know why
-	//as the below if(!player1->client) check should stop it anyway.
-	if(name2 == NULL)
+	if(ClientNumbersFromString(name2, pids) != 1)
 	{
-		if(ClientNumbersFromString(name2, pids) != 1) //If the name or clientid is not found
-		{
-			G_MatchOnePlayer(pids, err, sizeof(err));
-			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", name2));
-			return;
-		}
-
-		player2 = &g_entities[pids[0]];
-
-		if(player2->client->ps.duelInProgress)
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
-			return;
-		}
-
-		if(!G_AdminControl(ent->client->sess.adminLevel, player2->client->sess.adminLevel))
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
-			return;
-		}
-
-		if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR )
-		{
-			tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
-			tent->s.clientNum = ent->s.clientNum;
-
-			tent = G_TempEntity( player2->client->ps.origin, EV_PLAYER_TELEPORT_IN );
-			tent->s.clientNum = ent->s.clientNum;
-		}
-
-		VectorCopy (player2->client->ps.origin, origin);
-
-		origin[1] += 50;
-		origin[2] += 50;
-
-		VectorCopy (ent->client->ps.origin, origin);
-
-		ent->client->ps.eFlags ^= EF_TELEPORT_BIT;
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", name2));
+		return;
 	}
-	else
+
+	player = &g_entities[pids[0]];
+
+
+	if(ClientNumbersFromString(name, pids) != 1) //If the name or clientid is not found
 	{
-
-		if(ClientNumbersFromString(name2, pids) != 1)
-		{
-			G_MatchOnePlayer(pids, err, sizeof(err));
-			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", name2));
-			return;
-		}
-
-		player = &g_entities[pids[0]];
-
-
-		if(ClientNumbersFromString(name, pids) != 1) //If the name or clientid is not found
-		{
-			G_MatchOnePlayer(pids, err, sizeof(err));
-			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", name));
-			return;
-		}
-
-		player2 = &g_entities[pids[0]];
-
-		if(player2->client->ps.duelInProgress)
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is dueling.\n\""));
-			return;
-		}
-
-		if(!G_AdminControl(ent->client->sess.adminLevel, player2->client->sess.adminLevel))
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
-			return;
-		}
-
-		if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR )
-		{
-			tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
-			tent->s.clientNum = ent->s.clientNum;
-
-			tent = G_TempEntity( player2->client->ps.origin, EV_PLAYER_TELEPORT_IN );
-			tent->s.clientNum = ent->s.clientNum;
-		}
-
-		VectorCopy (player->client->ps.origin, origin);
-
-		origin[1] += 50;
-		origin[2] += 50;
-
-		VectorCopy (origin, player2->client->ps.origin);
-
-		player2->client->ps.eFlags ^= EF_TELEPORT_BIT;
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", name));
+		return;
 	}
-	trap_SendServerCommand(ent-g_entities, va("print \"^5You teleported %s to %s.\n\"",  player2->client->pers.netname, player->client->pers.netname));
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were teleported to %s by an admin.\n\"", player2->client->pers.netname));
+
+	player2 = &g_entities[pids[0]];
+
+	if(player2->client->ps.duelInProgress)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^2You cannot use this command on someone who is dueling.\n\""));
+		return;
+	}
+
+	if(!G_AdminControl(ent->client->sess.adminLevel, player2->client->sess.adminLevel))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
+	}
+
+	if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR )
+	{
+		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
+		tent->s.clientNum = ent->s.clientNum;
+
+		tent = G_TempEntity( player2->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+		tent->s.clientNum = ent->s.clientNum;
+	}
+	VectorCopy (player->client->ps.origin, origin);
+
+	origin[1] += 50;
+	origin[2] += 50;
+
+	VectorCopy (origin, player2->client->ps.origin);
+
+	player2->client->ps.eFlags ^= EF_TELEPORT_BIT;
+
+	trap_SendServerCommand(ent-g_entities, va("print \"^2You teleported %s to %s.\n\"",  player2->client->pers.netname, player->client->pers.netname));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^2You were teleported to %s by an admin.\n\"", player2->client->pers.netname));
 	G_LogPrintf("Teleport admin command executed by %s. This caused %s to teleport to %s.\n", player->client->pers.netname, player2->client->pers.netname);
 	return;
 }
@@ -619,7 +572,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 
 	if ( trap_Argc() < 2 )
 	{ 
-		trap_SendServerCommand( ent-g_entities, va ( "print \"^4Command Usage: /amannounce <name/clientid> <message>\nUse all or -1 for the clientid if you want to announce something to all players.\n\"" ) ); 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /amannounce <name/clientid> <message>\nUse all or -1 for the clientid if you want to announce something to all players.\n\"" ) ); 
 		return;
 	}
 
@@ -673,7 +626,7 @@ void Cmd_amMute_F(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /ammute <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /ammute <name/clientid>\n\""));
 		return;
 	}
 
@@ -698,8 +651,8 @@ void Cmd_amMute_F(gentity_t *ent)
 	{
 		tent->client->sess.state |= PLAYER_MUTED;
 	}
-	trap_SendServerCommand(ent-g_entities, va("print \"^5Player muted.\n\""));
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were muted by an admin.\n\""));
+	trap_SendServerCommand(ent-g_entities, va("print \"^2Player muted.\n\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^2You were muted by an admin.\n\""));
 	G_LogPrintf("Mute admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
 }
@@ -724,7 +677,7 @@ void Cmd_amUnMute_F(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amunmute <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amunmute <name/clientid>\n\""));
 		return;
 	}
 
@@ -741,7 +694,7 @@ void Cmd_amUnMute_F(gentity_t *ent)
 
 	if(!G_CheckState( tent, PLAYER_MUTED ) )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^5This player is not muted.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2This player is not muted.\n\""));
 		return;
 	}
 
@@ -755,8 +708,8 @@ void Cmd_amUnMute_F(gentity_t *ent)
 	{
 		tent->client->sess.state -= PLAYER_MUTED; //bad way of doing it but it should work
 	}
-	trap_SendServerCommand(ent-g_entities, va("print \"^5Player unmuted.\n\""));
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You were unmuted by an admin.\n\""));
+	trap_SendServerCommand(ent-g_entities, va("print \"^2Player unmuted.\n\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^2You were unmuted by an admin.\n\""));
 	G_LogPrintf("Unmute admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
 }
@@ -782,7 +735,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amsleep <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amsleep <name/clientid>\n\""));
 		return;
 	}
 
@@ -799,7 +752,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 
 	//if(tent->client->ps.duelInProgress)
 	//{
-	//	trap_SendServerCommand(ent-g_entities, va("print \"^3You cannot use this command on someone who is dueling\n\""));
+	//	trap_SendServerCommand(ent-g_entities, va("print \"^1You cannot use this command on someone who is dueling\n\""));
 	//	return;
 	//}
 
@@ -826,6 +779,8 @@ void Cmd_amSleep_F(gentity_t *ent)
 	tent2 = G_TempEntity( tent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
 	tent2->s.clientNum = tent->s.clientNum;
 
+	G_SetAnim(tent, NULL, SETANIM_BOTH, BOTH_STUMBLEDEATH1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
+
 	tent->client->ps.eFlags |= EF_INVULNERABLE;
 	tent->client->invulnerableTimer = level.time + Q3_INFINITE;
 	tent->client->ps.pm_type = PM_FREEZE;
@@ -834,10 +789,8 @@ void Cmd_amSleep_F(gentity_t *ent)
 	tent->client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
 	tent->client->ps.quickerGetup = qfalse;
 	
-	G_SetAnim(tent, NULL, SETANIM_BOTH, BOTH_STUMBLEDEATH1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
-
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5%s is now sleeping.\n\"", tent->client->pers.netname ) );
-	trap_SendServerCommand( tent-g_entities, "cp \"^5You are now sleeping.\n\"" );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2%s is now sleeping.\n\"", tent->client->pers.netname ) );
+	trap_SendServerCommand( tent-g_entities, "cp \"^2You are now sleeping.\n\"" );
 
 	G_LogPrintf("Sleep admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
@@ -864,7 +817,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amunsleep <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amunsleep <name/clientid>\n\""));
 		return;
 	}
 
@@ -881,13 +834,13 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 
 	if( !G_CheckState( tent, PLAYER_SLEEPING ) )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^5This player is not sleeping.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2This player is not sleeping.\n\""));
 		return;
 	}
 
 	if(tent->client->ps.duelInProgress)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^5You cannot use this command on someone who is duelling.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2You cannot use this command on someone who is duelling.\n\""));
 		return;
 	}
 
@@ -912,8 +865,8 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 	//Play a nice healing sound... Ahh
 	//G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5%s has been unslept.\n\"", tent->client->pers.netname ) );
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer sleeping. You can get up by using a movement key.\n\""));
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2%s has been unslept.\n\"", tent->client->pers.netname ) );
+	trap_SendServerCommand(tent-g_entities, va("cp \"^2You are no longer sleeping. You can get up by using a movement key.\n\""));
 
 	G_LogPrintf("Unsleep admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
@@ -943,14 +896,14 @@ void Cmd_amProtect_F(gentity_t *ent)
 		{
 			ent->client->ps.eFlags |= EF_INVULNERABLE;
 			ent->client->invulnerableTimer = level.time + Q3_INFINITE;
-			trap_SendServerCommand(ent-g_entities, va("print \"^5You have been protected.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^2You have been protected.\n\""));
 			G_LogPrintf("Protect admin command executed by %s on themself to protect themself.\n", ent->client->pers.netname);
 		}
 		else
 		{
 			ent->client->ps.eFlags &= ~EF_INVULNERABLE;
 			ent->client->invulnerableTimer = 0;
-			trap_SendServerCommand(ent-g_entities, va("print \"^5You are no longer protected.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^2You are no longer protected.\n\""));
 			G_LogPrintf("Protect admin command executed by %s on themself to unprotect themself.\n", ent->client->pers.netname);
 		}
 		return;
@@ -977,7 +930,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 	{
 		tent->client->ps.eFlags |= EF_INVULNERABLE;
 		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been protected.\n\""));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been protected.\n\""));
 		G_LogPrintf("Protect admin command executed by %s on %s to protect them.\n", ent->client->pers.netname, tent->client->pers.netname);	
 		return;
 	}
@@ -985,7 +938,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 	{
 		tent->client->ps.eFlags &= ~EF_INVULNERABLE;
 		tent->client->invulnerableTimer = 0;
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You are no longer protected.\n\""));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^2You are no longer protected.\n\""));
 		G_LogPrintf("Protect admin command executed by %s on %s to unprotect them.\n", ent->client->pers.netname, tent->client->pers.netname);	
 		return;
 	}
@@ -1010,7 +963,7 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 	{
 		if(g_entities[i].client->sess.isAdmin == qtrue)
 		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^3Name: ^6%s ^3Admin level: ^6%i\n\"", g_entities[i].client->pers.netname, g_entities[i].client->sess.adminLevel ) );
+			trap_SendServerCommand(ent-g_entities, va("print \"^2Name: ^7%s ^2Admin level: ^7%i\n\"", g_entities[i].client->pers.netname, g_entities[i].client->sess.adminLevel ) );
 		}
 	}
 	return;
@@ -1055,7 +1008,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 			ent->client->sess.state |= PLAYER_EMPOWERED;
 		}
 
-		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been empowered.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2You have been empowered.\n\""));
 		return;
 	}
 
@@ -1094,7 +1047,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 		tent->client->sess.state |= PLAYER_EMPOWERED;
 	}
 
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been empowered.\n\""));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been empowered.\n\""));
 
 	G_LogPrintf("Empower admin command executed by %s.\n", ent->client->pers.netname);
 	return;
@@ -1144,7 +1097,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 		ent->client->sess.state |= PLAYER_MERC; //Give them merc flags, which says that they are a merc.
 
-		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been merc'd.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2You have been merc'd.\n\""));
 		G_LogPrintf("Merc admin command executed by %s on themself.\n", ent->client->pers.netname);
 		return;
 	}
@@ -1167,7 +1120,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 		ent->client->sess.state -= PLAYER_MERC; //Take away merc flags.
 
-		trap_SendServerCommand(ent-g_entities, va("print \"^5You have been unmerc'd.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2You have been unmerc'd.\n\""));
 		G_LogPrintf("Unmerc admin command executed by %s on themself.\n", ent->client->pers.netname);
 		return;
 	}
@@ -1214,8 +1167,8 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 		tent->client->sess.state |= PLAYER_MERC; //Give them merc flags, which says that they are a merc.
 
-		trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s was merc'd.\n\"", tent->client->pers.netname));
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been merc'd.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Player %s was merc'd.\n\"", tent->client->pers.netname));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been merc'd.\n\""));
 		G_LogPrintf("Merc admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		return;
 	}
@@ -1237,8 +1190,8 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 		tent->client->sess.state -= PLAYER_MERC; //Take away merc flags.
 
-		trap_SendServerCommand(ent-g_entities, va("print \"^5Player %s was unmerc'd.\n\"", tent->client->pers.netname));
-		trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been unmerc'd.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Player %s was unmerc'd.\n\"", tent->client->pers.netname));
+		trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been unmerc'd.\n\""));
 		G_LogPrintf("Unmerc admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		return;
 	}
@@ -1263,7 +1216,7 @@ void Cmd_amEffect_F(gentity_t *ent)
 
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amaddeffect <effect> Example: /amaddeffect env/small_fire\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Command Usage: /amaddeffect <effect> Example: /amaddeffect env/small_fire\n\"" ) );
 		return;
 	}
 
@@ -1280,7 +1233,7 @@ void Cmd_amEffect_F(gentity_t *ent)
 	fx_runner->s.origin[0] = (int) ent->client->ps.origin[0];
 	SP_fx_runner(fx_runner);
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Effect placed.\n\"" ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Effect placed.\n\"" ) );
 	G_LogPrintf("Effect command executed by %s.\n", ent->client->pers.netname);
 	return;
 }
@@ -1307,7 +1260,7 @@ void Cmd_amClearEffects_F(gentity_t *ent)
 		//cm - Dom
 		//Effects are now written to a file sharing the name of the map we are on
 		//This file is read at the start of each map load and the effects placed automatically
-		trap_SendServerCommand( ent-g_entities, va( "print \"^5Clearing all effects...\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Clearing all effects...\n\"" ) );
 		trap_Cvar_Register( &mapname, "mapname", "", CVAR_SERVERINFO | CVAR_ROM );
 		Com_sprintf( savePath, sizeof( savePath ), "mp_effects/%s.cfg", mapname.string );
 		len = trap_FS_FOpenFile( savePath, &f, FS_WRITE );
@@ -1323,7 +1276,7 @@ void Cmd_amClearEffects_F(gentity_t *ent)
 
 		trap_FS_Write( buf, strlen( buf ), f );
 		trap_FS_FCloseFile( f );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^5All effects have been cleared.\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2All effects have been cleared.\n\"" ) );
 		G_LogPrintf( "Clear effects command executed by %s.\n", ent->client->pers.netname );
 		return;
 }
@@ -1347,7 +1300,7 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 
 	if(trap_Argc() != 3) //If the user doesn't specify both args.
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amforceteam <name/clientid> <newteam>\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Command Usage: /amforceteam <name/clientid> <newteam>\n\"" ) );
 		return;
 	}
 
@@ -1383,7 +1336,7 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 		SetTeam( tent, "free" );
 		G_LogPrintf( "ForceTeam [FREE] admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname );
 	}
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Player %s was forceteamed Successfully.\n\"", tent->client->pers.netname ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Player %s was forceteamed Successfully.\n\"", tent->client->pers.netname ) );
 	return;
 }
 
@@ -1406,21 +1359,14 @@ void Cmd_amMap_F(gentity_t *ent)
 
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /amMap <mapName>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amMap <mapName>\n\"" );
 		return;
 	}
 
 	trap_Argv( 1, map, sizeof( map ) );
 
-	trap_SendServerCommand( -1, va( "print \"^3The map is being changed to %s\n\"", map ) );
-	trap_SendServerCommand( -1, va( "cp \"^3The map is being changed to %s\n\"", map ) );
-
-	time(&start_time);
-	do
-	{
-		time(&cur_time);
-	}
-	while((cur_time - start_time) < 3 );
+	trap_SendServerCommand( -1, va( "print \"^2The map is being changed to ^7%s\n\"", map ) );
+	trap_SendServerCommand( -1, va( "cp \"^2The map is being changed to ^7%s\n\"", map ) );
 
 	trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
 	G_LogPrintf("Map changed to %s by %s.\n", map, ent->client->pers.netname);
@@ -1460,7 +1406,7 @@ void Cmd_amWeather_F(gentity_t *ent)
 
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /amWeather <weather>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amWeather <weather>\n\"" );
 		return;
 	}
 
@@ -1471,7 +1417,7 @@ void Cmd_amWeather_F(gentity_t *ent)
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}	
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Changing the weather...\n\"" ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Changing the weather...\n\"" ) );
 						
 	if (!Q_stricmp(weather, "snow"))
 	{
@@ -1566,7 +1512,7 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /amWeatherPlus <weather>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amWeatherPlus <weather>\n\"" );
 		return;
 	}
 
@@ -1581,20 +1527,20 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	{
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*snow");
-		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather: \nSnow\n\"" ) ;
+		trap_SendServerCommand( ent-g_entities,  "print \"^2Adding weather: \nSnow\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "rain"))
 	{
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*rain 500");
-		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather: \nSnow\n\"" ) ;
+		trap_SendServerCommand( ent-g_entities,  "print \"^2Adding weather: \nSnow\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "sandstorm"))
 	{
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*wind");
 		G_EffectIndex("*sand");
-		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nSand\nWind\n\"" ) ;
+		trap_SendServerCommand( ent-g_entities,  "print \"^2Adding weather:\nSand\nWind\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "blizzard"))
 	{
@@ -1602,23 +1548,23 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 		G_EffectIndex("*constantwind (100 100 -100)");
 		G_EffectIndex("*fog");
 		G_EffectIndex("*snow");
-		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nFog\nSnow\n\"" ) ;
+		trap_SendServerCommand( ent-g_entities,  "print \"^2Adding weather:\nFog\nSnow\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "heavyfog"))
 	{
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*heavyrainfog");
-		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nHeavy Fog\n\"" ) ;
+		trap_SendServerCommand( ent-g_entities,  "print \"^2Adding weather:\nHeavy Fog\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "spacedust"))
 	{
-		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nSpace Dust\n\"" ) ;
+		trap_SendServerCommand( ent-g_entities,  "print \"^2Adding weather:\nSpace Dust\n\"" ) ;
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*spacedust 4000");
 	}
 	else if (!Q_stricmp(weather, "acidrain"))
 	{
-		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nAcid Rain\n\"" ) ;
+		trap_SendServerCommand( ent-g_entities,  "print \"^2Adding weather:\nAcid Rain\n\"" ) ;
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*acidrain 500");
 	}
@@ -1627,13 +1573,13 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	{
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*fog");
-		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nFog\n\"" ) ;
+		trap_SendServerCommand( ent-g_entities,  "print \"^2Adding weather:\nFog\n\"" ) ;
 	}
 	else if (!Q_stricmp(weather, "sand"))
 	{
 		trap_SetConfigstring( CS_EFFECTS, "");
 		G_EffectIndex("*sand");
-		trap_SendServerCommand( ent-g_entities,  "print \"^5Adding weather:\nSand\n\"" ) ;
+		trap_SendServerCommand( ent-g_entities,  "print \"^2Adding weather:\nSand\n\"" ) ;
 	}	
 	else if (!Q_stricmp(weather, "clear"))
 	{
@@ -1676,15 +1622,15 @@ void Cmd_amStatus_F(gentity_t *ent)
 		return;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^4Status\n===================================\n\"" ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Status\n===================================\n\"" ) );
    for(i = 0; i < level.maxclients; i++)
    { 
       if(g_entities[i].client->pers.connected == CON_CONNECTED)
 	  { 
-		  trap_SendServerCommand( ent-g_entities, va( "print \"^3ID: ^6%i ^3Name: ^6%s ^3IP: ^6%s\n\"", g_entities[i].client->sess.pids[0], g_entities[i].client->pers.netname, g_entities[i].client->sess.IP ) );
+		  trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: ^7%s ^2IP: ^7%s\n\"", g_entities[i].client->sess.pids[i], g_entities[i].client->pers.netname, g_entities[i].client->sess.IP ) );
 	  }
    }
-   trap_SendServerCommand( ent-g_entities, va( "print \"^4===================================\n\"" ) );
+   trap_SendServerCommand( ent-g_entities, va( "print \"^2===================================\n\"" ) );
    return;
 }
 
@@ -1728,7 +1674,7 @@ void Cmd_amRename_F(gentity_t *ent)
 
    if ( trap_Argc() != 3) 
    { 
-      trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amrename <currentname> <newname>\n\"" ) ); 
+      trap_SendServerCommand( ent-g_entities, va( "print \"^2Command Usage: /amrename <currentname> <newname>\n\"" ) ); 
       return;
    }
 
@@ -1737,22 +1683,22 @@ void Cmd_amRename_F(gentity_t *ent)
 
    if (clientid == -1) 
    {
-		trap_SendServerCommand( ent-g_entities, va("print \"^5Can't find client ID for %s\n\"", currentname ) ); 
+		trap_SendServerCommand( ent-g_entities, va("print \"^2Can't find client ID for %s\n\"", currentname ) ); 
 		return; 
 	}
 	else if (clientid == -2) 
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^5Ambiguous client ID for %s\n\"", currentname ) ); 
+		trap_SendServerCommand( ent-g_entities, va("print \"^2Ambiguous client ID for %s\n\"", currentname ) ); 
 		return; 
 	}
 	else if (clientid >= MAX_CLIENTS || clientid < 0)  
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^5Bad client ID for %s\n\"", currentname ) ); 
+		trap_SendServerCommand( ent-g_entities, va("print \"^2Bad client ID for %s\n\"", currentname ) ); 
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
 	{ // check to make sure client slot is in use 
-		trap_SendServerCommand( ent-g_entities, va("print \"^5Client %s is not active\n\"", currentname ) ); 
+		trap_SendServerCommand( ent-g_entities, va("print \"^2Client %s is not active\n\"", currentname ) ); 
 		return; 
 	}
 	trap_Argv( 2, newname, sizeof( newname ) );
@@ -1783,7 +1729,7 @@ void Cmd_amSlap_F(gentity_t *ent)
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Command Usage: /amslap <name/clientid>\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Command Usage: /amslap <name/clientid>\n\"" ) );
 		return;
 	}
 
@@ -1816,8 +1762,8 @@ void Cmd_amSlap_F(gentity_t *ent)
 	tent->client->ps.forceDodgeAnim = 0;
 	tent->client->ps.quickerGetup = qfalse;
 		
-	trap_SendServerCommand(ent-g_entities, va("print \"^5You Successfully slapped %s.\n\"", tent->client->pers.netname));
-	trap_SendServerCommand(tent-g_entities, va("cp \"^5You have been slapped.\n\""));
+	trap_SendServerCommand(ent-g_entities, va("print \"^2You Successfully slapped %s.\n\"", tent->client->pers.netname));
+	trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been slapped.\n\""));
 
 	G_LogPrintf("Slap admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
@@ -1825,7 +1771,7 @@ void Cmd_amSlap_F(gentity_t *ent)
 
 void Cmd_info_F( gentity_t *ent )
 {
-	trap_SendServerCommand( ent-g_entities, va( "print \"^4OpenRP %s - info\n^3OpenRP Website: ^6 http://code.google.com/p/openrp/ \n^3Server Website: ^6 %s\n^3View a list of commands at ^6cmds.newagerpg.com\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP %s - info\n^2OpenRP Website: ^7http://code.google.com/p/openrp/ \n^2Server Website: ^7%s\n^2View a list of commands at ^7cmds.newagerpg.com\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
 	return;
 }
 
@@ -1858,8 +1804,8 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 
 	if( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /grantAdmin <username> <adminLevel>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /grantAdmin <username> <adminLevel>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /grantAdmin <username> <adminLevel>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /grantAdmin <username> <adminLevel>\n\"" );
 		return;
 	}
 
@@ -1895,7 +1841,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 
 	q.execute( va( "UPDATE Users set AdminLevel='%i' WHERE Username='%s'", adminLevel, userNameSTR.c_str() ) );
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^5Admin (level %i) granted to %s.\n\"", adminLevel, userNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Admin (level %i) granted to %s.\n\"", adminLevel, userNameSTR.c_str() ) );
 	return;
 }
 
@@ -1984,7 +1930,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /removeAdmin <accountname>\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /removeAdmin <accountname>\n\"");
 		return;
 	}
 
@@ -2083,8 +2029,8 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /genXP <characterName> <XP>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /genXP <characterName> <XP>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /genXP <characterName> <XP>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /genXP <characterName> <XP>\n\"" );
 		return;
 	}
 
@@ -2172,8 +2118,8 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /genCredits <characterName> <amount>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /genCredits <characterName> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /genCredits <characterName> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /genCredits <characterName> <amount>\n\"" );
 		return;
 	}
 
@@ -2262,7 +2208,7 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /createFaction <factionName>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /createFaction <factionName>\n\"" );
 		return;
 	}
 
@@ -2314,7 +2260,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 
 	if ( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /amSetFaction <characterName> <factionName>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amSetFaction <characterName> <factionName>\n\"" );
 		return;
 	}
 
@@ -2381,7 +2327,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 	if ( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /setFactionRank <characterName> <rank>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /setFactionRank <characterName> <rank>\n\"" );
 		return;
 	}
 
@@ -2502,8 +2448,8 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /factionGenCredits <factionID> <amount>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /factionGenCredits <factionID> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /factionGenCredits <factionID> <amount>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /factionGenCredits <factionID> <amount>\n\"" );
 		return;
 	}
 
@@ -2558,7 +2504,7 @@ void Cmd_CheatAccess_F( gentity_t *ent )
 		{
 			//They do now.
 			ent->client->pers.hasCheatAccess = qtrue;
-			trap_SendServerCommand( ent-g_entities, va ("print \"^5Cheat Access ^2Granted.\n\"" ));
+			trap_SendServerCommand( ent-g_entities, va ("print \"^2Cheat Access ^2Granted.\n\"" ));
 			G_LogPrintf( "%s executed the cheatAccess command and they now have cheat access.\n", ent->client->pers.netname );
 		}
 
@@ -2567,7 +2513,7 @@ void Cmd_CheatAccess_F( gentity_t *ent )
 		{
 			//They don't anymore.
 			ent->client->pers.hasCheatAccess = qfalse;
-			trap_SendServerCommand( ent-g_entities, va ("print \"^5Cheat Access ^1Removed.\n\"" ));
+			trap_SendServerCommand( ent-g_entities, va ("print \"^2Cheat Access ^1Removed.\n\"" ));
 			G_LogPrintf( "%s executed the cheatAccess command and they now no longer have cheat access (they had it but toggled it off).\n", ent->client->pers.netname );
 		}
 	}
@@ -2592,7 +2538,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 	/*
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /amshakescreen <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amshakescreen <name/clientid>\n\""));
 		return;
 	}
 	*/
@@ -2613,7 +2559,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 	G_ScreenShake( ent->s.origin, ent, 6.0f, 10000, qtrue );
 	trap_SendServerCommand( ent-g_entities, "print \"^2Success: You shook everybody's screen.\n\"" );
 	//Don't do a center print for the target - it would distract from the shaking screen.
-	//trap_SendServerCommand( tent-g_entities, "print \"^3An admin has shaken your screen.\n\"" );
+	//trap_SendServerCommand( tent-g_entities, "print \"^2An admin has shaken your screen.\n\"" );
 	
 	return;
 }
@@ -2631,7 +2577,7 @@ void Cmd_Music_F( gentity_t * ent )
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /ammusic <path>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /ammusic <path>\n\""));
 		return;
 	}
 

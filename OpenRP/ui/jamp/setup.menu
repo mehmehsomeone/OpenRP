@@ -80,8 +80,7 @@
 			style				WINDOW_STYLE_EMPTY
 			type				ITEM_TYPE_BUTTON
 			rect				50 155 100 25 
-			text				@MENUS_PLAY					
-			descText			"Play the Legacy Mod"
+			text				"MAIN MENU"					
 			font				4
 			textscale			1
 			textaligny			0
@@ -104,7 +103,6 @@
 			{ 			
 				play			"sound/interface/legacy.mp3" ; 
 				close			all ; 
-				open			multiplayermenu 
 			}
 		}
 

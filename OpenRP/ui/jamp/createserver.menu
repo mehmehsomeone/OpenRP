@@ -66,7 +66,7 @@
 			style				WINDOW_STYLE_EMPTY
 			type				ITEM_TYPE_BUTTON
 			rect				0 440 130 24
-			text				@MENUS_PLAY					
+			text				"MAIN MENU"					
 			font				3
 			textscale			1.1
 			textaligny			0

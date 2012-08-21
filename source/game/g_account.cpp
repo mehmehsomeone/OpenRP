@@ -93,16 +93,16 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	//Make sure they entered both a username and a password
 	if( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /login <username> <password>\n\"");
-		trap_SendServerCommand( ent-g_entities, "cp \"^4Command Usage: /login <username> <password>\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /login <username> <password>\n\"");
+		trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /login <username> <password>\n\"");
 		return;
 	}
 
 	//Check if we're already logged in 
 	if( isLoggedIn( ent ) )
 	{
-		trap_SendServerCommand ( ent-g_entities, "print \"^5Already logged in!\n\"" );
-		trap_SendServerCommand ( ent-g_entities, "cp \"^5Already logged in!\n\"" );
+		trap_SendServerCommand ( ent-g_entities, "print \"^2Already logged in!\n\"" );
+		trap_SendServerCommand ( ent-g_entities, "cp \"^2Already logged in!\n\"" );
 		return;
 	}
 	//Get the username and password
@@ -292,7 +292,7 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	//Make sure they entered both a username and a password
 	if( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /register <username> <password>\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /register <username> <password>\n\"");
 		return;
 	}
 	
@@ -378,11 +378,11 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 
 	if ( adminLevel < 11 )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Account Info:\n^3Account Name: ^6%s\n^3Account ID: ^6%i\n^3Admin: ^6%s\n^3Admin Level: ^6%i\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str(), adminLevel ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n^2Admin Level: ^7%i\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str(), adminLevel ) );
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^4Account Info:\n^3Account Name: ^6%s\n^3Account ID: ^6%i\n^3Admin: ^6%s\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str() ) );
 	}
 	return;
 }
@@ -405,7 +405,7 @@ void Cmd_EditAccount_F(gentity_t * ent)
 		
 		if(trap_Argc() != 3) //If the user doesn't specify both args.
 		{
-			trap_SendServerCommand( ent-g_entities, "print \"^4Command Usage: /editaccount <username/password> <value> \n\"" ) ;
+			trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /editaccount <username/password> <value> \n\"" ) ;
 			return;
 		}
 		char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS], changeCleaned[MAX_STRING_CHARS];
@@ -426,17 +426,19 @@ void Cmd_EditAccount_F(gentity_t * ent)
 				return;
 			}
 			q.execute( va( "UPDATE Users set Username='%s' WHERE AccountID= '%i'", changeSTR, ent->client->sess.accountID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Username has been changed to ^6%s ^2If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Username has been changed to ^7%s ^2If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
+			return;
 		}
 		else if(!Q_stricmp(parameter, "password"))
 		{
 			q.execute( va( "UPDATE Users set Password='%s' WHERE AccountID='%i'", changeSTR, ent->client->sess.accountID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Password has been changed to ^6%s\n\"",changeSTR.c_str() ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Password has been changed to ^7%s\n\"",changeSTR.c_str() ) );
 			return;
 		}
 		else
 		{
-			trap_SendServerCommand ( ent-g_entities, "print \"^4Command Usage: /editaccount <username/password> <value>\n\"" ) ;
+			trap_SendServerCommand ( ent-g_entities, "print \"^2Command Usage: /editaccount <username/password> <value>\n\"" );
+			return;
 		}
 }
 
@@ -463,7 +465,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^4Command Usage: /charName <name/clientid>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /accountName <name/clientid>\n\""));
 		return;
 	}
 
@@ -472,7 +474,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^6%s ^1does not exist.\n\"", cmdTarget));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^7%s ^1does not exist.\n\"", cmdTarget));
 		return;
 	}
 
@@ -481,7 +483,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 	if ( tent->client->sess.loggedinAccount )
 	{
 		string usernameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", tent->client->sess.accountID ) );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^3Account Name: ^6%s ^3.\n\"", usernameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Name: ^7%s\n\"", usernameSTR.c_str() ) );
 		return;
 	}
 	

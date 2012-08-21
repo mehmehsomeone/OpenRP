@@ -2879,7 +2879,7 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	{//send this client the MOTD for clients using the right version of OpenRP.
 		TextWrapCenterPrint(ojp_clientMOTD.string, motd);
 		if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		trap_SendServerCommand( ent-g_entities,va( "print \"^5OpenRP %s\n^5Type /info into the console for a list of commands.\n\"", OPENRP_CLIENTVERSION ) );
+		trap_SendServerCommand( ent-g_entities,va( "print \"^2OpenRP %s\nType /info into the console for a list of commands.\n\"", OPENRP_CLIENTVERSION ) );
 		}
 	}
 	else
