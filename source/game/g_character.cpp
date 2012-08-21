@@ -868,8 +868,8 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 
 		if(charID == 0)
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
-			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character ^7%s ^1does not exist.\n\"", charNameSTR.c_str() ) );
+			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character ^7%s does not exist.\n\"", charNameSTR.c_str() ) );
 			return;
 		}
 
