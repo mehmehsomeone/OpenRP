@@ -1535,14 +1535,8 @@ qboolean G_SetSaber(gentity_t *ent, int saberNum, char *saberName, qboolean sieg
 	//[StanceSelection]
 	if ( !G_ValidSaberStyle(ent, ent->client->ps.fd.saberAnimLevel) )
 	{//had an illegal style, revert to default
-				for(int i = 1; i < SS_NUM_SABER_STYLES; i++)
-				{
-				if(G_ValidSaberStyle(ent, i))
-				{
-				ent->client->ps.fd.saberAnimLevel = i;
-				ent->client->saberCycleQueue = ent->client->ps.fd.saberAnimLevel;
-				}
-				}
+		ent->client->ps.fd.saberAnimLevel = SS_MEDIUM;
+		ent->client->saberCycleQueue = ent->client->ps.fd.saberAnimLevel;
 	}
 	//[/StanceSelection]
 
