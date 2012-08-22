@@ -65,7 +65,7 @@ void BG_ForcePowerDrain( playerState_t *ps, forcePowers_t forcePower, int overri
 	//because a lot of the code uses this function for draining instead.
 	if(ps->fd.forcePower <= (ps->fd.forcePowerMax * FATIGUEDTHRESHHOLD))
 	{//Pop the Fatigued flag
-		ps->userInt3 |= ( 1 << FLAG_FATIGUED );
+	//	ps->userInt3 |= ( 1 << FLAG_FATIGUED );
 	}
 	//[/FatigueSys]
 }
@@ -5049,6 +5049,7 @@ weapChecks:
 //Add Fatigue to a player
 void BG_AddFatigue( playerState_t * ps, int Fatigue)
 {
+	/*
 	//For now, all saber attacks cost one FP.
 	if(ps->fd.forcePower > Fatigue)
 	{
@@ -5058,10 +5059,11 @@ void BG_AddFatigue( playerState_t * ps, int Fatigue)
 	{//don't have enough so just completely drain FP then.
 		ps->fd.forcePower = 0;
 	}
+	*/
 	
 	if(ps->fd.forcePower <= (ps->fd.forcePowerMax * FATIGUEDTHRESHHOLD))
 	{//Pop the Fatigued flag
-		ps->userInt3 |= ( 1 << FLAG_FATIGUED );
+	//	ps->userInt3 |= ( 1 << FLAG_FATIGUED );
 	}
 }
 
@@ -5105,7 +5107,7 @@ void BG_SaberFatigue( playerState_t * ps, int newMove, int anim )
 			}
 			else
 			{//single sabers
-				BG_AddFatigue( ps, FATIGUE_SABERTRANS);
+				//BG_AddFatigue( ps, FATIGUE_SABERTRANS);
 			}
 		}
 	}

@@ -2643,7 +2643,7 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 	//see if popping the flag is nessicary or not.
 	if(self->client->ps.fd.forcePower <= (self->client->ps.fd.forcePowerMax * FATIGUEDTHRESHHOLD))
 	{//Pop the Fatigued flag
-		self->client->ps.userInt3 |= ( 1 << FLAG_FATIGUED );
+	//	self->client->ps.userInt3 |= ( 1 << FLAG_FATIGUED );
 	}
 	//[/FatigueSys]
 
