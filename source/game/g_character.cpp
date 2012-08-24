@@ -1760,7 +1760,7 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 
 	if (trap_Argc() != 3) //If the user doesn't specify both args.
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /editCharacter <name/model/modelscale> <value> \n\"" ) ;
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /editCharacter <name/modelscale> <value> \n\"" ) ;
 		return;
 	}
 
@@ -1788,12 +1788,14 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 		trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Name has been changed to ^7%s^2. If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
 		return;
 	}
+	/*
 	else if( !Q_stricmp( parameter, "model" ) )
 	{
 			q.execute( va( "UPDATE Characters set Model='%s' WHERE CharID='%i'", changeSTR, ent->client->sess.characterID));
 			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Model has been changed to ^7%s^2.\n\"",changeSTR.c_str() ) );
 			return;
 	}
+	*/
 	else if( !Q_stricmp(parameter, "modelscale" ) )
 	{
 		modelscale = atoi(change);
@@ -1830,7 +1832,7 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 				
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /editCharacter <name/model/modelscale> <value> \n\"" ) ;
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /editCharacter <name/modelscale> <value> \n\"" ) ;
 		return;
 	}
 }
