@@ -4224,84 +4224,111 @@ void ClientCommand( int clientNum ) {
 	}
 	else if (Q_stricmp(cmd, "emmyhead") == 0){
 		TheEmote (BOTH_SONICPAIN_HOLD, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emcower") == 0) {
 		TheEmote (BOTH_COWER1, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emsmack") == 0) {
 		TheEmote (BOTH_TOSS1, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emenraged") == 0) {
 		TheEmote (BOTH_FORCE_RAGE, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emvictory") == 0) {
 		TheEmote (BOTH_TAVION_SWORDPOWER, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emvictory2") == 0) {
 		TheEmote (BOTH_TAVION_SCEPTERGROUND, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emvictory3") == 0) {
 		TheEmote (BOTH_ALORA_TAUNT, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emswirl") == 0) {
 		TheEmote (BOTH_CWCIRCLELOCK, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emdance2") == 0) {
 		TheEmote (BOTH_BUTTERFLY_LEFT, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emdance2") == 0) {
 		TheEmote (BOTH_BUTTERFLY_RIGHT, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emdance3") == 0) {
 		TheEmote (BOTH_FJSS_TR_BL, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emsit2") == 0) {
 		TheEmote (BOTH_SLEEP6START, ent, qtrue);
+		return;
 	}
 	else if (Q_stricmp(cmd, "empoint") == 0){
 		TheEmote (BOTH_SCEPTER_HOLD, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emkneel2") == 0) {
 		TheEmote (BOTH_ROSH_PAIN, ent, qtrue);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emkneel") == 0) {
 		TheEmote (BOTH_CROUCH3, ent, qtrue);
+		return;
 	}
 	else if (Q_stricmp(cmd, "sleep") == 0) {
 		TheEmote (BOTH_SLEEP1, ent, qtrue);
+		return;
 	}
 	else if (Q_stricmp(cmd, "embreakdance") == 0) {
 		TheEmote (BOTH_BACK_FLIP_UP, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emcheer") == 0) {
 		TheEmote (BOTH_TUSKENTAUNT1, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emcomeon") == 0) {
 		TheEmote (BOTH_COME_ON1, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emheadshake") == 0) {
 		TheEmote (BOTH_HEADSHAKE, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emheadnod") == 0) {
 		TheEmote (BOTH_HEADNOD, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emsurrender") == 0) {
 		TheEmote (TORSO_SURRENDER_START, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "ematease") == 0) {
 		TheEmote (BOTH_STAND4, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "empunch") == 0 ){
 		TheEmote (BOTH_LOSE_SABER, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emintimidate") == 0){
 		TheEmote (BOTH_ROSH_HEAL, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emslash") == 0){
 		TheEmote (BOTH_ALORA_SPIN_SLASH, ent, qfalse);
+		return;
 	}
 	else if (Q_stricmp(cmd, "emsit") == 0) {
 		TheEmote (BOTH_SIT6, ent, qtrue);
+		return;
 	}
 	if(Q_stricmp(cmd,"reload") == 0)
 	{

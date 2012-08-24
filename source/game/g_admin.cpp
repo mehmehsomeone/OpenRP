@@ -837,6 +837,8 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 	//G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
 
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2%s has been unslept.\n\"", tent->client->pers.netname ) );
+
+	trap_SendServerCommand(tent-g_entities, va("print \"^2You are no longer sleeping. You can get up by using a movement key.\n\""));
 	trap_SendServerCommand(tent-g_entities, va("cp \"^2You are no longer sleeping. You can get up by using a movement key.\n\""));
 
 	G_LogPrintf("Unsleep admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
@@ -901,6 +903,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 	{
 		tent->client->ps.eFlags |= EF_INVULNERABLE;
 		tent->client->invulnerableTimer = level.time + Q3_INFINITE;
+		trap_SendServerCommand(tent-g_entities, va("print \"^2You have been protected.\n\""));
 		trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been protected.\n\""));
 		G_LogPrintf("Protect admin command executed by %s on %s to protect them.\n", ent->client->pers.netname, tent->client->pers.netname);	
 		return;
@@ -909,6 +912,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 	{
 		tent->client->ps.eFlags &= ~EF_INVULNERABLE;
 		tent->client->invulnerableTimer = 0;
+		trap_SendServerCommand(tent-g_entities, va("print \"^2You are no longer protected.\n\""));
 		trap_SendServerCommand(tent-g_entities, va("cp \"^2You are no longer protected.\n\""));
 		G_LogPrintf("Protect admin command executed by %s on %s to unprotect them.\n", ent->client->pers.netname, tent->client->pers.netname);	
 		return;
@@ -1018,6 +1022,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 		tent->client->sess.state |= PLAYER_EMPOWERED;
 	}
 
+	trap_SendServerCommand(tent-g_entities, va("print \"^2You have been empowered.\n\""));
 	trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been empowered.\n\""));
 
 	G_LogPrintf("Empower admin command executed by %s.\n", ent->client->pers.netname);
@@ -1139,6 +1144,8 @@ void Cmd_amMerc_F(gentity_t *ent)
 		tent->client->sess.state |= PLAYER_MERC; //Give them merc flags, which says that they are a merc.
 
 		trap_SendServerCommand(ent-g_entities, va("print \"^2Player %s ^2was merc'd.\n\"", tent->client->pers.netname));
+
+		trap_SendServerCommand(tent-g_entities, va("print \"^2You have been merc'd.\n\""));
 		trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been merc'd.\n\""));
 		G_LogPrintf("Merc admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		return;
@@ -1162,6 +1169,8 @@ void Cmd_amMerc_F(gentity_t *ent)
 		tent->client->sess.state -= PLAYER_MERC; //Take away merc flags.
 
 		trap_SendServerCommand(ent-g_entities, va("print \"^2Player %s ^2was unmerc'd.\n\"", tent->client->pers.netname));
+
+		trap_SendServerCommand(tent-g_entities, va("print \"^2You have been unmerc'd.\n\""));
 		trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been unmerc'd.\n\""));
 		G_LogPrintf("Unmerc admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 		return;
@@ -1290,9 +1299,6 @@ void Cmd_amMap_F(gentity_t *ent)
 	}
 
 	trap_Argv( 1, map, MAX_STRING_CHARS );
-
-	trap_SendServerCommand( -1, va( "print \"^2The map is being changed to ^7%s\n\"", map ) );
-	trap_SendServerCommand( -1, va( "cp \"^2The map is being changed to ^7%s\n\"", map ) );
 
 	trap_SendConsoleCommand( EXEC_APPEND, va("map %s\n", map));
 	G_LogPrintf("Map changed to %s by %s.\n", map, ent->client->pers.netname);
