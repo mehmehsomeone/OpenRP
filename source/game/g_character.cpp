@@ -451,6 +451,12 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
 		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str() ) );
 
+		if(!DBname.empty())
+		{
+			trap_SendServerCommand ( ent-g_entities, va("print \"^1Error: You already have a character named %s.\n\"",DBname.c_str()));
+			return;
+		}
+
 		//Create character
 		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory,InFaction,Credits) VALUES('%i','%s','100','1','0','none','none','%i','0','0','250')", ent->client->sess.accountID, charNameSTR.c_str(), forceSensitive ) );
 		q.execute( va( "INSERT INTO Items(CharID,E11,Pistol) VALUES('%i', '0', '0')", ent->client->sess.characterID ) );
@@ -529,6 +535,12 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		//Check if the character exists
 		transform( charNameSTR.begin(), charNameSTR.end(), charNameSTR.begin(), ::tolower );
 		string DBname = q.get_string( va( "SELECT Name FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str() ) );
+
+		if(!DBname.empty())
+		{
+			trap_SendServerCommand ( ent-g_entities, va("print \"^1Error: You already have a character named %s.\n\"",DBname.c_str()));
+			return;
+		}
 
 		//Create character
 		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory,InFaction,Credits) VALUES('%i','%s','100','1','0','%s','Member','%i','0','1','250')", ent->client->sess.accountID, charNameSTR.c_str(), factionNameSTR.c_str(), forceSensitive ) );
@@ -857,7 +869,7 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 			return;
 		}
 
-		trap_Argv( 1, charName, sizeof( MAX_STRING_CHARS ) );
+		trap_Argv( 1, charName,  MAX_STRING_CHARS );
 
 		string charNameSTR = charName;
 

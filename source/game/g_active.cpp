@@ -23,8 +23,6 @@ qboolean saberCheckKnockdown_DuelLoss(gentity_t *saberent, gentity_t *saberOwner
 
 extern vmCvar_t g_saberLockRandomNess;
 
-extern qboolean G_CheckState(gentity_t * tent, int state);
-
 void P_SetTwitchInfo(gclient_t	*client)
 {
 	client->ps.painTime = level.time;
@@ -1840,7 +1838,6 @@ enum {
 
 void G_SetTauntAnim( gentity_t *ent, int taunt )
 {
-	int i= 0;
 	if (ent->client->pers.cmd.upmove ||
 		ent->client->pers.cmd.forwardmove ||
 		ent->client->pers.cmd.rightmove)
@@ -1891,25 +1888,7 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 	}
 	
 	// MJN - Check Sleeping
-	if( G_CheckState( ent, PLAYER_SLEEPING ) ){
-		return;
-	}
-
-	// MJN - Check if we are already in an emote.
-	if( InEmote( ent->client->emote_num ) ){
-		M_Cmd_Emote(ent, ent->client->emote_num );
-		return;
-	}
-	
-	// MJN - Check if we are already in a special emote.
-	if (ent->client->ps.forceHandExtendTime > level.time && 
-		ent->client->saberKnockedTime > level.time &&
-		InSpecialEmote( ent->client->ps.forceDodgeAnim ) )
-	{
-		ent->client->ps.forceHandExtendTime = level.time;
-		ent->client->ps.weaponTime = 0;
-		ent->client->saberKnockedTime = level.time;
-		ent->client->emote_num = 0;
+	if( ent->client->sess.isSleeping == qtrue ){
 		return;
 	}
 
@@ -2157,109 +2136,6 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 				}
 			}
 			break;
-			// MJN - Emotes
-			case 5://emsit
-				M_Cmd_Emote(ent, BOTH_SIT2);
-				break;
-			case 6://emsit2
-				M_Cmd_Emote(ent, BOTH_SIT6);
-				break;
-			case 7://emsit3
-				M_Cmd_Emote(ent, BOTH_SIT7);
-				break;
-			case 8://emwait
-				M_HolsterThoseSabers(ent);
-				anim = BOTH_STAND4;
-				break;
-			case 9://emsurrender
-				M_HolsterThoseSabers(ent);
-				anim = TORSO_SURRENDER_START;
-				break;
-			case 10://emsorrow
-				M_Cmd_Emote(ent, BOTH_FORCEHEAL_START);
-				break;
-			case 11://emhonor
-				M_Cmd_Emote(ent, BOTH_CROUCH3);
-				break;
-			case 12://emnod
-				anim = BOTH_HEADNOD;
-				break;
-			case 13://emshake
-				anim = BOTH_HEADSHAKE;
-				break;
-			case 14://empraise
-				anim = BOTH_TUSKENTAUNT1;
-				break;
-			case 15://emattenhut
-				M_HolsterThoseSabers(ent);
-				anim = BOTH_STAND8;
-				break;
-			case 16://emcrossarms
-				M_Cmd_Emote(ent, BOTH_STAND10);
-				break;
-			case 17://emalora
-				anim = BOTH_ALORA_TAUNT;
-				break;
-			case 18://emthrow
-				anim = M_Cmd_Two_RandAnim_f(ent, BOTH_SABERTHROW1START, BOTH_SABERTHROW2START);
-				break;
-			case 19://emtavion
-				anim = BOTH_TAVION_SWORDPOWER;
-				break;
-			case 20://empoint
-				anim = BOTH_SCEPTER_HOLD;
-				break;
-			case 21://emcomeon
-				anim = BOTH_COME_ON1;
-				break;
-			case 22://emsit4
-				M_Cmd_Emote(ent, BOTH_SIT1);
-				break;
-			case 23://emsit5
-				M_Cmd_Emote(ent, BOTH_SIT4);
-				break;
-			case 24://emsit6
-				M_Cmd_Emote(ent, BOTH_SIT5);
-				break;
-			case 25://emdance
-				anim = BOTH_A7_SOULCAL;
-				break;
-			case 26://empush
-				anim = BOTH_ATTACK11;
-				break;
-			case 27://emaim
-				anim = TORSO_WEAPONIDLE4;
-				break;
-			case 28://embutton
-				M_Cmd_Emote(ent, BOTH_BUTTON_HOLD);
-				break;
-			case 29://emchoked
-				anim = M_Cmd_Two_RandAnim_f(ent, BOTH_CHOKE1, BOTH_CHOKE3);
-				break;
-			case 30://emtyping
-				anim = BOTH_CONSOLE1;
-				break;
-			case 31://emdie1
-				M_Cmd_Emote(ent, BOTH_DEATH1);
-				break;
-			case 32://emdie2
-				M_Cmd_Emote(ent, BOTH_DEATH14);
-				break;
-			case 33://emdie3
-				M_Cmd_Emote(ent, BOTH_DEATH17);
-				break;
-			case 34://emtwitch
-				M_Cmd_Emote(ent, BOTH_DEATH14_UNGRIP);
-				break;
-			case 35://emtwitch2
-				M_Cmd_Emote(ent, TORSO_CHOKING1);
-				break;
-			case 36://emdie4
-				M_Cmd_Emote(ent, BOTH_DEATH4);
-				break;
-			default:// MJN - Implemented a failsafe.
-				G_Printf(S_COLOR_RED "Error: Animation %i not found.\n", anim); // This will tell you which anim it cannot find.
-				break;
 		}
 		if ( anim != -1 )
 		{
@@ -2267,29 +2143,10 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 			{
 				ent->client->ps.forceHandExtend = HANDEXTEND_TAUNT;
 				ent->client->ps.forceDodgeAnim = anim;
-				// MJN - Entry for emotes
-				if (InSpecialEmote( anim ) )
-				{
-					// MJN - Stop running Forcepowers
-					while (i < NUM_FORCE_POWERS)
-					{
-						if ((ent->client->ps.fd.forcePowersActive & (1 << i)) && i != FP_LEVITATION)
-						{
-							WP_ForcePowerStop(ent, i);
-						}
-						i++;
-					}
-					ent->client->ps.forceHandExtendTime = level.time + 9999999;
-					ent->client->saberKnockedTime = level.time + 9999999;
-					ent->client->ps.weaponTime = 99999999;
-					ent->client->emote_num = anim;
-				}
-				else{// basejk
-					ent->client->ps.forceHandExtendTime = level.time + BG_AnimLength(ent->localAnimIndex, (animNumber_t)anim);
-				}
+				ent->client->ps.forceHandExtendTime = level.time + BG_AnimLength(ent->localAnimIndex, (animNumber_t)anim);
 			}
 			if ( taunt != TAUNT_MEDITATE 
-				&& taunt != TAUNT_BOW && ( taunt < 5 || taunt > MAX_EMOTES ) )
+				&& taunt != TAUNT_BOW )
 			{//no sound for meditate or bow
 				G_AddEvent( ent, EV_TAUNT, taunt );
 			}

@@ -875,10 +875,11 @@ typedef struct {
 	qboolean	isAdmin;		// is an Admin
 	int adminLevel;
 	vec3_t placeOfDeath;
-	int state;						//The current state of the player
 	int warnings;					//The current amount of warnings the player has
 	char IP[32];					//The players IP Address is stored here
 	int pids[MAX_CLIENTS];			//Client IDs
+	qboolean isSleeping;
+	qboolean isSilenced;
 
 } clientSession_t;
 
