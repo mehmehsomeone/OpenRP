@@ -417,7 +417,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	//Make sure they entered a name, FS, and FactionID
 	if( trap_Argc() != 4 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /createCharacter <name> <forceSensitive> <factionID>\nForceSensitive: 1 = FS, 0 = Not FS FactionID: /ListFactions for factionIDs. Use ''none'' if you don't want to be in one.\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /createCharacter <name> <forceSensitive> <factionID>\nForceSensitive: Say either yes or no FactionID: /listFactions for factionIDs. Use ''none'' if you don't want to be in one.\nExample: /createCharacter luke yes 1\n\"");
 		return;
 	}
 
@@ -427,25 +427,23 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	string charNameSTR = charNameCleaned;
 
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
-	forceSensitive = atoi( temp );
+	string forceSensitiveSTR = temp;
 
 	trap_Argv( 3, temp2, MAX_STRING_CHARS );
 	string factionNoneSTR = temp2;
 	factionID = atoi( temp2 );
 
-
-	switch ( forceSensitive )
+	if ( !Q_stricmp( temp, "yes" ) )
 	{
-	case 0:
-		break;
-	case 1:
-		break;
-	default:
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Force Sensitive must be either 1 or 0.\n\"" );
-		return;
+		forceSensitive = 1;
 	}
 
-	if ( !Q_stricmp( temp2, "none" ) || !Q_stricmp( temp2, "None" ) )
+	else if ( !Q_stricmp( temp, "no" ) )
+	{
+		forceSensitive = 0;
+	}
+
+	if ( !Q_stricmp( temp2, "none" ) )
 	{
 		//Check if the character exists
 		transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
