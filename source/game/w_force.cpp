@@ -916,6 +916,12 @@ qboolean WP_ForcePowerUsable( gentity_t *self, forcePowers_t forcePower )
 		return qfalse;
 	}
 
+	// MJN - is the client in an emote?  If so, no force is allowed.
+	if (InEmote(self->client->emote_num ) ||
+		InSpecialEmote(self->client->emote_num )){
+		return qfalse;
+	}
+
 	if (self->client->ps.pm_flags & PMF_FOLLOW)
 	{ //specs can't use powers through people
 		return qfalse;

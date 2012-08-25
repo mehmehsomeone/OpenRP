@@ -18,6 +18,9 @@ extern char	*ConcatArgs( int start );
 extern void LevelCheck( int charID );
 extern void G_Sound2( gentity_t *ent, int channel, int soundIndex );
 extern int G_SoundIndex2( const char *name, ...  );
+extern int InEmote( int anim );
+extern int InSpecialEmote( int anim );
+extern void G_SetTauntAnim( gentity_t *ent, int taunt );
 
 /*
 ================
@@ -743,6 +746,12 @@ void Cmd_amSleep_F(gentity_t *ent)
 		return;
 	}
 
+	// MJN - are they in an emote?  Then unemote them :P
+	if (InEmote(tent->client->emote_num ) || InSpecialEmote(tent->client->emote_num ))
+	{
+		G_SetTauntAnim(tent, tent->client->emote_num);
+	}
+
 	if( tent->client->sess.isSleeping == qfalse )
 	{
 		tent->client->sess.isSleeping = qtrue;
@@ -763,8 +772,6 @@ void Cmd_amSleep_F(gentity_t *ent)
 	tent->client->ps.forceDodgeAnim = 0;
 	tent->client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
 	tent->client->ps.quickerGetup = qfalse;
-
-	G_SetAnim(tent, NULL, SETANIM_BOTH, BOTH_STUMBLEDEATH1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
 	
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2%s is now sleeping.\n\"", tent->client->pers.netname ) );
 	trap_SendServerCommand( tent-g_entities, "cp \"^2You are now sleeping.\n\"" );
@@ -1338,7 +1345,7 @@ void Cmd_amWeather_F(gentity_t *ent)
 
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amWeather <weather>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amWeather <weather>\nTypes of weather: snow, rain, sandstorm, blizzard, fog, spacedust, acidrain\n\"" );
 		return;
 	}
 
@@ -1413,7 +1420,7 @@ void Cmd_amWeather_F(gentity_t *ent)
 
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Invalid type of weather.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Invalid type of weather.\nTypes of weather: snow, rain, sandstorm, blizzard, fog, spacedust, acidrain\n\"" );
 		return;
 	}
 
@@ -1444,7 +1451,7 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 
 	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amWeatherPlus <weather>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amWeatherPlus <weather>\nTypes of weather: snow, rain, sandstorm, blizzard, fog, spacedust, acidrain\n\"" );
 		return;
 	}
 
@@ -1521,7 +1528,7 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Invalid type of weather.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Invalid type of weather.\nTypes of weather: snow, rain, sandstorm, blizzard, fog, spacedust, acidrain\n\"" );
 		return;
 	}
 
@@ -1559,7 +1566,7 @@ void Cmd_amStatus_F(gentity_t *ent)
    { 
       if(g_entities[i].client->pers.connected == CON_CONNECTED)
 	  { 
-		  trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s\n\"", g_entities[i].client->sess.pids[i], g_entities[i].client->pers.netname, g_entities[i].client->sess.IP ) );
+		  trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP ) );
 	  }
    }
    trap_SendServerCommand( ent-g_entities, va( "print \"^2===================================\n\"" ) );
@@ -1682,6 +1689,12 @@ void Cmd_amSlap_F(gentity_t *ent)
 		return;
 	}
 
+	// MJN - are they in an emote?  Then unemote them :P
+	if (InEmote(tent->client->emote_num ) || InSpecialEmote(tent->client->emote_num ))
+	{
+		G_SetTauntAnim(tent, tent->client->emote_num);
+	}
+
 	if ( tent->client->sess.isSleeping == qtrue )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Player %s ^1is sleeping so you can't slap them.\n\"", tent->client->pers.netname ) );
@@ -1703,7 +1716,7 @@ void Cmd_amSlap_F(gentity_t *ent)
 
 void Cmd_info_F( gentity_t *ent )
 {
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP %s - info\n^2OpenRP Website: ^7http://code.google.com/p/openrp/ \n^2Server Website: ^7%s\n^2View a list of commands at ^7cmds.newagerpg.com\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP %s - info\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n^2View a list of commands at ^7openrp.jkhub.org/cmds\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
 	return;
 }
 

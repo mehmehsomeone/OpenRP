@@ -4156,10 +4156,12 @@ void ClientCommand( int clientNum ) {
 		Cmd_amUnsleep_F (ent);
 		return;
 	}
+	/*
 	if(Q_stricmp(cmd, "amprotect") == 0) {
 		Cmd_amProtect_F (ent);
 		return;
 	}
+	*/
 	/*
 	if(Q_stricmp(cmd, "amempower") == 0) {
 		Cmd_amEmpower_F (ent);
@@ -4222,112 +4224,137 @@ void ClientCommand( int clientNum ) {
 		Cmd_Music_F (ent);
 		return;
 	}
-	if (Q_stricmp(cmd, "emmyhead") == 0){
-		TheEmote (BOTH_SONICPAIN_HOLD, ent, qfalse);
+	if( Q_stricmp (cmd, "emsit") == 0) {
+		G_SetTauntAnim( ent, 5);
 		return;
 	}
-	if (Q_stricmp(cmd, "emcower") == 0) {
-		TheEmote (BOTH_COWER1, ent, qfalse);
+	if( Q_stricmp (cmd, "emsit2") == 0) {
+		G_SetTauntAnim( ent, 6);
 		return;
 	}
-	if (Q_stricmp(cmd, "emsmack") == 0) {
-		TheEmote (BOTH_TOSS1, ent, qfalse);
+	if( Q_stricmp (cmd, "emsit3") == 0) {
+		G_SetTauntAnim( ent, 7);
 		return;
 	}
-	if (Q_stricmp(cmd, "emenraged") == 0) {
-		TheEmote (BOTH_FORCE_RAGE, ent, qfalse);
+	if( Q_stricmp (cmd, "emwait") == 0) {
+		G_SetTauntAnim( ent, 8);
 		return;
 	}
-	if (Q_stricmp(cmd, "emvictory") == 0) {
-		TheEmote (BOTH_TAVION_SWORDPOWER, ent, qfalse);
+	if( Q_stricmp (cmd, "emsurrender") == 0) {
+		G_SetTauntAnim( ent, 9);
 		return;
 	}
-	if (Q_stricmp(cmd, "emvictory2") == 0) {
-		TheEmote (BOTH_TAVION_SCEPTERGROUND, ent, qfalse);
+	if( Q_stricmp (cmd, "emsorrow") == 0) {
+		G_SetTauntAnim( ent, 10);
 		return;
 	}
-	if (Q_stricmp(cmd, "emvictory3") == 0) {
-		TheEmote (BOTH_ALORA_TAUNT, ent, qfalse);
+	if( Q_stricmp (cmd, "emhonor") == 0) {
+		G_SetTauntAnim( ent, 11);
 		return;
 	}
-	if (Q_stricmp(cmd, "emswirl") == 0) {
-		TheEmote (BOTH_CWCIRCLELOCK, ent, qfalse);
+	if( Q_stricmp (cmd, "emnod") == 0) {
+		G_SetTauntAnim( ent, 12);
 		return;
 	}
-	if (Q_stricmp(cmd, "emdance2") == 0) {
-		TheEmote (BOTH_BUTTERFLY_LEFT, ent, qfalse);
+	if( Q_stricmp (cmd, "emshake") == 0) {
+		G_SetTauntAnim( ent, 13);
 		return;
 	}
-	if (Q_stricmp(cmd, "emdance2") == 0) {
-		TheEmote (BOTH_BUTTERFLY_RIGHT, ent, qfalse);
+	if( Q_stricmp (cmd, "empraise") == 0) {
+		G_SetTauntAnim( ent, 14);
 		return;
 	}
-	if (Q_stricmp(cmd, "emdance3") == 0) {
-		TheEmote (BOTH_FJSS_TR_BL, ent, qfalse);
+	if( Q_stricmp (cmd, "emattenhut") == 0) {
+		G_SetTauntAnim( ent, 15);
 		return;
 	}
-	if (Q_stricmp(cmd, "emsit2") == 0) {
-		TheEmote (BOTH_SLEEP6START, ent, qtrue);
+	if( Q_stricmp (cmd, "emcrossarms") == 0) {
+		G_SetTauntAnim( ent, 16);
 		return;
 	}
-	if (Q_stricmp(cmd, "empoint") == 0){
-		TheEmote (BOTH_SCEPTER_HOLD, ent, qfalse);
+	if( Q_stricmp (cmd, "emalora") == 0) {
+		G_SetTauntAnim( ent, 17);
 		return;
 	}
-	if (Q_stricmp(cmd, "emkneel2") == 0) {
-		TheEmote (BOTH_ROSH_PAIN, ent, qtrue);
+	if( Q_stricmp (cmd, "emthrow") == 0) {
+		G_SetTauntAnim( ent, 18);
 		return;
 	}
-	if (Q_stricmp(cmd, "emkneel") == 0) {
-		TheEmote (BOTH_CROUCH3, ent, qtrue);
+	if( Q_stricmp (cmd, "emtavion") == 0) {
+		G_SetTauntAnim( ent, 19);
 		return;
 	}
-	if (Q_stricmp(cmd, "sleep") == 0) {
-		TheEmote (BOTH_SLEEP1, ent, qtrue);
+	if( Q_stricmp (cmd, "empoint") == 0) {
+		G_SetTauntAnim( ent, 20);
 		return;
 	}
-	if (Q_stricmp(cmd, "embreakdance") == 0) {
-		TheEmote (BOTH_BACK_FLIP_UP, ent, qfalse);
+	if( Q_stricmp (cmd, "emcomeon") == 0) {
+		G_SetTauntAnim( ent, 21);
 		return;
 	}
-	if (Q_stricmp(cmd, "emcheer") == 0) {
-		TheEmote (BOTH_TUSKENTAUNT1, ent, qfalse);
+	if( Q_stricmp (cmd, "emsit4") == 0) {
+		G_SetTauntAnim( ent, 22);
 		return;
 	}
-	if (Q_stricmp(cmd, "emcomeon") == 0) {
-		TheEmote (BOTH_COME_ON1, ent, qfalse);
+	if( Q_stricmp (cmd, "emsit5") == 0) {
+		G_SetTauntAnim( ent, 23);
 		return;
 	}
-	if (Q_stricmp(cmd, "emheadshake") == 0) {
-		TheEmote (BOTH_HEADSHAKE, ent, qfalse);
+	if( Q_stricmp (cmd, "emsit6") == 0) {
+		G_SetTauntAnim( ent, 24);
 		return;
 	}
-	if (Q_stricmp(cmd, "emheadnod") == 0) {
-		TheEmote (BOTH_HEADNOD, ent, qfalse);
+	//New emotes
+	if( Q_stricmp (cmd, "emdance") == 0) {
+		G_SetTauntAnim( ent, 25);
 		return;
 	}
-	if (Q_stricmp(cmd, "emsurrender") == 0) {
-		TheEmote (TORSO_SURRENDER_START, ent, qfalse);
+	if( Q_stricmp (cmd, "empush") == 0) {
+		G_SetTauntAnim( ent, 26);
 		return;
 	}
-	if (Q_stricmp(cmd, "ematease") == 0) {
-		TheEmote (BOTH_STAND4, ent, qfalse);
+	if( Q_stricmp (cmd, "emaim") == 0) {
+		G_SetTauntAnim( ent, 27);
 		return;
 	}
-	if (Q_stricmp(cmd, "empunch") == 0 ){
-		TheEmote (BOTH_LOSE_SABER, ent, qfalse);
+	if( Q_stricmp (cmd, "embutton") == 0) {
+		G_SetTauntAnim( ent, 28);
 		return;
 	}
-	if (Q_stricmp(cmd, "emintimidate") == 0){
-		TheEmote (BOTH_ROSH_HEAL, ent, qfalse);
+	if( Q_stricmp (cmd, "emchoked") == 0) {
+		G_SetTauntAnim( ent, 29);
 		return;
 	}
-	if (Q_stricmp(cmd, "emslash") == 0){
-		TheEmote (BOTH_ALORA_SPIN_SLASH, ent, qfalse);
+	if( Q_stricmp (cmd, "emtyping") == 0) {
+		G_SetTauntAnim( ent, 30);
 		return;
 	}
-	if (Q_stricmp(cmd, "emsit") == 0) {
-		TheEmote (BOTH_SIT6, ent, qtrue);
+	if( Q_stricmp (cmd, "emdie1") == 0) {
+		G_SetTauntAnim( ent, 31);
+		return;
+	}
+	if( Q_stricmp (cmd, "emdie2") == 0) {
+		G_SetTauntAnim( ent, 32);
+		return;
+	}
+	if( Q_stricmp (cmd, "emdie3") == 0) {
+		G_SetTauntAnim( ent, 33);
+		return;
+	}
+	if( Q_stricmp (cmd, "emtwitch") == 0) {
+		G_SetTauntAnim( ent, 34);
+		return;
+	}
+	if( Q_stricmp (cmd, "emtwitch2") == 0) {
+		G_SetTauntAnim( ent, 35);
+		return;
+	}
+	if( Q_stricmp (cmd, "emdie4") == 0) {
+		G_SetTauntAnim( ent, 36);
+		return;
+	}
+	if( Q_stricmp (cmd, "emsleep") == 0) {
+		G_SetTauntAnim( ent, 37);
 		return;
 	}
 	if(Q_stricmp(cmd,"reload") == 0)
