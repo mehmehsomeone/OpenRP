@@ -772,6 +772,21 @@ void Cmd_amSleep_F(gentity_t *ent)
 	tent->client->ps.forceDodgeAnim = 0;
 	tent->client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
 	tent->client->ps.quickerGetup = qfalse;
+
+	tent->client->frozenTime = level.time+Q3_INFINITE;
+	tent->client->ps.userInt3 |= (1 << FLAG_FROZEN);
+	tent->client->ps.userInt1 |= LOCK_UP;
+	tent->client->ps.userInt1 |= LOCK_DOWN;
+	tent->client->ps.userInt1 |= LOCK_RIGHT;
+	tent->client->ps.userInt1 |= LOCK_LEFT;
+	tent->client->ps.userInt1 |= LOCK_MOVERIGHT;
+	tent->client->ps.userInt1 |= LOCK_MOVELEFT;
+	tent->client->ps.userInt1 |= LOCK_MOVEFORWARD;
+	tent->client->ps.userInt1 |= LOCK_MOVEBACK;
+	tent->client->ps.userInt1 |= LOCK_MOVEUP;
+	tent->client->ps.userInt1 |= LOCK_MOVEDOWN;
+	tent->client->viewLockTime = level.time+Q3_INFINITE;
+	tent->client->ps.legsTimer = ent->client->ps.torsoTimer=level.time+Q3_INFINITE;
 	
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2%s is now sleeping.\n\"", tent->client->pers.netname ) );
 	trap_SendServerCommand( tent-g_entities, "cp \"^2You are now sleeping.\n\"" );
@@ -839,6 +854,21 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 	tent->client->ps.forceDodgeAnim = 0;
 	tent->client->ps.forceHandExtendTime = 0;
 	tent->client->ps.quickerGetup = qfalse;
+
+	tent->client->frozenTime = 0;
+	tent->client->ps.userInt3 &= ~(1 << FLAG_FROZEN);
+	tent->client->ps.userInt1 &= ~LOCK_UP;
+	tent->client->ps.userInt1 &= ~LOCK_DOWN;
+	tent->client->ps.userInt1 &= ~LOCK_RIGHT;
+	tent->client->ps.userInt1 &= ~LOCK_LEFT;
+	tent->client->ps.userInt1 &= ~LOCK_MOVERIGHT;
+	tent->client->ps.userInt1 &= ~LOCK_MOVELEFT;
+	tent->client->ps.userInt1 &= ~LOCK_MOVEFORWARD;
+	tent->client->ps.userInt1 &= ~LOCK_MOVEBACK;
+	tent->client->ps.userInt1 &= ~LOCK_MOVEUP;
+	tent->client->ps.userInt1 &= ~LOCK_MOVEDOWN;
+	tent->client->viewLockTime = 0;
+	tent->client->ps.legsTimer = ent->client->ps.torsoTimer=0;
 
 	//Play a nice healing sound... Ahh
 	//G_Sound(tent, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
@@ -1646,71 +1676,6 @@ void Cmd_amRename_F(gentity_t *ent)
 	uwRename(&g_entities[clientid], newname);
 
 	G_LogPrintf("Rename admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
-	return;
-}
-
-/*
-============
-amslap Function
-============
-*/
-void Cmd_amSlap_F(gentity_t *ent)
-{
-	int pids[MAX_CLIENTS];
-	char err[MAX_STRING_CHARS], cmdTarget[MAX_STRING_CHARS];
-	gentity_t *tent; 
-
-	if(!G_CheckAdmin(ent, ADMIN_SLAP))
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
-		return;
-	}
-
-	if(trap_Argc() < 2)
-	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Command Usage: /amslap <name/clientid>\n\"" ) );
-		return;
-	}
-
-	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
-
-	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
-	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid %s ^1does not exist.\n\"", cmdTarget));
-		return;
-	}
-
-	tent = &g_entities[pids[0]];
-
-	if(!G_AdminControl(ent->client->sess.adminLevel, tent->client->sess.adminLevel))
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
-	}
-
-	// MJN - are they in an emote?  Then unemote them :P
-	if (InEmote(tent->client->emote_num ) || InSpecialEmote(tent->client->emote_num ))
-	{
-		G_SetTauntAnim(tent, tent->client->emote_num);
-	}
-
-	if ( tent->client->sess.isSleeping == qtrue )
-	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Player %s ^1is sleeping so you can't slap them.\n\"", tent->client->pers.netname ) );
-		return;
-	}
-
-	tent->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
-	tent->client->ps.forceHandExtendTime = level.time + 3000;
-	tent->client->ps.velocity[2] += 500;
-	tent->client->ps.forceDodgeAnim = 0;
-	tent->client->ps.quickerGetup = qfalse;
-		
-	trap_SendServerCommand(ent-g_entities, va("print \"^2You Successfully slapped %s.\n\"", tent->client->pers.netname));
-	trap_SendServerCommand(tent-g_entities, va("cp \"^2You have been slapped.\n\""));
-
-	G_LogPrintf("Slap admin command executed by %s on %s.\n", ent->client->pers.netname, tent->client->pers.netname);
 	return;
 }
 

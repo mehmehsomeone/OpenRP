@@ -800,8 +800,9 @@ void SetTeam( gentity_t *ent, char *s )
 	specClient = 0;
 	specState = SPECTATOR_NOT;
 	if ( !Q_stricmp( s, "scoreboard" ) || !Q_stricmp( s, "score" )  ) {
-		team = TEAM_SPECTATOR;
-		specState = SPECTATOR_SCOREBOARD;
+		//team = TEAM_SPECTATOR;
+		//specState = SPECTATOR_SCOREBOARD;
+		return;
 	} else if ( !Q_stricmp( s, "follow1" ) ) {
 		team = TEAM_SPECTATOR;
 		specState = SPECTATOR_FOLLOW;
@@ -4208,14 +4209,11 @@ void ClientCommand( int clientNum ) {
 		Cmd_amRename_F (ent);
 		return;
 	}
-	if (Q_stricmp(cmd, "amslap") == 0) {
-		Cmd_amSlap_F (ent);
-		return;
-	}
 	if (Q_stricmp(cmd, "amcheataccess") == 0) {
 		Cmd_CheatAccess_F (ent);
 		return;
 	}
+	/*
 	if (Q_stricmp(cmd, "amshakescreen") == 0) {
 		Cmd_ShakeScreen_F (ent);
 		return;
@@ -4224,6 +4222,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_Music_F (ent);
 		return;
 	}
+	*/
 	if( Q_stricmp (cmd, "emsit") == 0) {
 		G_SetTauntAnim( ent, 5);
 		return;
