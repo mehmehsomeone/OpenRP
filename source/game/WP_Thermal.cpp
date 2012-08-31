@@ -2,7 +2,7 @@
 
 const int TD_DAMAGE	= 9999; //only on a direct impact
 const int TD_SPLASH_DAM = 9999;
-const int TD_SPLASH_RAD = 500;
+const int TD_SPLASH_RAD = 300;
 const float TD_MIN_CHARGE = 0.75f; //0.15f
 const int TD_TIME = 3500;//6000
 const int TD_ALT_TIME = 1000; //3000

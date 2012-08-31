@@ -1,11 +1,11 @@
 #include "g_weapons.h"
 
-const int ROCKET_VELOCITY = 2500; 
+const int ROCKET_VELOCITY = 500; 
 const int ROCKET_DAMAGE = 500; //Original 800
 const int ROCKET_SPLASH_DAMAGE = 100; //Original 250
-const int ROCKET_SPLASH_RADIUS = 200;
+const int ROCKET_SPLASH_RADIUS = 250;
 const int ROCKET_SIZE = 3;
-const int ROCKET_ALT_THINK_TIME = 100;
+const int ROCKET_ALT_THINK_TIME = 200;
 
 void rocketThink( gentity_t *ent )
 {

@@ -3,7 +3,7 @@
 //Comments are original values
 const float BLASTER_SPREAD = 1.0f; //1.6f
 const float BLASTER_SPREAD2 = 0.7f; //0.7f
-const int BLASTER_VELOCITY = 3450; //3450
+const int BLASTER_VELOCITY = 4000; //3450
 const int BLASTER_DAMAGE = 120; //80
 
 void WP_FireBlaster( gentity_t *ent, qboolean altFire )

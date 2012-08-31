@@ -1,7 +1,7 @@
 #include "g_weapons.h"
 
-const int MELEE_SWING1_DAMAGE = 10;
-const int MELEE_SWING2_DAMAGE = 12;
+const int MELEE_SWING1_DAMAGE = 3;
+const int MELEE_SWING2_DAMAGE = 5;
 const int MELEE_RANGE = 8;
 
 extern qboolean G_HeavyMelee( gentity_t *attacker );
