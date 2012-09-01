@@ -1833,14 +1833,12 @@ void Cmd_amRename_F(gentity_t *ent)
 
 void Cmd_info_F( gentity_t *ent )
 {
-	//trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP %s - info\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
 	trap_SendServerCommand( ent-g_entities, "print \"^3/login\n/logout\n/register\n/character\n/mycharacters\n/createcharacter\n/accountinfo\n/characterinfo\n/grantadmin\n/removeadmin\n/genexp\n/givecredits\n/editaccount\n/accountname\n\"");
 	trap_SendServerCommand( ent-g_entities, "print \"^3/editcharacter\n/createfaction\n/setfaction\n/setfactionrank\n/faction\n/factionwithdraw\n/factiondeposit\n/factiongencredits\n/listfactions\n/bounty\n/shop\n/inventory\n\"");
 	return;
 }
 void Cmd_aminfo_F( gentity_t *ent )
 {
-	// commented babby - trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP %s - info\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
 	trap_SendServerCommand( ent-g_entities, "print \"^3/amkick\n/amban\n/amwarn\n/amtele\n/amsilence\n/amunsilence\n/amsleep\n/amunsleep\n/amprotect\n/amempower\n\"");
 	trap_SendServerCommand( ent-g_entities, "print \"^3/ambitvalues\n/ammerc\n/amannounce\n/ameffect\n/amcleareffects\n/amforceteam\n/amstatus\n/amweather\n/amweatherplus\n\"");
 	trap_SendServerCommand( ent-g_entities, "print \"^3/ammap\n/amrename\n/amslap\n/amcheataccess\n/amshakescreen\n/ammusic\n\"");
@@ -1848,7 +1846,6 @@ void Cmd_aminfo_F( gentity_t *ent )
 }
 void Cmd_eminfo_F( gentity_t *ent )
 {
-	// commented babby - trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP %s - info\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
 	trap_SendServerCommand( ent-g_entities, "print \"^3/emsit\n/emsit2\n/emsit3\n/emsurrender\n/emsorrow\n/emhonor\n/emnod\n/emshake\n/empraise\n/emattenhut\n/emcrossarms\n/emalora\n\"");
 	trap_SendServerCommand( ent-g_entities, "print \"^3/emthrow\n/emtavion\n/empoint\n/emcomeon\n/emsit4\n/emsit5\n/emsit6\n/emdance\n/empush\n/emaim\n/embutton\n/emchoked\n/emtyping\n/emdie1\n/emdie2\n/emdie3\n/emtwitch\n\"");
 	trap_SendServerCommand( ent-g_entities, "print \"^3/twitch2\n/emdie4\n/emsleep\n\"");

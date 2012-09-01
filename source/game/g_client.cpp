@@ -2879,7 +2879,7 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	{//send this client the MOTD for clients using the right version of OpenRP.
 		TextWrapCenterPrint(ojp_clientMOTD.string, motd);
 		if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP %s - info\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\nType /info for a list of commands or /eminfo for a list of emotes.\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP ^7%s\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n^2Type /info for a list of commands or /eminfo for a list of emotes.\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
 		}
 	}
 	else
