@@ -4376,13 +4376,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_amUnsleep_F (ent);
 		return;
 	}
-	/*
 	if(Q_stricmp(cmd, "amprotect") == 0) {
 		Cmd_amProtect_F (ent);
 		return;
 	}
-	*/
-	/*
 	if(Q_stricmp(cmd, "amempower") == 0) {
 		Cmd_amEmpower_F (ent);
 		return;
@@ -4391,7 +4388,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_amMerc_F (ent);
 		return;
 	}
-	*/
 	if(Q_stricmp(cmd, "amannounce") == 0) {
 		Cmd_amAnnounce_F (ent);
 		return;
@@ -4448,7 +4444,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_CheatAccess_F (ent);
 		return;
 	}
-	/*
 	if (Q_stricmp(cmd, "amshakescreen") == 0) {
 		Cmd_ShakeScreen_F (ent);
 		return;
@@ -4457,7 +4452,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_Music_F (ent);
 		return;
 	}
-	*/
 	if( Q_stricmp (cmd, "emsit") == 0) {
 		G_SetTauntAnim( ent, 5);
 		return;

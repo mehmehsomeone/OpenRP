@@ -143,11 +143,12 @@ int G_SoundIndex( const char *name ) {
 	return G_FindConfigstringIndex (name, CS_SOUNDS, MAX_SOUNDS, qtrue);
 }
 
+/*
 int G_SoundIndex2( const char *name, ...  ) {
 	assert(name && name[0]);
 	return G_FindConfigstringIndex (name, CS_SOUNDS, MAX_SOUNDS, qtrue);
 }
-
+*/
 
 int G_SoundSetIndex(const char *name)
 {
@@ -1467,6 +1468,18 @@ void G_Sound( gentity_t *ent, int channel, int soundIndex ) {
 	te->s.eventParm = soundIndex;
 	te->s.saberEntityNum = channel;
 
+	if( ent->s.number < MAX_CLIENTS )
+	{
+		te->s.otherEntityNum = ent->s.number; //lmo hack to mark event with owner id
+											//(for non-interference in duels),
+	}
+	else
+	{
+		te->s.otherEntityNum = ent->s.otherEntityNum; // assume non-client entity alread marked with owner id
+//lmo debug
+		//G_Printf("non client tempent sound: class %s number %d owner %d\n", ent->classname, ent->s.number, ent->s.otherEntityNum);
+	}
+
 	if (ent && ent->client && channel > TRACK_CHANNEL_NONE)
 	{ //let the client remember the index of the player entity so he can kill the most recent sound on request
 		if (g_entities[ent->client->ps.fd.killSoundEntIndex[channel-50]].inuse &&
@@ -1487,6 +1500,7 @@ void G_Sound( gentity_t *ent, int channel, int soundIndex ) {
 	}
 }
 
+/*
 void G_Sound2( gentity_t *ent, int channel, int soundIndex )
 {
 	gentity_t	*te;
@@ -1519,6 +1533,7 @@ void G_Sound2( gentity_t *ent, int channel, int soundIndex )
 		//te->freeAfterEvent = qfalse;
 	}
 }
+*/
 
 /*
 =============

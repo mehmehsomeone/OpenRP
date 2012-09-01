@@ -1,13 +1,8 @@
 #include "g_local.h"
-#include "g_account.h"
-//#include "string.h"
-//#include <stdlib.h>
 #include <algorithm>
 #include "sqlite3/sqlite3.h"
 #include "sqlite3/libsqlitewrapped.h"
-//#include "q_shared.h"
-#include "g_adminshared.h"
-//#include "g_character.h"
+#include "g_account.h"
 
 using namespace std;
 

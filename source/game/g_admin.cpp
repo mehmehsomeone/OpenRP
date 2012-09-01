@@ -1,13 +1,10 @@
 #include "g_local.h"
-#include "g_account.h"
-//#include "string.h"
-//#include <stdlib.h>
 #include <algorithm>
 #include "sqlite3/sqlite3.h"
 #include "sqlite3/libsqlitewrapped.h"
-//#include "q_shared.h"
 #include "g_adminshared.h"
-//#include "g_character.h"
+#include "g_admin.h"
+#include "g_account.h"
 
 using namespace std;
 
@@ -18,8 +15,6 @@ extern void Admin_Teleport( gentity_t *ent );
 extern char	*ConcatArgs( int start );
 
 extern void LevelCheck( int charID );
-extern void G_Sound2( gentity_t *ent, int channel, int soundIndex );
-extern int G_SoundIndex2( const char *name, ...  );
 extern int InEmote( int anim );
 extern int InSpecialEmote( int anim );
 extern void G_SetTauntAnim( gentity_t *ent, int taunt );
@@ -865,25 +860,22 @@ void Cmd_amSleep_F(gentity_t *ent)
 		return;
 	}
 
-	g_entities[clientid].client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
-	g_entities[clientid].client->ps.forceDodgeAnim = 0;
-	g_entities[clientid].client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
-	g_entities[clientid].client->ps.quickerGetup = qfalse;
+	M_HolsterThoseSabers(&g_entities[clientid]);
 
-	g_entities[clientid].client->frozenTime = level.time+Q3_INFINITE;
-	g_entities[clientid].client->ps.userInt3 |= (1 << FLAG_FROZEN);
-	g_entities[clientid].client->ps.userInt1 |= LOCK_UP;
-	g_entities[clientid].client->ps.userInt1 |= LOCK_DOWN;
-	g_entities[clientid].client->ps.userInt1 |= LOCK_RIGHT;
-	g_entities[clientid].client->ps.userInt1 |= LOCK_LEFT;
 	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVERIGHT;
 	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVELEFT;
 	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVEFORWARD;
 	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVEBACK;
 	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVEUP;
 	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVEDOWN;
-	g_entities[clientid].client->viewLockTime = level.time+Q3_INFINITE;
+	g_entities[clientid].client->frozenTime = level.time+Q3_INFINITE;
+	g_entities[clientid].client->ps.userInt3 |= (1 << FLAG_FROZEN);
 	g_entities[clientid].client->ps.legsTimer = ent->client->ps.torsoTimer=level.time+Q3_INFINITE;
+
+	g_entities[clientid].client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
+	g_entities[clientid].client->ps.forceDodgeAnim = 0;
+	g_entities[clientid].client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
+	g_entities[clientid].client->ps.quickerGetup = qfalse;
 	
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2%s is now sleeping.\n\"", g_entities[clientid].client->pers.netname ) );
 	trap_SendServerCommand( clientid, "cp \"^2You are now sleeping.\n\"" );
@@ -958,27 +950,20 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 
 	g_entities[clientid].client->sess.isSleeping = qfalse;
 
-	g_entities[clientid].client->ps.forceDodgeAnim = 0;
-	g_entities[clientid].client->ps.forceHandExtendTime = 0;
-	g_entities[clientid].client->ps.quickerGetup = qfalse;
 
-	g_entities[clientid].client->frozenTime = 0;
-	g_entities[clientid].client->ps.userInt3 &= ~(1 << FLAG_FROZEN);
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_UP;
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_DOWN;
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_RIGHT;
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_LEFT;
 	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVERIGHT;
 	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVELEFT;
 	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVEFORWARD;
 	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVEBACK;
 	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVEUP;
 	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVEDOWN;
-	g_entities[clientid].client->viewLockTime = 0;
+	g_entities[clientid].client->frozenTime = 0;
+	g_entities[clientid].client->ps.userInt3 &= ~(1 << FLAG_FROZEN);
 	g_entities[clientid].client->ps.legsTimer = ent->client->ps.torsoTimer=0;
 
-	//Play a nice healing sound... Ahh
-	//G_Sound(&g_entities[clientid], CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
+	g_entities[clientid].client->ps.forceDodgeAnim = 0;
+	g_entities[clientid].client->ps.forceHandExtendTime = 0;
+	g_entities[clientid].client->ps.quickerGetup = qfalse;
 
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2%s has been unslept.\n\"", g_entities[clientid].client->pers.netname ) );
 
@@ -996,8 +981,8 @@ amprotect Function
 */
 void Cmd_amProtect_F(gentity_t *ent)
 {
-	char cmdTarget[MAX_STRING_CHARS];
-	int clientid = -1;
+	//char cmdTarget[MAX_STRING_CHARS];
+	//int clientid = -1;
 
 	if(!G_CheckAdmin(ent, ADMIN_PROTECT))
 	{
@@ -1005,6 +990,10 @@ void Cmd_amProtect_F(gentity_t *ent)
 		return;
 	}
 
+	trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Protect is currently disabled, and may be removed after some discussion.\n\""));
+	return;
+
+	/*
 	if(trap_Argc() < 2)
 	{ //If no name is given protect the user of the command.
 		if ( !(ent->client->ps.eFlags & EF_INVULNERABLE) )
@@ -1072,6 +1061,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 		G_LogPrintf("Protect admin command executed by %s on %s to unprotect them.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);	
 		return;
 	}
+	*/
 }
 
 /*
@@ -1104,11 +1094,10 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 amempower Function
 ============
 */
-/*
 void Cmd_amEmpower_F(gentity_t *ent)
 {
-	char cmdTarget[MAX_STRING_CHARS];
-	int clientid = -1;
+	//char cmdTarget[MAX_STRING_CHARS];
+	//int clientid = -1;
 	
 	if(!G_CheckAdmin(ent, ADMIN_EMPOWER))
 	{
@@ -1116,6 +1105,10 @@ void Cmd_amEmpower_F(gentity_t *ent)
 		return;
 	}
 
+	trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Merc is currently disabled, and may be removed after some discussion.\n\""));
+	return;
+
+	/*
 	if(trap_Argc() < 2)
 	{
 		{
@@ -1191,18 +1184,18 @@ void Cmd_amEmpower_F(gentity_t *ent)
 
 	G_LogPrintf("Empower admin command executed by %s.\n", ent->client->pers.netname);
 	return;
+	*/
 }
-*/
 /*
 ============
 ammerc Function
 ============
 */
-/*
+
 void Cmd_amMerc_F(gentity_t *ent)
 {
-	char cmdTarget[MAX_STRING_CHARS];
-	int clientid = -1;
+	//char cmdTarget[MAX_STRING_CHARS];
+	//int clientid = -1;
 
 	if(!G_CheckAdmin(ent, ADMIN_MERC))
 	{
@@ -1210,6 +1203,9 @@ void Cmd_amMerc_F(gentity_t *ent)
 		return;
 	}
 
+	trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Merc is currently disabled, and may be removed after some discussion.\n\""));
+	return;
+	/*
 	//Mercing yourself
 	if( ( trap_Argc() < 2 ) && ( !G_CheckState( ent, PLAYER_MERC ) ) ) //If the person who used the command did not specify a name, and if they are not currently a merc, then merc them.
 	{
@@ -1350,8 +1346,8 @@ void Cmd_amMerc_F(gentity_t *ent)
 		G_LogPrintf("Unmerc admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
 		return;
 	}
+	*/
 }
-*/
 
 /*
 ============
@@ -1838,7 +1834,7 @@ void Cmd_info_F( gentity_t *ent )
 void Cmd_aminfo_F( gentity_t *ent )
 {
 	trap_SendServerCommand( ent-g_entities, "print \"^3/amkick\n/amban\n/amwarn\n/amtele\n/amsilence\n/amunsilence\n/amsleep\n/amunsleep\n/amprotect\n/amempower\n\"");
-	trap_SendServerCommand( ent-g_entities, "print \"^3/ambitvalues\n/ammerc\n/amannounce\n/ameffect\n/amcleareffects\n/amforceteam\n/amstatus\n/amweather\n/amweatherplus\n\"");
+	trap_SendServerCommand( ent-g_entities, "print \"^3/ammerc\n/amannounce\n/ameffect\n/amforceteam\n/amstatus\n/amweather\n/amweatherplus\n\"");
 	trap_SendServerCommand( ent-g_entities, "print \"^3/ammap\n/amrename\n/amslap\n/amcheataccess\n/amshakescreen\n/ammusic\n\"");
 	return;
 }
@@ -2597,10 +2593,7 @@ void Cmd_CheatAccess_F( gentity_t *ent )
 
 void Cmd_ShakeScreen_F( gentity_t * ent )
 {
-	/*
-	char cmdTarget[MAX_STRING_CHARS];
-	int clientid = -1;
-	*/
+	int i;
 
 	if(!G_CheckAdmin(ent, ADMIN_SHAKE))
 	{
@@ -2608,43 +2601,13 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 		return;
 	}
 
-	/*
-	if(trap_Argc() < 2)
+	for( i = 0; i < level.maxclients; i++ )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amshakescreen <name/clientid>\n\""));
-		return;
+		G_ScreenShake( g_entities[i].s.origin, ent, 6.0f, 10000, qtrue );
+		//Don't do a center print for the target - it would distract from the shaking screen.
+		trap_SendServerCommand( i, "print \"^2An admin has shaken your screen.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Success: You shook everybody's screen.\n\"" );
 	}
-	*/
-
-	/*
-	clientid = M_G_ClientNumberFromName( cmdTarget );
-	if (clientid == -1) 
-	{ 
-		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
-		return; 
-	} 
-	if (clientid == -2) 
-	{ 
-		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
-		return; 
-	}
-	if (clientid >= MAX_CLIENTS || clientid < 0) 
-	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", arg1 ) );
-		return;
-	}
-	if (!g_entities[clientid].inuse) 
-	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
-		return; 
-	}
-	*/
-
-	G_ScreenShake( ent->s.origin, ent, 6.0f, 10000, qtrue );
-	trap_SendServerCommand( ent-g_entities, "print \"^2Success: You shook everybody's screen.\n\"" );
-	//Don't do a center print for the target - it would distract from the shaking screen.
-	//trap_SendServerCommand( clientid, "print \"^2An admin has shaken your screen.\n\"" );
-	
 	return;
 }
 
@@ -2652,6 +2615,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 void Cmd_Music_F( gentity_t * ent )
 {
 	char musicPath[MAX_STRING_CHARS];
+	int i;
 
 	if(!G_CheckAdmin(ent, ADMIN_MUSIC))
 	{
@@ -2668,9 +2632,11 @@ void Cmd_Music_F( gentity_t * ent )
 	trap_Argv(1, musicPath, MAX_STRING_CHARS);
 	string musicPathSTR = musicPath;
 
-	//Put this message above G_Sound2 because the file they choose may not exist, so that message should display last.
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing ^6%s\n\"", musicPath ) );
-	G_Sound2( ent, CHAN_MUSIC, G_SoundIndex2( "%s", musicPathSTR.c_str() ) );
+	for( i = 0; i < level.maxclients; i++ )
+	{
+		G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", musicPathSTR.c_str() ) ) );
+	}
 	return;
 }
 
@@ -2692,6 +2658,7 @@ void Cmd_amOrigin_F( gentity_t * ent )
 {
 	int	clientid = -1; 
 	char	arg1[MAX_STRING_CHARS];
+
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	clientid = M_G_ClientNumberFromName( arg1 );
 
