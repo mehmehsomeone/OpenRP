@@ -2606,8 +2606,8 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 		G_ScreenShake( g_entities[i].s.origin, ent, 6.0f, 10000, qtrue );
 		//Don't do a center print for the target - it would distract from the shaking screen.
 		trap_SendServerCommand( i, "print \"^2An admin has shaken your screen.\n\"" );
-		trap_SendServerCommand( ent-g_entities, "print \"^2Success: You shook everybody's screen.\n\"" );
 	}
+	trap_SendServerCommand( ent-g_entities, "print \"^2Success: You shook everybody's screen.\n\"" );
 	return;
 }
 
