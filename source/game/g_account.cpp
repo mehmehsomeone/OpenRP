@@ -13,8 +13,7 @@ using namespace std;
 
 //extern void SaveCharacter(gentity_t * ent);
 extern void SanitizeString2( char *in, char *out );
-extern int G_ClientNumberFromStrippedSubstring ( const char* name );
-extern int G_ClientNumberFromArg ( char* name);
+extern int M_G_ClientNumberFromName ( const char* name );
 
 /*
 =================
@@ -469,7 +468,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 
 	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 

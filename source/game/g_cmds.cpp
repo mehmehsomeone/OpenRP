@@ -2289,59 +2289,204 @@ int G_ClientNumberFromStrippedName ( const char* name )
 	return -1;
 }
 
-int G_ClientNumberFromStrippedSubstring ( const char* name )
+qboolean M_PartialMatch( const char * s1, const char * s2 )
+{
+	int s1len, s2len, maxlen;
+	char s1lwr[MAX_STRING_CHARS];
+	char s2lwr[MAX_STRING_CHARS];
+	s1len = strlen( s1 );
+	s2len = strlen( s2 );
+	maxlen = s1 > s2 ? s1len : s2len;
+
+	// Strings to lowercase (So we have case independend comparison):
+	strcpy(s1lwr, s1);
+	strcpy(s2lwr, s2);
+	Q_strlwr(s1lwr);
+	Q_strlwr(s2lwr);
+
+	if( strstr( s2lwr, s1lwr ) ){
+		return qtrue;
+	}
+	else{
+		return qfalse;
+	}
+}
+/*
+==================
+M_SanitizeString
+
+Remove case and control characters (Same as in g_cmds.c).
+==================
+*/
+static void M_SanitizeString( char *in, char *out ){
+	int i = 0;
+	int r = 0;
+
+	while (in[i])
+	{
+		if (i >= MAX_NAME_LENGTH-1)
+		{ //the ui truncates the name here..
+			break;
+		}
+
+		if (in[i] == '^')
+		{
+			if (in[i+1] >= 48 && //'0'
+				in[i+1] <= 57) //'9'
+			{ //only skip it if there's a number after it for the color
+				i += 2;
+				continue;
+			}
+			else
+			{ //just skip the ^
+				i++;
+				continue;
+			}
+		}
+
+		if (in[i] < 32)
+		{
+			i++;
+			continue;
+		}
+
+		out[r] = in[i];
+		r++;
+		i++;
+	}
+	out[r] = 0;
+}
+/*
+==================
+M_SanitizeString2
+
+Remove case and control characters
+==================
+*/
+static void M_SanitizeString2( char *in, char *out ) {
+	while ( *in ) {
+		if ( *in == 27 ) {
+			in += 2;		// skip color code
+			continue;
+		}
+		if ( *in < 32 ) {
+			in++;
+			continue;
+		}
+		*out++ = tolower( *in++ );
+	}
+	*out = 0;
+}
+/*
+==================
+M_IsInteger
+
+==================
+*/
+qboolean M_IsInteger( const char * name )
+{
+	int len;
+	int i;
+
+	len = strlen( name );
+
+	for( i = 0; i < len; i++ ){
+		switch (name[i])
+		{
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+			break;
+
+			default:
+				return qfalse;
+		};
+	}
+	return qtrue;
+}
+
+int M_G_ClientNumberFromName ( const char* name )
 {
 	char		s2[MAX_STRING_CHARS];
 	char		n2[MAX_STRING_CHARS];
-	int			i, match = -1;
-	gclient_t	*cl;
+	int			i;
+	gclient_t*	cl;
 
-	// check for a name match
-	SanitizeString2( (char*)name, s2 );
-
-	for ( i=0 ; i < level.numConnectedClients ; i++ ) 
+	// Try to read the name as a clientid number:
+	if( M_IsInteger( name ) )
 	{
-		cl=&level.clients[level.sortedClients[i]];
-		SanitizeString2( cl->pers.netname, n2 );
-		if ( strstr( n2, s2 ) ) 
-		{
-			if( match != -1 )
-			{ //found more than one match
-				return -2;
-			}
-			match = level.sortedClients[i];
+		i = atoi( name );
+		if( i < 0 || i > level.maxclients ){
+			// Might be that client has a number for a name so check that later on.
 		}
-	}
-
-	return match;
-}
-
-int G_ClientNumberFromArg ( char* name)
-{
-	int client_id = 0;
-	char *cp;
-	
-	cp = name;
-	while (*cp)
-	{
-		if ( *cp >= '0' && *cp <= '9' ) cp++;
 		else
 		{
-			client_id = -1; //mark as alphanumeric
-			break;
+			return i;
 		}
 	}
 
-	if ( client_id == 0 )
-	{ // arg is assumed to be client number
-		client_id = atoi(name);
-	}
-	// arg is client name
-	if ( client_id == -1 )
+	// Try method 1:
+	// check for a name match
+	M_SanitizeString( (char*)name, s2 );
+	for ( i=0, cl=level.clients ; i < level.maxclients ; i++, cl++ )
 	{
-		client_id = G_ClientNumberFromStrippedSubstring(name);
+		if(cl){
+			M_SanitizeString( cl->pers.netname, n2 );
+			if ( !strcmp( n2, s2 ) )
+			{
+				return i;
+			}
+		}
 	}
-	return client_id;
+
+	// check for partial match.
+	M_SanitizeString( (char*)name, s2 );
+	for ( i=0, cl=level.clients ; i < level.maxclients ; i++, cl++ )
+	{
+		if(cl){
+			M_SanitizeString( cl->pers.netname, n2 );
+			if ( M_PartialMatch( s2, n2 ) )
+			{
+				return i;
+			}
+		}
+	}
+
+	// Try method 2:
+	// check for a name match
+	M_SanitizeString2( (char*)name, s2 );
+	for ( i=0, cl=level.clients ; i < level.maxclients ; i++, cl++ )
+	{
+		if(cl){
+			M_SanitizeString2( cl->pers.netname, n2 );
+			if ( !strcmp( n2, s2 ) )
+			{
+				return i;
+			}
+		}
+	}
+
+	// check for partial match.
+	M_SanitizeString2( (char*)name, s2 );
+	for ( i=0, cl=level.clients ; i < level.maxclients ; i++, cl++ )
+	{
+		if(cl){
+			M_SanitizeString2( cl->pers.netname, n2 );
+			if ( M_PartialMatch( s2, n2 ) )
+			{
+				return i;
+			}
+		}
+	}
+
+	return -1;
 }
 
 void Admin_Teleport( gentity_t *ent )

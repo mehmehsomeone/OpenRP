@@ -45,6 +45,6 @@ void ForceHeal( gentity_t *self )
 	G_Sound( self, CHAN_ITEM, G_SoundIndex("sound/weapons/force/heal.wav") );
 
 //[Bolted effect]
-	G_PlayBoltedEffect( G_EffectIndex( "force/heal2.efx" ), self, "thoracic" );
+	//G_PlayBoltedEffect( G_EffectIndex( "force/heal2.efx" ), self, "thoracic" );
 //[/Bolted effect]
 }

@@ -13,9 +13,7 @@ using namespace std;
 
 extern void AddSpawnField(char *field, char *value);
 extern void SP_fx_runner( gentity_t *ent );
-extern void SanitizeString2( char *in, char *out );
-extern int G_ClientNumberFromStrippedSubstring ( const char* name );
-extern int G_ClientNumberFromArg ( char* name);
+extern int M_G_ClientNumberFromName ( const char* name );
 extern void Admin_Teleport( gentity_t *ent );
 extern char	*ConcatArgs( int start );
 
@@ -195,7 +193,7 @@ void Cmd_amBan_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -264,7 +262,7 @@ void Cmd_amKick_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -322,7 +320,7 @@ void Cmd_amWarn_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -405,7 +403,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		int	clientid;
 		char	arg1[MAX_STRING_CHARS];
 		trap_Argv( 1, arg1, sizeof( arg1 ) );
-		clientid = G_ClientNumberFromArg( arg1 );
+		clientid = M_G_ClientNumberFromName( arg1 );
 
 		if (clientid == -1)
 		{
@@ -458,8 +456,8 @@ void Cmd_amTeleport_F(gentity_t *ent)
 			char	arg2[MAX_STRING_CHARS];
 			trap_Argv( 1, arg1, sizeof( arg1 ) );
 			trap_Argv( 2, arg2, sizeof( arg2 ) );
-			clientid = G_ClientNumberFromArg( arg1 );
-			clientid2 = G_ClientNumberFromArg( arg2 );
+			clientid = M_G_ClientNumberFromName( arg1 );
+			clientid2 = M_G_ClientNumberFromName( arg2 );
 
 			if (clientid == -1)
 			{
@@ -549,7 +547,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 			
 			trap_Argv( 1, arg1, sizeof( arg1 ) );
 		
-			clientid = G_ClientNumberFromArg( arg1 );
+			clientid = M_G_ClientNumberFromName( arg1 );
 			
 
 			if (clientid == -1)
@@ -642,7 +640,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 		return;
 	}
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -694,7 +692,7 @@ void Cmd_amSilence_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -757,7 +755,7 @@ void Cmd_amUnSilence_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -823,7 +821,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -918,7 +916,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -1028,7 +1026,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -1142,7 +1140,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 		return;
 	}
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -1268,7 +1266,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
 	//Mercing another player
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -1421,7 +1419,7 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 
 	trap_Argv( 2, teamname, MAX_STRING_CHARS ); //The second command argument is the team's name.
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -1800,7 +1798,7 @@ void Cmd_amRename_F(gentity_t *ent)
    }
 
    trap_Argv( 1, currentname, MAX_STRING_CHARS );
-	clientid = G_ClientNumberFromArg( currentname );
+	clientid = M_G_ClientNumberFromName( currentname );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", currentname ) ); 
@@ -2619,7 +2617,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 	*/
 
 	/*
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
@@ -2695,7 +2693,7 @@ void Cmd_amOrigin_F( gentity_t * ent )
 	int	clientid = -1; 
 	char	arg1[MAX_STRING_CHARS];
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
-	clientid = G_ClientNumberFromArg( arg1 );
+	clientid = M_G_ClientNumberFromName( arg1 );
 
 	//cm - Dom
 	//BugFix: If you gave an ambigious name (e.g. The letter 'a' appears both in XharocK and Alora)

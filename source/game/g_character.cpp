@@ -13,8 +13,7 @@ using namespace std;
 
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern void SanitizeString2( char *in, char *out );
-extern int G_ClientNumberFromStrippedSubstring ( const char* name );
-extern int G_ClientNumberFromArg ( char* name);
+extern int M_G_ClientNumberFromName ( const char* name );
 extern char	*ConcatArgs( int start );
 
 /*
@@ -2088,7 +2087,7 @@ void Cmd_CharName_F( gentity_t * ent )
 
 	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
-	clientid = G_ClientNumberFromArg( cmdTarget );
+	clientid = M_G_ClientNumberFromName( cmdTarget );
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
