@@ -294,16 +294,19 @@ void NPC_RemoveBody( gentity_t *self )
 			{
 				self->nextthink = level.time + FRAMETIME; // try back in a second
 
+				/*
 				if( DistancetoClosestPlayer(self->r.currentOrigin, -1) <= REMOVE_DISTANCE )
 				//if ( DistanceSquared( g_entities[0].r.currentOrigin, self->r.currentOrigin ) <= REMOVE_DISTANCE_SQR )
 				{
 					return;
 				}
-
+				*/
+				/*
 				if(InPlayersFOV(self->r.currentOrigin, -1, 110, 90, qtrue))
 				{//a player sees the body, delay removal.
 					return;
 				}
+				*/
 				
 				/* replaced by above.
 				if ( (InFOVFromPlayerView( self, 110, 90 )) ) // generous FOV check

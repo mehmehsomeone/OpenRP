@@ -1120,7 +1120,7 @@ static cvarTable_t		gameCvarTable[] = {
 	//controls how long the corpses stay before disappearing.  Time in seconds.
 	//set 0 to have corpses last
 	//forever (at least until the game runs out of map entity space).
-	{ &g_corpseRemovalTime, "g_corpseRemovalTime", "30", 0, 0, qtrue },
+	{ &g_corpseRemovalTime, "g_corpseRemovalTime", "20", 0, 0, qtrue },
 	//[/NOBODYQUE]
 
 	//[ExpandedMOTD]
@@ -1129,13 +1129,13 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &ojp_clientMOTD, "ojp_clientMOTD", "", CVAR_ARCHIVE, 0, qfalse },
 	//This message of the day is printed in the center of a player's screen when they first join a server if they AREN'T
 	//running the right version of OJP.
-	{ &ojp_MOTD, "ojp_MOTD", "Please download the latest version of Legacy mod at legacyrp.com", CVAR_ARCHIVE, 0, qfalse },
+	{ &ojp_MOTD, "ojp_MOTD", "Please download the latest version of OpenRP at openrp.jkhub.org/download", CVAR_ARCHIVE, 0, qfalse },
 	//[/ExpandedMOTD]	
 
 	//[DodgeSys]
 	//toggles the use of Body Dodges, which are matrix-like moves that make the players 
 	//evade damage in exchange for DP.
-	{ &ojp_allowBodyDodge, "ojp_allowBodyDodge", "1", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qtrue },
+	{ &ojp_allowBodyDodge, "ojp_allowBodyDodge", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qtrue },
 	//[/DodgeSys]
 	//[FFARespawnTimer]
 	{ &ojp_ffaRespawnTimer, "ojp_ffaRespawnTimer","0",CVAR_ARCHIVE,0,qtrue},

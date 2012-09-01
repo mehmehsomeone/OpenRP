@@ -12,9 +12,9 @@
 using namespace std;
 
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
-extern int ClientNumbersFromString( char *s, int *plist);
-extern qboolean G_MatchOnePlayer(int *plist, char *err, int len);
 extern void SanitizeString2( char *in, char *out );
+extern int G_ClientNumberFromStrippedSubstring ( const char* name );
+extern int G_ClientNumberFromArg ( char* name);
 extern char	*ConcatArgs( int start );
 
 /*
@@ -2065,10 +2065,8 @@ void Cmd_CharName_F( gentity_t * ent )
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
-	int pids[MAX_CLIENTS];
-	char err[MAX_STRING_CHARS];
-	gentity_t *tent;
 	char cmdTarget[MAX_STRING_CHARS];
+	int clientid = -1;
 
 	if ( !db.Connected() )
 	{
@@ -2090,24 +2088,37 @@ void Cmd_CharName_F( gentity_t * ent )
 
 	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
-	if(ClientNumbersFromString(cmdTarget, pids) != 1) //If the name or clientid is not found
-	{
-		G_MatchOnePlayer(pids, err, sizeof(err));
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Player or clientid ^7%s ^1does not exist.\n\"", cmdTarget));
+	clientid = G_ClientNumberFromArg( cmdTarget );
+	if (clientid == -1) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
+		return; 
+	} 
+	if (clientid == -2) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
+		return; 
+	}
+	if (clientid >= MAX_CLIENTS || clientid < 0) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
-
-	tent = &g_entities[pids[0]];
-
-	if ( tent->client->sess.characterChosen == qtrue )
+	if (!g_entities[clientid].inuse) 
 	{
-		string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", tent->client->sess.characterID ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
+		return; 
+	}
+
+	if ( g_entities[clientid].client->sess.characterChosen == qtrue )
+	{
+		string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", g_entities[clientid].client->sess.characterID ) );
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character Name: ^7%s\n\"", charNameSTR.c_str() ) );
 		return;
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: %s does not have a character selected.\n\"", tent->client->pers.netname ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: %s does not have a character selected.\n\"", g_entities[clientid].client->pers.netname ) );
 	}
 	return;
 }

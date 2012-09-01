@@ -2289,6 +2289,80 @@ int G_ClientNumberFromStrippedName ( const char* name )
 	return -1;
 }
 
+int G_ClientNumberFromStrippedSubstring ( const char* name )
+{
+	char		s2[MAX_STRING_CHARS];
+	char		n2[MAX_STRING_CHARS];
+	int			i, match = -1;
+	gclient_t	*cl;
+
+	// check for a name match
+	SanitizeString2( (char*)name, s2 );
+
+	for ( i=0 ; i < level.numConnectedClients ; i++ ) 
+	{
+		cl=&level.clients[level.sortedClients[i]];
+		SanitizeString2( cl->pers.netname, n2 );
+		if ( strstr( n2, s2 ) ) 
+		{
+			if( match != -1 )
+			{ //found more than one match
+				return -2;
+			}
+			match = level.sortedClients[i];
+		}
+	}
+
+	return match;
+}
+
+int G_ClientNumberFromArg ( char* name)
+{
+	int client_id = 0;
+	char *cp;
+	
+	cp = name;
+	while (*cp)
+	{
+		if ( *cp >= '0' && *cp <= '9' ) cp++;
+		else
+		{
+			client_id = -1; //mark as alphanumeric
+			break;
+		}
+	}
+
+	if ( client_id == 0 )
+	{ // arg is assumed to be client number
+		client_id = atoi(name);
+	}
+	// arg is client name
+	if ( client_id == -1 )
+	{
+		client_id = G_ClientNumberFromStrippedSubstring(name);
+	}
+	return client_id;
+}
+
+void Admin_Teleport( gentity_t *ent )
+{
+	vec3_t		origin;
+	char		buffer[MAX_TOKEN_CHARS];
+	int			i;
+
+	if ( trap_Argc() != 4 ) {
+		trap_SendServerCommand( ent-g_entities, va("print \"usage: tele (X) (Y) (Z)\ntype in /origin OR /origin (name) to find out (X) (Y) (Z)\n\""));
+		return;
+	}
+
+	for ( i = 0 ; i < 3 ; i++ ) {
+		trap_Argv( i + 1, buffer, sizeof( buffer ) );
+		origin[i] = atof( buffer );
+	}
+
+	TeleportPlayer( ent, origin, ent->client->ps.viewangles );
+}
+
 /*
 ==================
 Cmd_CallVote_f
@@ -4145,10 +4219,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_amSilence_F (ent);
 		return;
 	}
-	if(Q_stricmp(cmd, "kidd") == 0) {
-		Cmd_kidd_F (ent);
-		return;
-	}
 	if(Q_stricmp(cmd, "amunsilence") == 0) {
 		Cmd_amUnSilence_F (ent);
 		return;
@@ -4199,6 +4269,14 @@ void ClientCommand( int clientNum ) {
 	}
 	if(Q_stricmp(cmd, "amweatherplus") == 0) {
 		Cmd_amWeatherPlus_F (ent);
+		return;
+	}
+	if(Q_stricmp(cmd, "amtelemark") == 0) {
+		Cmd_amTelemark_F (ent);
+		return;
+	}
+	if(Q_stricmp(cmd, "amorigin") == 0) {
+		Cmd_amOrigin_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "info") == 0) {

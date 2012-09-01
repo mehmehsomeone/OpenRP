@@ -877,7 +877,6 @@ typedef struct {
 	vec3_t placeOfDeath;
 	int warnings;					//The current amount of warnings the player has
 	char IP[32];					//The players IP Address is stored here
-	int pids[MAX_CLIENTS];			//Client IDs
 	qboolean isSleeping;
 	qboolean isSilenced;
 
@@ -908,6 +907,13 @@ typedef struct {
 	int			voteCount;			// to prevent people from constantly calling votes
 	int			teamVoteCount;		// to prevent people from constantly calling votes
 	qboolean	teamInfo;			// send team overlay updates?
+
+	//OpenRP - teleport stuff (credit to ClanMod for this)
+	int	amtelemark1;
+	int	amtelemark2;
+	int	amtelemark3;
+	int	amtelemarkyaw;
+	qboolean	amtelemarkset;
 
 	//[ClientPlugInDetect]
 	//this flag shows weither or not this client is running the right version of OJP on the client side.  
