@@ -31,7 +31,7 @@
 #define ARMOR_PROTECTION		0.50 // Shields only stop 50% of armor-piercing dmg
 #define ARMOR_REDUCTION_FACTOR	0.50 // Certain damage doesn't take off armor as efficiently
 
-#define	JUMP_VELOCITY		320//270
+#define	JUMP_VELOCITY		200//was 320 -- 270
 
 #define	MAX_ITEMS			256
 

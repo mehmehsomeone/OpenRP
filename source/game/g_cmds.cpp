@@ -4145,6 +4145,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_amSilence_F (ent);
 		return;
 	}
+	if(Q_stricmp(cmd, "kidd") == 0) {
+		Cmd_kidd_F (ent);
+		return;
+	}
 	if(Q_stricmp(cmd, "amunsilence") == 0) {
 		Cmd_amUnSilence_F (ent);
 		return;
@@ -4199,6 +4203,14 @@ void ClientCommand( int clientNum ) {
 	}
 	if(Q_stricmp(cmd, "info") == 0) {
 		Cmd_info_F (ent);
+		return;
+	}
+	if(Q_stricmp(cmd, "eminfo") == 0) {
+		Cmd_eminfo_F (ent);
+		return;
+	}
+	if(Q_stricmp(cmd, "aminfo") == 0) {
+		Cmd_aminfo_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "ammap") == 0) {

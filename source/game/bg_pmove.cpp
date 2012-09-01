@@ -198,9 +198,9 @@ float forceJumpHeight[NUM_FORCE_POWER_LEVELS] =
 float forceJumpStrength[NUM_FORCE_POWER_LEVELS] = 
 {
 	JUMP_VELOCITY,//normal jump
-	420,
-	590,
-	840
+	320,//was 420
+	420,//was 590
+	550//was 840
 };
 
 //rww - Get a pointer to the bgEntity by the index
