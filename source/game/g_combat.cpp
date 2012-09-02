@@ -2552,15 +2552,6 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	self->client->ps.userInt3 &= ~(1 << FLAG_FLAMETHROWER);
 	//[/Flamethrower]
 
-	//[NOBODYQUE]
-	//this is set earlier since some of the previous function calls depend on this being
-	//set for the g_spawn emergency entity override stuff.
-	if ( self->NPC )
-	{
-		self->NPC->timeOfDeath = level.time;//this will change - used for debouncing post-death events
-	}
-	//[/NOBODYQUE]
-
 	//if he was charging or anything else, kill the sound
 	G_MuteSound(self->s.number, CHAN_WEAPON);
 
@@ -3038,6 +3029,11 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	TIMER_Clear2( self );
 
 	trap_LinkEntity (self);
+
+	if ( self->NPC )
+	{
+		self->NPC->timeOfDeath = level.time;//this will change - used for debouncing post-death events
+	}
 
 	// Start any necessary death fx for this entity
 	DeathFX( self );

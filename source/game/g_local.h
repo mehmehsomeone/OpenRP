@@ -345,9 +345,7 @@ extern vmCvar_t		ojp_spmodelrgb;
 extern vmCvar_t		bot_cpu_usage;
 //[/AotCAI]
 
-//[NOBODYQUE]
 extern vmCvar_t		g_corpseRemovalTime;
-//[/NOBODYQUE]
 
 //[ExpandedMOTD]
 extern vmCvar_t		ojp_clientMOTD;
@@ -879,6 +877,7 @@ typedef struct {
 	char IP[32];					//The players IP Address is stored here
 	qboolean isSleeping;
 	qboolean isSilenced;
+	qboolean isProtected;
 
 } clientSession_t;
 
@@ -1495,13 +1494,9 @@ typedef struct {
 
 	qboolean	locationLinked;			// target_locations get linked
 	gentity_t	*locationHead;			// head of the location list
-	//[NOBODYQUE]
-	//don't need this stuff anymore.
-	/*
+
 	int			bodyQueIndex;			// dead bodies
 	gentity_t	*bodyQue[BODY_QUEUE_SIZE];
-	*/
-	//[/NOBODYQUE]
 	int			portalSequence;
 
 	alertEvent_t	alertEvents[ MAX_ALERT_EVENTS ];

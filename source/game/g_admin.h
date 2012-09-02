@@ -38,6 +38,7 @@ void Cmd_GenerateCredits_F(gentity_t * ent);
 void Cmd_CheatAccess_F( gentity_t *ent );
 void Cmd_amWeatherPlus_F(gentity_t *ent);
 void Cmd_ShakeScreen_F( gentity_t * ent );
+void Cmd_Sound_F( gentity_t * ent );
 void Cmd_Music_F( gentity_t * ent );
 void Cmd_amTelemark_F( gentity_t * ent );
 void Cmd_amOrigin_F( gentity_t * ent );

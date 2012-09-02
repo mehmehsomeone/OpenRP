@@ -984,19 +984,13 @@ BODYQUE
 =======================================================================
 */
 
-//[NOBODYQUE]
-// replaced by g_corpseRemovalTime.
-//#define BODY_SINK_TIME		30000//45000
-//[/NOBODYQUE]
+#define BODY_SINK_TIME		30000//45000
 
 /*
 ===============
 InitBodyQue
 ===============
 */
-//[NOBODYQUE]
-//we don't want to use a reserved body que system anymore.
-/*
 void InitBodyQue (void) {
 	int		i;
 	gentity_t	*ent;
@@ -1009,9 +1003,6 @@ void InitBodyQue (void) {
 		level.bodyQue[i] = ent;
 	}
 }
-*/
-//[/NOBODYQUE]
-
 
 /*
 =============
@@ -1021,21 +1012,10 @@ After sitting around for five seconds, fall into the ground and dissapear
 =============
 */
 void BodySink( gentity_t *ent ) {
-	//[NOBODYQUE]
-	//while we're at it, I'm making the corpse removal time be set by a cvar like in SP.
-	if(g_corpseRemovalTime.integer && (level.time - ent->timestamp) > g_corpseRemovalTime.integer*1000 + 2500)
-	{
-	//if ( level.time - ent->timestamp > BODY_SINK_TIME + 2500 ) {
-
-		//removed body que code.  replaced with dynamic body creation.
-		//for now we need to manually call the G_KillG2Queue to remove the client's corpse
-		//instance.
-		G_KillG2Queue(ent->s.number);
-		G_FreeEntity(ent);
+	if(g_corpseRemovalTime.integer && (level.time - ent->timestamp) > g_corpseRemovalTime.integer*1000 + 2500) {
 		// the body ques are never actually freed, they are just unlinked
-		//trap_UnlinkEntity( ent );
-		//ent->physicsObject = qfalse;
-	//[/NOBODYQUE]
+		trap_UnlinkEntity( ent );
+		ent->physicsObject = qfalse;
 		return;	
 	}
 //	ent->nextthink = level.time + 100;
@@ -1077,17 +1057,9 @@ static qboolean CopyToBodyQue( gentity_t *ent ) {
 		return qfalse;
 	}
 
-	//[NOBODYQUE]
-	body = G_Spawn();
-
-	body->classname = "body";
-
 	// grab a body que and cycle to the next one
-	/*
 	body = level.bodyQue[ level.bodyQueIndex ];
 	level.bodyQueIndex = (level.bodyQueIndex + 1) % BODY_QUEUE_SIZE;
-	*/
-	//[/NOBODYQUE]
 
 	trap_UnlinkEntity (body);
 	body->s = ent->s;
@@ -1121,18 +1093,13 @@ static qboolean CopyToBodyQue( gentity_t *ent ) {
 	} else {
 		body->s.pos.trType = TR_STATIONARY;
 	}
-
 	body->s.event = 0;
 
 	body->s.weapon = ent->s.bolt2;
 
 	if (body->s.weapon == WP_SABER && ent->client->ps.saberInFlight)
 	{
-		//[NOBODYQUE]
-		//actually we shouldn't use have any weapon at all if we died like this.
-		body->s.weapon = WP_MELEE;
-		//body->s.weapon = WP_BLASTER; //lie to keep from putting a saber on the corpse, because it was thrown at death
-		//[/NOBODYQUE]
+		body->s.weapon = WP_MELEE; //lie to keep from putting a saber on the corpse, because it was thrown at death
 	}
 
 	//G_AddEvent(body, EV_BODY_QUEUE_COPY, ent->s.clientNum);
@@ -1144,7 +1111,6 @@ static qboolean CopyToBodyQue( gentity_t *ent ) {
 	trap_SendServerCommand(-1, va("ircg %i %i %i %i", ent->s.number, body->s.number, body->s.weapon, islight));
 
 	body->r.svFlags = ent->r.svFlags | SVF_BROADCAST;
-
 	VectorCopy (ent->r.mins, body->r.mins);
 	VectorCopy (ent->r.maxs, body->r.maxs);
 	VectorCopy (ent->r.absmin, body->r.absmin);
@@ -1161,7 +1127,6 @@ static qboolean CopyToBodyQue( gentity_t *ent ) {
 	body->r.contents = CONTENTS_CORPSE;
 	body->r.ownerNum = ent->s.number;
 
-	//[NOBODYQUE]
 	if(g_corpseRemovalTime.integer)
 	{
 		body->nextthink = level.time + g_corpseRemovalTime.integer*1000;
@@ -1169,7 +1134,6 @@ static qboolean CopyToBodyQue( gentity_t *ent ) {
 
 		body->think = BodySink;
 	}
-	//[/NOBODYQUE]
 
 	body->die = body_die;
 

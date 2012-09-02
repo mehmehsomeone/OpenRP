@@ -527,7 +527,6 @@ int BodyRemovalPadTime( gentity_t *ent )
 		time = 0;
 		break;
 	default:
-		//[NOBODYQUE]
 		//NPCs use g_corpseRemovalTime now.
 		// never go away
 		if ( g_corpseRemovalTime.integer <= 0 )
@@ -543,7 +542,6 @@ int BodyRemovalPadTime( gentity_t *ent )
 	//	time = Q3_INFINITE;
 		// for now I'm making default 10000
 		//time = 10000;
-		//[NOBODYQUE]
 		break;
 
 	}

@@ -2256,7 +2256,7 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 				M_Cmd_Emote(ent, BOTH_DEATH4);
 				break;
 			case 37://emsleep
-				M_Cmd_Emote(ent, BOTH_SLEEP1);
+				anim = BOTH_SLEEP1;
 				break;
 			default:// MJN - Implemented a failsafe.
 				G_Printf(S_COLOR_RED "Error: Animation %i not found.\n", anim); // This will tell you which anim it cannot find.

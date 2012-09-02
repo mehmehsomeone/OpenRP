@@ -243,7 +243,7 @@ void CG_LoadHolsterData (clientInfo_t *ci)
 		}
 	}
 #ifdef _DEBUG
-	CG_Printf("Holstered Weapon Data Loaded for %s.\n", ci->modelName);
+	//CG_Printf("Holstered Weapon Data Loaded for %s.\n", ci->modelName);
 #endif
 }
 

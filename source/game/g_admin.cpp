@@ -981,8 +981,8 @@ amprotect Function
 */
 void Cmd_amProtect_F(gentity_t *ent)
 {
-	//char cmdTarget[MAX_STRING_CHARS];
-	//int clientid = -1;
+	char cmdTarget[MAX_STRING_CHARS];
+	int clientid = -1;
 
 	if(!G_CheckAdmin(ent, ADMIN_PROTECT))
 	{
@@ -993,13 +993,13 @@ void Cmd_amProtect_F(gentity_t *ent)
 	trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Protect is currently disabled, and may be removed after some discussion.\n\""));
 	return;
 
-	/*
 	if(trap_Argc() < 2)
 	{ //If no name is given protect the user of the command.
-		if ( !(ent->client->ps.eFlags & EF_INVULNERABLE) )
+		if ( !ent->client->sess.isProtected )
 		{
 			ent->client->ps.eFlags |= EF_INVULNERABLE;
 			ent->client->invulnerableTimer = level.time + Q3_INFINITE;
+			ent->client->sess.isProtected = qtrue;
 			trap_SendServerCommand(ent-g_entities, va("print \"^2You have been protected.\n\""));
 			G_LogPrintf("Protect admin command executed by %s on themself to protect themself.\n", ent->client->pers.netname);
 		}
@@ -1007,6 +1007,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 		{
 			ent->client->ps.eFlags &= ~EF_INVULNERABLE;
 			ent->client->invulnerableTimer = 0;
+			ent->client->sess.isProtected = qfalse;
 			trap_SendServerCommand(ent-g_entities, va("print \"^2You are no longer protected.\n\""));
 			G_LogPrintf("Protect admin command executed by %s on themself to unprotect themself.\n", ent->client->pers.netname);
 		}
@@ -1043,10 +1044,11 @@ void Cmd_amProtect_F(gentity_t *ent)
 		return;
 	}
 
-	if ( !(g_entities[clientid].client->ps.eFlags & EF_INVULNERABLE) )
+	if ( !g_entities[clientid].client->sess.isProtected )
 	{
 		g_entities[clientid].client->ps.eFlags |= EF_INVULNERABLE;
 		g_entities[clientid].client->invulnerableTimer = level.time + Q3_INFINITE;
+		g_entities[clientid].client->sess.isProtected = qtrue;
 		trap_SendServerCommand(clientid, va("print \"^2You have been protected.\n\""));
 		trap_SendServerCommand(clientid, va("cp \"^2You have been protected.\n\""));
 		G_LogPrintf("Protect admin command executed by %s on %s to protect them.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);	
@@ -1056,12 +1058,12 @@ void Cmd_amProtect_F(gentity_t *ent)
 	{
 		g_entities[clientid].client->ps.eFlags &= ~EF_INVULNERABLE;
 		g_entities[clientid].client->invulnerableTimer = 0;
+		g_entities[clientid].client->sess.isProtected = qfalse;
 		trap_SendServerCommand(clientid, va("print \"^2You are no longer protected.\n\""));
 		trap_SendServerCommand(clientid, va("cp \"^2You are no longer protected.\n\""));
 		G_LogPrintf("Protect admin command executed by %s on %s to unprotect them.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);	
 		return;
 	}
-	*/
 }
 
 /*
@@ -2612,6 +2614,34 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 }
 
 
+void Cmd_Sound_F( gentity_t * ent )
+{
+	char soundPath[MAX_STRING_CHARS];
+	int i;
+
+	if(!G_CheckAdmin(ent, ADMIN_MUSIC))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		return;
+	}
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amsound <path>\n\""));
+		return;
+	}
+
+	trap_Argv(1, soundPath, MAX_STRING_CHARS);
+	string soundPathSTR = soundPath;
+
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the sound file: ^7%s\n\"", soundPath ) );
+	for( i = 0; i < level.maxclients; i++ )
+	{
+		G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", soundPathSTR.c_str() ) ) );
+	}
+	return;
+}
+
 void Cmd_Music_F( gentity_t * ent )
 {
 	char musicPath[MAX_STRING_CHARS];
@@ -2632,10 +2662,10 @@ void Cmd_Music_F( gentity_t * ent )
 	trap_Argv(1, musicPath, MAX_STRING_CHARS);
 	string musicPathSTR = musicPath;
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing ^6%s\n\"", musicPath ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the music file: ^7%s\n\"", musicPath ) );
 	for( i = 0; i < level.maxclients; i++ )
 	{
-		G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", musicPathSTR.c_str() ) ) );
+		G_EntitySound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", musicPathSTR.c_str() ) ) );
 	}
 	return;
 }
@@ -2678,12 +2708,12 @@ void Cmd_amOrigin_F( gentity_t * ent )
 
 	if (clientid)
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^1X:^7%d, ^1Y:^7%d, ^1Z:^7%d\n\"", (int) g_entities[clientid].client->ps.origin[0], (int) g_entities[clientid].client->ps.origin[1], (int) g_entities[clientid].client->ps.origin[2]));
+		trap_SendServerCommand( ent-g_entities, va("print \"^2X:^7%d, ^2Y:^7%d, ^2Z:^7%d\n\"", (int) g_entities[clientid].client->ps.origin[0], (int) g_entities[clientid].client->ps.origin[1], (int) g_entities[clientid].client->ps.origin[2]));
 		return;
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^1X:^7%d, ^1Y:^7%d, ^1Z:^7%d\n\"", (int) ent->client->ps.origin[0], (int) ent->client->ps.origin[1], (int) ent->client->ps.origin[2]));
+		trap_SendServerCommand( ent-g_entities, va("print \"^2X:^7%d, ^2Y:^7%d, ^2Z:^7%d\n\"", (int) ent->client->ps.origin[0], (int) ent->client->ps.origin[1], (int) ent->client->ps.origin[2]));
 	}
 	return;
 }

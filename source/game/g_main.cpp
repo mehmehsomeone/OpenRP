@@ -631,9 +631,7 @@ vmCvar_t		ojp_spmodelrgb;
 vmCvar_t		bot_cpu_usage;
 //[/AotCAI]
 
-//[NOBODYQUE]
 vmCvar_t		g_corpseRemovalTime;
-//[/NOBODYQUE]
 
 //[ExpandedMOTD]
 vmCvar_t		ojp_clientMOTD;
@@ -1116,12 +1114,10 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &bot_cpu_usage, "bot_cpu_usage", "0", 0, 0, qtrue },
 	//[/AotCAI]
 
-	//[NOBODYQUE]
 	//controls how long the corpses stay before disappearing.  Time in seconds.
 	//set 0 to have corpses last
 	//forever (at least until the game runs out of map entity space).
 	{ &g_corpseRemovalTime, "g_corpseRemovalTime", "20", 0, 0, qtrue },
-	//[/NOBODYQUE]
 
 	//[ExpandedMOTD]
 	//This message of the day is printed in the center of a player's screen when they first join a server if they 

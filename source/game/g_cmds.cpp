@@ -4448,6 +4448,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_ShakeScreen_F (ent);
 		return;
 	}
+	if (Q_stricmp(cmd, "amsound") == 0) {
+		Cmd_Sound_F (ent);
+		return;
+	}
 	if (Q_stricmp(cmd, "ammusic") == 0) {
 		Cmd_Music_F (ent);
 		return;
