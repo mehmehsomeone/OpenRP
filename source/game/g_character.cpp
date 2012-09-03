@@ -695,7 +695,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	ent->client->sess.characterID = charID;
 	LoadCharacter(ent);
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Your character is selected as: ^7%s^2!\nYou can use /characterInfo to view everything about your character.\n\"", charName ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Your character is selected as: ^7%s^2!\n^2You can use /characterInfo to view everything about your character.\n\"", charName ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Your character is selected as: ^7%s^2!\n^2You can use /characterInfo to view everything ^2about your character.\n\"", charName ) );
 
 	return;
 }
@@ -2147,7 +2147,7 @@ void Cmd_Me_F( gentity_t *ent )
 		return;
 	}
 
-	trap_SendServerCommand( -1, va( "chat \"(ACTION) ^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
+	trap_SendServerCommand( -1, va( "print \"(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, real_msg ) );
 	trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
 	return;
 }
@@ -2180,7 +2180,7 @@ void Cmd_It_F( gentity_t *ent )
 		return;
 	}
 
-	trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\"", ent->client->pers.netname, real_msg ) );
+	trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\n\"", ent->client->pers.netname, real_msg ) );
 	trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
 	return;
 }

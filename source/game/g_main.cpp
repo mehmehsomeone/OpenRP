@@ -631,7 +631,9 @@ vmCvar_t		ojp_spmodelrgb;
 vmCvar_t		bot_cpu_usage;
 //[/AotCAI]
 
+//[NOBODYQUE]
 vmCvar_t		g_corpseRemovalTime;
+//[/NOBODYQUE]
 
 //[ExpandedMOTD]
 vmCvar_t		ojp_clientMOTD;
@@ -706,6 +708,10 @@ vmCvar_t		openrp_admin10Bitvalues;
 
 //Determines whether admins can perform admin commands on higher admin levels
 vmCvar_t		openrp_adminControl;
+
+//[BlackNames]
+vmCvar_t	g_allowBlackNames;		// Allow clients to use black names
+//[/BlackNames]
 //[/OpenRP]
 
 //CVARS
@@ -1114,10 +1120,12 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &bot_cpu_usage, "bot_cpu_usage", "0", 0, 0, qtrue },
 	//[/AotCAI]
 
+	//[NOBODYQUE]
 	//controls how long the corpses stay before disappearing.  Time in seconds.
 	//set 0 to have corpses last
 	//forever (at least until the game runs out of map entity space).
 	{ &g_corpseRemovalTime, "g_corpseRemovalTime", "20", 0, 0, qtrue },
+	//[/NOBODYQUE]
 
 	//[ExpandedMOTD]
 	//This message of the day is printed in the center of a player's screen when they first join a server if they 
@@ -1176,6 +1184,11 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_pistolSellCost, "openrp_pistolSellCost", "100", 0 , 0, qtrue  },
 	{ &openrp_pistolLevel, "openrp_pistolLevel", "1", 0 , 0, qtrue  },
 	{ &openrp_pistolDescription, "openrp_pistolDescription", "A bryar pistol.", 0 , 0, qtrue  },
+
+	//[BlackNames]
+	//Toggles allowance of black names
+	{ &g_allowBlackNames, "g_allowBlackNames", "1", CVAR_ARCHIVE, 0, qtrue },
+	//[/BlackNames]
 
 	//[/OpenRP]
 

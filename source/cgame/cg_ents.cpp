@@ -840,6 +840,11 @@ CG_General
 */
 void CG_G2ServerBoneAngles(centity_t *cent);
 
+//[NOBODYQUE]
+extern void CG_BodyQueueCopy(centity_t *cent, int clientNum, int knownWeapon);
+//[/NOBODYQUE]
+
+
 extern qboolean BG_GetRootSurfNameWithVariant( void *ghoul2, const char *rootSurfName, char *returnSurfName, int returnSize );
 
 
@@ -1638,6 +1643,16 @@ Ghoul2 Insert End
 
 			return;
 		}
+		//[NOBODYQUE]
+		else if ( cent->bodyFadeTime )
+		{//ok, the body fade effect is over.  remove the ghoul2 model to prevent the sanity
+			//check from grabbing it later.
+			if (trap_G2_HaveWeGhoul2Models(cent->ghoul2))
+			{
+				trap_G2API_CleanGhoul2Models(&(cent->ghoul2));
+			}
+		}
+		//[/NOBODYQUE]
 		else
 		{
 			cent->dustTrailTime = 0;

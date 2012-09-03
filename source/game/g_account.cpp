@@ -134,7 +134,7 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 
 	//You are now logged in as <username>. Congratulations, you can type.
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: You are now logged in as %s!\n^2Please create a character (/createCharacter) or ^2select one (/character)\n\"", userName ) );
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
 

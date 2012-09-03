@@ -775,6 +775,94 @@ void G_SpewEntList(void)
 #endif
 }
 
+
+//[NOBODYQUE]
+gentity_t *FindRemoveAbleGent(void)
+{//returns an entity that we can remove to prevent the game from overloading 
+	//on map entities.  
+	//We first search for stuff that's immediately safe to remove
+	//and then start searching for things that aren't mission critical to remove.
+	int i;
+	gentity_t *e = NULL;
+
+	e = &g_entities[MAX_CLIENTS];
+	for( i=MAX_CLIENTS; i <level.num_entities;i++)
+	{
+		if(!stricmp(e->classname,"item_shield") || !stricmp(e->classname,"item_seeker") 
+			|| !stricmp(e->classname,"item_binoculars"))
+		{
+			G_Printf("Warning, removing instant medpack to prevent entity overflow.\n");
+			return e;
+		}
+	}
+
+	//we can easily dump player corpses
+	e = &g_entities[MAX_CLIENTS];
+	for ( i = MAX_CLIENTS ; i<level.num_entities ; i++, e++) 
+	{
+		if(e->s.eType == ET_BODY)
+		{//found one!
+			G_Printf("Warning: FindRemoveAbleGent removed a corpse to prevent a max entity overflow.\n");
+			return e;
+		}
+	}
+
+	//dead NPCs can be removed as well
+	e = &g_entities[MAX_CLIENTS];
+	for ( i = MAX_CLIENTS ; i<level.num_entities ; i++, e++) 
+	{
+		if(e->s.eType == ET_NPC 
+			&& e->NPC
+			&& e->health <= 0 
+			&& e->NPC->timeOfDeath + 1000 < level.time ) //NPC has been dead long enough for all the death related code to run.
+		{//found one
+			G_Printf("Warning: FindRemoveAbleGent removed a dead NPC to prevent a max entity overflow.\n");
+			return e;
+		}
+	}
+
+	//try looking for scripted NPCs that are acting like dead bodies next.
+	e = &g_entities[MAX_CLIENTS];
+	for ( i = MAX_CLIENTS ; i<level.num_entities ; i++, e++) 
+	{
+		if(e->s.eType == ET_NPC && e->client && e->health > 0 
+			&& BG_InDeathAnim(e->client->ps.legsAnim))
+		{//found one
+			G_Printf("Warning: FindRemoveAbleGent removed a NPC that was faking death to prevent a max entity overflow.\n");
+			return e;
+		}
+	}
+	//Weapon or forcefield entities
+	e = &g_entities[MAX_CLIENTS];
+	for( i = MAX_CLIENTS; i < level.num_entities; i++, e++)
+	{
+		if(e->s.eType == ET_ITEM || e->s.eType == ET_SPECIAL)
+			return e;
+	}
+	//light entities?
+	e = &g_entities[MAX_CLIENTS];
+	for ( i = MAX_CLIENTS ; i<level.num_entities ; i++, e++) 
+	{
+		if(!strcmp(e->classname, "light"))
+		{//found one
+			G_Printf("Warning: FindRemoveAbleGent removed a light entity to prevent a max entity overflow.\n");
+			return e;
+		}
+	}
+	e = &g_entities[MAX_CLIENTS];
+	for( i = MAX_CLIENTS; i < level.num_entities; i++, e++)
+	{
+		if(Q_stricmp(e->classname,"tempEntity") == 0)
+			return e;
+	}
+
+
+	//crap!  we couldn't find anything.  Ideally, this function should have enough things
+	//to be able to remove to have this never happen.
+	return NULL;
+}
+//[/NOBODYQUE]
+
 /*
 =================
 G_Spawn
@@ -826,6 +914,19 @@ gentity_t *G_Spawn( void ) {
 			G_Printf("%4i: %s\n", i, g_entities[i].classname);
 		}
 		*/
+		//[NOBODYQUE]
+		//in case we can't find an open entity, search for something we can safely replace
+		//to keep the game running.  This isn't the best solution but it's better than
+		//having the game shut down.
+		e = FindRemoveAbleGent();
+		if(e)
+		{//found something we can replace
+			G_FreeEntity( e );
+			G_InitGentity( e );
+			return e;
+		}
+		//[/NOBODYQUE]
+
 		G_SpewEntList();
 		G_Error( "G_Spawn: no free entities" );
 	}

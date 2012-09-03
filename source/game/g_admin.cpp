@@ -630,6 +630,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 
 	if(!Q_stricmp(cmdTarget, "all") | (!Q_stricmp(cmdTarget, "-1") ))
 	{
+		trap_SendServerCommand( -1, va("print \"%s\"", real_msg) );
 		trap_SendServerCommand( -1, va("cp \"%s\"", real_msg) );
 		G_LogPrintf("Announce admin command executed by %s. The announcement was: %s\n", ent->client->pers.netname, real_msg);
 		return;
@@ -989,9 +990,6 @@ void Cmd_amProtect_F(gentity_t *ent)
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
-
-	trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Protect is currently disabled, and may be removed after some discussion.\n\""));
-	return;
 
 	if(trap_Argc() < 2)
 	{ //If no name is given protect the user of the command.
