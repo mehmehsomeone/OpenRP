@@ -41,6 +41,7 @@ extern vmCvar_t bot_wp_edit;
 //[/HolocronFiles]
 
 char	*ConcatArgs( int start );
+int M_G_ClientNumberFromName ( const char* name );
 
 extern void TheEmote(int animation, gentity_t *ent, qboolean freeze);
 
@@ -2031,8 +2032,7 @@ Cmd_Tell_f
 ==================
 */
 static void Cmd_Tell_f( gentity_t *ent ) {
-	int			targetNum;
-	gentity_t	*target;
+	int			clientid;
 	char		*p;
 	char		arg[MAX_TOKEN_CHARS];
 
@@ -2041,23 +2041,35 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	}
 
 	trap_Argv( 1, arg, sizeof( arg ) );
-	targetNum = atoi( arg );
-	if ( targetNum < 0 || targetNum >= level.maxclients ) {
+	clientid = M_G_ClientNumberFromName( arg );
+	if (clientid == -1) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", arg ) ); 
+		return; 
+	} 
+	if (clientid == -2) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", arg ) ); 
+		return; 
+	}
+	if (clientid >= MAX_CLIENTS || clientid < 0) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", arg ) );
 		return;
 	}
-
-	target = &g_entities[targetNum];
-	if ( !target || !target->inuse || !target->client ) {
+	if (!g_entities[clientid].inuse) 
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", arg ) ); 
 		return;
 	}
 
 	p = ConcatArgs( 2 );
 
-	G_LogPrintf( "tell: %s to %s: %s\n", ent->client->pers.netname, target->client->pers.netname, p );
-	G_Say( ent, target, SAY_TELL, p );
+	G_LogPrintf( "tell: %s to %s: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, p );
+	G_Say( ent, &g_entities[clientid], SAY_TELL, p );
 	// don't tell to the player self if it was already directed to this player
 	// also don't send the chat back to a bot
-	if ( ent != target && !(ent->r.svFlags & SVF_BOT)) {
+	if ( ent != &g_entities[clientid] && !(ent->r.svFlags & SVF_BOT)) {
 		G_Say( ent, ent, SAY_TELL, p );
 	}
 }
@@ -4344,6 +4356,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_It_F (ent);
 		return;
 	}
+	if (Q_stricmp(cmd, "comm") == 0) {
+		Cmd_Comm_F (ent);
+		return;
+	}
 	if (Q_stricmp(cmd, "amkick") == 0) {
 		Cmd_amKick_F (ent);
 		return;
@@ -4609,7 +4625,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_Say_f (ent, SAY_ALL, qfalse);
 		return;
 	}
-	if (Q_stricmp (cmd, "say_team") == 0) {
+	if ( (Q_stricmp (cmd, "say_team") == 0) || (Q_stricmp (cmd, "ooc") == 0) ){
 		//[OpenRP - OOC]
 		/*if (g_gametype.integer < GT_TEAM)
 		{ //not a team game, just refer to regular say.
@@ -4630,7 +4646,7 @@ void ClientCommand( int clientNum ) {
 		//[/OpenRP - OOC]
 		return;
 	}
-	if (Q_stricmp (cmd, "tell") == 0) {
+	if ( (Q_stricmp (cmd, "tell") == 0) || (Q_stricmp (cmd, "pm") == 0) ) {
 
 		if ( ent->client->sess.isSilenced == qtrue )
 		{

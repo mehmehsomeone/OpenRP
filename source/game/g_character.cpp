@@ -2184,3 +2184,66 @@ void Cmd_It_F( gentity_t *ent )
 	trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
 	return;
 }
+
+void Cmd_Comm_F(gentity_t *ent)
+{
+	int pos = 0;
+	char real_msg[MAX_STRING_CHARS];
+	char *msg = ConcatArgs(1);
+	int clientid = -1;
+	char cmdTarget[MAX_STRING_CHARS];
+
+	while (*msg)
+	{
+		if ( msg[0] == '\\' && msg[1] == 'n' )
+		{
+			msg++;
+			real_msg[pos++] = '\n';
+		}
+		else
+		{
+			real_msg[pos++] = *msg;
+		}
+		msg++;
+	}
+	real_msg[pos] = 0;
+
+	if ( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /comm <name> <message>\n\"" );
+		return;
+	}
+
+	trap_Argv( 1, cmdTarget, MAX_STRING_CHARS );
+
+	if (!Q_stricmp( cmdTarget, "all" ) || !Q_stricmp( cmdTarget, "-1" ) || !Q_stricmp( cmdTarget, "system" ) )
+	{
+		trap_SendServerCommand( -1, va( "chat \"^7Comm systemwide broadcast from ^3%s ^7- ^4%s\n\"", ent->client->pers.netname, real_msg));
+		return;
+	}
+
+	clientid = M_G_ClientNumberFromName( cmdTarget );
+	if (clientid == -1) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
+		return; 
+	} 
+	if (clientid == -2) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
+		return; 
+	}
+	if (clientid >= MAX_CLIENTS || clientid < 0) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		return;
+	}
+	if (!g_entities[clientid].inuse) 
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
+		return; 
+	}
+
+	trap_SendServerCommand( clientid, va( "chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\n\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg ) );
+	return;
+}
