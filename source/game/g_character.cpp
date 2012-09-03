@@ -2189,36 +2189,37 @@ void Cmd_Comm_F(gentity_t *ent)
 {
 	int pos = 0;
 	char real_msg[MAX_STRING_CHARS];
-	char *msg = ConcatArgs(1);
-	int clientid = -1;
+	char *msg = ConcatArgs(2);
 	char cmdTarget[MAX_STRING_CHARS];
+	int clientid = -1;
 
-	while (*msg)
-	{
-		if ( msg[0] == '\\' && msg[1] == 'n' )
-		{
+	while(*msg)
+	{ 
+		if(msg[0] == '\\' && msg[1] == 'n')
+		{ 
 			msg++;
 			real_msg[pos++] = '\n';
-		}
+		} 
 		else
 		{
 			real_msg[pos++] = *msg;
-		}
+		} 
 		msg++;
 	}
+
 	real_msg[pos] = 0;
 
 	if ( trap_Argc() < 2 )
-	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /comm <name> <message>\n\"" );
+	{ 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /comm <name/clientid> <message>\nUse all, -1, or system for the clientid if you want to comm something to all players.\n\"" ) ); 
 		return;
 	}
 
-	trap_Argv( 1, cmdTarget, MAX_STRING_CHARS );
+	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	if (!Q_stricmp( cmdTarget, "all" ) || !Q_stricmp( cmdTarget, "-1" ) || !Q_stricmp( cmdTarget, "system" ) )
+	if(!Q_stricmp(cmdTarget, "all") | (!Q_stricmp(cmdTarget, "-1") ) | (!Q_stricmp(cmdTarget, "system") ) )
 	{
-		trap_SendServerCommand( -1, va( "chat \"^7Comm systemwide broadcast from ^3%s ^7- ^4%s\n\"", ent->client->pers.netname, real_msg));
+		trap_SendServerCommand( -1, va("chat \"^7Comm systemwide broadcast from ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg) );
 		return;
 	}
 
@@ -2244,6 +2245,6 @@ void Cmd_Comm_F(gentity_t *ent)
 		return; 
 	}
 
-	trap_SendServerCommand( clientid, va( "chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\n\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg ) );
+	trap_SendServerCommand(clientid, va("chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	return;
 }
