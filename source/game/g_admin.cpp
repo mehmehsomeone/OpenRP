@@ -365,10 +365,23 @@ amtele Function
 */
 void Cmd_amTeleport_F(gentity_t *ent)
 {
+	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		return;
+	}
+
 	vec3_t location;
 	vec3_t forward;
 	vec3_t origin;
 	vec3_t yaw;
+
+	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		return;
+	}
+
 
 	if ( trap_Argc() == 1 )
 	{
@@ -2670,6 +2683,12 @@ void Cmd_Music_F( gentity_t * ent )
 
 void Cmd_amTelemark_F( gentity_t * ent )
 {
+	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		return;
+	}
+
 	// mark the teleportation point with a mark.
 	ent->client->ps.viewangles[0] = 0.0f;
 	ent->client->ps.viewangles[2] = 0.0f;
