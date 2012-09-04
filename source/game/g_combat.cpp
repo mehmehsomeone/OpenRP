@@ -473,10 +473,11 @@ void TossClientItems( gentity_t *self ) {
 	//[/CoOp]
 
 	// drop the weapon if not a gauntlet or machinegun
-	//[OpenRP - disabling weapon drops]
-	/*
+
 	weapon = self->s.weapon;
 
+	//[OpenRP - disabling weapon drops]
+	/*
 	// make a special check to see if they are changing to a new
 	// weapon that isn't the mg or gauntlet.  Without this, a client
 	// can pick up a weapon, be killed, and not drop the weapon because
@@ -489,11 +490,10 @@ void TossClientItems( gentity_t *self ) {
 			weapon = WP_NONE;
 		}
 	}
-
-	//racc - this sets the weapon that the player body will use.
-	self->s.bolt2 = weapon;
 	*/
 	//[/OpenRP - disabling weapon drops]
+	//racc - this sets the weapon that the player body will use.
+	self->s.bolt2 = weapon;
 
 	//[CoOp]
 	if ( weapon > WP_SABER && weapon <= MAX_PLAYER_WEAPONS && weapon != WP_BRYAR_PISTOL && weapon != WP_MELEE )//&& self->client->ps.ammo[ weaponData[weapon].ammoIndex ]

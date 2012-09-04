@@ -4278,7 +4278,7 @@ void ClientCommand( int clientNum ) {
 		Cmd_EditAccount_F (ent);
 		return;
 	}
-	if (Q_stricmp(cmd, "accountName") == 0) {
+	if (Q_stricmp(cmd, "accountname") == 0) {
 		Cmd_AccountName_F (ent);
 		return;
 	}
