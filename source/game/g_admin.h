@@ -42,3 +42,4 @@ void Cmd_Sound_F( gentity_t * ent );
 void Cmd_Music_F( gentity_t * ent );
 void Cmd_amTelemark_F( gentity_t * ent );
 void Cmd_amOrigin_F( gentity_t * ent );
+void Cmd_AdminChat_F( gentity_t *ent );

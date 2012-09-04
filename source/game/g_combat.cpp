@@ -473,6 +473,8 @@ void TossClientItems( gentity_t *self ) {
 	//[/CoOp]
 
 	// drop the weapon if not a gauntlet or machinegun
+	//[OpenRP - disabling weapon drops]
+	/*
 	weapon = self->s.weapon;
 
 	// make a special check to see if they are changing to a new
@@ -490,6 +492,8 @@ void TossClientItems( gentity_t *self ) {
 
 	//racc - this sets the weapon that the player body will use.
 	self->s.bolt2 = weapon;
+	*/
+	//[/OpenRP - disabling weapon drops]
 
 	//[CoOp]
 	if ( weapon > WP_SABER && weapon <= MAX_PLAYER_WEAPONS && weapon != WP_BRYAR_PISTOL && weapon != WP_MELEE )//&& self->client->ps.ammo[ weaponData[weapon].ammoIndex ]
@@ -502,6 +506,8 @@ void TossClientItems( gentity_t *self ) {
 			dropped = WP_DropThermal( self );
 			item = NULL;
 		}
+		//[OpenRP - disabling weapon drops]
+		/*
 		else
 		{// find the item type for this weapon
 			item = BG_FindItemForWeapon( (weapon_t) weapon );
@@ -528,7 +534,11 @@ void TossClientItems( gentity_t *self ) {
 			te->r.svFlags |= SVF_BROADCAST;
 			te->s.eventParm = self->s.number;
 		}
+		*/
+		//[/OpenRP - disabling weapon drops]
 	}
+	//[OpenRP - disabling weapon drops]
+	/*
 	else if ( self->client->NPC_class == CLASS_MARK1 ) 
 	{
 
@@ -555,6 +565,8 @@ void TossClientItems( gentity_t *self ) {
 		}
 		Drop_Item( self, item, 0 );
 	}
+	*/
+	//[/OpenRP - disabling weapon drops]
 	//[/CoOp]
 
 	// drop all the powerups if not in teamplay

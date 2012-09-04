@@ -423,7 +423,7 @@ void Cmd_Give_f (gentity_t *cmdent, int baseArg)
 			return;
 	}
 
-	if (give_all || Q_stricmp(name, "armor") == 0)
+	if (give_all || Q_stricmp(name, "armor") == 0 || Q_stricmp(name, "shields") == 0)
 	{
 		if (trap_Argc() == 3+baseArg) {
 			trap_Argv( 2+baseArg, arg, sizeof( arg ) );
@@ -1108,7 +1108,7 @@ void StopFollowing( gentity_t *ent ) {
 	//[OLDGAMETYPES]
 	ent->client->ps.isJediMaster = qfalse; // major exploit if you are spectating somebody and they are JM and you reconnect
 	//[/OLDGAMETYPES]
-	ent->client->ps.cloakFuel = 100; // so that fuel goes away after stop following them
+	ent->client->ps.cloakFuel = CLOAK_MAXFUEL; // so that fuel goes away after stop following them
 	ent->client->ps.jetpackFuel = JETPACK_MAXFUEL; // so that fuel goes away after stop following them
 	ent->health = ent->client->ps.stats[STAT_HEALTH] = 100; // so that you don't keep dead angles if you were spectating a dead person
 	//[/BugFix38]
@@ -4454,6 +4454,10 @@ void ClientCommand( int clientNum ) {
 	}
 	if(Q_stricmp(cmd, "amrename") == 0) {
 		Cmd_amRename_F (ent);
+		return;
+	}
+	if(Q_stricmp(cmd, "admin") == 0) {
+		Cmd_AdminChat_F (ent);
 		return;
 	}
 	if (Q_stricmp(cmd, "amcheataccess") == 0) {

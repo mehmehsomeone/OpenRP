@@ -2220,6 +2220,7 @@ void Cmd_Comm_F(gentity_t *ent)
 	if(!Q_stricmp(cmdTarget, "all") | (!Q_stricmp(cmdTarget, "-1") ) | (!Q_stricmp(cmdTarget, "system") ) )
 	{
 		trap_SendServerCommand( -1, va("chat \"^7Comm systemwide broadcast from ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg) );
+		G_LogPrintf("Systemwide comm message sent by %s. Message: %s\n", ent->client->pers.netname, real_msg);
 		return;
 	}
 
@@ -2245,6 +2246,8 @@ void Cmd_Comm_F(gentity_t *ent)
 		return; 
 	}
 
+	trap_SendServerCommand(ent-g_entities, va("chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	trap_SendServerCommand(clientid, va("chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+	G_LogPrintf("Comm message sent by %s to %s. Message: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
 	return;
 }

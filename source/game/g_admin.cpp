@@ -643,7 +643,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 
 	if(!Q_stricmp(cmdTarget, "all") | (!Q_stricmp(cmdTarget, "-1") ))
 	{
-		trap_SendServerCommand( -1, va("print \"%s\"", real_msg) );
+		trap_SendServerCommand( -1, va("print \"%s\n\"", real_msg) );
 		trap_SendServerCommand( -1, va("cp \"%s\"", real_msg) );
 		G_LogPrintf("Announce admin command executed by %s. The announcement was: %s\n", ent->client->pers.netname, real_msg);
 		return;
@@ -671,7 +671,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 		return; 
 	}
 
-	trap_SendServerCommand(clientid, va("print \"%s\"", real_msg));
+	trap_SendServerCommand(clientid, va("print \"%s\n\"", real_msg));
 	trap_SendServerCommand(clientid, va("cp \"%s\"", real_msg));
 	G_LogPrintf("Announce admin command executed by %s. It was sent to %s. The announcement was: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
 	return;
@@ -2616,7 +2616,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 
 	for( i = 0; i < level.maxclients; i++ )
 	{
-		G_ScreenShake( g_entities[i].s.origin, ent, 6.0f, 10000, qtrue );
+		G_ScreenShake( g_entities[i].s.origin, &g_entities[i], 6.0f, 10000, qfalse );
 		//Don't do a center print for the target - it would distract from the shaking screen.
 		trap_SendServerCommand( i, "print \"^2An admin has shaken your screen.\n\"" );
 	}
@@ -2630,7 +2630,7 @@ void Cmd_Sound_F( gentity_t * ent )
 	char soundPath[MAX_STRING_CHARS];
 	int i;
 
-	if(!G_CheckAdmin(ent, ADMIN_MUSIC))
+	if(!G_CheckAdmin(ent, ADMIN_AUDIO))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
@@ -2653,17 +2653,22 @@ void Cmd_Sound_F( gentity_t * ent )
 	return;
 }
 
+
 void Cmd_Music_F( gentity_t * ent )
 {
-	char musicPath[MAX_STRING_CHARS];
-	int i;
+	//char musicPath[MAX_STRING_CHARS];
+	//int i;
 
-	if(!G_CheckAdmin(ent, ADMIN_MUSIC))
+	if(!G_CheckAdmin(ent, ADMIN_AUDIO))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
 	}
 
+	trap_SendServerCommand( ent-g_entities, "print \"^1Error: This command is currently disabled. Try /amSound instead.\n\"" );
+	return;
+	
+	/*
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /ammusic <path>\n\""));
@@ -2679,6 +2684,7 @@ void Cmd_Music_F( gentity_t * ent )
 		G_EntitySound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", musicPathSTR.c_str() ) ) );
 	}
 	return;
+	*/
 }
 
 void Cmd_amTelemark_F( gentity_t * ent )
@@ -2733,4 +2739,49 @@ void Cmd_amOrigin_F( gentity_t * ent )
 		trap_SendServerCommand( ent-g_entities, va("print \"^2X:^7%d, ^2Y:^7%d, ^2Z:^7%d\n\"", (int) ent->client->ps.origin[0], (int) ent->client->ps.origin[1], (int) ent->client->ps.origin[2]));
 	}
 	return;
+}
+
+void Cmd_AdminChat_F( gentity_t *ent )
+{
+	if ( ent->client->sess.isAdmin == qfalse )
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		return;
+	}
+
+	int pos = 0;
+	char real_msg[MAX_STRING_CHARS];
+	char *msg = ConcatArgs(1);
+	int i;
+
+	while(*msg)
+	{ 
+		if(msg[0] == '\\' && msg[1] == 'n')
+		{ 
+			msg++;
+			real_msg[pos++] = '\n';
+		} 
+		else
+		{
+			real_msg[pos++] = *msg;
+		} 
+		msg++;
+	}
+
+	real_msg[pos] = 0;
+
+	for ( i = 0; i < level.maxclients; i++ )
+	{
+		if ( g_entities[i].client->sess.isAdmin == qtrue )
+		{
+			trap_SendServerCommand( i, va ("chat \"^3<Admin Chat> - ^7%s^3: ^2%s\"", ent->client->pers.netname, real_msg ) );
+		}
+	}
+	
+	return;
+}
+
+void Cmd_Heal_F( gentity_t *ent )
+{
+
 }
