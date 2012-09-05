@@ -4360,6 +4360,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_Comm_F (ent);
 		return;
 	}
+	if (Q_stricmp(cmd, "force") == 0) {
+		Cmd_ForceMessage_F (ent);
+		return;
+	}
 	if (Q_stricmp(cmd, "amkick") == 0) {
 		Cmd_amKick_F (ent);
 		return;

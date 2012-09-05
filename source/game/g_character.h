@@ -31,3 +31,4 @@ void Cmd_CharName_F( gentity_t * ent );
 void Cmd_Me_F( gentity_t *ent );
 void Cmd_It_F( gentity_t *ent );
 void Cmd_Comm_F(gentity_t *ent);
+void Cmd_ForceMessage_F(gentity_t *ent);

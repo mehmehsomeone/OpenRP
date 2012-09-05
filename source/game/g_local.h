@@ -752,6 +752,9 @@ struct gentity_s {
 	vec3_t		epVelocity;
 	float		epGravFactor;
 
+	vec3_t		origOrigin;
+	qboolean    spawnedBefore;
+
 	gitem_t		*item;			// for bonus items
 
 	//[Asteroids]

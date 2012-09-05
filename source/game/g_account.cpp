@@ -3,12 +3,15 @@
 #include "sqlite3/sqlite3.h"
 #include "sqlite3/libsqlitewrapped.h"
 #include "g_account.h"
+#include "g_adminshared.h"
 
 using namespace std;
 
 //extern void SaveCharacter(gentity_t * ent);
 extern void SanitizeString2( char *in, char *out );
 extern int M_G_ClientNumberFromName ( const char* name );
+
+extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 
 /*
 =================
@@ -346,37 +349,82 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 	Database db(DATABASE_PATH);
 	Query q(db);
 
+
 	if (!db.Connected())
 	{
 		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
 		return;
 	}
-
-	string accountNameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
-	int admin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
-	int adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
-	string adminSTR, adminLevelSTR;
-
-	switch( admin )
+	if ( trap_Argc() < 2 )
 	{
-	case 0:
-		adminSTR = "No";
-		break;
-	case 1:
-		adminSTR = "Yes";
-		break;
-	default:
-		adminSTR = "Unknown";
-		break;
+		string accountNameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+		int admin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+		int adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+		string adminSTR, adminLevelSTR;
+
+		switch( admin )
+		{
+		case 0:
+			adminSTR = "No";
+			break;
+		case 1:
+			adminSTR = "Yes";
+			break;
+		default:
+			adminSTR = "Unknown";
+			break;
+		}
+
+		if ( adminLevel < 11 )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n^2Admin Level: ^7%i\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str(), adminLevel ) );
+		}
+		else
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str() ) );
+		}
+		return;
 	}
 
-	if ( adminLevel < 11 )
-	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n^2Admin Level: ^7%i\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str(), adminLevel ) );
-	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str() ) );
+		if ( !G_CheckAdmin( ent, ADMIN_SEARCH ) )
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+			return;
+		}
+		char accountName[MAX_STRING_CHARS];
+
+		trap_Argv( 1, accountName, MAX_STRING_CHARS );
+		string accountNameSTR = accountName;
+
+		int accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%i'", accountNameSTR.c_str() ) );
+		int admin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", accountID ) );
+		int adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", accountID ) );
+		string adminSTR, adminLevelSTR;
+
+		switch( admin )
+		{
+		case 0:
+			adminSTR = "No";
+			break;
+		case 1:
+			adminSTR = "Yes";
+			break;
+		default:
+			adminSTR = "Unknown";
+			break;
+		}
+
+		if ( adminLevel < 11 )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n^2Admin Level: ^7%i\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str(), adminLevel ) );
+		}
+		else
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str() ) );
+		}
+		return;
 	}
 	return;
 }

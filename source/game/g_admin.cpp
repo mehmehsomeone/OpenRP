@@ -641,7 +641,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 		return;
 	}
 
-	if(!Q_stricmp(cmdTarget, "all") | (!Q_stricmp(cmdTarget, "-1") ))
+	if(!Q_stricmp(cmdTarget, "all") || (!Q_stricmp(cmdTarget, "-1") ))
 	{
 		trap_SendServerCommand( -1, va("print \"%s\n\"", real_msg) );
 		trap_SendServerCommand( -1, va("cp \"%s\"", real_msg) );
@@ -2779,9 +2779,4 @@ void Cmd_AdminChat_F( gentity_t *ent )
 	}
 	
 	return;
-}
-
-void Cmd_Heal_F( gentity_t *ent )
-{
-
 }

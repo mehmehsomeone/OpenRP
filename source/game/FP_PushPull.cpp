@@ -3,6 +3,10 @@
 extern qboolean G_InGetUpAnim(playerState_t *ps);
 extern void G_LetGoOfWall( gentity_t *ent );
 extern void G_DeflectMissile( gentity_t *ent, gentity_t *missile, vec3_t forward );
+
+extern qboolean CheckPushItem( gentity_t *ent );
+extern void ResetItem( gentity_t *ent );
+
 extern void Touch_Button(gentity_t *ent, gentity_t *other, trace_t *trace );
 
 qboolean CanCounterThrow(gentity_t *self, gentity_t *thrower, qboolean pull)
@@ -835,6 +839,42 @@ void ForceThrow( gentity_t *self, qboolean pull )
 					G_DeflectMissile( self, push_list[x], forward );
 					//G_ReflectMissile( self, push_list[x], forward );
 					//[/ForceSys]
+				}
+			}
+			else if ( CheckPushItem( push_list[x] ) )
+			{
+				if ( push_list[x]->item->giType == IT_TEAM ) {
+					push_list[x]->nextthink = level.time + CTF_FLAG_RETURN_TIME;
+					push_list[x]->think = ResetItem;//incase it falls off a cliff
+				} else {
+					push_list[x]->nextthink = level.time + 30000;
+					push_list[x]->think = ResetItem;//incase it falls off a cliff
+				}
+
+				if ( pull )
+				{//pull the item
+
+					push_list[x]->s.pos.trType = TR_GRAVITY;
+					push_list[x]->s.apos.trType = TR_GRAVITY;
+					VectorScale( forward, -650.0f, push_list[x]->s.pos.trDelta );
+					VectorScale( forward, -650.0f, push_list[x]->s.apos.trDelta );
+					push_list[x]->s.pos.trTime = level.time;		// move a bit on the very first frame
+					push_list[x]->s.apos.trTime = level.time;		// move a bit on the very first frame
+					VectorCopy( push_list[x]->r.currentOrigin, push_list[x]->s.pos.trBase );
+					VectorCopy( push_list[x]->r.currentOrigin, push_list[x]->s.apos.trBase );
+					push_list[x]->s.eFlags = FL_BOUNCE_HALF;
+				}
+				else 
+				{
+					push_list[x]->s.pos.trType = TR_GRAVITY;
+					push_list[x]->s.apos.trType = TR_GRAVITY;
+					VectorScale( forward, 650.0f, push_list[x]->s.pos.trDelta );
+					VectorScale( forward, 650.0f, push_list[x]->s.apos.trDelta );
+					push_list[x]->s.pos.trTime = level.time;		// move a bit on the very first frame
+					push_list[x]->s.apos.trTime = level.time;		// move a bit on the very first frame
+					VectorCopy( push_list[x]->r.currentOrigin, push_list[x]->s.pos.trBase );
+					VectorCopy( push_list[x]->r.currentOrigin, push_list[x]->s.apos.trBase );
+					push_list[x]->s.eFlags = FL_BOUNCE_HALF;
 				}
 			}
 			else if ( !Q_stricmp( "func_static", push_list[x]->classname ) )

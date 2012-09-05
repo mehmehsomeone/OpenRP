@@ -2,10 +2,10 @@
 #define ADMIN_KICK					1 // /amkick
 #define ADMIN_BAN					2 // /amban
 #define ADMIN_TELEPORT				4 // /amtele
-#define ADMIN_SEARCHCHAR			8 // /characterInfo on another character
+#define ADMIN_SEARCH				8 // /characterInfo and /accountInfo on another character or account
 #define ADMIN_SLEEP					16 // /amsleep and /amunsleep
 #define ADMIN_SILENCE				32 // /amsilence and /amunsilence
-#define ADMIN_HEALTH				64 // /amheal
+#define ADMIN_COMMBROADCAST			64 // /comm -1, system, all, or broadcast
 #define ADMIN_GRANTREMOVEADMIN		128 // Grant or remove admin
 #define ADMIN_MAP					256 // /map
 #define ADMIN_XP					512 // XP related

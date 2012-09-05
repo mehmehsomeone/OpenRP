@@ -496,4 +496,5 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand("amsound");
 	trap_AddCommand("ammusic");
 	trap_AddCommand("ooc");
+	trap_AddCommand("force");
 }

@@ -863,73 +863,76 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 			return;
 		}
 
-		trap_Argv( 1, charName,  MAX_STRING_CHARS );
-
-		string charNameSTR = charName;
-
-		//Check if the character exists
-		transform( charNameSTR.begin(), charNameSTR.end(), charNameSTR.begin(), ::tolower );
-
-		int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
-
-		if(charID == 0)
-		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character ^7%s ^1does not exist.\n\"", charNameSTR.c_str() ) );
-			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character ^7%s does not exist.\n\"", charNameSTR.c_str() ) );
-			return;
-		}
-
-		if(!G_CheckAdmin(ent, ADMIN_SEARCHCHAR))
-		{
-			string charFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
-			string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", charID ) );
-
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2Character Info:\nName: ^7%s\n^2Faction: ^7%s\n^2Rank: ^7%s\n\"", charNameSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str() ) );
-
-			return;
-		}
-
 		else
 		{
-			//Get their character info from the database
-			//Name
-			string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", charID ) );
-			//Force Sensitive
-			int forceSensitive = q.get_num( va( "SELECT ForceSensitive FROM Characters WHERE CharID='%i'", charID) );
-			//Faction
-			string charFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
-			//Faction Rank
-			string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", charID ) );
-			//Level
-			int charLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
-			//XP
-			int charXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", charID ) );
-			//Credits
-			int charCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", charID ) );
-			//ModelScale
-			int charModelScale = q.get_num( va( "SELECT ModelScale FROM Characters WHERE CharID='%i'", charID ) );
+			trap_Argv( 1, charName,  MAX_STRING_CHARS );
 
-			switch( forceSensitive )
+			string charNameSTR = charName;
+
+			//Check if the character exists
+			transform( charNameSTR.begin(), charNameSTR.end(), charNameSTR.begin(), ::tolower );
+
+			int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
+
+			if(charID == 0)
 			{
-			case 0:
-				forceSensitiveSTR = "No";
-				break;
-			case 1:
-				forceSensitiveSTR = "Yes";
-				break;
-			default:
-				forceSensitiveSTR = "Unknown";
-				break;
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character ^7%s ^1does not exist.\n\"", charNameSTR.c_str() ) );
+				trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character ^7%s does not exist.\n\"", charNameSTR.c_str() ) );
+				return;
 			}
 
-			nextLevel = charLevel + 1;
-			neededXP = Q_powf( nextLevel, 2 ) * 2;
+			if(!G_CheckAdmin(ent, ADMIN_SEARCH))
+			{
+				string charFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
+				string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", charID ) );
+
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2Character Info:\nName: ^7%s\n^2Faction: ^7%s\n^2Rank: ^7%s\n\"", charNameSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str() ) );
+
+				return;
+			}
+
+			else
+			{
+				//Get their character info from the database
+				//Name
+				string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", charID ) );
+				//Force Sensitive
+				int forceSensitive = q.get_num( va( "SELECT ForceSensitive FROM Characters WHERE CharID='%i'", charID) );
+				//Faction
+				string charFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
+				//Faction Rank
+				string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", charID ) );
+				//Level
+				int charLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
+				//XP
+				int charXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", charID ) );
+				//Credits
+				int charCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", charID ) );
+				//ModelScale
+				int charModelScale = q.get_num( va( "SELECT ModelScale FROM Characters WHERE CharID='%i'", charID ) );
+
+				switch( forceSensitive )
+				{
+				case 0:
+					forceSensitiveSTR = "No";
+					break;
+				case 1:
+					forceSensitiveSTR = "Yes";
+					break;
+				default:
+					forceSensitiveSTR = "Unknown";
+					break;
+				}
+
+				nextLevel = charLevel + 1;
+				neededXP = Q_powf( nextLevel, 2 ) * 2;
 	
-			//Show them the info.
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2Character Info:\nName: ^7%s\n^2Force Sensitive: ^7%s\n^2Faction: ^7%s\n^2Faction Rank: ^7%s\n^2Level: ^7%i/50\n^2XP: ^7%i/%i\n^2Credits: ^7%i\n^2Modelscale: ^7%i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, neededXP, charCredits, charModelScale ) );
+				//Show them the info.
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2Character Info:\nName: ^7%s\n^2Force Sensitive: ^7%s\n^2Faction: ^7%s\n^2Faction Rank: ^7%s\n^2Level: ^7%i/50\n^2XP: ^7%i/%i\n^2Credits: ^7%i\n^2Modelscale: ^7%i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, neededXP, charCredits, charModelScale ) );
+				return;
+			}
 			return;
 		}
-		return;
 }
 
 
@@ -2217,9 +2220,14 @@ void Cmd_Comm_F(gentity_t *ent)
 
 	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
 
-	if(!Q_stricmp(cmdTarget, "all") | (!Q_stricmp(cmdTarget, "-1") ) | (!Q_stricmp(cmdTarget, "system") ) )
+	if(!Q_stricmp(cmdTarget, "all") || (!Q_stricmp(cmdTarget, "-1") ) || (!Q_stricmp(cmdTarget, "system") ) || (!Q_stricmp(cmdTarget, "broadcast") ) )
 	{
-		trap_SendServerCommand( -1, va("chat \"^7Comm systemwide broadcast from ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg) );
+		if ( !G_CheckAdmin( ent, ADMIN_COMMBROADCAST ) )
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+			return;
+		}
+		trap_SendServerCommand( -1, va("chat \"^7Comm system broadcast ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg) );
 		G_LogPrintf("Systemwide comm message sent by %s. Message: %s\n", ent->client->pers.netname, real_msg);
 		return;
 	}
@@ -2249,5 +2257,87 @@ void Cmd_Comm_F(gentity_t *ent)
 	trap_SendServerCommand(ent-g_entities, va("chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	trap_SendServerCommand(clientid, va("chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	G_LogPrintf("Comm message sent by %s to %s. Message: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
+	return;
+}
+
+void Cmd_ForceMessage_F(gentity_t *ent)
+{
+	Database db(DATABASE_PATH);
+	Query q(db);
+	//The database is not connected. Please do so.
+	if (!db.Connected())
+	{
+		G_Printf("Database not connected, %s\n",DATABASE_PATH);
+		return;
+	}
+
+	if ( ent->client->sess.characterChosen == qfalse )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must have a character selected to use this command.\nThis is to confirm that you're force sensitive.\n\"" );
+		return;
+	}
+
+	int forceSensitive = q.get_num( va( "SELECT ForceSensitive FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+
+	if ( forceSensitive == 0 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Your character isn't force sensitive.\n\"" );
+		return;
+	}
+	int pos = 0;
+	char real_msg[MAX_STRING_CHARS];
+	char *msg = ConcatArgs(2);
+	char cmdTarget[MAX_STRING_CHARS];
+	int clientid = -1;
+
+	while(*msg)
+	{ 
+		if(msg[0] == '\\' && msg[1] == 'n')
+		{ 
+			msg++;
+			real_msg[pos++] = '\n';
+		} 
+		else
+		{
+			real_msg[pos++] = *msg;
+		} 
+		msg++;
+	}
+
+	real_msg[pos] = 0;
+
+	if ( trap_Argc() < 2 )
+	{ 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /force <name/clientid> <message>\n\"" ) ); 
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
+
+	clientid = M_G_ClientNumberFromName( cmdTarget );
+	if (clientid == -1) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
+		return; 
+	} 
+	if (clientid == -2) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
+		return; 
+	}
+	if (clientid >= MAX_CLIENTS || clientid < 0) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		return;
+	}
+	if (!g_entities[clientid].inuse) 
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
+		return; 
+	}
+
+	trap_SendServerCommand(ent-g_entities, va("chat \"^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+	trap_SendServerCommand(clientid, va("chat \"^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+	G_LogPrintf("Force message sent by %s to %s. Message: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
 	return;
 }

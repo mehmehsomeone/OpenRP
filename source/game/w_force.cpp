@@ -45,6 +45,30 @@ gentity_t *G_PreDefSound(vec3_t org, int pdSound)
 	return te;
 }
 
+qboolean CheckPushItem( gentity_t *ent ) {
+	if ( !ent->item )
+		return qfalse;
+
+	if ( ent->item->giType == IT_AMMO ||
+		 ent->item->giType == IT_HEALTH ||
+		 ent->item->giType == IT_ARMOR ||
+		 ent->item->giType == IT_HOLDABLE ) {
+			return qtrue; // these don't have placeholders
+		}
+
+	if ( ent->item->giType == IT_WEAPON ||
+		//( mod_pushall.integer == 2 && ent->item->giType == IT_TEAM ) ||
+		 ent->item->giType == IT_POWERUP ) {
+			// check for if dropped item
+			if ( ent->r.svFlags & EF_DROPPEDWEAPON )
+				return qtrue; // these types can only if dropped
+			if ( ent->flags & FL_DROPPED_ITEM )
+				return qtrue; // these types can only if dropped
+		}
+
+	return qfalse;
+}
+
 const int forcePowerMinRank[NUM_FORCE_POWER_LEVELS][NUM_FORCE_POWERS] = //0 == neutral
 {
 	{

@@ -2755,6 +2755,11 @@ void RespawnItem( gentity_t *ent ) {
 			;
 	}
 
+	VectorCopy(ent->origOrigin, ent->s.origin);
+	VectorCopy(ent->origOrigin, ent->s.pos.trBase);
+	VectorCopy(ent->origOrigin, ent->s.apos.trBase);
+	VectorCopy(ent->origOrigin, ent->r.currentOrigin);
+
 	ent->r.contents = CONTENTS_TRIGGER;
 	//ent->s.eFlags &= ~EF_NODRAW;
 	ent->s.eFlags &= ~(EF_NODRAW | EF_ITEMPLACEHOLDER);
@@ -2801,6 +2806,38 @@ qboolean CheckItemCanBePickedUpByNPC( gentity_t *item, gentity_t *pickerupper )
 		return qtrue;
 	}
 	return qfalse;
+}
+
+void ResetItem( gentity_t *ent ) {
+	// randomly select from teamed entities
+	
+	//G_FreeEntity(ent);
+
+	//ent->r.contents = CONTENTS_TRIGGER;
+	//ent->s.eFlags &= ~EF_NODRAW;
+	//ent->s.eFlags &= ~(EF_NODRAW | EF_ITEMPLACEHOLDER);
+	//ent->r.svFlags &= ~SVF_NOCLIENT;
+	
+	//ent->s.pos.trTime = level.time;		// move a bit on the very first frame
+	//ent->s.apos.trTime = level.time;
+
+	VectorCopy(ent->origOrigin, ent->s.origin);
+	VectorCopy(ent->origOrigin, ent->s.pos.trBase);
+	VectorCopy(ent->origOrigin, ent->s.apos.trBase);
+	VectorCopy(ent->origOrigin, ent->r.currentOrigin);
+	
+	//ent->s.eFlags = EF_BOUNCE_HALF;
+	//ent->r.contents = CONTENTS_TRIGGER;
+	//ent->s.eFlags &= ~EF_NODRAW;
+	//ent->s.eFlags &= ~(EF_NODRAW | EF_ITEMPLACEHOLDER);
+	//ent->r.svFlags &= ~SVF_NOCLIENT;
+
+	trap_LinkEntity (ent);
+
+	// play the normal respawn sound only to nearby clients
+	//G_AddEvent( ent, EV_ITEM_RESPAWN, 0 );
+//	ent->think = ResetItem;
+//	ent->nextthink = level.time + 30000;
 }
 
 /*
@@ -3218,6 +3255,7 @@ void FinishSpawningItem( gentity_t *ent ) {
 	trace_t		tr;
 	vec3_t		dest;
 //	gitem_t		*item;
+	vec3_t		endposhack={0.0f,0.0f,0.0f};
 
 //	VectorSet( ent->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, -ITEM_RADIUS );
 //	VectorSet( ent->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS );
@@ -3377,6 +3415,7 @@ void FinishSpawningItem( gentity_t *ent ) {
 		ent->s.groundEntityNum = tr.entityNum;
 
 		G_SetOrigin( ent, tr.endpos );
+		VectorCopy(tr.endpos, endposhack);
 	}
 
 	//[CoOp]
@@ -3409,6 +3448,16 @@ void FinishSpawningItem( gentity_t *ent ) {
 		return;
 	}
 	*/
+
+	if (!ent->spawnedBefore)
+	{
+		ent->spawnedBefore = qtrue;
+		//if ( ent->spawnflags & ITMSF_SUSPEND ) {
+		//	VectorCopy(ent->s.origin, ent->origOrigin);
+		//} else {
+			VectorCopy(endposhack, ent->origOrigin);
+		//}
+	}
 
 	trap_LinkEntity (ent);
 }
@@ -3678,6 +3727,13 @@ void G_SpawnItem (gentity_t *ent, gitem_t *item) {
 	RegisterItem( item );
 	if ( G_ItemDisabled(item) )
 		return;
+
+	if (ent->spawnedBefore)
+	{
+		//ent->spawnedBefore = qtrue;
+		//VectorCopy(ent->s.origin, ent->origOrigin);
+		VectorCopy(ent->origOrigin, ent->s.origin);
+	}
 
 	ent->item = item;
 	// some movers spawn on the second frame, so delay item
