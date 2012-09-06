@@ -12,12 +12,12 @@
 #define ADMIN_PROTECT				1024 // /amprotect
 #define ADMIN_ANNOUNCE				2048 // /amannounce
 #define ADMIN_WARN					4096 // /amwarn
-#define ADMIN_EMPOWER				8192 // /amemp
-#define ADMIN_MERC				    16384 // /ammerc
+#define ADMIN_ALLCHAT				8192 // /amAllChat
+#define ADMIN_INVISIBLE			    16384 // /aminvisible
 #define ADMIN_CHEATS				32768 // Cheat commands related
 #define	ADMIN_ADMINWHOIS			65536 // /amlistadmins
 #define ADMIN_SCALE					131072 // modelscaling
-#define ADMIN_SHAKE					262144 // ambitvalues
+#define ADMIN_SHAKE					262144 // amshakescreen
 #define ADMIN_ADDEFFECT				524288 // /amaddeffect
 #define ADMIN_FORCETEAM				1048576 // /amforceteam
 #define ADMIN_WEATHER				2097152 // /amweather

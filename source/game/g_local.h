@@ -366,7 +366,7 @@ extern vmCvar_t		ojp_truebalance;//[TrueBalance]
 
 extern vmCvar_t ojp_modelscaleEnabled;//[Modelscale]
 
-//[OpenRP Admin]
+//[OpenRP]
 extern vmCvar_t		openrp_maxWarnings; 
 
 //OpenRP website
@@ -398,7 +398,14 @@ extern vmCvar_t		openrp_admin10Bitvalues;
 //Determines whether admins can perform admin commands on higher admin levels.
 //If it's on (set to 1), then lower level admins can't use cmds like sleep on higher level admins.
 extern vmCvar_t		openrp_adminControl;
-//[/OpenRP Admin]
+
+extern vmCvar_t		openrp_jetpackFuel;
+extern vmCvar_t		openrp_cloakFuel;
+
+extern vmCvar_t		openrp_allChat;
+
+extern vmCvar_t		openrp_showRenames;
+//[/OpenRP]
 
 // movers are things like doors, plats, buttons, etc
 typedef enum {
@@ -883,6 +890,8 @@ typedef struct {
 	qboolean isSleeping;
 	qboolean isSilenced;
 	qboolean isProtected;
+	qboolean isInvisible;
+	qboolean allChat;
 
 } clientSession_t;
 
@@ -924,7 +933,10 @@ typedef struct {
 	//This is used to determine if the visual weapon events can be sent or not.
 	qboolean ojpClientPlugIn;
 	//[/ClientPlugInDetect]
-		int			motdShowTime;		// MJN - Show MOTD to player.
+
+	char *ojpClientVersion;
+
+	int			motdShowTime;		// MJN - Show MOTD to player.
 	qboolean	protect;			// MJN - Person is protected.
 	qboolean	sleeping;			// MJN - This player is asleep.
 	float		zShowTime;			// MJN - Is it time to show some Z's when sleeping?

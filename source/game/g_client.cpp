@@ -2135,9 +2135,12 @@ void ClientUserinfoChanged( int clientNum ) {
 				strcpy ( client->pers.netname, oldname );
 			}
 			else
-			{				
-				trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " %s %s\n\"", oldname, G_GetStringEdString("MP_SVGAME", "PLRENAME"), client->pers.netname) );
-				client->pers.netnameTime = level.time + 5000;
+			{
+				if ( openrp_showRenames.integer == 1 )
+				{
+					trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " %s %s\n\"", oldname, G_GetStringEdString("MP_SVGAME", "PLRENAME"), client->pers.netname) );
+					client->pers.netnameTime = level.time + 5000;
+				}
 			}
 		}
 	}
@@ -2370,6 +2373,7 @@ void ClientUserinfoChanged( int clientNum ) {
 	}
 	else if(!strcmp(OPENRP_CLIENTVERSION, s))
 	{
+		client->pers.ojpClientVersion = s;
 		client->pers.ojpClientPlugIn = qtrue;
 	}
 	//[/ClientPlugInDetect]

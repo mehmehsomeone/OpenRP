@@ -144,8 +144,8 @@
 
 //[Flamethrower]
 const int FLAMETHROWER_FUELCOST = 3;		//fuel cost of flamethrower per hit trace -- 1.3 was 3
-const float JETPACK_MAXFUEL = Q3_INFINITE; //Original 66, issue 15 FIXME: 74 MAX possible?
-const int CLOAK_MAXFUEL = Q3_INFINITE;
+const float JETPACK_MAXFUEL = 100; //Original 66, issue 15 FIXME: 74 MAX possible?
+const int CLOAK_MAXFUEL = 100;
 //[/Flamethrower]
 
 //[BUGFIX12]

@@ -500,7 +500,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		}
 
 		int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID, charNameSTR.c_str() ) );
-		if( charID == 0 )
+		if( !charID )
 		{
 			trap_SendServerCommand( ent-g_entities, "print \"^1Error: Character does not exist\n\"");
 			return;
@@ -585,7 +585,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		}
 
 		int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID, charNameSTR.c_str() ) );
-		if( charID == 0 )
+		if( !charID )
 		{
 			trap_SendServerCommand( ent-g_entities, "print \"^1Error: Character does not exist\n\"");
 			return;
@@ -647,7 +647,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	//Check if the character exists
 	transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
 	int charID = q.get_num(va("SELECT CharID FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str()));
-	if( charID == 0 )
+	if( !charID )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Character does not exist\n\"");
 		return;
@@ -746,7 +746,7 @@ void Cmd_GiveCredits_F(gentity_t * ent)
 
 	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", recipientCharNameSTR.c_str() ) );
 
-	if(charID == 0)
+	if( !charID )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", recipientCharNameSTR.c_str() ) );
 		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", recipientCharNameSTR.c_str() ) );
@@ -874,7 +874,7 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 
 			int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
-			if(charID == 0)
+			if( !charID )
 			{
 				trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character ^7%s ^1does not exist.\n\"", charNameSTR.c_str() ) );
 				trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character ^7%s does not exist.\n\"", charNameSTR.c_str() ) );
@@ -1252,7 +1252,7 @@ void Cmd_TransferLeader_F( gentity_t * ent )
 
 		int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", newLeaderSTR.c_str() ) );
 
-		if(charID == 0)
+		if(!charID)
 		{
 			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", newLeaderSTR.c_str() ) );
 			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", newLeaderSTR.c_str() ) );
@@ -1283,7 +1283,7 @@ void Cmd_TransferLeader_F( gentity_t * ent )
 		int newLeaderCharID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", newLeaderSTR.c_str() ) );
 		int oldLeaderCharID = q.get_num( va( "SELECT CharID FROM Characters WHERE Faction='%s' AND Rank='Leader'", transferFactionNameSTR.c_str() ) );
 
-		if(newLeaderCharID == 0)
+		if(!newLeaderCharID)
 		{
 			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", newLeaderSTR.c_str() ) );
 			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", newLeaderSTR.c_str() ) );
@@ -1507,7 +1507,7 @@ void Cmd_CheckInventory_F( gentity_t * ent )
 
 	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
-	if(charID == 0)
+	if(!charID)
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
@@ -1960,7 +1960,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 
 		int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", bountyNameSTR.c_str() ) );
 
-		if(charID == 0)
+		if(!charID)
 		{
 			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", bountyNameSTR.c_str() ) );
 			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", bountyNameSTR.c_str() ) );
@@ -2190,6 +2190,13 @@ void Cmd_It_F( gentity_t *ent )
 
 void Cmd_Comm_F(gentity_t *ent)
 {
+	if ( ent->client->sess.isSilenced == qtrue )
+	{
+		trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
+		trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
+		return;
+	}
+
 	int pos = 0;
 	char real_msg[MAX_STRING_CHARS];
 	char *msg = ConcatArgs(2);
@@ -2227,7 +2234,7 @@ void Cmd_Comm_F(gentity_t *ent)
 			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 			return;
 		}
-		trap_SendServerCommand( -1, va("chat \"^7Comm system broadcast ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg) );
+		trap_SendServerCommand( -1, va("chat \"^7COMM SYSTEM BROADCAST ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg) );
 		G_LogPrintf("Systemwide comm message sent by %s. Message: %s\n", ent->client->pers.netname, real_msg);
 		return;
 	}
@@ -2262,6 +2269,13 @@ void Cmd_Comm_F(gentity_t *ent)
 
 void Cmd_ForceMessage_F(gentity_t *ent)
 {
+	if ( ent->client->sess.isSilenced == qtrue )
+	{
+		trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
+		trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
+		return;
+	}
+
 	Database db(DATABASE_PATH);
 	Query q(db);
 	//The database is not connected. Please do so.

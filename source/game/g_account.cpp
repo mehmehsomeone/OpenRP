@@ -27,6 +27,13 @@ void CheckAdmin(gentity_t * ent)
 	Database db(DATABASE_PATH);
 	Query q(db);
 	
+	//This dictates that you are not logged in.
+	if( !isLoggedIn(ent) )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You are not logged in.\n\"");
+		return;
+	}
+
 	int accountID = ent->client->sess.accountID;
 
 	//Checks if the user is admin
@@ -398,7 +405,14 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 		trap_Argv( 1, accountName, MAX_STRING_CHARS );
 		string accountNameSTR = accountName;
 
-		int accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%i'", accountNameSTR.c_str() ) );
+		int accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'", accountNameSTR.c_str() ) );
+		
+		if ( !accountID )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Account with username %s does not exist.\n\"", accountNameSTR.c_str() ) );
+			return;
+		}
+
 		int admin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", accountID ) );
 		int adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", accountID ) );
 		string adminSTR, adminLevelSTR;
@@ -418,11 +432,11 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 
 		if ( adminLevel < 11 )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n^2Admin Level: ^7%i\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str(), adminLevel ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n^2Admin Level: ^7%i\n\"", accountNameSTR.c_str(), accountID, adminSTR.c_str(), adminLevel ) );
 		}
 		else
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n\"", accountNameSTR.c_str(), ent->client->sess.accountID, adminSTR.c_str() ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Info:\nAccount Name: ^7%s\n^2Account ID: ^7%i\n^2Admin: ^7%s\n\"", accountNameSTR.c_str(), accountID, adminSTR.c_str() ) );
 		}
 		return;
 	}

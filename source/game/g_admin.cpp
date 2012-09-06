@@ -1112,7 +1112,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 	//char cmdTarget[MAX_STRING_CHARS];
 	//int clientid = -1;
 	
-	if(!G_CheckAdmin(ent, ADMIN_EMPOWER))
+	if( ent->client->sess.isAdmin == qfalse )
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
@@ -1210,7 +1210,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 	//char cmdTarget[MAX_STRING_CHARS];
 	//int clientid = -1;
 
-	if(!G_CheckAdmin(ent, ADMIN_MERC))
+	if( ent->client->sess.isAdmin == qfalse )
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
@@ -1743,6 +1743,7 @@ amstatus Function
 void Cmd_amStatus_F(gentity_t *ent)
 {
 	int i;
+	string hasClientSTR;
 
   	if(!G_CheckAdmin(ent, ADMIN_STATUS))
 	{
@@ -1754,8 +1755,24 @@ void Cmd_amStatus_F(gentity_t *ent)
    for(i = 0; i < level.maxclients; i++)
    { 
       if(g_entities[i].client->pers.connected == CON_CONNECTED)
-	  { 
-		  trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP ) );
+	  {
+		  switch ( g_entities[i].client->pers.ojpClientPlugIn )
+		  {
+		  case qtrue:
+			  hasClientSTR = "Yes";
+		  case qfalse:
+			  hasClientSTR = "No";
+		  default:
+			  hasClientSTR = "Unknown";
+		  }
+		  if ( g_entities[i].client->pers.ojpClientPlugIn == qtrue )
+		  {
+			  trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s - Version: %s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str(), g_entities[i].client->pers.ojpClientVersion  ) );
+		  }
+		  else
+		  {
+			  trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str() ) );
+		  }  
 	  }
    }
    trap_SendServerCommand( ent-g_entities, va( "print \"^2===================================\n\"" ) );
@@ -2131,7 +2148,7 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 
 	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
-	if(charID == 0)
+	if( !charID )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
@@ -2220,7 +2237,7 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 
 	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
-	if(charID == 0)
+	if( !charID )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
@@ -2359,7 +2376,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 
 	int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
-	if(charID == 0)
+	if( !charID )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 		return;
@@ -2428,7 +2445,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 		int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
-		if(charID == 0)
+		if( !charID )
 		{
 			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 			return;
@@ -2480,7 +2497,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 		int charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
 
-		if(charID == 0)
+		if( !charID )
 		{
 			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 			return;
@@ -2580,26 +2597,22 @@ void Cmd_CheatAccess_F( gentity_t *ent )
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 	}
-	//If the user of the command does have the proper bitvalue
+	//If they don't have cheat access
+	if( ent->client->pers.hasCheatAccess == qfalse )
+	{
+		//They do now.
+		ent->client->pers.hasCheatAccess = qtrue;
+		trap_SendServerCommand( ent-g_entities, va ("print \"^2Cheat Access ^2Granted.\n\"" ));
+		G_LogPrintf( "%s executed the cheatAccess command and they now have cheat access.\n", ent->client->pers.netname );
+	}
+
+	//If they do have cheat access
 	else
 	{
-		//If they don't have cheat access
-		if( ent->client->pers.hasCheatAccess == qfalse )
-		{
-			//They do now.
-			ent->client->pers.hasCheatAccess = qtrue;
-			trap_SendServerCommand( ent-g_entities, va ("print \"^2Cheat Access ^2Granted.\n\"" ));
-			G_LogPrintf( "%s executed the cheatAccess command and they now have cheat access.\n", ent->client->pers.netname );
-		}
-
-		//If they do have cheat access
-		else
-		{
-			//They don't anymore.
-			ent->client->pers.hasCheatAccess = qfalse;
-			trap_SendServerCommand( ent-g_entities, va ("print \"^2Cheat Access ^1Removed.\n\"" ));
-			G_LogPrintf( "%s executed the cheatAccess command and they now no longer have cheat access (they had it but toggled it off).\n", ent->client->pers.netname );
-		}
+		//They don't anymore.
+		ent->client->pers.hasCheatAccess = qfalse;
+		trap_SendServerCommand( ent-g_entities, va ("print \"^2Cheat Access ^1Removed.\n\"" ));
+		G_LogPrintf( "%s executed the cheatAccess command and they now no longer have cheat access (they had it but toggled it off).\n", ent->client->pers.netname );
 	}
 	return;
 }
@@ -2616,9 +2629,9 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 
 	for( i = 0; i < level.maxclients; i++ )
 	{
-		G_ScreenShake( g_entities[i].s.origin, &g_entities[i], 6.0f, 10000, qfalse );
+		G_ScreenShake( g_entities[i].s.origin, &g_entities[i], 6.0f, 10000, qtrue );
 		//Don't do a center print for the target - it would distract from the shaking screen.
-		trap_SendServerCommand( i, "print \"^2An admin has shaken your screen.\n\"" );
+		trap_SendServerCommand( i, "print \"^2An admin shook your screen.\n\"" );
 	}
 	trap_SendServerCommand( ent-g_entities, "print \"^2Success: You shook everybody's screen.\n\"" );
 	return;
@@ -2774,9 +2787,75 @@ void Cmd_AdminChat_F( gentity_t *ent )
 	{
 		if ( g_entities[i].client->sess.isAdmin == qtrue )
 		{
-			trap_SendServerCommand( i, va ("chat \"^3<Admin Chat> - ^7%s^3: ^2%s\"", ent->client->pers.netname, real_msg ) );
+			trap_SendServerCommand( i, va ("chat \"^6<Admin Chat> - ^7%s^6: ^6%s\"", ent->client->pers.netname, real_msg ) );
 		}
 	}
 	
+	return;
+}
+
+void Cmd_Invisible_F( gentity_t * ent )
+{
+	if(!G_CheckAdmin(ent, ADMIN_INVISIBLE))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		return;
+	}
+
+	int forceVisible = 0;
+
+	// If we have a targetname, we're are invisible until we are spawned in by being used.
+	if ( ent->client->sess.isInvisible == qfalse )
+	{
+		ent->s.eFlags = EF_NODRAW;
+		ent->r.contents = 0; 
+		ent->clipmask = 0;
+		ent->client->sess.isInvisible = qtrue;
+
+		G_SpawnInt( "forcevisible", "0", &forceVisible );
+		if ( forceVisible )
+		{//can see these through walls with force sight, so must be broadcast
+			ent->r.svFlags |= SVF_BROADCAST;
+			ent->s.eFlags |= EF_FORCE_VISIBLE;
+		}
+		
+	}
+	else
+	{
+		ent->s.eFlags &= ~EF_NODRAW;
+		ent->r.contents = CONTENTS_BODY;
+		ent->clipmask = MASK_PLAYERSOLID;
+		ent->client->sess.isInvisible = qfalse;
+
+		G_SpawnInt( "forcevisible", "1", &forceVisible );
+		if ( forceVisible )
+		{//can see these through walls with force sight, so must be broadcast
+			ent->r.svFlags |= SVF_BROADCAST;
+			ent->s.eFlags |= EF_FORCE_VISIBLE;
+		}
+	}
+	return;
+}
+
+void Cmd_AllChat_F( gentity_t * ent )
+{
+	if(!G_CheckAdmin(ent, ADMIN_ALLCHAT))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		return;
+	}
+
+	if ( ent->client->sess.allChat == qfalse )
+	{
+		ent->client->sess.allChat =	qtrue;
+		trap_SendServerCommand( ent-g_entities, "print \"^2Success: All chat turned ON.\n\"" );
+		return;
+	}
+	else
+	{
+		ent->client->sess.allChat =	qfalse;
+		trap_SendServerCommand( ent-g_entities, "print \"^2Success: All chat turned OFF.\n\"" );
+		return;
+	}
 	return;
 }

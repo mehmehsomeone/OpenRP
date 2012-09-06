@@ -2009,6 +2009,7 @@ Cmd_Say_f
 */
 static void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	char		*p;
+	int i;
 
 	if ( trap_Argc () < 2 && !arg0 ) {
 		return;
@@ -2022,8 +2023,33 @@ static void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	{
 		p = ConcatArgs( 1 );
 	}
-
-	G_Say( ent, NULL, mode, p );
+	//[OpenRP - Distance based chat]
+	if ( openrp_allChat.integer == 0 && mode == SAY_ALL )
+	{
+		for ( i = 0; i < level.maxclients; i++ )
+		{
+			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+			{
+				G_Say( ent, &g_entities[i], mode, p );
+			}
+			else
+			{
+				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 450 )
+				{
+					G_Say( ent, &g_entities[i], mode, p );
+				}
+				else
+				{
+					continue;
+				}
+			}
+		}
+	}
+	else
+	{
+		G_Say( ent, NULL, mode, p );
+	}
+	//[/OpenRP - Distance based chat]
 }
 
 /*
@@ -4478,6 +4504,16 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp(cmd, "ammusic") == 0) {
 		Cmd_Music_F (ent);
+		return;
+	}
+	/*
+	if (Q_stricmp(cmd, "aminvisible") == 0) {
+		Cmd_Invisible_F (ent);
+		return;
+	}
+	*/
+	if (Q_stricmp(cmd, "amallchat") == 0) {
+		Cmd_AllChat_F (ent);
 		return;
 	}
 	if( Q_stricmp (cmd, "emsit") == 0) {
