@@ -1908,7 +1908,8 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	//[/OpenRP - OOC]
 
 	//[AdminSys][ChatSpamProtection]
-	if(!(ent->r.svFlags & SVF_BOT))
+	
+	if( !( ent->r.svFlags & SVF_BOT ) && ( openrp_allChat.integer == 1 || ( openrp_allChat.integer == 0 && mode != SAY_ALL ) ) )
 	{//don't chat protect the bots.
 		if(ent->client && ent->client->chatDebounceTime > level.time //debounce isn't up
 			//and we're not bouncing our message back to our self while using SAY_TELL 
@@ -4514,6 +4515,18 @@ void ClientCommand( int clientNum ) {
 	*/
 	if (Q_stricmp(cmd, "amallchat") == 0) {
 		Cmd_AllChat_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "yell") == 0) {
+		Cmd_Yell_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "whisper") == 0) {
+		Cmd_Whisper_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "looc") == 0) {
+		Cmd_LOOC_F (ent);
 		return;
 	}
 	if( Q_stricmp (cmd, "emsit") == 0) {

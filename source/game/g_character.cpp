@@ -2355,3 +2355,198 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 	G_LogPrintf("Force message sent by %s to %s. Message: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
 	return;
 }
+
+void Cmd_Yell_F(gentity_t *ent)
+{
+	if ( ent->client->sess.isSilenced == qtrue )
+	{
+		trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
+		trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
+		return;
+	}
+
+	if ( openrp_allChat.integer != 0 )
+	{
+		trap_SendServerCommand(ent-g_entities,"print \"^1All chat is enabled. It must be disabled to use this command.\n\"");
+		trap_SendServerCommand(ent-g_entities,"cp \"^1^1All chat is enabled.\n^1It must be disabled to use this command.\n\"");
+		return;
+	}
+
+	int pos = 0;
+	char real_msg[MAX_STRING_CHARS];
+	char *msg = ConcatArgs(1);
+	int i;
+
+	while(*msg)
+	{ 
+		if(msg[0] == '\\' && msg[1] == 'n')
+		{ 
+			msg++;
+			real_msg[pos++] = '\n';
+		} 
+		else
+		{
+			real_msg[pos++] = *msg;
+		} 
+		msg++;
+	}
+
+	real_msg[pos] = 0;
+
+	if ( trap_Argc() < 2 )
+	{ 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /yell <message>\n\"" ) ); 
+		return;
+	}
+
+	for ( i = 0; i < level.maxclients; i++ )
+	{
+		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		{
+			trap_SendServerCommand( i, va("chat \"^7<Yell> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
+		}
+		else
+		{
+			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 900 )
+			{
+				trap_SendServerCommand( i, va("chat \"^7<Yell> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
+	G_LogPrintf("<Yell> %s: %s\n", ent->client->pers.netname, real_msg);
+	return;
+}
+
+void Cmd_Whisper_F(gentity_t *ent)
+{
+	if ( ent->client->sess.isSilenced == qtrue )
+	{
+		trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
+		trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
+		return;
+	}
+
+	if ( openrp_allChat.integer != 0 )
+	{
+		trap_SendServerCommand(ent-g_entities,"print \"^1All chat is enabled. It must be disabled to use this command.\n\"");
+		trap_SendServerCommand(ent-g_entities,"cp \"^1^1All chat is enabled.\n^1It must be disabled to use this command.\n\"");
+		return;
+	}
+
+	int pos = 0;
+	char real_msg[MAX_STRING_CHARS];
+	char *msg = ConcatArgs(1);
+	int i;
+
+	while(*msg)
+	{ 
+		if(msg[0] == '\\' && msg[1] == 'n')
+		{ 
+			msg++;
+			real_msg[pos++] = '\n';
+		} 
+		else
+		{
+			real_msg[pos++] = *msg;
+		} 
+		msg++;
+	}
+
+	real_msg[pos] = 0;
+
+	if ( trap_Argc() < 2 )
+	{ 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /whisper <message>\n\"" ) ); 
+		return;
+	}
+
+	for ( i = 0; i < level.maxclients; i++ )
+	{
+		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		{
+			trap_SendServerCommand( i, va("chat \"^7<Whisper> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
+		}
+		else
+		{
+			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+			{
+				trap_SendServerCommand( i, va("chat \"^7<Whisper> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
+	G_LogPrintf("<Whisper> %s: %s\n", ent->client->pers.netname, real_msg);
+	return;
+}
+
+void Cmd_LOOC_F(gentity_t *ent)
+{
+	if ( ent->client->sess.isSilenced == qtrue )
+	{
+		trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
+		trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
+		return;
+	}
+
+	if ( openrp_allChat.integer != 0 )
+	{
+		trap_SendServerCommand(ent-g_entities,"print \"^1All chat is enabled. It must be disabled to use this command.\n\"");
+		trap_SendServerCommand(ent-g_entities,"cp \"^1^1All chat is enabled.\n^1It must be disabled to use this command.\n\"");
+		return;
+	}
+
+	int pos = 0;
+	char real_msg[MAX_STRING_CHARS];
+	char *msg = ConcatArgs(1);
+	int i;
+
+	while(*msg)
+	{ 
+		if(msg[0] == '\\' && msg[1] == 'n')
+		{ 
+			msg++;
+			real_msg[pos++] = '\n';
+		} 
+		else
+		{
+			real_msg[pos++] = *msg;
+		} 
+		msg++;
+	}
+
+	real_msg[pos] = 0;
+
+	if ( trap_Argc() < 2 )
+	{ 
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /looc <message>\n\"" ) ); 
+		return;
+	}
+
+	for ( i = 0; i < level.maxclients; i++ )
+	{
+		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		{
+			trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^2%s\"", ent->client->pers.netname, real_msg));
+		}
+		else
+		{
+			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+			{
+				trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^2%s\"", ent->client->pers.netname, real_msg));
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
+	G_LogPrintf("<LOOC> %s: %s\n", ent->client->pers.netname, real_msg);
+	return;
+}
