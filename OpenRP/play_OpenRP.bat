@@ -1,2 +1,2 @@
 cd ..
-jamp +set fs_game OpenRP
+start jamp.exe +set fs_game OpenRP

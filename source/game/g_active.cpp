@@ -2439,6 +2439,7 @@ void ClientThink_real( gentity_t *ent ) {
 		ent->client->ps.userInt3 &= ~(1 << FLAG_FROZEN);
 		//ent->client->ps.pm_type = PM_NORMAL;
 
+	/*
 	if((ent->client->pers.cmd.buttons & BUTTON_THERMALTHROW) && !ent->client->weaponbuttonNeedRelease)
 	{
 		gentity_t *item = TouchingItem(ent);
@@ -2457,7 +2458,8 @@ void ClientThink_real( gentity_t *ent ) {
 		}
 		ent->client->weaponbuttonNeedRelease = qtrue;
 	}
-	else if(!(ent->client->pers.cmd.buttons & BUTTON_THERMALTHROW) && ent->client->weaponbuttonNeedRelease)
+	*/
+	if(!(ent->client->pers.cmd.buttons & BUTTON_THERMALTHROW) && ent->client->weaponbuttonNeedRelease)
 		ent->client->weaponbuttonNeedRelease = qfalse;
 
 	//[Reload]

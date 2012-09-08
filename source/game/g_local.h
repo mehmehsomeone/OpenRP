@@ -34,9 +34,10 @@ void CancelReload(gentity_t *ent);
 #define BODY_QUEUE_SIZE		8
 
 //[CrashLog]
-#ifndef G_INFINITE
+/*#ifndef G_INFINITE
 #define G_INFINITE			1000000
 #endif
+*/
 /*#ifndef INFINITE
 #define INFINITE			1000000
 #endif*/
@@ -405,6 +406,8 @@ extern vmCvar_t		openrp_cloakFuel;
 extern vmCvar_t		openrp_allChat;
 
 extern vmCvar_t		openrp_showRenames;
+
+extern vmCvar_t		openrp_databasePath;
 //[/OpenRP]
 
 // movers are things like doors, plats, buttons, etc
@@ -2567,10 +2570,12 @@ typedef struct teamgame_s {
 
 //[CrashLog]
 // forty - stack traces - g_crash.c
+/*
 void EnableCoreDumps(void);
 void DisableCoreDumps(void);
 void EnableStackTrace(void);
 void DisableStackTrace(void);
+*/
 //[/CrashLog]
 
 

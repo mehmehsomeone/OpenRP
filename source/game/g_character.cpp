@@ -2127,6 +2127,7 @@ void Cmd_Me_F( gentity_t *ent )
 	int pos = 0;
 	char real_msg[MAX_STRING_CHARS];
 	char *msg = ConcatArgs(1);
+	int i;
 
 	while(*msg)
 	{ 
@@ -2150,8 +2151,26 @@ void Cmd_Me_F( gentity_t *ent )
 		return;
 	}
 
-	trap_SendServerCommand( -1, va( "print \"(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, real_msg ) );
-	trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
+	for ( i = 0; i < level.maxclients; i++ )
+	{
+		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		{
+			trap_SendServerCommand( -1, va( "print \"(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, real_msg ) );
+			trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
+		}
+		else
+		{
+			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+			{
+				trap_SendServerCommand( -1, va( "print \"(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, real_msg ) );
+				trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
 	return;
 }
 
@@ -2160,6 +2179,7 @@ void Cmd_It_F( gentity_t *ent )
 	int pos = 0;
 	char real_msg[MAX_STRING_CHARS];
 	char *msg = ConcatArgs(1);
+	int i;
 
 	while(*msg)
 	{ 
@@ -2183,8 +2203,26 @@ void Cmd_It_F( gentity_t *ent )
 		return;
 	}
 
-	trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\n\"", ent->client->pers.netname, real_msg ) );
-	trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
+		for ( i = 0; i < level.maxclients; i++ )
+	{
+		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		{
+			trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\n\"", ent->client->pers.netname, real_msg ) );
+			trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
+		}
+		else
+		{
+			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+			{
+				trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\n\"", ent->client->pers.netname, real_msg ) );
+				trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
 	return;
 }
 
@@ -2403,13 +2441,13 @@ void Cmd_Yell_F(gentity_t *ent)
 	{
 		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 		{
-			trap_SendServerCommand( i, va("chat \"^7<Yell> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
+			trap_SendServerCommand( i, va("chat \"^7<YELL> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
 		}
 		else
 		{
 			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 900 )
 			{
-				trap_SendServerCommand( i, va("chat \"^7<Yell> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
+				trap_SendServerCommand( i, va("chat \"^7<YELL> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
 			}
 			else
 			{
@@ -2417,7 +2455,7 @@ void Cmd_Yell_F(gentity_t *ent)
 			}
 		}
 	}
-	G_LogPrintf("<Yell> %s: %s\n", ent->client->pers.netname, real_msg);
+	G_LogPrintf("<YELL> %s: %s\n", ent->client->pers.netname, real_msg);
 	return;
 }
 
@@ -2472,7 +2510,7 @@ void Cmd_Whisper_F(gentity_t *ent)
 		}
 		else
 		{
-			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 150 )
 			{
 				trap_SendServerCommand( i, va("chat \"^7<Whisper> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
 			}
@@ -2533,13 +2571,13 @@ void Cmd_LOOC_F(gentity_t *ent)
 	{
 		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 		{
-			trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^2%s\"", ent->client->pers.netname, real_msg));
+			trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^6%s\"", ent->client->pers.netname, real_msg));
 		}
 		else
 		{
 			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
 			{
-				trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^2%s\"", ent->client->pers.netname, real_msg));
+				trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^6%s\"", ent->client->pers.netname, real_msg));
 			}
 			else
 			{

@@ -1,5 +1,5 @@
 //Declarations
-#define DATABASE_PATH "OpenRP/data.db"
+#define DATABASE_PATH openrp_databasePath.string
 //Hashtable for feats
 typedef struct{
 	int    ID;				// Feat ID

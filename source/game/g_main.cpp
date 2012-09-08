@@ -69,14 +69,14 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 	switch ( command ) {
 	case GAME_INIT:
 		//[CrashLog]
-		EnableStackTrace();
+		//EnableStackTrace();
 		//[/CrashLog]
 		G_InitGame( arg0, arg1, arg2 );
 		return 0;
 	case GAME_SHUTDOWN:
 		G_ShutdownGame( arg0 );
 		//[CrashLog]
-		DisableStackTrace();
+		//DisableStackTrace();
 		//[/CrashLog]
 		return 0;
 	case GAME_CLIENT_CONNECT:
@@ -719,6 +719,8 @@ vmCvar_t	openrp_cloakFuel;
 vmCvar_t openrp_allChat;
 
 vmCvar_t	openrp_showRenames;
+
+vmCvar_t	openrp_databasePath;
 //[/OpenRP]
 
 //CVARS
@@ -1203,6 +1205,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_allChat, "openrp_allChat", "1", CVAR_ARCHIVE, 0, qtrue },
 
 	{ &openrp_showRenames, "openrp_showRenames", "1", CVAR_ARCHIVE, 0, qtrue },
+
+	{ &openrp_databasePath, "openrp_databasePath", "OpenRP/data.db", CVAR_ARCHIVE, 0, qtrue },
 	//[/OpenRP]
 
 };
