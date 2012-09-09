@@ -935,20 +935,17 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 		}
 }
 
-
-
-
 /*
 =================
 
-Cmd_Faction_F
+Cmd_FactionInfo_F
 
 Spits out the faction information
 
 Command: faction
 =====
 */
-void Cmd_Faction_F( gentity_t * ent )
+void Cmd_FactionInfo_F( gentity_t * ent )
 {
 	StderrLog log;
 	Database db(DATABASE_PATH, &log);
@@ -2153,21 +2150,24 @@ void Cmd_Me_F( gentity_t *ent )
 
 	for ( i = 0; i < level.maxclients; i++ )
 	{
-		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			trap_SendServerCommand( -1, va( "print \"(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, real_msg ) );
-			trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
-		}
-		else
-		{
-			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 			{
 				trap_SendServerCommand( -1, va( "print \"(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, real_msg ) );
 				trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
 			}
 			else
 			{
-				continue;
+				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+				{
+					trap_SendServerCommand( -1, va( "print \"(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, real_msg ) );
+					trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
+				}
+				else
+				{
+					continue;
+				}
 			}
 		}
 	}
@@ -2203,23 +2203,26 @@ void Cmd_It_F( gentity_t *ent )
 		return;
 	}
 
-		for ( i = 0; i < level.maxclients; i++ )
+	for ( i = 0; i < level.maxclients; i++ )
 	{
-		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\n\"", ent->client->pers.netname, real_msg ) );
-			trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
-		}
-		else
-		{
-			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 			{
 				trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\n\"", ent->client->pers.netname, real_msg ) );
 				trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
 			}
 			else
 			{
-				continue;
+				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+				{
+					trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\n\"", ent->client->pers.netname, real_msg ) );
+					trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
+				}
+				else
+				{
+					continue;
+				}
 			}
 		}
 	}
@@ -2439,19 +2442,22 @@ void Cmd_Yell_F(gentity_t *ent)
 
 	for ( i = 0; i < level.maxclients; i++ )
 	{
-		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			trap_SendServerCommand( i, va("chat \"^7<YELL> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
-		}
-		else
-		{
-			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 900 )
+			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 			{
 				trap_SendServerCommand( i, va("chat \"^7<YELL> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
 			}
 			else
 			{
-				continue;
+				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 900 )
+				{
+					trap_SendServerCommand( i, va("chat \"^7<YELL> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
+				}
+				else
+				{
+					continue;
+				}
 			}
 		}
 	}
@@ -2504,19 +2510,22 @@ void Cmd_Whisper_F(gentity_t *ent)
 
 	for ( i = 0; i < level.maxclients; i++ )
 	{
-		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			trap_SendServerCommand( i, va("chat \"^7<Whisper> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
-		}
-		else
-		{
-			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 150 )
+			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 			{
 				trap_SendServerCommand( i, va("chat \"^7<Whisper> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
 			}
 			else
 			{
-				continue;
+				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 150 )
+				{
+					trap_SendServerCommand( i, va("chat \"^7<Whisper> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
+				}
+				else
+				{
+					continue;
+				}
 			}
 		}
 	}
@@ -2569,19 +2578,22 @@ void Cmd_LOOC_F(gentity_t *ent)
 
 	for ( i = 0; i < level.maxclients; i++ )
 	{
-		if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^6%s\"", ent->client->pers.netname, real_msg));
-		}
-		else
-		{
-			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 			{
 				trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^6%s\"", ent->client->pers.netname, real_msg));
 			}
 			else
 			{
-				continue;
+				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+				{
+					trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^6%s\"", ent->client->pers.netname, real_msg));
+				}
+				else
+				{
+					continue;
+				}
 			}
 		}
 	}

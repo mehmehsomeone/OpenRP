@@ -2029,19 +2029,22 @@ static void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
 	{
 		for ( i = 0; i < level.maxclients; i++ )
 		{
-			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+			if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 			{
-				G_Say( ent, &g_entities[i], mode, p );
-			}
-			else
-			{
-				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 450 )
+				if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 				{
 					G_Say( ent, &g_entities[i], mode, p );
 				}
 				else
 				{
-					continue;
+					if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 450 )
+					{
+						G_Say( ent, &g_entities[i], mode, p );
+					}
+					else
+					{
+						continue;
+					}
 				}
 			}
 		}
@@ -2781,7 +2784,13 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 		SiegeClearSwitchData();
 		Com_sprintf( level.voteString, sizeof( level.voteString ), "vstr nextmap");
 		Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
-	} 
+	}
+	else if ( !Q_stricmp (arg1, "timelimit" ) )
+	{
+		int n = atoi ( arg2 );
+		
+		Com_sprintf ( level.voteString, sizeof(level.voteString ), "%s %s", arg1, n );
+	}
 	else
 	{
 		//[AdminSys]
@@ -4325,8 +4334,8 @@ void ClientCommand( int clientNum ) {
 		Cmd_SetFactionRank_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "faction") == 0) {
-		Cmd_Faction_F (ent);
+	if (Q_stricmp (cmd, "factioninfo") == 0) {
+		Cmd_FactionInfo_F (ent);
 		return;
 	}
 	if (Q_stricmp (cmd, "factionwithdraw") == 0) {
@@ -4527,6 +4536,10 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp(cmd, "looc") == 0) {
 		Cmd_LOOC_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "amlistwarnings") == 0) {
+		Cmd_amWarningList_F (ent);
 		return;
 	}
 	if( Q_stricmp (cmd, "emsit") == 0) {

@@ -18,6 +18,7 @@ extern void LevelCheck( int charID );
 extern int InEmote( int anim );
 extern int InSpecialEmote( int anim );
 extern void G_SetTauntAnim( gentity_t *ent, int taunt );
+extern void AddIP( char *str );
 
 /*
 ================
@@ -224,7 +225,7 @@ void Cmd_amBan_F(gentity_t *ent)
 
 	if (!(g_entities[clientid].r.svFlags & SVF_BOT))
 	{
-		trap_SendConsoleCommand( EXEC_INSERT, va("addip %s", g_entities[clientid].client->sess.IP));
+		AddIP(g_entities[clientid].client->sess.IP);
 		trap_SendServerCommand(ent-g_entities, va("print \"^2The IP of the person you banned is ^7%s\n\"", g_entities[clientid].client->sess.IP));
 	}
 	trap_DropClient(clientid, "^1was ^1permanently ^1banned.\n");
@@ -1094,7 +1095,7 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 
 	for(i = 0; i < level.maxclients; i++)
 	{
-		if(g_entities[i].client->sess.isAdmin == qtrue)
+		if( g_entities[i].client->sess.isAdmin == qtrue && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
 			trap_SendServerCommand(ent-g_entities, va("print \"^2Name: %s ^2Admin level: ^7%i\n\"", g_entities[i].client->pers.netname, g_entities[i].client->sess.adminLevel ) );
 		}
@@ -1754,7 +1755,7 @@ void Cmd_amStatus_F(gentity_t *ent)
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Status\n===================================\n\"" ) );
    for(i = 0; i < level.maxclients; i++)
    { 
-      if(g_entities[i].client->pers.connected == CON_CONNECTED)
+      if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 	  {
 		  switch ( g_entities[i].client->pers.ojpClientPlugIn )
 		  {
@@ -2627,11 +2628,30 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 		return;
 	}
 
+	char intensity[MAX_STRING_CHARS], length[MAX_STRING_CHARS];
+	float intensityFixed;
+	int temp, lengthFixed;
+
+	if ( trap_Argc() != 3 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amShakeScreen <intensity> <length>\nExample: /amShakeScreen 5 7\"" );
+		return;
+	}
+
+	trap_Argv( 1, intensity, MAX_STRING_CHARS );
+	temp = atoi( intensity );
+	intensityFixed = temp;
+	trap_Argv( 2, length, MAX_STRING_CHARS );
+	lengthFixed = atoi( length );
+
 	for( i = 0; i < level.maxclients; i++ )
 	{
-		G_ScreenShake( g_entities[i].s.origin, &g_entities[i], 6.0f, 10000, qtrue );
-		//Don't do a center print for the target - it would distract from the shaking screen.
-		trap_SendServerCommand( i, "print \"^2An admin shook your screen.\n\"" );
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		{
+			G_ScreenShake( g_entities[i].s.origin, &g_entities[i],intensityFixed, lengthFixed, qtrue );
+			//Don't do a center print for the target - it would distract from the shaking screen.
+			trap_SendServerCommand( i, "print \"^2An admin shook your screen.\n\"" );
+		}
 	}
 	trap_SendServerCommand( ent-g_entities, "print \"^2Success: You shook everybody's screen.\n\"" );
 	return;
@@ -2661,7 +2681,10 @@ void Cmd_Sound_F( gentity_t * ent )
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the sound file: ^7%s\n\"", soundPath ) );
 	for( i = 0; i < level.maxclients; i++ )
 	{
-		G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", soundPathSTR.c_str() ) ) );
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		{
+			G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", soundPathSTR.c_str() ) ) );
+		}
 	}
 	return;
 }
@@ -2694,7 +2717,10 @@ void Cmd_Music_F( gentity_t * ent )
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the music file: ^7%s\n\"", musicPath ) );
 	for( i = 0; i < level.maxclients; i++ )
 	{
-		G_EntitySound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", musicPathSTR.c_str() ) ) );
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		{
+			G_EntitySound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", musicPathSTR.c_str() ) ) );
+		}
 	}
 	return;
 	*/
@@ -2785,7 +2811,7 @@ void Cmd_AdminChat_F( gentity_t *ent )
 
 	for ( i = 0; i < level.maxclients; i++ )
 	{
-		if ( g_entities[i].client->sess.isAdmin == qtrue )
+		if ( g_entities[i].client->sess.isAdmin == qtrue && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
 			trap_SendServerCommand( i, va ("chat \"^6<Admin Chat> - ^7%s^6: ^6%s\"", ent->client->pers.netname, real_msg ) );
 		}
@@ -2857,5 +2883,27 @@ void Cmd_AllChat_F( gentity_t * ent )
 		trap_SendServerCommand( ent-g_entities, "print \"^2Success: All chat turned OFF.\n\"" );
 		return;
 	}
+	return;
+}
+
+void Cmd_amWarningList_F(gentity_t *ent)
+{
+	if(!G_CheckAdmin(ent, ADMIN_WARN))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		return;
+	}
+
+	int i;
+
+	trap_SendServerCommand( ent-g_entities, "print \"^2Warning List:\n\n\"" );
+	for ( i = 0; i < level.maxclients; i++ )
+	{
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^7%s ^2%i/%i\n\"", g_entities[i].client->pers.netname, g_entities[i].client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
+		}
+	}
+
 	return;
 }

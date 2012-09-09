@@ -17,7 +17,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent);
 void Cmd_CreateCharacter_F(gentity_t * ent);
 void Cmd_CharacterInfo_F(gentity_t * ent);
 void Cmd_GiveCredits_F( gentity_t * ent );
-void Cmd_Faction_F( gentity_t * ent );
+void Cmd_FactionInfo_F( gentity_t * ent );
 void Cmd_FactionWithdraw_F( gentity_t * ent );
 void Cmd_FactionDeposit_F( gentity_t * ent );
 void Cmd_ListFactions_F( gentity_t * ent );
