@@ -1342,7 +1342,7 @@ void respawn( gentity_t *ent ) {
 	}
 	else
 	{
-		gentity_t	*tent;
+//		gentity_t	*tent;
 
 		ClientSpawn(ent);
 		// add a teleportation effect
@@ -2652,7 +2652,7 @@ void SetTeamQuick(gentity_t *ent, int team, qboolean doBegin);
 void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	gentity_t	*ent;
 	gclient_t	*client;
-	gentity_t	*tent;
+//	gentity_t	*tent;
 	int			flags, i;
 	//[BugFix48]
 	int			spawnCount;
@@ -2767,6 +2767,9 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	//[/BugFix48]
 
 	client->ps.hasDetPackPlanted = qfalse;
+
+	ent->client->sess.skillPoints = 1;
+	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", (int) ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 
 	//first-time force power initialization
 	WP_InitForcePowers( ent );
@@ -3349,9 +3352,7 @@ void ClientSpawn(gentity_t *ent) {
 	}
 	//[/OpenRP - Skillpoint System]
 	*/
-	//[/ExpSys]]
-
-	
+	//[/ExpSys]
 
 	//first we want the userinfo so we can see if we should update this client's saber -rww
 	trap_GetUserinfo( index, userinfo, sizeof(userinfo) );
@@ -4834,7 +4835,7 @@ extern void G_LeaveVehicle( gentity_t* ent, qboolean ConCheck );
 //[/BugFix38]
 void ClientDisconnect( int clientNum ) {
 	gentity_t	*ent;
-	gentity_t	*tent;
+//	gentity_t	*tent;
 	int			i;
 
 	// cleanup if we are kicking a bot that

@@ -6688,7 +6688,7 @@ void AddSkill(gentity_t *self, float amount)
 	}
 
 	self->client->sess.skillPoints += amount;
-	self->client->skillUpdated = qtrue; //mark that we've updated our skill points so we can update the player's client.
+	trap_SendServerCommand(self->s.number, va("nfr %i %i %i", (int) self->client->sess.skillPoints, 0, self->client->sess.sessionTeam)); //mark that we've updated our skill points so we can update the player's client.
 
 	
 	/*

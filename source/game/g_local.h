@@ -1328,7 +1328,7 @@ struct gclient_s {
 
 	//[ExpSys]
 	qboolean	skillUpdated;			//indicates that we've updated our skill points and should let the player's client know.
-	int			skillDebounce;			//debouncer for skill point updates to the player client
+	//int			skillDebounce;			//debouncer for skill point updates to the player client
 	int			skillLevel[NUM_SKILLS];
 	int			featLevel[NUM_FEATS];
 	//[/ExpSys]

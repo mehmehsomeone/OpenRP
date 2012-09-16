@@ -311,6 +311,7 @@ void LevelCheck(int charID)
 		{
 			if ( loggedIn )
 			{
+				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/levelup.mp3" ) );
 				trap_SendServerCommand( clientID, va( "print \"^2Level up! You leveled up %i times and are now a level %i!\n\"", timesLeveled, charNewCurrentLevel ) );
 				trap_SendServerCommand( clientID, va( "cp \"^2Level up! You leveled up %i times and are now a level %i!\n\"", timesLeveled, charNewCurrentLevel ) );
 			}
@@ -321,6 +322,7 @@ void LevelCheck(int charID)
 		{
 			if ( loggedIn )
 			{
+				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/levelup.mp3" ) );
 				trap_SendServerCommand( clientID, va( "print \"^2Level up! You are now a level %i!\n\"", charNewCurrentLevel ) );
 				trap_SendServerCommand( clientID, va( "cp \"^2Level up! You are now a level %i!\n\"", charNewCurrentLevel ) );
 			}
@@ -650,7 +652,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 
 		//Reset skill points
 		ent->client->sess.skillPoints = 1;
-		ent->client->skillUpdated = qtrue;
+		trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", (int) ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;
@@ -687,7 +689,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	ent->client->sess.characterID = charID;
 	int charSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	ent->client->sess.skillPoints = charSkillPoints;
-	ent->client->skillUpdated = qtrue;
+	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", (int) ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 	LoadCharacter(ent);
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Your character is selected as: ^7%s^2!\nYou can use /characterInfo to view everything about your character.\n\"", charName ) );
 	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Your character is selected as: ^7%s^2!\n^2You can use /characterInfo to view everything ^2about your character.\n\"", charName ) );

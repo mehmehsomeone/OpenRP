@@ -19,6 +19,28 @@ USER INTERFACE MAIN
 #include "../cgame/animtable.h" //we want this to be compiled into the module because we access it in the shared module.
 #include "../game/bg_saga.h"
 
+//[FAKE CHALLENGE RESPONSE HIJACK - Thanks to Didz]
+#define WIN32_LEAN_AND_MEAN
+#define NOGDI
+#include <Windows.h>
+//[/FAKE CHALLENGE RESPONSE HIJACK]
+
+//q3queryboom Thanks to Razor
+//--------------------------------
+//      Name:   q3queryboom patch
+//      Desc:   Upon recieving an oversized serverinfo response from the master server list, a buffer overflow will occur resulting in a crash
+//      Hook:   CL_ServerInfoPacket
+//      Retn:   CL_ServerInfoPacket
+//--------------------------------
+#ifdef _WIN32
+        static unsigned char *qb_hookAddress = (unsigned char *)0x420083;       //      .text           E8 38 49 02 00          call Info_ValueForKey
+        static unsigned char *qb_returnSuccess = (unsigned char *)0x4449C0;     //      .text           Info_ValueForKey        proc near
+        static unsigned char *qb_returnFail = (unsigned char *)0x4200AE;        //      .text           C3                                      retn
+        static unsigned char qb_originalBytes[] = { 0xE8, 0x38, 0x49, 0x02, 0x00 };
+#elif defined(MACOS_X)
+        #error q3queryboom hook not yet available on Mac OSX
+#endif
+
 //[Mac]
 #if MAC_PORT
 #include "../cgame/holocronicons.h"
@@ -10423,6 +10445,161 @@ static void UI_BuildPlayerModel_List( qboolean inGameLoad )
 }
 
 
+//[FAKE CHALLENGE RESPONSE HIJACK - Thanks to Didz]
+// This code fixes a client-side exploit where an attacker that is flooding the client with
+// challengeResponse packets (from spoofed IP addresses) can hijack a pending server connection
+// and redirect the client to its spoofed IP address.
+typedef struct {
+        int type;
+        byte ip[4];
+        byte ipx[10];
+        unsigned short port;
+} netadr_t;
+
+byte *_challengeResponseHookAddress = (byte *)0x41EAF7;
+byte _originalchallengeResponseBytes[7] = {0x83, 0x3D, 0x08, 0xCC, 0xB3, 0x00, 0x01};
+
+qboolean (*iNET_CompareAdr)(netadr_t a, netadr_t B) = (qboolean (*)(netadr_t a, netadr_t B))0x442F30;
+int *icmd_argc = (int *)0xB3CC08;
+netadr_t *iclc_serverAddress = (netadr_t *)0x9140D4;
+
+// This hook will check the packet's sender address and make sure it matches the server address
+// that the client wanted to connect to in the first place.
+static void __declspec(naked) Hook_VerifyChallengeResponse(void)
+{
+        static netadr_t *from;
+        static qboolean result;
+        static int argc;
+
+        __asm {
+                lea eax, [esp+0x410+0x04] // Load local variable from into netadr_t *from
+                mov from, eax
+                pushad
+        }
+
+        result = iNET_CompareAdr(*from, *iclc_serverAddress);
+        argc = *icmd_argc;
+
+        __asm {
+                popad
+
+                mov eax, result
+                // If result == true
+                test eax, eax
+                jnz match
+                
+                // Not matching:
+                mov eax, 0x41EAEC
+                jmp eax
+
+                // Matching:
+                match:
+                cmp argc, 1
+                mov eax, 0x41EAFE
+                jmp eax
+        }
+}
+
+void UI_PatchFakeChallengeResponse( void )
+{
+        int dummy;
+
+        // Patch:
+                VirtualProtect((LPVOID)_challengeResponseHookAddress, sizeof(_originalchallengeResponseBytes), PAGE_EXECUTE_READWRITE, (PDWORD)&dummy);
+                *_challengeResponseHookAddress = 0xE9; // replace the original code with a jump
+                *(unsigned int *)(_challengeResponseHookAddress + 1) = (unsigned int)Hook_VerifyChallengeResponse - (unsigned int)(_challengeResponseHookAddress + 5);
+                *(_challengeResponseHookAddress + 5) = 0x90;
+                *(_challengeResponseHookAddress + 6) = 0x90;
+                VirtualProtect((LPVOID)_challengeResponseHookAddress, sizeof(_originalchallengeResponseBytes), PAGE_EXECUTE_READ, NULL);
+
+        // Unpatch:
+        /*
+                VirtualProtect((LPVOID)_challengeResponseHookAddress, sizeof(_originalchallengeResponseBytes), PAGE_EXECUTE_READWRITE, &dummy);
+                memcpy( _challengeResponseHookAddress, &_originalchallengeResponseBytes, sizeof(_originalchallengeResponseBytes) );
+                VirtualProtect((LPVOID)_challengeResponseHookAddress, sizeof(_originalchallengeResponseBytes), PAGE_EXECUTE_READ, NULL);
+        */
+}
+//[/FAKE CHALLENGE RESPONSE HIJACK]
+
+//q3queryboom Thanks to Razor
+//--------------------------------
+//      Name:   q3queryboom patch
+//      Desc:   Upon recieving an oversized serverinfo response from the master server list, a buffer overflow will occur resulting in a crash
+//      Hook:   CL_ServerInfoPacket
+//      Retn:   CL_ServerInfoPacket
+//--------------------------------
+static int QB_CheckPacket( const char *info )
+{
+        char *value = NULL;
+        int length = 0;
+
+        //Overall size > 384
+        length = strlen( info );
+        if ( length > 384 )
+        {
+                Com_Printf( "Ignoring server response due to oversized serverinfo packet (size: %i > 384)\n", length );
+                return 1;
+        }
+
+        //hostname > 192
+        value = Info_ValueForKey( info, "hostname" );
+        length = strlen( value );
+        if ( length > 192 )
+        {
+                Com_Printf( "Ignoring server response due to oversized 'hostname' info key (size: %i > 192)\n", length );
+                return 1;
+        }
+
+        //mapname > 48
+        value = Info_ValueForKey( info, "mapname" );
+        length = strlen( value );
+        if ( length > 48 )
+        {
+                Com_Printf( "Ignoring server response due to oversized 'mapname' info key (size: %i > 48)\n", length );
+                return 1;
+        }
+
+        //fs_game > 32
+        value = Info_ValueForKey( info, "game" );
+        length = strlen( value );
+        if ( length > 32 )
+        {
+                Com_Printf( "Ignoring server response due to oversized 'game' info key (size: %i > 32)\n", length );
+                return 1;
+        }
+
+        return 0;
+}
+
+static void __declspec( naked ) Hook_QueryBoom( void )
+{//q3queryboom
+        __asm {
+                pushad
+                push eax
+                call QB_CheckPacket
+                add esp, 4
+                test eax, eax
+                popad
+                jnz bad
+
+                push qb_returnSuccess
+                ret
+
+                bad:
+                push qb_returnFail
+                ret
+        }
+}
+
+void PatchEngine( void )
+{
+        int dummy;
+        VirtualProtect( (LPVOID)qb_hookAddress, sizeof( qb_originalBytes ), PAGE_EXECUTE_READWRITE, (PDWORD)&dummy );
+        *qb_hookAddress = 0xE8; // replace with CALL opcode
+        *(unsigned int *)(qb_hookAddress + 1) = (unsigned int)Hook_QueryBoom - (unsigned int)(qb_hookAddress + 5);
+        VirtualProtect( (LPVOID)qb_hookAddress, sizeof( qb_originalBytes ), PAGE_EXECUTE_READ, (PDWORD)&dummy );
+}
+
 
 /*
 =================
@@ -10596,6 +10773,9 @@ void _UI_Init( qboolean inGameLoad ) {
 	trap_Cvar_Register(NULL, "debug_protocol", "", 0 );
 
 	trap_Cvar_Set("ui_actualNetGameType", va("%d", ui_netGameType.integer));
+
+	UI_PatchFakeChallengeResponse();
+	PatchEngine();
 }
 
 /*

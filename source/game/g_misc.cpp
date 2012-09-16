@@ -194,7 +194,7 @@ TELEPORTERS
 */
 
 void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
-	gentity_t	*tent;
+//	gentity_t	*tent;
 	qboolean	isNPC = qfalse;
 	if (player->s.eType == ET_NPC)
 	{

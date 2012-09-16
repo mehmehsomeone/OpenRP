@@ -203,7 +203,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 
 		//Reset skill points
 		ent->client->sess.skillPoints = 1;
-		ent->client->skillUpdated = qtrue;
+		trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", (int) ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;

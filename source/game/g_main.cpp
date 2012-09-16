@@ -2168,7 +2168,7 @@ void G_ResetDuelists(void)
 {
 	int i;
 	gentity_t *ent;
-	gentity_t *tent;
+//	gentity_t *tent;
 
 	i = 0;
 	while (i < 3)

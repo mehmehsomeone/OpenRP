@@ -1913,7 +1913,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 
 	//[AdminSys][ChatSpamProtection]
 	
-	if(!(ent->r.svFlags & SVF_BOT) && ent->client->sess.chatCommandExecuted == qfalse )
+	if(!(ent->r.svFlags & SVF_BOT) /*&& ent->client->sess.chatCommandExecuted == qfalse*/ )
 	{//don't chat protect the bots.
 		if(ent->client && ent->client->chatDebounceTime > level.time //debounce isn't up
 			//and we're not bouncing our message back to our self while using SAY_TELL 
@@ -2046,6 +2046,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		G_Printf( "%s%s\n", name, text);
 	}
 
+	/*
 	if( !Q_stricmpn( text, "/ooc", 4 ) && ent->client->sess.chatCommandExecuted == qfalse )
 	{
 		ent->client->sess.chatCommandExecuted = qtrue;
@@ -2100,6 +2101,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		Cmd_Say_f( ent, SAY_LOOC, qfalse, qtrue );
 		return;
 	}
+	*/
 
 	// send it to all the apropriate clients
 
@@ -2126,7 +2128,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 			{				
 				if ( Distance( ent->client->ps.origin, other->client->ps.origin ) < distance )
 				{
-					ent->client->sess.chatCommandExecuted = qfalse;
+					//ent->client->sess.chatCommandExecuted = qfalse;
 					if ( mode == SAY_ME )
 					{
 						trap_SendServerCommand( j, va( "print \" ^3(ACTION) - ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
@@ -2151,12 +2153,11 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		for (j = 0; j < level.maxclients; j++)
 		{
 			other = &g_entities[j];
-			ent->client->sess.chatCommandExecuted = qfalse;
+			//ent->client->sess.chatCommandExecuted = qfalse;
 			if ( mode == SAY_ADMIN && !other->client->sess.isAdmin )
 			{
 				continue;
 			}
-			//todo: make report seen by reporter
 			if ( mode == SAY_REPORT && !other->client->sess.isAdmin)
 			{
 				continue;
@@ -2241,9 +2242,9 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	{
 		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			if ( g_entities[i].client->sess.isAdmin )
+			if ( g_entities[i].client->sess.isAdmin && g_entities[i].client->sess.allChat )
 			{
-				trap_SendServerCommand( i, va( "chat \"^6<Tell> ^7%s ^6to ^7%s: ^6\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, p ) );
+				trap_SendServerCommand( i, va( "chat \"^6<Tell> ^7%s ^6to ^7%s: ^6%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, p ) );
 			}
 		}
 	}

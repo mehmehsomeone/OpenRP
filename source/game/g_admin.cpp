@@ -611,6 +611,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 	char *msg = ConcatArgs(2);
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
+	int i;
 
 	while(*msg)
 	{ 
@@ -644,6 +645,13 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 
 	if(!Q_stricmp(cmdTarget, "all") || (!Q_stricmp(cmdTarget, "-1") ))
 	{
+		for( i = 0; i < level.maxclients; i++ )
+		{
+			if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+			{
+				G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/info.mp3" ) );
+			}
+		}
 		trap_SendServerCommand( -1, va("print \"%s\n\"", real_msg) );
 		trap_SendServerCommand( -1, va("cp \"%s\"", real_msg) );
 		G_LogPrintf("Announce admin command executed by %s. The announcement was: %s\n", ent->client->pers.netname, real_msg);
@@ -671,7 +679,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
 		return; 
 	}
-
+	G_Sound( &g_entities[clientid], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/info.mp3" ) );
 	trap_SendServerCommand(clientid, va("print \"%s\n\"", real_msg));
 	trap_SendServerCommand(clientid, va("cp \"%s\"", real_msg));
 	G_LogPrintf("Announce admin command executed by %s. It was sent to %s. The announcement was: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
@@ -2182,12 +2190,14 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 			if ( loggedIn )
 			{
 				AddSkill( &g_entities[clientID], changedSkillPoints );
+				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/xp.mp3" ) );
 				trap_SendServerCommand( clientID, va( "print \"^2You received %i skill points! You are the highest level, so you won't level up anymore!\n\"", changedSkillPoints ) );
 			}
 			break;
 		default:
 			if ( loggedIn )
 			{
+				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/xp.mp3" ) );
 				AddSkill( &g_entities[clientID], changedSkillPoints );
 				trap_SendServerCommand( clientID, va( "print \"^2You received %i skill points!\n\"", changedSkillPoints ) );
 			}
@@ -2726,6 +2736,18 @@ void Cmd_Audio_F( gentity_t * ent )
 			if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 			{
 				G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", audioPath ) ) );
+			}
+		}
+	}
+
+	else if(!Q_stricmpn(audioPath, "alert", 5))
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the alert sound file.\n\"", audioPath ) );
+		for( i = 0; i < level.maxclients; i++ )
+		{
+			if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+			{
+				G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/alert.mp3" ) );
 			}
 		}
 	}
