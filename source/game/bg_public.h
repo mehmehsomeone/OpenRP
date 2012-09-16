@@ -20,7 +20,7 @@
 #define	GAME_VERSION		"basejka-1"
 
 //[ClientPlugInDetect]
-#define OPENRP_CLIENTVERSION		"Pre-alpha 1"
+#define OPENRP_CLIENTVERSION		"Pre-alpha 2"
 #define OPENRP_SERVERVERSION		"Pre-alpha 1"
 //[/ClientPlugInDetect]
 

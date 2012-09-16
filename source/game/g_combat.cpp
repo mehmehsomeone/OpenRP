@@ -2160,12 +2160,16 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	//[/SeekerItemNPC]
 
 	//[ExpSys]
+	//[OpenRP - Skillpoint System]
+	/*
 	if(!self->NPC && !(self->r.svFlags & SVF_BOT) )
 	{//NPCs and bots don't care about skill point updates
 		if(self->client->sess.skillPoints >= 1 && self->client->ps.otherKiller == self->client->ps.clientNum)
 			self->client->sess.skillPoints--;
 		trap_SendServerCommand(self->s.number, va("nfr %i %i %i", (int) self->client->sess.skillPoints, 0, self->client->sess.sessionTeam));
 	}
+	*/
+	//[/OpenRP - Skillpoint System]
 	//[/ExpSys]
 
 	if ( self->client->ps.pm_type == PM_DEAD ) {
@@ -6181,7 +6185,8 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 				take /= (targ->client->ps.fd.forcePowerLevel[FP_RAGE]+1);
 			}
 		}
-
+		//[OpenRP - Skillpoint System]
+		/*
 		//[ExpSys]
 		//give experience for damaging players
 		if(targ->client && targ->health > 0 && attacker && attacker->client)
@@ -6204,6 +6209,8 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			//[/SkillChange]
 		}
 		//[/ExpSys]
+		*/
+		//[/OpenRP - Skillpoint System]
 
 		targ->health = targ->health - take;
 
@@ -6666,29 +6673,39 @@ void AddFatigueKillBonus( gentity_t *attacker, gentity_t *victim )
 //[ExpSys]
 void AddSkill(gentity_t *self, float amount)
 {//add skill points to self
-	if(amount < 0)
+	//[OpenRP - Skillpoint System]
+	
+	if(amount == 0)
 	{
-		G_Printf("AddSkill: amount cannot be negative (%f)\n");
 		return;
 	}
 
-	if(amount == 0) return;
+	
+	if( (self->client->sess.skillPoints + amount) < 1)
+	{
+		G_Printf("Error: Failed to give %f skill points to %s because they would have < 1 skill point if they were given.", amount, self->client->pers.netname );
+		return;
+	}
 
 	self->client->sess.skillPoints += amount;
 	self->client->skillUpdated = qtrue; //mark that we've updated our skill points so we can update the player's client.
 
+	
+	/*
 	if(g_maxForceRank.integer < g_minForceRank.integer)
 	{//can't have a max skill point level that's less than our starting skill points.
 		//G_Printf("g_maxForceRank less than g_minForceRank.  Defaulting to g_minForceRank.\n");
 		trap_Cvar_Set("g_maxForceRank", g_minForceRank.string);
 	}
+	
 
 	if(self->client->sess.skillPoints > g_maxForceRank.value)
 	{
 		self->client->sess.skillPoints = g_maxForceRank.value;
 	}
+	*/
 }
-
+//[/OpenRP - Skillpoint System]
 void G_DodgeDrain(gentity_t *victim, gentity_t *attacker, int amount)
 {//drains DP from victim.  Also awards experience points to the attacker.
 	if ( !g_friendlyFire.integer && OnSameTeam(victim, attacker))

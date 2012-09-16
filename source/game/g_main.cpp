@@ -350,9 +350,11 @@ vmCvar_t	g_MaxHolocronCarry;
 vmCvar_t	g_ff_objectives;
 vmCvar_t	g_autoMapCycle;
 vmCvar_t	g_dmflags;
+//[OpenRP - Skillpoint System]
 //[ExpSys]
-vmCvar_t	g_minForceRank;
+//vmCvar_t	g_minForceRank;
 //[/ExpSys]
+//[/OpenRP - Skillpoint System]
 vmCvar_t	g_maxForceRank;
 vmCvar_t	g_forceBasedTeams;
 vmCvar_t	g_privateDuel;
@@ -759,7 +761,9 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	//[ExpSys]
 	//sets the initial skill points that players get.
-	{ &g_minForceRank, "g_minExpLevel", "3", CVAR_ARCHIVE, 0, qfalse  }, //Default was 16
+	//[OpenRP - Skillpoint System]
+	//{ &g_minForceRank, "g_minExpLevel", "3", CVAR_ARCHIVE, 0, qfalse  }, //Default was 16
+	//[//OpenRP - Skillpoint System]
 	{ &g_maxForceRank, "g_maxExpLevel", "250", CVAR_ARCHIVE, 0, qfalse  },//Default was 250
 	//{ &g_maxForceRank, "g_maxForceRank", "6", CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse  },
 	//[/ExpSys]
@@ -2178,8 +2182,8 @@ void G_ResetDuelists(void)
 		ClientSpawn(ent);
 
 		// add a teleportation effect
-		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
-		tent->s.clientNum = ent->s.clientNum;
+		//tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+		//tent->s.clientNum = ent->s.clientNum;
 		i++;
 	}
 }

@@ -13,6 +13,8 @@ static vec3_t	playerMaxs = {15, 15, DEFAULT_MAXS_2};
 extern int g_siegeRespawnCheck;
 extern int ojp_ffaRespawnTimerCheck;//[FFARespawnTimer]
 
+extern void Cmd_AccountLogout_F(gentity_t * ent);
+
 void WP_SaberAddG2Model( gentity_t *saberent, const char *saberModel, qhandle_t saberSkin );
 void WP_SaberRemoveG2Model( gentity_t *saberent );
 
@@ -1344,8 +1346,8 @@ void respawn( gentity_t *ent ) {
 
 		ClientSpawn(ent);
 		// add a teleportation effect
-		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
-		tent->s.clientNum = ent->s.clientNum;
+		//tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+		//tent->s.clientNum = ent->s.clientNum;
 	}
 }
 
@@ -2367,13 +2369,14 @@ void ClientUserinfoChanged( int clientNum ) {
 
 	//[ClientPlugInDetect]
 	s = Info_ValueForKey( userinfo, "ojp_clientplugin" );
+
 	if ( !*s  ) 
 	{
 		client->pers.ojpClientPlugIn = qfalse;
 	}
 	else if(!strcmp(OPENRP_CLIENTVERSION, s))
 	{
-		client->pers.ojpClientVersion = s;
+		client->pers.ojpClientVersion = *s;
 		client->pers.ojpClientPlugIn = qtrue;
 	}
 	//[/ClientPlugInDetect]
@@ -2868,8 +2871,8 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 		//[LastManStanding]
 		if (ojp_lms.integer <= 0 || ent->lives >= 1 || !BG_IsLMSGametype(g_gametype.integer))
 		{//don't do the "teleport in" effect if we're playing LMS and we're "out"
-			tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
-			tent->s.clientNum = ent->s.clientNum;
+			//tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+			//tent->s.clientNum = ent->s.clientNum;
 		}
 		//tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
 		//tent->s.clientNum = ent->s.clientNum;
@@ -3337,11 +3340,15 @@ void ClientSpawn(gentity_t *ent) {
 	client = ent->client;
 
 	//[ExpSys]
+	//[OpenRP - Skillpoint System]
+	/*
 	if(ent->client->sess.skillPoints < g_minForceRank.value)
 	{//the minForceRank was changed to a higher value than the player has
 		ent->client->sess.skillPoints = g_minForceRank.value;
 		ent->client->skillUpdated = qtrue;
 	}
+	//[/OpenRP - Skillpoint System]
+	*/
 	//[/ExpSys]]
 
 	
@@ -4880,6 +4887,13 @@ void ClientDisconnect( int clientNum ) {
 	}*/
 	//[/BugFix38]
 
+	//[OpenRP]
+	if ( ent->client->sess.loggedinAccount )
+	{
+		Cmd_AccountLogout_F(ent);
+	}
+	//[/OpenRP]
+
 	// stop any following clients
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
 		if ( level.clients[i].sess.sessionTeam == TEAM_SPECTATOR
@@ -4892,8 +4906,8 @@ void ClientDisconnect( int clientNum ) {
 	// send effect if they were completely connected
 	if ( ent->client->pers.connected == CON_CONNECTED 
 		&& ent->client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
-		tent->s.clientNum = ent->s.clientNum;
+		//tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
+		//tent->s.clientNum = ent->s.clientNum;
 
 		// They don't get to take powerups with them!
 		// Especially important for stuff like CTF flags

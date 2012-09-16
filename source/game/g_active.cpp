@@ -1552,7 +1552,8 @@ void G_CheckClientIdle( gentity_t *ent, usercmd_t *ucmd )
 			ent->client->ps.torsoAnim = TORSO_RAISEWEAP1;
 		}
 	}
-	else if ( level.time - ent->client->idleTime > 5000 )
+	//[OpenRP - idle time]
+	else if ( level.time - ent->client->idleTime > 60000 )
 	{//been idle for 5 seconds
 		int	idleAnim = -1;
 		switch ( ent->client->ps.legsAnim )
@@ -1570,6 +1571,7 @@ void G_CheckClientIdle( gentity_t *ent, usercmd_t *ucmd )
 			idleAnim = BOTH_STAND5IDLE1;
 			break;
 		}
+		//[/OpenRP - idle time]
 
 		if (idleAnim == BOTH_STAND2IDLE1 && Q_irand(1, 10) <= 5)
 		{

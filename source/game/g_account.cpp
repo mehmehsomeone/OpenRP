@@ -13,6 +13,8 @@ extern int M_G_ClientNumberFromName ( const char* name );
 
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 
+extern void SaveCharacter(gentity_t * ent);
+
 /*
 =================
 
@@ -85,6 +87,7 @@ Account Login
 void Cmd_AccountLogin_F( gentity_t * ent )
 {
 	Database db(DATABASE_PATH);
+	Query q(db);
 	//The database is not connected. Please do so.
 	if (!db.Connected())
 	{
@@ -115,7 +118,6 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	trap_Argv( 2, userPassword, MAX_STRING_CHARS );
 
 	//Check if this username exists
-	Query q(db);
 	transform(userNameSTR.begin(), userNameSTR.end(),userNameSTR.begin(),::tolower);
 	string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
 	if( DBname.empty() )
@@ -137,6 +139,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 
 	//Log the user in
 	int accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'",userNameSTR.c_str() ) );
+	q.execute( va( "UPDATE Users set ClientID='%i' WHERE AccountID='%i'", ent-g_entities, accountID ) );
+	q.execute( va( "UPDATE Users set LoggedIn='1' WHERE AccountID='%i'", accountID ) );
 	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
 
@@ -166,6 +170,15 @@ Account Logout
 
 void Cmd_AccountLogout_F(gentity_t * ent)
 {
+	Database db(DATABASE_PATH);
+	Query q(db);
+	//The database is not connected. Please do so.
+	if (!db.Connected())
+	{
+		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		return;
+	}
+
 	if( !isLoggedIn( ent ) )
 	{
 		//You can't logout if you haven't logged in, noob.
@@ -178,13 +191,19 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 	if(ent->client->sess.characterChosen == qtrue)
 	{
 		//Save their character
-		//SaveCharacter( ent );
+		SaveCharacter( ent );
 
 		//Logout of Account
+		q.execute( va( "UPDATE Users set ClientID='33' WHERE AccountID='%i'", ent->client->sess.accountID ) );
+		q.execute( va( "UPDATE Users set LoggedIn='0' WHERE AccountID='%i'", ent->client->sess.accountID ) );
 		ent->client->sess.loggedinAccount = qfalse;
 		ent->client->sess.accountID = NULL;
 		ent->client->sess.isAdmin = qfalse;
 		ent->client->sess.adminLevel = 11;
+
+		//Reset skill points
+		ent->client->sess.skillPoints = 1;
+		ent->client->skillUpdated = qtrue;
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;
@@ -194,7 +213,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		ent->client->ps.iModelScale = 100;
 		ent->client->sess.modelScale = 100;
 
-		/*
+		
 		//Remove all feats
 		for(int k = 0; k < NUM_FEATS-1; k++)
 		{
@@ -213,7 +232,6 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		{
 			ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
 		}
-		*/
 
 		//Respawn client
 		ent->flags &= ~FL_GODMODE;
@@ -231,10 +249,11 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 	else
 	{
 		//Logout of Account
+		q.execute( va( "UPDATE Users set ClientID='33' WHERE AccountID='%i'", ent->client->sess.accountID ) );
+		q.execute( va( "UPDATE Users set LoggedIn='0' WHERE AccountID='%i'", ent->client->sess.accountID ) );
 		ent->client->sess.loggedinAccount = qfalse;
 		ent->client->sess.accountID = NULL;
 
-		/*
 		//Remove all feats
 		for(int k = 0; k < NUM_FEATS-1; k++)
 		{
@@ -253,7 +272,6 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		{
 			ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
 		}
-		*/
 
 		//Respawn client
 		ent->flags &= ~FL_GODMODE;
@@ -316,10 +334,12 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	}
 
 	//Create the account
-	q.execute(va("INSERT INTO Users(Username,Password,ClientID,Admin,AdminLevel) VALUES('%s','%s','0','0','11')", userNameSTR.c_str(), userPassword ) );
+	q.execute(va("INSERT INTO Users(Username,Password,ClientID,Admin,AdminLevel,LoggedIn) VALUES('%s','%s','33','0','11','0')", userNameSTR.c_str(), userPassword ) );
 
 	//Log them in automatically
 	int accountID = q.get_num(va("SELECT AccountID FROM Users WHERE Username='%s'",userNameSTR.c_str()));
+	q.execute( va( "UPDATE Users set ClientID='%i' WHERE AccountID='%i'", ent-g_entities, accountID ) );
+	q.execute( va( "UPDATE Users set LoggedIn='1' WHERE AccountID='%i'", accountID ) );
 	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
 

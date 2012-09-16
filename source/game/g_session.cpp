@@ -338,11 +338,13 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot, qbool
 	sess->saber2Type[0] = 0;
 
 	//[ExpSys]
+	//[OpenRP - Skillpoint System]
 	if(firstTime)
 	{//only reset skillpoints for new players.
 		sess->IP[0] = 0;
-		sess->skillPoints = g_minForceRank.value;
+		sess->skillPoints = 1;
 	}
+	//[/OpenRP - Skillpoint System]
 	else
 	{//remember the data from the last time.
 		char	s[MAX_STRING_CHARS];

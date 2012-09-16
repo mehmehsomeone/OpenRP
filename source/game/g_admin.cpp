@@ -1752,31 +1752,33 @@ void Cmd_amStatus_F(gentity_t *ent)
 		return;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Status\n===================================\n\"" ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Status:\n\"" ) );
+	for(i = 0; i < level.maxclients; i++)
+	{ 
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP ) );
+		}
+	}
+	/*
    for(i = 0; i < level.maxclients; i++)
    { 
-      if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
-	  {
-		  switch ( g_entities[i].client->pers.ojpClientPlugIn )
-		  {
-		  case qtrue:
-			  hasClientSTR = "Yes";
-		  case qfalse:
-			  hasClientSTR = "No";
-		  default:
-			  hasClientSTR = "Unknown";
-		  }
-		  if ( g_entities[i].client->pers.ojpClientPlugIn == qtrue )
-		  {
-			  trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s - Version: %s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str(), g_entities[i].client->pers.ojpClientVersion  ) );
-		  }
-		  else
-		  {
-			  trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str() ) );
-		  }  
-	  }
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		{
+			if ( g_entities[i].client->pers.ojpClientPlugIn )
+			{
+				hasClientSTR = "Yes";
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s - Version: %s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str(), g_entities[i].client->pers.ojpClientVersion  ) );
+		
+			}
+			else
+			{
+				hasClientSTR = "No";
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str() ) );
+			}
+		}
    }
-   trap_SendServerCommand( ent-g_entities, va( "print \"^2===================================\n\"" ) );
+   */
    return;
 }
 
@@ -1858,15 +1860,15 @@ void Cmd_amRename_F(gentity_t *ent)
 
 void Cmd_info_F( gentity_t *ent )
 {
-	trap_SendServerCommand( ent-g_entities, "print \"^3/login\n/logout\n/register\n/character\n/mycharacters\n/createcharacter\n/accountinfo\n/characterinfo\n/grantadmin\n/removeadmin\n/genexp\n/givecredits\n/editaccount\n/accountname\n\"");
-	trap_SendServerCommand( ent-g_entities, "print \"^3/editcharacter\n/createfaction\n/setfaction\n/setfactionrank\n/faction\n/factionwithdraw\n/factiondeposit\n/factiongencredits\n/listfactions\n/bounty\n/shop\n/inventory\n\"");
+	trap_SendServerCommand( ent-g_entities, "print \"^3/login\n/logout\n/register\n/character\n/mycharacters\n/createcharacter\n/accountinfo\n/characterinfo\n/grantadmin\n/removeadmin\n/giveskillpoints\n/givecredits\n/editaccount\n/accountname\n\"");
+	trap_SendServerCommand( ent-g_entities, "print \"^3/editcharacter\n/createfaction\n/setfaction\n/setfactionrank\n/faction\n/factioninfo\n/factionwithdraw\n/factiondeposit\n/factiongencredits\n/listfactions\n/bounty\n/shop\n/inventory\n\"");
 	return;
 }
 void Cmd_aminfo_F( gentity_t *ent )
 {
 	trap_SendServerCommand( ent-g_entities, "print \"^3/amkick\n/amban\n/amwarn\n/amtele\n/amsilence\n/amunsilence\n/amsleep\n/amunsleep\n/amprotect\n/amempower\n\"");
 	trap_SendServerCommand( ent-g_entities, "print \"^3/ammerc\n/amannounce\n/ameffect\n/amforceteam\n/amstatus\n/amweather\n/amweatherplus\n\"");
-	trap_SendServerCommand( ent-g_entities, "print \"^3/ammap\n/amrename\n/amslap\n/amcheataccess\n/amshakescreen\n/ammusic\n\"");
+	trap_SendServerCommand( ent-g_entities, "print \"^3/ammap\n/amrename\n/amslap\n/amcheataccess\n/amshakescreen\n\"");
 	return;
 }
 void Cmd_eminfo_F( gentity_t *ent )
@@ -2103,11 +2105,11 @@ void Cmd_SVRemoveAdmin_F()
 /*
 =================
 
-Generate XP
+Give Skill Points
 
 =====
 */
-void Cmd_GenerateXP_F(gentity_t * ent)
+void Cmd_GiveSkillPoints_F(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
@@ -2118,12 +2120,10 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 		return;
 	}
 
-	//gentity_t * soundtarget;
-
 	char charName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
-	int changedXP;
+	int changedSkillPoints;
 	
-	if(!G_CheckAdmin(ent, ADMIN_XP))
+	if(!G_CheckAdmin(ent, ADMIN_SKILLPOINTS))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
 		return;
@@ -2131,8 +2131,8 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 
 	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /genXP <characterName> <XP>\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /genXP <characterName> <XP>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /giveSkillPoints <characterName> <skillPoints>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /giveSkillPoints <characterName> <skillPoints>\n\"" );
 		return;
 	}
 
@@ -2142,7 +2142,7 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 
 	//XP Added or removed.
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
-	changedXP = atoi(temp);
+	changedSkillPoints = atoi(temp);
 
 	//Check if the character exists
 	transform( charNameSTR.begin(), charNameSTR.end(), charNameSTR.begin(), ::tolower );
@@ -2157,34 +2157,46 @@ void Cmd_GenerateXP_F(gentity_t * ent)
 	}
 
 	//Get their accountID
-	//int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
+	int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
-	//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
-
-	//soundtarget = &g_entities[clientID];
+	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+	int loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
 
 	int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
 
-	int currentXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", charID ) );
+	int currentSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", charID ) );
 
-	int newXPTotal = currentXP + changedXP;
+	int newSkillPointsTotal = currentSkillPoints + changedSkillPoints;
 
-	q.execute( va( "UPDATE Characters set Experience='%i' WHERE CharID='%i'", newXPTotal, charID ) );
+	if ( newSkillPointsTotal < 1 )
+	{
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^1Error: You can't give %i skill points to %s, or else they would have < 1 skill point.\n\"", changedSkillPoints ) );
+		return;
+	}
+
+	q.execute( va( "UPDATE Characters set SkillPoints='%i' WHERE CharID='%i'", newSkillPointsTotal, charID ) );
 
 	switch( currentLevel )
 	{
 		case 50:
-			trap_SendServerCommand( -1, va( "print \"^2 %s received %i XP! They are the highest level, so XP won't level them up anymore!\n\"", charNameSTR.c_str(), changedXP ) );
+			if ( loggedIn )
+			{
+				AddSkill( &g_entities[clientID], changedSkillPoints );
+				trap_SendServerCommand( clientID, va( "print \"^2You received %i skill points! You are the highest level, so you won't level up anymore!\n\"", changedSkillPoints ) );
+			}
 			break;
 		default:
-			trap_SendServerCommand( -1, va( "print \"^2 %s received %i XP!\n\"", charNameSTR.c_str(), changedXP ) );
-			//G_Sound( soundtarget, CHAN_AUTO, G_SoundIndex( "sound/success.wav" ) );
+			if ( loggedIn )
+			{
+				AddSkill( &g_entities[clientID], changedSkillPoints );
+				trap_SendServerCommand( clientID, va( "print \"^2You received %i skill points!\n\"", changedSkillPoints ) );
+			}
 			LevelCheck(charID);
 			break;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: %i XP has been given to character %s.\n\"", changedXP, charNameSTR.c_str() ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: %i XP has been given to character %s.\n\"", changedXP, charNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: %i skill points have been given to character %s.\n\"", changedSkillPoints, charNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: %i skill points have been given to character %s.\n\"", changedSkillPoints, charNameSTR.c_str() ) );
 
 	return;
 }
@@ -2212,8 +2224,6 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
 		return;
 	}
-
-	//gentity_t * soundtarget;
 
 	char charName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
 	int changedCredits;
@@ -2246,11 +2256,10 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 	}
 
 	//Get their accountID
-	//int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
+	int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
-	//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
-
-	//soundtarget = &g_entities[clientID];
+	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+	int loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
 
 	int currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", charID ) );
 
@@ -2258,8 +2267,11 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 
 	q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newCreditsTotal, charID ) );
 
-	trap_SendServerCommand( -1, va( "chat \"^1<OOC> %s received some credits from an admin!\n\"", charNameSTR.c_str() ) );
-	//G_Sound( soundtarget, CHAN_AUTO, G_SoundIndex( "sound/success.wav" ) );
+	if( loggedIn )
+	{
+		trap_SendServerCommand( clientID, va( "print \"^2You received some credits from an admin!\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( clientID, va( "cp \"^2You received some credits from an admin!\n\"", charNameSTR.c_str() ) );
+	}
 
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: %i credits have been generated and given to character %s.\n\"", changedCredits, charNameSTR.c_str() ) );
 	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: %i credits have been generated and given to character %s.\n\"", changedCredits, charNameSTR.c_str() ) );
@@ -2384,24 +2396,35 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	}
 
 	//Get their accountID
-	//int accountID = q.get_num( va( "SELECT UserID FROM Characters WHERE CharID='%i'", charID ) );
+	int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
-	//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+	int loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
 
 	if (!Q_stricmp(factionName, "none"))
 	{
 		q.execute( va( "UPDATE Characters set Faction='none' WHERE CharID='%i'", charID ) );
 		q.execute( va( "UPDATE Characters set Rank='none' WHERE CharID='%i'", charID ) );
-		trap_SendServerCommand( -1, va( "print \"^2 %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
+
+		if ( loggedIn )
+		{
+			trap_SendServerCommand( clientID, "print \"^2You have been removed from your faction.\n\"" );
+			trap_SendServerCommand( clientID, "cp \"^2You have been removed from your faction.\n\"" );
+		}
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
 	}
-	else {
+	else
+	{
 		q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", factionNameSTR.c_str(), charID ) );
 		q.execute( va( "UPDATE Characters set Rank='Member' WHERE CharID='%i'", charID ) );
 
-		trap_SendServerCommand( -1, va( "chat \"^1<OOC> %s has been put in the %s faction! They can use /faction to view info about it.\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
+		if ( loggedIn )
+		{
+			trap_SendServerCommand( clientID, va( "print \"^2You have been put in the %s faction!\nYou can use /factionInfo to view info about it.\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
+			trap_SendServerCommand( clientID, va( "cp \"^2You have been put in the %s faction!\n^2You can use /factionInfo to view info about it.\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
+		}
 
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s has been put in the faction %s.\nUse /SetFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s has been put in the faction %s.\nUse /setFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
 	}
 	return;
 }
@@ -2453,15 +2476,20 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 		}
 
 		//Get their accountID
-		//int accountID = q.get_num( va( "SELECT UserID FROM Characters WHERE CharID='%i'", charID ) );
+		int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 		//Get their clientID so we can send them messages
-		//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+		int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+		int loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
 
 		string charCurrentFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
 
 		q.execute( va( "UPDATE Characters set Rank='%s' WHERE CharID='%i'", factionRankSTR.c_str(), charID ) );
 
-		trap_SendServerCommand( -1, va( "chat \"^1<OOC> %s is now the %s rank in the %s faction!\n\"", charNameSTR.c_str(), factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
+		if ( loggedIn )
+		{
+			trap_SendServerCommand( clientID, va( "print \"^2You are now the %s rank in the %s faction!\n\"", factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
+			trap_SendServerCommand( clientID, va( "cp \"^2You are now the %s rank in the %s faction!\n\"", factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
+		}
 
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s is now the %s rank in the %s faction.\n\"", charNameSTR.c_str(), factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
 
@@ -2505,15 +2533,20 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 		}
 
 		//Get their accountID
-		//int accountID = q.get_num( va( "SELECT UserID FROM Characters WHERE CharID='%i'", charID ) );
+		int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 		//Get their clientID so we can send them messages
-		//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+		int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+		int loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
 
 		string charCurrentFactionSTR = q.get_string( va( "SELECT Faction FROM Characters WHERE CharID='%i'", charID ) );
 
 		q.execute( va( "UPDATE Characters set Rank='%s' WHERE CharID='%i'", factionRankSTR.c_str(), charID ) );
 
-		trap_SendServerCommand( -1, va( "chat \"^1<OOC> %s is now the %s rank in the %s faction!\n\"", charNameSTR.c_str(), factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
+		if ( loggedIn )
+		{
+			trap_SendServerCommand( clientID, va( "print \"^2You are now the %s rank in the %s faction!\n\"", factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
+			trap_SendServerCommand( clientID, va( "cp \"^2You are now the %s rank in the %s faction!\n\"", factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
+		}
 
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s is now the %s rank in the %s faction.\n\"", charNameSTR.c_str(), factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
 
@@ -2630,7 +2663,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 
 	char intensity[MAX_STRING_CHARS], length[MAX_STRING_CHARS];
 	float intensityFixed;
-	int temp, lengthFixed;
+	int temp, lengthFixed, lengthFixed2;
 
 	if ( trap_Argc() != 3 )
 	{
@@ -2643,12 +2676,14 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 	intensityFixed = temp;
 	trap_Argv( 2, length, MAX_STRING_CHARS );
 	lengthFixed = atoi( length );
+	lengthFixed2 = lengthFixed * 1000;
+
 
 	for( i = 0; i < level.maxclients; i++ )
 	{
 		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			G_ScreenShake( g_entities[i].s.origin, &g_entities[i],intensityFixed, lengthFixed, qtrue );
+			G_ScreenShake( g_entities[i].s.origin, &g_entities[i],intensityFixed, lengthFixed2, qtrue );
 			//Don't do a center print for the target - it would distract from the shaking screen.
 			trap_SendServerCommand( i, "print \"^2An admin shook your screen.\n\"" );
 		}
@@ -2658,9 +2693,9 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 }
 
 
-void Cmd_Sound_F( gentity_t * ent )
+void Cmd_Audio_F( gentity_t * ent )
 {
-	char soundPath[MAX_STRING_CHARS];
+	char audioPath[MAX_STRING_CHARS];
 	int i;
 
 	if(!G_CheckAdmin(ent, ADMIN_AUDIO))
@@ -2671,59 +2706,35 @@ void Cmd_Sound_F( gentity_t * ent )
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amsound <path>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amAudio <path>\n\""));
 		return;
 	}
 
-	trap_Argv(1, soundPath, MAX_STRING_CHARS);
-	string soundPathSTR = soundPath;
+	trap_Argv(1, audioPath, MAX_STRING_CHARS);
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the sound file: ^7%s\n\"", soundPath ) );
-	for( i = 0; i < level.maxclients; i++ )
+	if(!Q_stricmpn(audioPath, "music/", 6))
 	{
-		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the music file: ^7%s\n\"", audioPath ) );
+		trap_SetConfigstring( CS_MUSIC, audioPath );
+	}
+
+	else if(!Q_stricmpn(audioPath, "sound/", 6))
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the sound file: ^7%s\n\"", audioPath ) );
+		for( i = 0; i < level.maxclients; i++ )
 		{
-			G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", soundPathSTR.c_str() ) ) );
+			if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+			{
+				G_Sound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", audioPath ) ) );
+			}
 		}
 	}
-	return;
-}
 
-
-void Cmd_Music_F( gentity_t * ent )
-{
-	//char musicPath[MAX_STRING_CHARS];
-	//int i;
-
-	if(!G_CheckAdmin(ent, ADMIN_AUDIO))
+	else
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
-		return;
-	}
-
-	trap_SendServerCommand( ent-g_entities, "print \"^1Error: This command is currently disabled. Try /amSound instead.\n\"" );
-	return;
-	
-	/*
-	if(trap_Argc() < 2)
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /ammusic <path>\n\""));
-		return;
-	}
-
-	trap_Argv(1, musicPath, MAX_STRING_CHARS);
-	string musicPathSTR = musicPath;
-
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the music file: ^7%s\n\"", musicPath ) );
-	for( i = 0; i < level.maxclients; i++ )
-	{
-		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
-		{
-			G_EntitySound( &g_entities[i], CHAN_MUSIC, G_SoundIndex( va( "%s", musicPathSTR.c_str() ) ) );
-		}
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Music or sound must be in the music or sound folders.\n\"", audioPath ) );
 	}
 	return;
-	*/
 }
 
 void Cmd_amTelemark_F( gentity_t * ent )
@@ -2813,7 +2824,7 @@ void Cmd_AdminChat_F( gentity_t *ent )
 	{
 		if ( g_entities[i].client->sess.isAdmin == qtrue && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			trap_SendServerCommand( i, va ("chat \"^6<Admin Chat> - ^7%s^6: ^6%s\"", ent->client->pers.netname, real_msg ) );
+			trap_SendServerCommand( i, va ("chat \"^6<Admin Chat> ^7%s^6: ^6%s\"", ent->client->pers.netname, real_msg ) );
 		}
 	}
 	
@@ -2904,6 +2915,5 @@ void Cmd_amWarningList_F(gentity_t *ent)
 			trap_SendServerCommand( ent-g_entities, va( "print \"^7%s ^2%i/%i\n\"", g_entities[i].client->pers.netname, g_entities[i].client->sess.warnings, atoi( openrp_maxWarnings.string ) ) );
 		}
 	}
-
 	return;
 }

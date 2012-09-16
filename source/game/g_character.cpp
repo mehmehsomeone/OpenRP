@@ -12,6 +12,7 @@ extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern void SanitizeString2( char *in, char *out );
 extern int M_G_ClientNumberFromName ( const char* name );
 extern char	*ConcatArgs( int start );
+extern void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0, qboolean chatCommand );
 
 /*
 =================
@@ -22,32 +23,31 @@ Loads the character data
 
 =================
 */
-//void DetermineDodgeMax(gentity_t *ent);
+extern void DetermineDodgeMax(gentity_t *ent);
 void LoadCharacter(gentity_t * ent)
 {
-	//LoadSkills(ent);
-	//LoadForcePowers(ent);
-	//LoadFeats(ent);
+	LoadSkills(ent);
+	LoadForcePowers(ent);
+	LoadFeats(ent);
 	LoadAttributes(ent);
 
-	/*
 	//Create new power string
 	string newForceString;
 	newForceString.append(va("%i-%i-",FORCE_MASTERY_JEDI_KNIGHT,FORCE_LIGHTSIDE));
 	int i;
-	for( i = 0; i < NUM_FORCE_POWERS; i++ )
+	for( i = 0; i < NUM_FORCE_POWERS-1; i++ )
 	{
 		char tempForce[2];
 		itoa( ent->client->ps.fd.forcePowerLevel[i], tempForce, 10 );
 		newForceString.append(tempForce);
 	}
-	for( i = 0; i < NUM_SKILLS; i++ )
+	for( i = 0; i < NUM_SKILLS-1; i++ )
 	{
 		char tempSkill[2];
 		itoa( ent->client->skillLevel[i], tempSkill, 10 );
 		newForceString.append(tempSkill);
 	}
-	for( i = 0; i < NUM_FEATS; i++ )
+	for( i = 0; i < NUM_FEATS-1; i++ )
 	{
 		char tempFeat[2];
 		itoa( ent->client->featLevel[i], tempFeat, 10 );
@@ -56,7 +56,6 @@ void LoadCharacter(gentity_t * ent)
 	trap_SendServerCommand( ent-g_entities, va( "forcechanged x %s\n", newForceString.c_str() ) );
 	
 	DetermineDodgeMax(ent);
-	*/
 	return;
 }
 /*
@@ -68,7 +67,6 @@ Loads the character feats
 
 =================
 */
-/*
 void LoadFeats(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
@@ -89,7 +87,6 @@ void LoadFeats(gentity_t * ent)
 	}
 	return;
 }
-*/
 
 /*
 =================
@@ -100,7 +97,6 @@ Loads the character skills
 
 =================
 */
-/*
 void LoadSkills(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
@@ -121,7 +117,6 @@ void LoadSkills(gentity_t * ent)
 	}
 	return;
 }
-*/
 
 /*
 =================
@@ -132,7 +127,6 @@ Loads the character force powers
 
 =================
 */
-/*
 void LoadForcePowers(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
@@ -155,7 +149,6 @@ void LoadForcePowers(gentity_t * ent)
 	}
 	return;
 }
-*/
 
 /*
 =================
@@ -169,16 +162,16 @@ void LoadAttributes(gentity_t * ent)
 	Database db(DATABASE_PATH);
 	Query q(db);
 	
-	//char userinfo[MAX_INFO_STRING];
-	//trap_GetUserinfo( ent-g_entities, userinfo, MAX_INFO_STRING );
+	char userinfo[MAX_INFO_STRING];
+	trap_GetUserinfo( ent-g_entities, userinfo, MAX_INFO_STRING );
 
-	/*
+	
     //Model
 	string model = q.get_string( va( "SELECT Model FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	Info_SetValueForKey( userinfo, "model", model.c_str() );
 	trap_SetUserinfo( ent-g_entities, userinfo );
 	ClientUserinfoChanged( ent-g_entities );
-	*/
+	
 
 	//Model scale
 	int modelScale = q.get_num( va( "SELECT ModelScale FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
@@ -213,7 +206,6 @@ Saves the character information to the database
 
 =====
 */
-/*
 void SaveCharacter(gentity_t * ent) 
 {
         Database db(DATABASE_PATH);
@@ -230,14 +222,14 @@ void SaveCharacter(gentity_t * ent)
 		string forceString;
 
         //Create feat string
-        for(int i = 0; i < NUM_FEATS; i++)
+        for(int i = 0; i < NUM_FEATS-1; i++)
         {
 		 char tempFeat[2];
 		 itoa(ent->client->featLevel[i],tempFeat,10);
 		 featString.append(tempFeat);
         }
         //Create skill string
-        for(int j = 0; j < NUM_SKILLS; j++)
+        for(int j = 0; j < NUM_SKILLS-1; j++)
         {
 		 char tempSkill[2];
          itoa(ent->client->skillLevel[j],tempSkill,10);
@@ -260,7 +252,6 @@ void SaveCharacter(gentity_t * ent)
 	  
 	  return;
 }
-*/
 
 /*
 =================
@@ -275,13 +266,13 @@ void LevelCheck(int charID)
 	Query q(db);
 
 	int i;
-	int nextLevel, neededXP, timesLeveled;
+	int nextLevel, neededSkillPoints, timesLeveled;
 
 	//Get their accountID
-	//int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", accountID ) );
+	int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
-	//Commented out for now - this has some problems associated with it.
-	//int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+	int loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
 
 	string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", charID ) );
 
@@ -290,7 +281,7 @@ void LevelCheck(int charID)
 	for ( i=0; i < 49; ++i )
 	{
 		int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
-		int currentXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", charID ) );
+		int currentSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", charID ) );
 
 		if ( currentLevel == 50 )
 		{
@@ -298,9 +289,9 @@ void LevelCheck(int charID)
 		}
 		
 		nextLevel = currentLevel + 1;
-		neededXP = Q_powf( nextLevel, 2 ) * 2;
+		neededSkillPoints = Q_powf( nextLevel, 2 ) * 2;
 
-		if ( currentXP >= neededXP )
+		if ( currentSkillPoints >= neededSkillPoints )
 		{
 			q.execute( va( "UPDATE Characters set Level='%i' WHERE CharID='%i'", nextLevel, charID ) );
 		}
@@ -318,13 +309,21 @@ void LevelCheck(int charID)
 	{
 		if ( timesLeveled > 1 )
 		{
-			trap_SendServerCommand( -1, va( "chat \"^1<OOC> Level up! %s leveled up %i times and is now a level %i!\n\"", charNameSTR.c_str(), timesLeveled, charNewCurrentLevel ) );
+			if ( loggedIn )
+			{
+				trap_SendServerCommand( clientID, va( "print \"^2Level up! You leveled up %i times and are now a level %i!\n\"", timesLeveled, charNewCurrentLevel ) );
+				trap_SendServerCommand( clientID, va( "cp \"^2Level up! You leveled up %i times and are now a level %i!\n\"", timesLeveled, charNewCurrentLevel ) );
+			}
 			return;
 		}
 
 		else
 		{
-			trap_SendServerCommand( -1, va( "chat \"^1<OOC> Level up! %s is now a level %i!\n\"", charNameSTR.c_str(), charNewCurrentLevel ) );
+			if ( loggedIn )
+			{
+				trap_SendServerCommand( clientID, va( "print \"^2Level up! You are now a level %i!\n\"", charNewCurrentLevel ) );
+				trap_SendServerCommand( clientID, va( "cp \"^2Level up! You are now a level %i!\n\"", charNewCurrentLevel ) );
+			}
 			return;
 		}
 	}
@@ -452,13 +451,13 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		}
 
 		//Create character
-		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory,InFaction,Credits) VALUES('%i','%s','100','1','0','none','none','%i','0','0','250')", ent->client->sess.accountID, charNameSTR.c_str(), forceSensitive ) );
+		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,SkillPoints,Faction,Rank,ForceSensitive,CheckInventory,InFaction,Credits) VALUES('%i','%s','100','1','1','none','none','%i','0','0','250')", ent->client->sess.accountID, charNameSTR.c_str(), forceSensitive ) );
 		q.execute( va( "INSERT INTO Items(CharID,E11,Pistol) VALUES('%i', '0', '0')", ent->client->sess.characterID ) );
 
 		if(ent->client->sess.characterChosen == qtrue)
 		{
 			//Save their character
-			//SaveCharacter( ent );
+			SaveCharacter( ent );
 
 			//Deselect Character
 			ent->client->sess.characterChosen = qfalse;
@@ -468,7 +467,6 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 			ent->client->ps.iModelScale = 100;
 			ent->client->sess.modelScale = 100;
 
-			/*
 			//Remove all feats
 			for(int k = 0; k < NUM_FEATS-1; k++)
 			{
@@ -487,14 +485,11 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 			{
 				ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
 			}
-			*/
 
-			/*
 			//Respawn client
 			ent->flags &= ~FL_GODMODE;
 			ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
 			SetTeam(ent,"s");
-			*/
 		
 			//trap_SendServerCommand( ent-g_entities, "print \"^2Deselecting current character and switching to your new character...\n\"" );
 		}
@@ -537,13 +532,13 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		}
 
 		//Create character
-		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,Experience,Faction,Rank,ForceSensitive,CheckInventory,InFaction,Credits) VALUES('%i','%s','100','1','0','%s','Member','%i','0','1','250')", ent->client->sess.accountID, charNameSTR.c_str(), factionNameSTR.c_str(), forceSensitive ) );
+		q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,SkillPoints,Faction,Rank,ForceSensitive,CheckInventory,InFaction,Credits) VALUES('%i','%s','100','1','1','%s','Member','%i','0','1','250')", ent->client->sess.accountID, charNameSTR.c_str(), factionNameSTR.c_str(), forceSensitive ) );
 		q.execute( va( "INSERT INTO Items(CharID,E11,Pistol) VALUES('%i', '0', '0')", ent->client->sess.characterID ) );
 
 		if(ent->client->sess.characterChosen == qtrue)
 		{
 			//Save their character
-			//SaveCharacter( ent );
+			SaveCharacter( ent );
 
 			//Deselect Character
 			ent->client->sess.characterChosen = qfalse;
@@ -553,7 +548,6 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 			ent->client->ps.iModelScale = 100;
 			ent->client->sess.modelScale = 100;
 
-			/*
 			//Remove all feats
 			for(int k = 0; k < NUM_FEATS-1; k++)
 			{
@@ -572,14 +566,11 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 			{
 				ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
 			}
-			*/
 
-			/*
 			//Respawn client
 			ent->flags &= ~FL_GODMODE;
 			ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
 			SetTeam(ent,"s");
-			*/
 		
 			//trap_SendServerCommand( ent-g_entities, "print \"^2Deselecting current character and switching to your new character...\n\"" );
 		}
@@ -635,7 +626,6 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	if( trap_Argc() < 2 )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /character <name>\n\"" );
-		//trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /character <name>\n\"" );
 		return;
 	}
 
@@ -656,7 +646,11 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	if(ent->client->sess.characterChosen == qtrue)
 	{
 		//Save their character
-		//SaveCharacter( ent );
+		SaveCharacter( ent );
+
+		//Reset skill points
+		ent->client->sess.skillPoints = 1;
+		ent->client->skillUpdated = qtrue;
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;
@@ -666,9 +660,8 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 		ent->client->ps.iModelScale = 100;
 		ent->client->sess.modelScale = 100;
 
-		/*
 		//Remove all feats
-		for(int k = 0; k < NUM_FEATS; k++)
+		for(int k = 0; k < NUM_FEATS-1; k++)
 		{
 			ent->client->featLevel[k] = FORCE_LEVEL_0;
 		}
@@ -685,7 +678,6 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 		{
 			ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
 		}
-		*/
 		
 		//trap_SendServerCommand( ent-g_entities, "print \"^2Deselecting current character and switching to the new character you want...\n\"" );
 	}
@@ -693,9 +685,16 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	//Update that we have a character selected
 	ent->client->sess.characterChosen = qtrue;
 	ent->client->sess.characterID = charID;
+	int charSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+	ent->client->sess.skillPoints = charSkillPoints;
+	ent->client->skillUpdated = qtrue;
 	LoadCharacter(ent);
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Your character is selected as: ^7%s^2!\nYou can use /characterInfo to view everything about your character.\n\"", charName ) );
 	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Your character is selected as: ^7%s^2!\n^2You can use /characterInfo to view everything ^2about your character.\n\"", charName ) );
+
+	ent->flags &= ~FL_GODMODE;
+	ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
+	player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 
 	return;
 }
@@ -725,11 +724,11 @@ void Cmd_GiveCredits_F(gentity_t * ent)
 
 	char recipientCharName[MAX_STRING_CHARS], temp[MAX_STRING_CHARS];
 	int changedCredits;
+	//int i;
 
 	if( trap_Argc() != 3 )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /giveCredits <characterName> <amount>\n\"" );
-		//trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /giveCredits <characterName> <amount>\n\"" );
 		return;
 	}
 
@@ -749,7 +748,6 @@ void Cmd_GiveCredits_F(gentity_t * ent)
 	if( !charID )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", recipientCharNameSTR.c_str() ) );
-		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", recipientCharNameSTR.c_str() ) );
 		return;
 	}
 
@@ -780,7 +778,31 @@ void Cmd_GiveCredits_F(gentity_t * ent)
 	q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newSenderCreditsTotal,  ent->client->sess.characterID ) );
 	q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newRecipientCreditsTotal, charID ) );
 
-	trap_SendServerCommand( -1, va( "chat \"^3%s gives %i credits to %s.\n\"", senderCharNameSTR.c_str(), changedCredits, recipientCharNameSTR.c_str() ) );
+	/*
+	for ( i = 0; i < level.maxclients; i++ )
+	{
+		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		{
+			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+			{
+				trap_SendServerCommand( i, va( "print \"(ACTION) ^3%s ^3gives %i credits to ^3%s\n\"", ent->client->pers.netname, changedCredits, g_entities[clientID].client->pers.netname ) );
+				trap_SendServerCommand( i, va( "chat \"^3%s ^3gives %i credits to ^3%s\"", ent->client->pers.netname, changedCredits, g_entities[clientID].client->pers.netname ) );
+			}
+			else
+			{
+				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
+				{
+					trap_SendServerCommand( i, va( "print \"(ACTION) ^3%s ^3gives %i credits to ^3%s\"", ent->client->pers.netname, g_entities[clientID].client->pers.netname ) );
+					trap_SendServerCommand( i, va( "chat \"^3%s ^3gives %i credits to ^3%s\"", ent->client->pers.netname, g_entities[clientID].client->pers.netname ) );
+				}
+				else
+				{
+					continue;
+				}
+			}
+		}
+	}
+	*/
 
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: ^7%i ^2of your credits have been given to character ^7%s^2. You now have ^7%i ^2credits.\n\"", changedCredits, recipientCharNameSTR.c_str(), newSenderCreditsTotal ) );
 	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: ^7%i ^2of your credits have been given to character ^7%s^2. You now have ^7%i ^2credits.\n\"", changedCredits, recipientCharNameSTR.c_str(), newSenderCreditsTotal ) );
@@ -817,7 +839,7 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 		}
 
 		char charName[MAX_STRING_CHARS];
-		int nextLevel, neededXP;
+		int nextLevel, neededSkillPoints;
 		string forceSensitiveSTR;
 
 		if( trap_Argc() < 2 )
@@ -833,14 +855,12 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 			string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 			//Level
 			int charLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-			//XP
-			int charXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+			//Skill Points
+			int charSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 			//Credits
 			int charCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 			//ModelScale
 			int charModelScale = q.get_num( va( "SELECT ModelScale FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-			//Model
-			//string charModelSTR = q.get_string( va( "SELECT Model FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 
 			switch( forceSensitive )
 			{
@@ -856,10 +876,10 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 			}
 
 			nextLevel = charLevel + 1;
-			neededXP = Q_powf( nextLevel, 2 ) * 2;
+			neededSkillPoints = Q_powf( nextLevel, 2 ) * 2;
 
 			//Show them the info.
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Character Info:\nName: ^7%s\n^2Force Sensitive: ^7%s\n^2Faction: ^7%s\n^2Faction Rank: ^7%s\n^2Level: ^7%i/50\n^2XP: ^7%i/%i\n^2Credits: ^7%i\n^2Modelscale: ^7%i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, neededXP, charCredits, charModelScale ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Character Info:\nName: ^7%s\n^2Force Sensitive: ^7%s\n^2Faction: ^7%s\n^2Faction Rank: ^7%s\n^2Level: ^7%i/50\n^2Skill Points: ^7%i/%i\n^2Credits: ^7%i\n^2Modelscale: ^7%i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charSkillPoints, neededSkillPoints, charCredits, charModelScale ) );
 			return;
 		}
 
@@ -904,8 +924,8 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 				string charFactionRankSTR = q.get_string( va( "SELECT Rank FROM Characters WHERE CharID='%i'", charID ) );
 				//Level
 				int charLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
-				//XP
-				int charXP = q.get_num( va( "SELECT Experience FROM Characters WHERE CharID='%i'", charID ) );
+				//Skill Points
+				int charSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", charID ) );
 				//Credits
 				int charCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", charID ) );
 				//ModelScale
@@ -925,10 +945,10 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 				}
 
 				nextLevel = charLevel + 1;
-				neededXP = Q_powf( nextLevel, 2 ) * 2;
+				neededSkillPoints = Q_powf( nextLevel, 2 ) * 2;
 	
 				//Show them the info.
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2Character Info:\nName: ^7%s\n^2Force Sensitive: ^7%s\n^2Faction: ^7%s\n^2Faction Rank: ^7%s\n^2Level: ^7%i/50\n^2XP: ^7%i/%i\n^2Credits: ^7%i\n^2Modelscale: ^7%i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charXP, neededXP, charCredits, charModelScale ) );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2Character Info:\nName: ^7%s\n^2Force Sensitive: ^7%s\n^2Faction: ^7%s\n^2Faction Rank: ^7%s\n^2Level: ^7%i/50\n^2Skill Points: ^7%i/%i\n^2Credits: ^7%i\n^2Modelscale: ^7%i\n\"", charNameSTR.c_str(), forceSensitiveSTR.c_str(), charFactionSTR.c_str(), charFactionRankSTR.c_str(), charLevel, charSkillPoints, neededSkillPoints, charCredits, charModelScale ) );
 				return;
 			}
 			return;
@@ -2119,116 +2139,6 @@ void Cmd_CharName_F( gentity_t * ent )
 	return;
 }
 
-void Cmd_Me_F( gentity_t *ent )
-{ 
-	int pos = 0;
-	char real_msg[MAX_STRING_CHARS];
-	char *msg = ConcatArgs(1);
-	int i;
-
-	while(*msg)
-	{ 
-		if(msg[0] == '\\' && msg[1] == 'n')
-		{ 
-			msg++;
-			real_msg[pos++] = '\n';
-		} 
-		else
-		{
-			real_msg[pos++] = *msg;
-		} 
-		msg++;
-	}
-
-	real_msg[pos] = 0;
-
-	if ( trap_Argc() < 2 )
-	{ 
-		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /me <action> (You can use spaces such as /me opens the door.)\n\"" ) ); 
-		return;
-	}
-
-	for ( i = 0; i < level.maxclients; i++ )
-	{
-		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
-		{
-			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
-			{
-				trap_SendServerCommand( -1, va( "print \"(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, real_msg ) );
-				trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
-			}
-			else
-			{
-				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
-				{
-					trap_SendServerCommand( -1, va( "print \"(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, real_msg ) );
-					trap_SendServerCommand( -1, va( "chat \"^3%s ^3%s\"", ent->client->pers.netname, real_msg ) );
-				}
-				else
-				{
-					continue;
-				}
-			}
-		}
-	}
-	return;
-}
-
-void Cmd_It_F( gentity_t *ent )
-{ 
-	int pos = 0;
-	char real_msg[MAX_STRING_CHARS];
-	char *msg = ConcatArgs(1);
-	int i;
-
-	while(*msg)
-	{ 
-		if(msg[0] == '\\' && msg[1] == 'n')
-		{ 
-			msg++;
-			real_msg[pos++] = '\n';
-		} 
-		else
-		{
-			real_msg[pos++] = *msg;
-		} 
-		msg++;
-	}
-
-	real_msg[pos] = 0;
-
-	if ( trap_Argc() < 2 )
-	{ 
-		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /it <action> (You can use spaces such as /it The tree falls down.)\n\"" ) ); 
-		return;
-	}
-
-	for ( i = 0; i < level.maxclients; i++ )
-	{
-		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
-		{
-			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
-			{
-				trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\n\"", ent->client->pers.netname, real_msg ) );
-				trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
-			}
-			else
-			{
-				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
-				{
-					trap_SendServerCommand( -1, va( "print \"(ENV - %s) ^3%s\n\"", ent->client->pers.netname, real_msg ) );
-					trap_SendServerCommand( -1, va( "chat \"^3%s\"", real_msg ) );
-				}
-				else
-				{
-					continue;
-				}
-			}
-		}
-	}
-	return;
-}
-
 void Cmd_Comm_F(gentity_t *ent)
 {
 	if ( ent->client->sess.isSilenced == qtrue )
@@ -2394,209 +2304,5 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 	trap_SendServerCommand(ent-g_entities, va("chat \"^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	trap_SendServerCommand(clientid, va("chat \"^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	G_LogPrintf("Force message sent by %s to %s. Message: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
-	return;
-}
-
-void Cmd_Yell_F(gentity_t *ent)
-{
-	if ( ent->client->sess.isSilenced == qtrue )
-	{
-		trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
-		trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
-		return;
-	}
-
-	if ( openrp_allChat.integer != 0 )
-	{
-		trap_SendServerCommand(ent-g_entities,"print \"^1All chat is enabled. It must be disabled to use this command.\n\"");
-		trap_SendServerCommand(ent-g_entities,"cp \"^1^1All chat is enabled.\n^1It must be disabled to use this command.\n\"");
-		return;
-	}
-
-	int pos = 0;
-	char real_msg[MAX_STRING_CHARS];
-	char *msg = ConcatArgs(1);
-	int i;
-
-	while(*msg)
-	{ 
-		if(msg[0] == '\\' && msg[1] == 'n')
-		{ 
-			msg++;
-			real_msg[pos++] = '\n';
-		} 
-		else
-		{
-			real_msg[pos++] = *msg;
-		} 
-		msg++;
-	}
-
-	real_msg[pos] = 0;
-
-	if ( trap_Argc() < 2 )
-	{ 
-		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /yell <message>\n\"" ) ); 
-		return;
-	}
-
-	for ( i = 0; i < level.maxclients; i++ )
-	{
-		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
-		{
-			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
-			{
-				trap_SendServerCommand( i, va("chat \"^7<YELL> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
-			}
-			else
-			{
-				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 900 )
-				{
-					trap_SendServerCommand( i, va("chat \"^7<YELL> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
-				}
-				else
-				{
-					continue;
-				}
-			}
-		}
-	}
-	G_LogPrintf("<YELL> %s: %s\n", ent->client->pers.netname, real_msg);
-	return;
-}
-
-void Cmd_Whisper_F(gentity_t *ent)
-{
-	if ( ent->client->sess.isSilenced == qtrue )
-	{
-		trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
-		trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
-		return;
-	}
-
-	if ( openrp_allChat.integer != 0 )
-	{
-		trap_SendServerCommand(ent-g_entities,"print \"^1All chat is enabled. It must be disabled to use this command.\n\"");
-		trap_SendServerCommand(ent-g_entities,"cp \"^1^1All chat is enabled.\n^1It must be disabled to use this command.\n\"");
-		return;
-	}
-
-	int pos = 0;
-	char real_msg[MAX_STRING_CHARS];
-	char *msg = ConcatArgs(1);
-	int i;
-
-	while(*msg)
-	{ 
-		if(msg[0] == '\\' && msg[1] == 'n')
-		{ 
-			msg++;
-			real_msg[pos++] = '\n';
-		} 
-		else
-		{
-			real_msg[pos++] = *msg;
-		} 
-		msg++;
-	}
-
-	real_msg[pos] = 0;
-
-	if ( trap_Argc() < 2 )
-	{ 
-		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /whisper <message>\n\"" ) ); 
-		return;
-	}
-
-	for ( i = 0; i < level.maxclients; i++ )
-	{
-		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
-		{
-			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
-			{
-				trap_SendServerCommand( i, va("chat \"^7<Whisper> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
-			}
-			else
-			{
-				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 150 )
-				{
-					trap_SendServerCommand( i, va("chat \"^7<Whisper> %s^7: ^2%s\"", ent->client->pers.netname, real_msg));
-				}
-				else
-				{
-					continue;
-				}
-			}
-		}
-	}
-	G_LogPrintf("<Whisper> %s: %s\n", ent->client->pers.netname, real_msg);
-	return;
-}
-
-void Cmd_LOOC_F(gentity_t *ent)
-{
-	if ( ent->client->sess.isSilenced == qtrue )
-	{
-		trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
-		trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
-		return;
-	}
-
-	if ( openrp_allChat.integer != 0 )
-	{
-		trap_SendServerCommand(ent-g_entities,"print \"^1All chat is enabled. It must be disabled to use this command.\n\"");
-		trap_SendServerCommand(ent-g_entities,"cp \"^1^1All chat is enabled.\n^1It must be disabled to use this command.\n\"");
-		return;
-	}
-
-	int pos = 0;
-	char real_msg[MAX_STRING_CHARS];
-	char *msg = ConcatArgs(1);
-	int i;
-
-	while(*msg)
-	{ 
-		if(msg[0] == '\\' && msg[1] == 'n')
-		{ 
-			msg++;
-			real_msg[pos++] = '\n';
-		} 
-		else
-		{
-			real_msg[pos++] = *msg;
-		} 
-		msg++;
-	}
-
-	real_msg[pos] = 0;
-
-	if ( trap_Argc() < 2 )
-	{ 
-		trap_SendServerCommand( ent-g_entities, va ( "print \"^2Command Usage: /looc <message>\n\"" ) ); 
-		return;
-	}
-
-	for ( i = 0; i < level.maxclients; i++ )
-	{
-		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
-		{
-			if ( g_entities[i].client->sess.allChat == qtrue || (g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
-			{
-				trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^6%s\"", ent->client->pers.netname, real_msg));
-			}
-			else
-			{
-				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 800 )
-				{
-					trap_SendServerCommand( i, va("chat \"^6<LOOC> %s^6: ^6%s\"", ent->client->pers.netname, real_msg));
-				}
-				else
-				{
-					continue;
-				}
-			}
-		}
-	}
-	G_LogPrintf("<LOOC> %s: %s\n", ent->client->pers.netname, real_msg);
 	return;
 }

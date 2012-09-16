@@ -8,7 +8,7 @@
 #define ADMIN_COMMBROADCAST			64 // /comm -1, system, all, or broadcast
 #define ADMIN_GRANTREMOVEADMIN		128 // Grant or remove admin
 #define ADMIN_MAP					256 // /map
-#define ADMIN_XP					512 // XP related
+#define ADMIN_SKILLPOINTS			512 // skillpoint related
 #define ADMIN_PROTECT				1024 // /amprotect
 #define ADMIN_ANNOUNCE				2048 // /amannounce
 #define ADMIN_WARN					4096 // /amwarn
@@ -26,7 +26,7 @@
 #define	ADMIN_FACTION				16777216 // Faction related
 #define ADMIN_CREDITS				33554432 // Credits related
 #define ADMIN_ITEM					67108864 // Item related
-#define ADMIN_AUDIO					134217728 // /amsound and /ammusic
+#define ADMIN_AUDIO					134217728 // /amaudio
 #define ADMIN_BOUNTY				268435456 // /bounty remove
 
 //OpenRP Bitvalues End Here.

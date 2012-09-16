@@ -447,7 +447,7 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand("characterinfo");
 	trap_AddCommand("grantadmin");
 	trap_AddCommand("removeadmin");
-	trap_AddCommand("genxp");
+	trap_AddCommand("giveskillpoints");
 	trap_AddCommand("givecredits");
 	trap_AddCommand("gencredits");
 	trap_AddCommand("editaccount");
@@ -465,8 +465,6 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand("bounty");
 	trap_AddCommand("amlistadmins");
 	trap_AddCommand("charactername");
-	trap_AddCommand("me");
-	trap_AddCommand("it");
 	trap_AddCommand("comm");
 	trap_AddCommand("amkick");
 	trap_AddCommand("amban");
@@ -493,8 +491,6 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand("admin");
 	trap_AddCommand("amcheataccess");
 	trap_AddCommand("amshakescreen");
-	trap_AddCommand("amsound");
-	trap_AddCommand("ammusic");
+	trap_AddCommand("amaudio");
 	trap_AddCommand("ooc");
-	trap_AddCommand("force");
 }

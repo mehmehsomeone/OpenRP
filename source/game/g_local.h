@@ -121,9 +121,11 @@ extern	vmCvar_t	g_trueJedi;
 
 extern	vmCvar_t	g_autoMapCycle;
 extern	vmCvar_t	g_dmflags;
+//[OpenRP - Skillpoint System]
 //[ExpSys]
-extern	vmCvar_t	g_minForceRank;
+//extern	vmCvar_t	g_minForceRank;
 //[/ExpSys]
+//[/OpenRP - Skillpoint System]
 extern	vmCvar_t	g_maxForceRank;
 extern	vmCvar_t	g_forceBasedTeams;
 extern	vmCvar_t	g_privateDuel;
@@ -896,6 +898,10 @@ typedef struct {
 	qboolean isInvisible;
 	qboolean allChat;
 	qboolean isAutoWalking;
+	qboolean chatCommandExecuted;
+	int chatMode;
+	float commFrequency;
+	int commMode;
 
 } clientSession_t;
 
@@ -938,7 +944,7 @@ typedef struct {
 	qboolean ojpClientPlugIn;
 	//[/ClientPlugInDetect]
 
-	char *ojpClientVersion;
+	char ojpClientVersion;
 
 	int			motdShowTime;		// MJN - Show MOTD to player.
 	qboolean	protect;			// MJN - Person is protected.
