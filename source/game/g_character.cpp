@@ -35,19 +35,19 @@ void LoadCharacter(gentity_t * ent)
 	string newForceString;
 	newForceString.append(va("%i-%i-",FORCE_MASTERY_JEDI_KNIGHT,FORCE_LIGHTSIDE));
 	int i;
-	for( i = 0; i < NUM_FORCE_POWERS-1; i++ )
+	for( i = 0; i < NUM_FORCE_POWERS; i++ )
 	{
 		char tempForce[2];
 		itoa( ent->client->ps.fd.forcePowerLevel[i], tempForce, 10 );
 		newForceString.append(tempForce);
 	}
-	for( i = 0; i < NUM_SKILLS-1; i++ )
+	for( i = 0; i < NUM_SKILLS; i++ )
 	{
 		char tempSkill[2];
 		itoa( ent->client->skillLevel[i], tempSkill, 10 );
 		newForceString.append(tempSkill);
 	}
-	for( i = 0; i < NUM_FEATS-1; i++ )
+	for( i = 0; i < NUM_FEATS; i++ )
 	{
 		char tempFeat[2];
 		itoa( ent->client->featLevel[i], tempFeat, 10 );
@@ -165,13 +165,13 @@ void LoadAttributes(gentity_t * ent)
 	char userinfo[MAX_INFO_STRING];
 	trap_GetUserinfo( ent-g_entities, userinfo, MAX_INFO_STRING );
 
-	
+	/*
     //Model
 	string model = q.get_string( va( "SELECT Model FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	Info_SetValueForKey( userinfo, "model", model.c_str() );
 	trap_SetUserinfo( ent-g_entities, userinfo );
 	ClientUserinfoChanged( ent-g_entities );
-	
+	*/
 
 	//Model scale
 	int modelScale = q.get_num( va( "SELECT ModelScale FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
@@ -222,14 +222,14 @@ void SaveCharacter(gentity_t * ent)
 		string forceString;
 
         //Create feat string
-        for(int i = 0; i < NUM_FEATS-1; i++)
+        for(int i = 0; i < NUM_FEATS; i++)
         {
 		 char tempFeat[2];
 		 itoa(ent->client->featLevel[i],tempFeat,10);
 		 featString.append(tempFeat);
         }
         //Create skill string
-        for(int j = 0; j < NUM_SKILLS-1; j++)
+        for(int j = 0; j < NUM_SKILLS; j++)
         {
 		 char tempSkill[2];
          itoa(ent->client->skillLevel[j],tempSkill,10);
