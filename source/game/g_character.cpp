@@ -2155,6 +2155,7 @@ void Cmd_Comm_F(gentity_t *ent)
 	char *msg = ConcatArgs(2);
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
+	int i;
 
 	while(*msg)
 	{ 
@@ -2212,6 +2213,28 @@ void Cmd_Comm_F(gentity_t *ent)
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
 		return; 
+	}
+
+	if ( openrp_allChat.integer == 0  )
+	{
+		for ( i = 0; i < level.maxclients; i++ )
+		{
+			if ( g_entities[i].client->sess.allChat == qtrue || ( g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+			{
+				trap_SendServerCommand(i, va("chat \"^7Comm ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg));
+			}
+			else
+			{				
+				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 600 )
+				{
+					trap_SendServerCommand(i, va("chat \"^7Comm ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg));
+				}
+				else
+				{
+					continue;
+				}
+			}
+		}
 	}
 
 	trap_SendServerCommand(ent-g_entities, va("chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
