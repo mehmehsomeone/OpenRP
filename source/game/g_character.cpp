@@ -2227,6 +2227,10 @@ void Cmd_Comm_F(gentity_t *ent)
 			{				
 				if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 600 )
 				{
+					if ( i == ent-g_entities )
+					{
+						continue;
+					}
 					trap_SendServerCommand(i, va("chat \"^7Comm ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg));
 				}
 				else

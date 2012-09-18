@@ -233,9 +233,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 			ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
 		}
 
-		//Respawn client
-		ent->flags &= ~FL_GODMODE;
-		ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
+		//Change their team to spec.
 		SetTeam(ent,"s");
 
 		//Congratulations, you can type! Oh, and you've been logged out. Later.
@@ -273,9 +271,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 			ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
 		}
 
-		//Respawn client
-		ent->flags &= ~FL_GODMODE;
-		ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
+		//Change their team to spec.
 		SetTeam( ent, "s" );
 
 		//Congratulations, you can type! Oh, and you've been logged out. Later.
