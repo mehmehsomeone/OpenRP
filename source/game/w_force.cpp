@@ -528,7 +528,7 @@ void WP_InitForcePowers( gentity_t *ent )
 				//[/BotTweaks]
 				{//[Account System]
 					//!g_teamAutoJoin.integer && 
-					if(ent->client->pers.ojpClientPlugIn == qfalse && ent->client->pers.connected == CON_CONNECTED)
+					if(ent->client->sess.ojpClientPlugIn == qfalse && ent->client->pers.connected == CON_CONNECTED)
 					{
 						ent->client->sess.sessionTeam = TEAM_SPECTATOR;
 						ent->client->sess.spectatorState = SPECTATOR_FREE;

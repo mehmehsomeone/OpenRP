@@ -1626,7 +1626,9 @@ qboolean ForcePower_Valid(int i)
 	//Added Saber Throw to hud selection menu.
 	if (i == FP_LEVITATION ||
 		i == FP_SABER_OFFENSE ||
-		i == FP_SABER_DEFENSE)
+		i == FP_SABER_DEFENSE ||
+		i == FP_DRAIN ||
+		i == FP_ABSORB )
 	//	i == FP_SABER_DEFENSE ||
 	//	i == FP_SABERTHROW)
 	//[/SaberSys]

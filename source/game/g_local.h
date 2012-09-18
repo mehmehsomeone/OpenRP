@@ -903,6 +903,14 @@ typedef struct {
 	float commFrequency;
 	int commMode;
 
+	//[ClientPlugInDetect]
+	//this flag shows weither or not this client is running the right version of OJP on the client side.  
+	//This is used to determine if the visual weapon events can be sent or not.
+	qboolean ojpClientPlugIn;
+	//[/ClientPlugInDetect]
+
+	char *ojpClientVersion;
+
 } clientSession_t;
 
 // playerstate mGameFlags
@@ -937,14 +945,6 @@ typedef struct {
 	int	amtelemark3;
 	int	amtelemarkyaw;
 	qboolean	amtelemarkset;
-
-	//[ClientPlugInDetect]
-	//this flag shows weither or not this client is running the right version of OJP on the client side.  
-	//This is used to determine if the visual weapon events can be sent or not.
-	qboolean ojpClientPlugIn;
-	//[/ClientPlugInDetect]
-
-	char ojpClientVersion;
 
 	int			motdShowTime;		// MJN - Show MOTD to player.
 	qboolean	protect;			// MJN - Person is protected.

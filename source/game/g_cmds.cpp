@@ -1460,7 +1460,7 @@ void Cmd_ForceChanged_f( gentity_t *ent )
 			Info_SetValueForKey( userinfo, "forcepowers", arg );
 			trap_SetUserinfo( ent->s.number, userinfo );	
 
-			if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && ent->client->pers.ojpClientPlugIn == qtrue)
+			if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && ent->client->sess.ojpClientPlugIn == qtrue)
 			{ //if it's a spec, just make the changes now
 				//No longer print it, as the UI calls this a lot.
 				WP_InitForcePowers( ent );

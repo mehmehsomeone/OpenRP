@@ -1342,7 +1342,7 @@ void TeamplayInfoMessage( gentity_t *ent ) {
 
 			//[BugFix34]
 			//check to make sure that duplicate data isn't being transmitted to the clients.
-			if(ent->client->pers.ojpClientPlugIn //don't use this method if the player doesn't have the client plugin
+			if(ent->client->sess.ojpClientPlugIn //don't use this method if the player doesn't have the client plugin
 				&& oldOverLayData[i].location == player->client->pers.teamState.location
 				&& oldOverLayData[i].health == h
 				&& oldOverLayData[i].armor == a 

@@ -81,7 +81,7 @@ void G_WriteClientSessionData( gclient_t *client ) {
 	}
 
 	//[ExpSys]
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %f %i %i %i %i %i %i %s",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %f %i %i %i %i %i %i %s %i %s",
 	//s = va("%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s",
 	//[/ExpSys]
 		client->sess.sessionTeam,
@@ -110,7 +110,9 @@ void G_WriteClientSessionData( gclient_t *client ) {
 		client->sess.characterID,
 		client->sess.warnings,
 		client->sess.modelScale,
-		IP
+		IP,
+		client->sess.ojpClientPlugIn,
+		client->sess.ojpClientVersion
 		//[/OpenRP - account and character, other systems & IP]
 		);
 
@@ -139,7 +141,7 @@ void G_ReadSessionData( gclient_t *client ) {
 	var = va( "session%i", client - level.clients );
 	trap_Cvar_VariableStringBuffer( var, s, sizeof(s) );
 	//[ExpSys]
-	sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %f %i %i %i %i %i %i %s",
+	sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %f %i %i %i %i %i %i %s %i %s",
 	//sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s",
 	//[ExpSys]
 		&sessionTeam,                 // bk010221 - format
@@ -168,7 +170,9 @@ void G_ReadSessionData( gclient_t *client ) {
 		&client->sess.characterID,
 		&client->sess.warnings,
 		&client->sess.modelScale,
-		&client->sess.IP
+		&client->sess.IP,
+		&client->sess.ojpClientPlugIn,
+		&client->sess.ojpClientVersion
 		//[/OpenRP - account and character, other systems & IP]
 		);
 
@@ -355,7 +359,7 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot, qbool
 		var = va( "session%i", client - level.clients );
 		trap_Cvar_VariableStringBuffer( var, s, sizeof(s) );
 		//[ExpSys]
-		sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %f %i %i %i %i %i %i %s",
+		sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %f %i %i %i %i %i %i %s %i %s",
 		//sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s",
 		//[ExpSys]
 			&tempInt,                 // bk010221 - format
@@ -381,7 +385,9 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot, qbool
 			&client->sess.characterID,
 			&client->sess.warnings,
 			&client->sess.modelScale,
-			&client->sess.IP
+			&client->sess.IP,
+			&client->sess.ojpClientPlugIn,
+			&client->sess.ojpClientVersion
 			//[/OpenRP - account and character, other systems & IP]
 			);
 	}

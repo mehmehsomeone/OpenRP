@@ -1761,22 +1761,14 @@ void Cmd_amStatus_F(gentity_t *ent)
 	}
 
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Status:\n\"" ) );
-	for(i = 0; i < level.maxclients; i++)
-	{ 
-		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
-		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP ) );
-		}
-	}
-	/*
    for(i = 0; i < level.maxclients; i++)
    { 
 		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			if ( g_entities[i].client->pers.ojpClientPlugIn )
+			if ( g_entities[i].client->sess.ojpClientPlugIn == qtrue )
 			{
 				hasClientSTR = "Yes";
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s - Version: %s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str(), g_entities[i].client->pers.ojpClientVersion  ) );
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s - Version: %s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str(), g_entities[i].client->sess.ojpClientVersion  ) );
 		
 			}
 			else
@@ -1786,7 +1778,6 @@ void Cmd_amStatus_F(gentity_t *ent)
 			}
 		}
    }
-   */
    return;
 }
 

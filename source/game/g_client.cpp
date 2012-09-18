@@ -2372,12 +2372,12 @@ void ClientUserinfoChanged( int clientNum ) {
 
 	if ( !*s  ) 
 	{
-		client->pers.ojpClientPlugIn = qfalse;
+		client->sess.ojpClientPlugIn = qfalse;
 	}
 	else if(!strcmp(OPENRP_CLIENTVERSION, s))
 	{
-		client->pers.ojpClientVersion = *s;
-		client->pers.ojpClientPlugIn = qtrue;
+		client->sess.ojpClientVersion = s;
+		client->sess.ojpClientPlugIn = qtrue;
 	}
 	//[/ClientPlugInDetect]
 
@@ -2889,7 +2889,7 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 
 	//[ExpandedMOTD]
 	//prepare and send MOTD message to new client.
-	if(client->pers.ojpClientPlugIn)
+	if(client->sess.ojpClientPlugIn)
 	{//send this client the MOTD for clients using the right version of OpenRP.
 		TextWrapCenterPrint(ojp_clientMOTD.string, motd);
 		if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
@@ -5267,7 +5267,7 @@ qboolean OJP_AllPlayersHaveClientPlugin(void)
 	int i;
 	for(i = 0; i < level.maxclients; i++)
 	{
-		if(g_entities[i].inuse && !g_entities[i].client->pers.ojpClientPlugIn)
+		if(g_entities[i].inuse && !g_entities[i].client->sess.ojpClientPlugIn)
 		{//a live player that doesn't have the plugin
 			return qfalse;
 		}
