@@ -2730,7 +2730,7 @@ void ClientThink_real( gentity_t *ent ) {
 	//1.3 (DarthDie) -- update as soon as we have had skill changed, so we can do AddText
 	if(!ent->NPC && !(ent->r.svFlags & SVF_BOT) && client->skillUpdated /*&& client->skillDebounce < level.time*/)
 	{
-		trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", (int) ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
+		trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 		//client->skillDebounce = level.time + 5000;
 		client->skillUpdated = qfalse;
 	}

@@ -1021,15 +1021,15 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_thirdPersonSpecialCam, "cg_thirdPersonSpecialCam", "0", 0 },
 
 	{ &cg_thirdPerson, "cg_thirdPerson", "0", CVAR_ARCHIVE },
-	{ &cg_thirdPersonRange, "cg_thirdPersonRange", "80", CVAR_CHEAT },
-	{ &cg_thirdPersonAngle, "cg_thirdPersonAngle", "0", CVAR_CHEAT },
-	{ &cg_thirdPersonPitchOffset, "cg_thirdPersonPitchOffset", "0", CVAR_CHEAT },
-	{ &cg_thirdPersonVertOffset, "cg_thirdPersonVertOffset", "16", CVAR_CHEAT },
+	{ &cg_thirdPersonRange, "cg_thirdPersonRange", "80", CVAR_ARCHIVE },
+	{ &cg_thirdPersonAngle, "cg_thirdPersonAngle", "0", CVAR_ARCHIVE },
+	{ &cg_thirdPersonPitchOffset, "cg_thirdPersonPitchOffset", "0", CVAR_ARCHIVE },
+	{ &cg_thirdPersonVertOffset, "cg_thirdPersonVertOffset", "16", CVAR_ARCHIVE },
 	{ &cg_thirdPersonCameraDamp, "cg_thirdPersonCameraDamp", "0.3", 0 },
-	{ &cg_thirdPersonTargetDamp, "cg_thirdPersonTargetDamp", "0.5", CVAR_CHEAT },
+	{ &cg_thirdPersonTargetDamp, "cg_thirdPersonTargetDamp", "0.5", CVAR_ARCHIVE },
 	
-	{ &cg_thirdPersonHorzOffset, "cg_thirdPersonHorzOffset", "0", CVAR_CHEAT },
-	{ &cg_thirdPersonAlpha,	"cg_thirdPersonAlpha",	"1.0", CVAR_CHEAT },
+	{ &cg_thirdPersonHorzOffset, "cg_thirdPersonHorzOffset", "0", CVAR_ARCHIVE },
+	{ &cg_thirdPersonAlpha,	"cg_thirdPersonAlpha",	"1.0", CVAR_ARCHIVE },
 
 	//[TrueView]
 	//True View Control cvars
@@ -1273,8 +1273,8 @@ void CG_UpdateCvars( void ) {
 
 	if(!cg.predictedPlayerState.zoomMode)
 	{
-		if(cg_fov.integer > 95)
-			trap_Cvar_Set( "cg_fov", "95" );
+		if(cg_fov.integer > 120)
+			trap_Cvar_Set( "cg_fov", "120" );
 		else if(cg_fov.integer < 65)
 			trap_Cvar_Set( "cg_fov", "65" );
 	}

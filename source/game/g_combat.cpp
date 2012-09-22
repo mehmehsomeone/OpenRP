@@ -6671,7 +6671,7 @@ void AddFatigueKillBonus( gentity_t *attacker, gentity_t *victim )
 
 
 //[ExpSys]
-void AddSkill(gentity_t *self, float amount)
+void AddSkill(gentity_t *self, int amount)
 {//add skill points to self
 	//[OpenRP - Skillpoint System]
 	
@@ -6683,12 +6683,12 @@ void AddSkill(gentity_t *self, float amount)
 	
 	if( (self->client->sess.skillPoints + amount) < 1)
 	{
-		G_Printf("Error: Failed to give %f skill points to %s because they would have < 1 skill point if they were given.", amount, self->client->pers.netname );
+		G_Printf("Error: Failed to give %i skill points to %s because they would have < 1 skill point if they were given.", amount, self->client->pers.netname );
 		return;
 	}
 
 	self->client->sess.skillPoints += amount;
-	trap_SendServerCommand(self->s.number, va("nfr %i %i %i", (int) self->client->sess.skillPoints, 0, self->client->sess.sessionTeam)); //mark that we've updated our skill points so we can update the player's client.
+	trap_SendServerCommand(self->s.number, va("nfr %i %i %i", self->client->sess.skillPoints, 0, self->client->sess.sessionTeam)); //mark that we've updated our skill points so we can update the player's client.
 
 	
 	/*

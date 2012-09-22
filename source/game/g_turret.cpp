@@ -552,7 +552,7 @@ void turret_base_think( gentity_t *self )
 			if ( enemyDist < (self->radius * self->radius) )
 			{
 				// was in valid radius
-				if ( trap_InPVS( self->r.currentOrigin, self->enemy->r.currentOrigin ) )
+				//if ( trap_InPVS( self->r.currentOrigin, self->enemy->r.currentOrigin ) )
 				{
 					// Every now and again, check to see if we can even trace to the enemy
 					trace_t tr;

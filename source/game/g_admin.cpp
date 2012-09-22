@@ -76,7 +76,7 @@ qboolean G_CheckAdmin(gentity_t *ent, int command)
 
 	CheckAdmin( ent );
 
-	if ( ent->client->sess.isAdmin == qfalse )
+	if ( !ent->client->sess.isAdmin )
 	{
 		return qfalse;
 	}
@@ -177,7 +177,7 @@ void Cmd_amBan_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_BAN))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -219,7 +219,7 @@ void Cmd_amBan_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
@@ -246,7 +246,7 @@ void Cmd_amKick_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_KICK))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -282,7 +282,7 @@ void Cmd_amKick_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
@@ -304,7 +304,7 @@ void Cmd_amWarn_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_WARN))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -340,7 +340,7 @@ void Cmd_amWarn_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
@@ -368,7 +368,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -379,7 +379,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -389,9 +389,9 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		//cm NOTE: This is where you teleport to a the telemark.
 		if (ent->client->pers.amtelemark1 == 0 && ent->client->pers.amtelemark2 == 0 && 
 				ent->client->pers.amtelemark3 == 0 && ent->client->pers.amtelemarkyaw == 0 &&
-				ent->client->pers.amtelemarkset == qfalse)
+				!ent->client->pers.amtelemarkset )
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"^1Error: You do not have a telemark set.\nUse /amtelemark to establish a telemark.\n\"") );
+			trap_SendServerCommand( ent-g_entities, va("print \"^1You do not have a telemark set.\nUse /amtelemark to establish a telemark.\n\"") );
 			return;
 		} 
 		else 
@@ -639,7 +639,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_ANNOUNCE))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -698,7 +698,7 @@ void Cmd_amSilence_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SILENCE))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -734,11 +734,11 @@ void Cmd_amSilence_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
-	if( g_entities[clientid].client->sess.isSilenced == qfalse )
+	if( !g_entities[clientid].client->sess.isSilenced )
 	{
 		g_entities[clientid].client->sess.isSilenced = qtrue;
 	}
@@ -761,7 +761,7 @@ void Cmd_amUnSilence_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SILENCE))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -795,7 +795,7 @@ void Cmd_amUnSilence_F(gentity_t *ent)
 		return; 
 	}
 
-	if( g_entities[clientid].client->sess.isSilenced == qfalse )
+	if( !g_entities[clientid].client->sess.isSilenced )
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^2This player is not silenced.\n\""));
 		return;
@@ -803,7 +803,7 @@ void Cmd_amUnSilence_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
@@ -827,7 +827,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -863,7 +863,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
@@ -873,13 +873,13 @@ void Cmd_amSleep_F(gentity_t *ent)
 		G_SetTauntAnim(&g_entities[clientid], g_entities[clientid].client->emote_num);
 	}
 
-	if( g_entities[clientid].client->sess.isSleeping == qfalse )
+	if( !g_entities[clientid].client->sess.isSleeping )
 	{
 		g_entities[clientid].client->sess.isSleeping = qtrue;
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Player %s ^1is already sleeping. You can unsleep them with /amunsleep %s\n\"", g_entities[clientid].client->pers.netname, g_entities[clientid].client->pers.netname ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Player %s ^1is already sleeping. You can unsleep them with /amunsleep %s\n\"", g_entities[clientid].client->pers.netname, g_entities[clientid].client->pers.netname ) );
 		return;
 	}
 
@@ -919,7 +919,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -953,7 +953,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 		return; 
 	}
 
-	if( g_entities[clientid].client->sess.isSleeping == qfalse )
+	if( !g_entities[clientid].client->sess.isSleeping )
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^2This player is not sleeping.\n\""));
 		return;
@@ -967,7 +967,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
@@ -1009,7 +1009,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_PROTECT))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1060,7 +1060,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
@@ -1095,7 +1095,7 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_ADMINWHOIS))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1103,7 +1103,7 @@ void Cmd_amListAdmins_F(gentity_t *ent)
 
 	for(i = 0; i < level.maxclients; i++)
 	{
-		if( g_entities[i].client->sess.isAdmin == qtrue && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		if( g_entities[i].client->sess.isAdmin && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
 			trap_SendServerCommand(ent-g_entities, va("print \"^2Name: %s ^2Admin level: ^7%i\n\"", g_entities[i].client->pers.netname, g_entities[i].client->sess.adminLevel ) );
 		}
@@ -1121,13 +1121,13 @@ void Cmd_amEmpower_F(gentity_t *ent)
 	//char cmdTarget[MAX_STRING_CHARS];
 	//int clientid = -1;
 	
-	if( ent->client->sess.isAdmin == qfalse )
+	if( !ent->client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
-	trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Merc is currently disabled, and may be removed after some discussion.\n\""));
+	trap_SendServerCommand(ent-g_entities, va("print \"^1Merc is currently disabled, and may be removed after some discussion.\n\""));
 	return;
 
 	/*
@@ -1179,7 +1179,7 @@ void Cmd_amEmpower_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
@@ -1219,13 +1219,13 @@ void Cmd_amMerc_F(gentity_t *ent)
 	//char cmdTarget[MAX_STRING_CHARS];
 	//int clientid = -1;
 
-	if( ent->client->sess.isAdmin == qfalse )
+	if( !ent->client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
-	trap_SendServerCommand(ent-g_entities, va("print \"^1Error: Merc is currently disabled, and may be removed after some discussion.\n\""));
+	trap_SendServerCommand(ent-g_entities, va("print \"^1Merc is currently disabled, and may be removed after some discussion.\n\""));
 	return;
 	/*
 	//Mercing yourself
@@ -1308,7 +1308,7 @@ void Cmd_amMerc_F(gentity_t *ent)
 
 	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You can't use this command on them. They are a higher admin level than you.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
 	}
 
@@ -1383,7 +1383,7 @@ void Cmd_amEffect_F(gentity_t *ent)
 	
 	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
 	{
-		trap_SendServerCommand(ent-g_entities, va( "print \"^1Error: You are not allowed to use this command.\n\"" ));
+		trap_SendServerCommand(ent-g_entities, va( "print \"^1You are not allowed to use this command.\n\"" ));
 		return;
 	}
 
@@ -1423,7 +1423,7 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 	
 	if(!G_CheckAdmin(ent, ADMIN_FORCETEAM))
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You are not allowed to use this command.\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1You are not allowed to use this command.\n\"" ) );
 		return;
 	}
 
@@ -1493,7 +1493,7 @@ void Cmd_amMap_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_MAP))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1551,7 +1551,7 @@ void Cmd_amWeather_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}	
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Changing the weather...\n\"" ) );
@@ -1618,20 +1618,20 @@ void Cmd_amWeather_F(gentity_t *ent)
 
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Invalid type of weather.\nTypes of weather: snow, rain, sandstorm, blizzard, fog, spacedust, acidrain\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1Invalid type of weather.\nTypes of weather: snow, rain, sandstorm, blizzard, fog, spacedust, acidrain\n\"" );
 		return;
 	}
 
 	if (!Q_stricmp(weather, "clear"))
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Weather cleared.\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Weather cleared.\n\"" ) );
 		G_LogPrintf("Weather cleared by %s.\n", ent->client->pers.netname);
 		return;
 	}
 
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Weather changed to %s. To change it back, use /amweather clear\n\"", weather ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Weather changed to %s. To change it back, use /amweather clear\n\"", weather ) );
 		G_LogPrintf("Weather command executed by %s. The weather is now %s.\n", ent->client->pers.netname, weather);
 		return;
 	}
@@ -1657,7 +1657,7 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 
 	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}						
 	if (!Q_stricmp(weather, "snow"))
@@ -1726,20 +1726,20 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: Invalid type of weather.\nTypes of weather: snow, rain, sandstorm, blizzard, fog, spacedust, acidrain\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1Invalid type of weather.\nTypes of weather: snow, rain, sandstorm, blizzard, fog, spacedust, acidrain\n\"" );
 		return;
 	}
 
 	if (!Q_stricmp(weather, "clear"))
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Weather cleared.\n\"" ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Weather cleared.\n\"" ) );
 		G_LogPrintf("Weather cleared by %s.\n", ent->client->pers.netname);
 		return;
 	}
 
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Weather %s added. To clear the weather, use /amweatherplus clear\n\"", weather ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Weather %s added. To clear the weather, use /amweatherplus clear\n\"", weather ) );
 		G_LogPrintf("Weatherplus command executed by %s. The weather added was %s.\n", ent->client->pers.netname, weather);
 		return;
 	}
@@ -1756,7 +1756,7 @@ void Cmd_amStatus_F(gentity_t *ent)
 
   	if(!G_CheckAdmin(ent, ADMIN_STATUS))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1765,7 +1765,7 @@ void Cmd_amStatus_F(gentity_t *ent)
    { 
 		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			if ( g_entities[i].client->sess.ojpClientPlugIn == qtrue )
+			if ( g_entities[i].client->sess.ojpClientPlugIn )
 			{
 				hasClientSTR = "Yes";
 				trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s - Version: %s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str(), g_entities[i].client->sess.ojpClientVersion  ) );
@@ -1815,7 +1815,7 @@ void Cmd_amRename_F(gentity_t *ent)
 
    if(!G_CheckAdmin(ent, ADMIN_RENAME))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1901,7 +1901,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 
 	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -1920,8 +1920,8 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	if( DBname.empty() )
 	{
 		//The username does not exist, thus, the error does.
-		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() ) );
-		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Username %s does not exist.\n\"", userNameSTR.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Username %s does not exist.\n\"", userNameSTR.c_str() ) );
 		return;
 	}
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
@@ -1983,8 +1983,8 @@ void Cmd_SVGrantAdmin_F()
 	if( DBname.empty() )
 	{
 		//The username does not exist, thus, the error does.
-		G_Printf( "print \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() );
-		G_Printf( "cp \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() );
+		G_Printf( "print \"^1Username %s does not exist.\n\"", userNameSTR.c_str() );
+		G_Printf( "cp \"^1Username %s does not exist.\n\"", userNameSTR.c_str() );
 		return;
 	}
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
@@ -2027,7 +2027,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 
 	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2124,7 +2124,7 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 	
 	if(!G_CheckAdmin(ent, ADMIN_SKILLPOINTS))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2150,8 +2150,8 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 
 	if( !charID )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
-		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 		return;
 	}
 
@@ -2169,7 +2169,7 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 
 	if ( newSkillPointsTotal < 1 )
 	{
-		trap_SendServerCommand( ent-g_entities, va ( "print \"^1Error: You can't give %i skill points to %s, or else they would have < 1 skill point.\n\"", changedSkillPoints ) );
+		trap_SendServerCommand( ent-g_entities, va ( "print \"^1You can't give %i skill points to %s, or else they would have < 1 skill point.\n\"", changedSkillPoints ) );
 		return;
 	}
 
@@ -2188,16 +2188,16 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 		default:
 			if ( loggedIn )
 			{
-				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/xp.mp3" ) );
 				AddSkill( &g_entities[clientID], changedSkillPoints );
+				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/xp.mp3" ) );
 				trap_SendServerCommand( clientID, va( "print \"^2You received %i skill points!\n\"", changedSkillPoints ) );
 			}
 			LevelCheck(charID);
 			break;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: %i skill points have been given to character %s.\n\"", changedSkillPoints, charNameSTR.c_str() ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: %i skill points have been given to character %s.\n\"", changedSkillPoints, charNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2%i skill points have been given to character %s.\n\"", changedSkillPoints, charNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2%i skill points have been given to character %s.\n\"", changedSkillPoints, charNameSTR.c_str() ) );
 
 	return;
 }
@@ -2213,7 +2213,7 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_CREDITS))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2251,8 +2251,8 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 
 	if( !charID )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
-		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 		return;
 	}
 
@@ -2274,8 +2274,8 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 		trap_SendServerCommand( clientID, va( "cp \"^2You received some credits from an admin!\n\"", charNameSTR.c_str() ) );
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: %i credits have been generated and given to character %s.\n\"", changedCredits, charNameSTR.c_str() ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: %i credits have been generated and given to character %s.\n\"", changedCredits, charNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2%i credits have been generated and given to character %s.\n\"", changedCredits, charNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2%i credits have been generated and given to character %s.\n\"", changedCredits, charNameSTR.c_str() ) );
 
 	return;
 }
@@ -2291,13 +2291,13 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
 	if( !ent->client->sess.characterChosen )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1You must be logged in and have a character selected in order to use this command.\n\"" );
 		return;
 	}
 
@@ -2317,7 +2317,7 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 
 	if ( currentFactionSTR != "none" )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: You must leave the %s faction first before creating one.\n\"", currentFactionSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1You must leave the %s faction first before creating one.\n\"", currentFactionSTR.c_str() ) );
 		return;
 	}
 
@@ -2334,15 +2334,15 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	string DBname = q.get_string( va( "SELECT Name FROM Factions WHERE Name='%s'", factionNameSTR.c_str() ) );
 	if( !DBname.empty() )
 	{
-		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Faction %s already exists.\n\"", DBname.c_str() ) );
-		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Error: Faction %s already exists.\n\"", DBname.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Faction %s already exists.\n\"", DBname.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Faction %s already exists.\n\"", DBname.c_str() ) );
 		return;
 	}
 
 	q.execute(va("INSERT INTO Factions(Name,Leader,Bank) VALUES('%s','%s','0')", factionNameSTR.c_str(), characterNameSTR.c_str() ) );
 	q.execute( va( "UPDATE Characters set Faction='%s' WHERE CharID='%i'", factionNameSTR.c_str(), ent->client->sess.characterID ) );
 	q.execute( va( "UPDATE Characters set Rank='Leader' WHERE CharID='%i'", ent->client->sess.characterID ) );
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Faction %s has been created. To add people to it, use /setFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Faction %s has been created. To add people to it, use /setFaction %s <character>\n\"", factionNameSTR.c_str(), factionNameSTR.c_str() ) );
 
 	return;
 }
@@ -2358,7 +2358,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 {
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2392,7 +2392,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 
 	if( !charID )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 		return;
 	}
 
@@ -2412,7 +2412,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 			trap_SendServerCommand( clientID, "print \"^2You have been removed from your faction.\n\"" );
 			trap_SendServerCommand( clientID, "cp \"^2You have been removed from your faction.\n\"" );
 		}
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character %s has been removed from their faction.\n\"", charNameSTR.c_str() ) );
 	}
 	else
 	{
@@ -2425,7 +2425,7 @@ void Cmd_SetFaction_F( gentity_t * ent )
 			trap_SendServerCommand( clientID, va( "cp \"^2You have been put in the %s faction!\n^2You can use /factionInfo to view info about it.\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
 		}
 
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s has been put in the faction %s.\nUse /setFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character %s has been put in the faction %s.\nUse /setFactionRank to change their rank. Is it currently set to: Member\n\"", charNameSTR.c_str(), factionNameSTR.c_str() ) );
 	}
 	return;
 }
@@ -2472,7 +2472,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 		if( !charID )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 			return;
 		}
 
@@ -2492,7 +2492,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 			trap_SendServerCommand( clientID, va( "cp \"^2You are now the %s rank in the %s faction!\n\"", factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
 		}
 
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s is now the %s rank in the %s faction.\n\"", charNameSTR.c_str(), factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character %s is now the %s rank in the %s faction.\n\"", charNameSTR.c_str(), factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
 
 		return;
 	}
@@ -2501,7 +2501,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 	{
 		if ( !ent->client->sess.characterChosen )
 		{
-			trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must have a character selected to use this command.\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^1You must have a character selected to use this command.\n\"" );
 			return;
 		}
 
@@ -2509,7 +2509,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 		if ( userFaction == "none" )
 		{
-			trap_SendServerCommand( ent-g_entities, "print \"^1Error: You are not in a faction.\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^1You are not in a faction.\n\"" );
 			return;
 		}
 
@@ -2518,7 +2518,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 		if ( userFactionLeader != userCharName )
 		{
-			trap_SendServerCommand( ent-g_entities, "print \"^1Error: You are not the leader of your faction.\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^1You are not the leader of your faction.\n\"" );
 			return;
 		}
 
@@ -2529,7 +2529,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 		if( !charID )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", charNameSTR.c_str() ) );
 			return;
 		}
 
@@ -2549,7 +2549,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 			trap_SendServerCommand( clientID, va( "cp \"^2You are now the %s rank in the %s faction!\n\"", factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
 		}
 
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Character %s is now the %s rank in the %s faction.\n\"", charNameSTR.c_str(), factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character %s is now the %s rank in the %s faction.\n\"", charNameSTR.c_str(), factionRankSTR.c_str(), charCurrentFactionSTR.c_str() ) );
 
 		return;
 	}
@@ -2566,7 +2566,7 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_CREDITS) && !G_CheckAdmin(ent, ADMIN_FACTION))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2601,8 +2601,8 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 	string factionNameSTR = q.get_string( va( "SELECT Name FROM Factions WHERE FactionID='%i'", factionID ) );
 	if( factionNameSTR.empty() )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Faction with FactionID %i does not exist.\n\"", factionID ) );
-		trap_SendServerCommand( ent-g_entities, va( "cp \"^^1Error: Faction with FactionID %i does not exist.\n\"", factionID ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Faction with FactionID %i does not exist.\n\"", factionID ) );
+		trap_SendServerCommand( ent-g_entities, va( "cp \"^^1Faction with FactionID %i does not exist.\n\"", factionID ) );
 		return;
 	}
 
@@ -2612,43 +2612,9 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 
 	q.execute( va( "UPDATE Factions set Bank='%i' WHERE FactionID='%i'", newCreditsTotal, factionID ) );
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: %i credits have been generated and given to faction %s.\n\"", changedCredits, factionNameSTR.c_str() ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: %i credits have been generated and given to faction %s.\n\"", changedCredits, factionNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2%i credits have been generated and given to faction %s.\n\"", changedCredits, factionNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2%i credits have been generated and given to faction %s.\n\"", changedCredits, factionNameSTR.c_str() ) );
 
-	return;
-}
-
-void Cmd_CheatAccess_F( gentity_t *ent )
-{
-	//This dictates that you are not logged in.
-	if( !isLoggedIn(ent) )
-	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You are not logged in.\n\"");
-		return;
-	}
-
-	//If the user of the command doesn't have the proper bitvalue
-	if(!G_CheckAdmin(ent, ADMIN_CHEATS) )
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
-	}
-	//If they don't have cheat access
-	if( ent->client->pers.hasCheatAccess == qfalse )
-	{
-		//They do now.
-		ent->client->pers.hasCheatAccess = qtrue;
-		trap_SendServerCommand( ent-g_entities, va ("print \"^2Cheat Access ^2Granted.\n\"" ));
-		G_LogPrintf( "%s executed the cheatAccess command and they now have cheat access.\n", ent->client->pers.netname );
-	}
-
-	//If they do have cheat access
-	else
-	{
-		//They don't anymore.
-		ent->client->pers.hasCheatAccess = qfalse;
-		trap_SendServerCommand( ent-g_entities, va ("print \"^2Cheat Access ^1Removed.\n\"" ));
-		G_LogPrintf( "%s executed the cheatAccess command and they now no longer have cheat access (they had it but toggled it off).\n", ent->client->pers.netname );
-	}
 	return;
 }
 
@@ -2658,7 +2624,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 
 	if(!G_CheckAdmin(ent, ADMIN_SHAKE))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2689,7 +2655,7 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 			trap_SendServerCommand( i, "print \"^2An admin shook your screen.\n\"" );
 		}
 	}
-	trap_SendServerCommand( ent-g_entities, "print \"^2Success: You shook everybody's screen.\n\"" );
+	trap_SendServerCommand( ent-g_entities, "print \"^2You shook everybody's screen.\n\"" );
 	return;
 }
 
@@ -2701,7 +2667,7 @@ void Cmd_Audio_F( gentity_t * ent )
 
 	if(!G_CheckAdmin(ent, ADMIN_AUDIO))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2715,13 +2681,13 @@ void Cmd_Audio_F( gentity_t * ent )
 
 	if(!Q_stricmpn(audioPath, "music/", 6))
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the music file: ^7%s\n\"", audioPath ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2You started playing the music file: ^7%s\n\"", audioPath ) );
 		trap_SetConfigstring( CS_MUSIC, audioPath );
 	}
 
 	else if(!Q_stricmpn(audioPath, "sound/", 6))
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the sound file: ^7%s\n\"", audioPath ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2You started playing the sound file: ^7%s\n\"", audioPath ) );
 		for( i = 0; i < level.maxclients; i++ )
 		{
 			if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
@@ -2733,7 +2699,7 @@ void Cmd_Audio_F( gentity_t * ent )
 
 	else if(!Q_stricmpn(audioPath, "alert", 5))
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You started playing the alert sound file.\n\"", audioPath ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2You started playing the alert sound file.\n\"", audioPath ) );
 		for( i = 0; i < level.maxclients; i++ )
 		{
 			if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
@@ -2745,7 +2711,7 @@ void Cmd_Audio_F( gentity_t * ent )
 
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Music or sound must be in the music or sound folders.\n\"", audioPath ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Music or sound must be in the music or sound folders.\n\"", audioPath ) );
 	}
 	return;
 }
@@ -2754,7 +2720,7 @@ void Cmd_amTelemark_F( gentity_t * ent )
 {
 	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2806,9 +2772,9 @@ void Cmd_amOrigin_F( gentity_t * ent )
 
 void Cmd_AdminChat_F( gentity_t *ent )
 {
-	if ( ent->client->sess.isAdmin == qfalse )
+	if ( !ent->client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
@@ -2835,7 +2801,7 @@ void Cmd_AdminChat_F( gentity_t *ent )
 
 	for ( i = 0; i < level.maxclients; i++ )
 	{
-		if ( g_entities[i].client->sess.isAdmin == qtrue && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		if ( g_entities[i].client->sess.isAdmin && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
 			trap_SendServerCommand( i, va ("chat \"^6<Admin Chat> ^7%s^6: ^6%s\"", ent->client->pers.netname, real_msg ) );
 		}
@@ -2848,14 +2814,14 @@ void Cmd_Invisible_F( gentity_t * ent )
 {
 	if(!G_CheckAdmin(ent, ADMIN_INVISIBLE))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
 	int forceVisible = 0;
 
 	// If we have a targetname, we're are invisible until we are spawned in by being used.
-	if ( ent->client->sess.isInvisible == qfalse )
+	if ( !ent->client->sess.isInvisible )
 	{
 		ent->s.eFlags = EF_NODRAW;
 		ent->r.contents = 0; 
@@ -2891,20 +2857,20 @@ void Cmd_AllChat_F( gentity_t * ent )
 {
 	if(!G_CheckAdmin(ent, ADMIN_ALLCHAT))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
-	if ( ent->client->sess.allChat == qfalse )
+	if ( !ent->client->sess.allChat )
 	{
 		ent->client->sess.allChat =	qtrue;
-		trap_SendServerCommand( ent-g_entities, "print \"^2Success: All chat turned ON.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2All chat turned ON.\n\"" );
 		return;
 	}
 	else
 	{
 		ent->client->sess.allChat =	qfalse;
-		trap_SendServerCommand( ent-g_entities, "print \"^2Success: All chat turned OFF.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2All chat turned OFF.\n\"" );
 		return;
 	}
 	return;
@@ -2914,7 +2880,7 @@ void Cmd_amWarningList_F(gentity_t *ent)
 {
 	if(!G_CheckAdmin(ent, ADMIN_WARN))
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 

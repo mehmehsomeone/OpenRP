@@ -29,7 +29,7 @@ void CancelReload(gentity_t *ent);
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
-#define	GAMEVERSION	"OpenRP" OPENRP_CLIENTVERSION
+#define	GAMEVERSION	"OpenRP " OPENRP_CLIENTVERSION
 
 #define BODY_QUEUE_SIZE		8
 
@@ -879,7 +879,7 @@ typedef struct {
 	int			TKCount;
 	//[Asteroids]
 	//[ExpSys]
-	float		skillPoints;		//number of skill points this player currently has.
+	int			skillPoints;		//number of skill points this player currently has.
 	//[/ExpSys]
 	qboolean    loggedinAccount;    // Logged into a player Account
 	int			accountID;     // Account ID
@@ -902,6 +902,7 @@ typedef struct {
 	int chatMode;
 	float commFrequency;
 	int commMode;
+	qboolean commOn;
 
 	//[ClientPlugInDetect]
 	//this flag shows weither or not this client is running the right version of OJP on the client side.  
@@ -1809,7 +1810,7 @@ void ExplodeDeath( gentity_t *self );
 void G_CheckForDismemberment(gentity_t *ent, gentity_t *enemy, vec3_t point, int damage, int deathAnim, qboolean postDeath);
 extern int gGAvoidDismember;
 //[ExpSys]
-void AddSkill(gentity_t *self, float amount);
+void AddSkill(gentity_t *self, int amount);
 void G_DodgeDrain(gentity_t *victim, gentity_t *attacker, int amount);
 //[/ExpSys]
 

@@ -32,7 +32,7 @@ void CheckAdmin(gentity_t * ent)
 	//This dictates that you are not logged in.
 	if( !isLoggedIn(ent) )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You are not logged in.\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^1You are not logged in.\n\"");
 		return;
 	}
 
@@ -46,6 +46,10 @@ void CheckAdmin(gentity_t * ent)
 	{//The user is an admin.
 		ent->client->sess.isAdmin = qtrue;
 		ent->client->sess.adminLevel = adminLevel;
+		if ( G_CheckAdmin( ent, ADMIN_CHEATS ) && !ent->client->pers.hasCheatAccess )
+		{
+			ent->client->pers.hasCheatAccess = qtrue;
+		}
 	}
 	
 	//If they're not an admin, make them an admin level 11, which isn't really an admin level, and it's below all other levels.
@@ -123,8 +127,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	if( DBname.empty() )
 	{
 		//The username does not exist, thus, the error does.
-		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() ) );
-		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Error: Username %s does not exist.\n\"", userNameSTR.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Username %s does not exist.\n\"", userNameSTR.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "cp \"^1Username %s does not exist.\n\"", userNameSTR.c_str() ) );
 		return;
 	}
 
@@ -133,7 +137,7 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	if( DBpassword.empty() || strcmp(DBpassword.c_str(), userPassword) != 0 )
 	{
 		//Just as there is an incorrect password (and an error), does it tell you.
-		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Incorrect password. \n\"", DBpassword.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Incorrect password. \n\"", DBpassword.c_str() ) );
 		return;
 	}
 
@@ -147,8 +151,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	CheckAdmin(ent);
 
 	//You are now logged in as <username>. Congratulations, you can type.
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: You are now logged in as %s!\n^2Please create a character (/createCharacter) or ^2select one (/character)\n\"", userName ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2You are now logged in as %s!\n^2Please create a character (/createCharacter) or ^2select one (/character)\n\"", userName ) );
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
 
@@ -182,13 +186,13 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 	if( !isLoggedIn( ent ) )
 	{
 		//You can't logout if you haven't logged in, noob.
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You are not logged in, so you can't logout.\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^1Error: You are not logged in, so you can't logout.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1You are not logged in, so you can't logout.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^1You are not logged in, so you can't logout.\n\"" );
 		return;
 	}
 
 	//If they have a character selected, logout and save their character
-	if(ent->client->sess.characterChosen == qtrue)
+	if( ent->client->sess.characterChosen )
 	{
 		//Save their character
 		SaveCharacter( ent );
@@ -203,7 +207,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 
 		//Reset skill points
 		ent->client->sess.skillPoints = 1;
-		trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", (int) ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
+		trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;
@@ -237,8 +241,8 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		SetTeam(ent,"s");
 
 		//Congratulations, you can type! Oh, and you've been logged out. Later.
-		trap_SendServerCommand( ent-g_entities, "print \"^2Success: You've been logged out.\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^2Success: You've been logged out.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2You've been logged out.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^2You've been logged out.\n\"" );
 
 		//Update the ui
 		trap_SendServerCommand( ent-g_entities, va( "lui_logout" ) );
@@ -275,8 +279,8 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		SetTeam( ent, "s" );
 
 		//Congratulations, you can type! Oh, and you've been logged out. Later.
-		trap_SendServerCommand( ent-g_entities, "print \"^2Success: You've been logged out.\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^2Success: You've been logged out.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2You've been logged out.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^2You've been logged out.\n\"" );
 
 		//Update the UI
 		trap_SendServerCommand( ent-g_entities, va( "lui_logout" ) );
@@ -325,7 +329,7 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'",userNameSTR.c_str() ) );
 	if(!DBname.empty())
 	{
-		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Username %s is already in use.\n\"",DBname.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Username %s is already in use.\n\"",DBname.c_str() ) );
 		return;
 	}
 
@@ -339,8 +343,8 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Success: Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
 
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
@@ -364,8 +368,8 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 {
 	if( !ent->client->sess.loggedinAccount )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in, in order to view your account info.\n\"" );
-		trap_SendServerCommand( ent-g_entities, "cp \"^1Error: You must be logged in, in order to view your account info.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1You must be logged in, in order to view your account info.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "cp \"^1You must be logged in, in order to view your account info.\n\"" );
 		return;
 	}
 		
@@ -413,7 +417,7 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 	{
 		if ( !G_CheckAdmin( ent, ADMIN_SEARCH ) )
 		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1Error: You are not allowed to use this command.\n\""));
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 			return;
 		}
 		char accountName[MAX_STRING_CHARS];
@@ -425,7 +429,7 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 		
 		if ( !accountID )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: Account with username %s does not exist.\n\"", accountNameSTR.c_str() ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Account with username %s does not exist.\n\"", accountNameSTR.c_str() ) );
 			return;
 		}
 
@@ -463,7 +467,7 @@ void Cmd_EditAccount_F(gentity_t * ent)
 {
 	if( !ent->client->sess.loggedinAccount )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in to edit your account.\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^1You must be logged in to edit your account.\n\"");
 		return;
 	}
 	Database db(DATABASE_PATH);
@@ -494,17 +498,17 @@ void Cmd_EditAccount_F(gentity_t * ent)
 			string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'",changeSTR.c_str() ) );
 			if(!DBname.empty())
 			{
-				trap_SendServerCommand ( ent-g_entities, va( "print \"^1Error: Username %s is already in use.\n\"", DBname.c_str() ) );
+				trap_SendServerCommand ( ent-g_entities, va( "print \"^1Username %s is already in use.\n\"", DBname.c_str() ) );
 				return;
 			}
 			q.execute( va( "UPDATE Users set Username='%s' WHERE AccountID= '%i'", changeSTR, ent->client->sess.accountID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Username has been changed to ^7%s ^2If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Username has been changed to ^7%s ^2If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
 			return;
 		}
 		else if(!Q_stricmp(parameter, "password"))
 		{
 			q.execute( va( "UPDATE Users set Password='%s' WHERE AccountID='%i'", changeSTR, ent->client->sess.accountID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Success: Password has been changed to ^7%s\n\"",changeSTR.c_str() ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Password has been changed to ^7%s\n\"",changeSTR.c_str() ) );
 			return;
 		}
 		else
@@ -529,7 +533,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 
 	if ( ( !ent->client->sess.loggedinAccount ) || ( !ent->client->sess.characterChosen ) )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Error: You must be logged in and have a character selected in order to use this command.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1You must be logged in and have a character selected in order to use this command.\n\"" );
 		return;
 	}
 
@@ -572,7 +576,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 	
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Error: % is not logged in.\n\"", g_entities[clientid].client->pers.netname ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1% is not logged in.\n\"", g_entities[clientid].client->pers.netname ) );
 	}
 
 	return;

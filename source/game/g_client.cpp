@@ -2768,9 +2768,6 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 
 	client->ps.hasDetPackPlanted = qfalse;
 
-	ent->client->sess.skillPoints = 1;
-	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", (int) ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
-
 	//first-time force power initialization
 	WP_InitForcePowers( ent );
 
@@ -3571,8 +3568,14 @@ void ClientSpawn(gentity_t *ent) {
 		//let's just make sure the styles we chose are cool
 		if ( !G_ValidSaberStyle(ent, ent->client->ps.fd.saberAnimLevel) )
 		{//had an illegal style, revert to default
-			ent->client->ps.fd.saberAnimLevel = SS_MEDIUM;
-			ent->client->saberCycleQueue = ent->client->ps.fd.saberAnimLevel;
+			for (int i = 1; i < SS_NUM_SABER_STYLES; i++)
+			{
+				if(G_ValidSaberStyle(ent, i))
+				{
+					ent->client->ps.fd.saberAnimLevel = i;
+					ent->client->saberCycleQueue = ent->client->ps.fd.saberAnimLevel;
+				}
+			}
 		}
 	}
 	//[/StanceSelection]

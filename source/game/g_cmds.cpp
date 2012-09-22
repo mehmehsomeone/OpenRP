@@ -116,7 +116,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 			//[ExpSys]
 			cl->ps.persistant[PERS_CAPTURES],
 			//cl->ps.persistant[PERS_CAPTURES]);
-			(int) cl->sess.skillPoints);
+			cl->sess.skillPoints);
 			//[/ExpSys]
 		j = strlen(entry);
 		if (stringlength + j > 1022)
@@ -153,7 +153,7 @@ CheatsOk
 ==================
 */
 qboolean	CheatsOk( gentity_t *ent ) {
-	if ( ent->client->pers.hasCheatAccess == qtrue )
+	if ( ent->client->pers.hasCheatAccess )
 	{
 		return qtrue;
 	}
@@ -1460,7 +1460,7 @@ void Cmd_ForceChanged_f( gentity_t *ent )
 			Info_SetValueForKey( userinfo, "forcepowers", arg );
 			trap_SetUserinfo( ent->s.number, userinfo );	
 
-			if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && ent->client->sess.ojpClientPlugIn == qtrue)
+			if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && ent->client->sess.ojpClientPlugIn )
 			{ //if it's a spec, just make the changes now
 				//No longer print it, as the UI calls this a lot.
 				WP_InitForcePowers( ent );
@@ -1541,8 +1541,14 @@ qboolean G_SetSaber(gentity_t *ent, int saberNum, char *saberName, qboolean sieg
 	//[StanceSelection]
 	if ( !G_ValidSaberStyle(ent, ent->client->ps.fd.saberAnimLevel) )
 	{//had an illegal style, revert to default
-		ent->client->ps.fd.saberAnimLevel = SS_MEDIUM;
-		ent->client->saberCycleQueue = ent->client->ps.fd.saberAnimLevel;
+		for (int i = 1; i < SS_NUM_SABER_STYLES; i++)
+		{
+			if(G_ValidSaberStyle(ent, i))
+			{
+				ent->client->ps.fd.saberAnimLevel = i;
+				ent->client->saberCycleQueue = ent->client->ps.fd.saberAnimLevel;
+			}
+		}
 	}
 	//[/StanceSelection]
 
@@ -1913,7 +1919,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 
 	//[AdminSys][ChatSpamProtection]
 	
-	if(!(ent->r.svFlags & SVF_BOT) /*&& ent->client->sess.chatCommandExecuted == qfalse*/ )
+	if(!(ent->r.svFlags & SVF_BOT) /*&& !ent->client->sess.chatCommandExecuted */ )
 	{//don't chat protect the bots.
 		if(ent->client && ent->client->chatDebounceTime > level.time //debounce isn't up
 			//and we're not bouncing our message back to our self while using SAY_TELL 
@@ -2023,7 +2029,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	case SAY_REPORT:
 		if ( ent->client->sess.isAdmin )
 		{
-			trap_SendServerCommand( ent-g_entities, "print \"^1Error: You can't send reports as an admin.\n\"" );
+			trap_SendServerCommand( ent-g_entities, "print \"^1You can't send reports as an admin.\n\"" );
 			return;
 		}
 		G_LogPrintf( "report: %s: %s", ent->client->pers.netname, chatText );
@@ -2047,7 +2053,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	}
 
 	/*
-	if( !Q_stricmpn( text, "/ooc", 4 ) && ent->client->sess.chatCommandExecuted == qfalse )
+	if( !Q_stricmpn( text, "/ooc", 4 ) && !ent->client->sess.chatCommandExecuted )
 	{
 		ent->client->sess.chatCommandExecuted = qtrue;
 		Cmd_Say_f( ent, SAY_TEAM, qfalse, qtrue );
@@ -2055,7 +2061,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		
 	}
 
-	else if( !Q_stricmpn( text, "/yell", 5 ) && ent->client->sess.chatCommandExecuted == qfalse )
+	else if( !Q_stricmpn( text, "/yell", 5 ) && !ent->client->sess.chatCommandExecuted )
 	{
 		ent->client->sess.chatCommandExecuted = qtrue;
 		Cmd_Say_f( ent, SAY_YELL, qfalse, qtrue );
@@ -2063,7 +2069,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		
 	}
 
-	else if( !Q_stricmpn( text, "/whisper", 8 ) && ent->client->sess.chatCommandExecuted == qfalse )
+	else if( !Q_stricmpn( text, "/whisper", 8 ) && !ent->client->sess.chatCommandExecuted )
 	{
 		ent->client->sess.chatCommandExecuted = qtrue;
 		Cmd_Say_f( ent, SAY_WHISPER, qfalse, qtrue );
@@ -2071,7 +2077,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		
 	}
 
-	else if( !Q_stricmpn( text, "/me", 3 ) && ent->client->sess.chatCommandExecuted == qfalse )
+	else if( !Q_stricmpn( text, "/me", 3 ) && !ent->client->sess.chatCommandExecuted )
 	{
 		ent->client->sess.chatCommandExecuted = qtrue;
 		Cmd_Say_f( ent, SAY_ME, qfalse, qtrue );
@@ -2079,7 +2085,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		
 	}
 
-	else if( !Q_stricmpn( text, "/it", 3 ) && ent->client->sess.chatCommandExecuted == qfalse )
+	else if( !Q_stricmpn( text, "/it", 3 ) && !ent->client->sess.chatCommandExecuted )
 	{
 		ent->client->sess.chatCommandExecuted = qtrue;
 		Cmd_Say_f( ent, SAY_IT, qfalse, qtrue );
@@ -2087,7 +2093,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		
 	}
 
-	else if( !Q_stricmpn( text, "/admin", 6 ) && ent->client->sess.chatCommandExecuted == qfalse )
+	else if( !Q_stricmpn( text, "/admin", 6 ) && !ent->client->sess.chatCommandExecuted )
 	{
 		ent->client->sess.chatCommandExecuted = qtrue;
 		Cmd_Say_f( ent, SAY_ADMIN, qfalse, qtrue );
@@ -2095,7 +2101,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		
 	}
 
-	else if( !Q_stricmpn( text, "/looc", 5 ) && ent->client->sess.chatCommandExecuted == qfalse )
+	else if( !Q_stricmpn( text, "/looc", 5 ) && !ent->client->sess.chatCommandExecuted )
 	{
 		ent->client->sess.chatCommandExecuted = qtrue;
 		Cmd_Say_f( ent, SAY_LOOC, qfalse, qtrue );
@@ -2111,11 +2117,30 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		{
 			other = &g_entities[j];
 
-			if ( other->client->sess.allChat == qtrue || (other->client->sess.sessionTeam == TEAM_SPECTATOR || other->client->tempSpectate >= level.time ) )
+			if ( other->client->sess.allChat || (other->client->sess.sessionTeam == TEAM_SPECTATOR || other->client->tempSpectate >= level.time ) )
 			{
 				if ( mode == SAY_ME )
 				{
-					trap_SendServerCommand( j, va( "print \" ^3(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, chatText ) );
+					trap_SendServerCommand( j, va( "print \"@^3(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, chatText ) );
+				}
+
+				if ( mode == SAY_IT )
+				{
+					trap_SendServerCommand( j, va( "print \"@^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
+				}
+				G_SayTo( ent, other, mode, color, name, '@'+text, locMsg );
+			}
+			else
+			{
+				continue;
+			}
+
+			if ( Distance( ent->client->ps.origin, other->client->ps.origin ) < distance )
+			{
+				//ent->client->sess.chatCommandExecuted = qfalse;
+				if ( mode == SAY_ME )
+				{
+					trap_SendServerCommand( j, va( "print \" ^3(ACTION) - ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
 				}
 
 				if ( mode == SAY_IT )
@@ -2124,27 +2149,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 				}
 				G_SayTo( ent, other, mode, color, name, text, locMsg );
 			}
-			else
-			{				
-				if ( Distance( ent->client->ps.origin, other->client->ps.origin ) < distance )
-				{
-					//ent->client->sess.chatCommandExecuted = qfalse;
-					if ( mode == SAY_ME )
-					{
-						trap_SendServerCommand( j, va( "print \" ^3(ACTION) - ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
-					}
-
-					if ( mode == SAY_IT )
-					{
-						trap_SendServerCommand( j, va( "print \" ^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
-					}
-					G_SayTo( ent, other, mode, color, name, text, locMsg );
-				}
-				else
-				{
-					continue;
-				}
-			}
+				
 		}
 	}
 	
@@ -4672,10 +4677,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_AdminChat_F (ent);
 		return;
 	}
-	if (Q_stricmp(cmd, "amcheataccess") == 0) {
-		Cmd_CheatAccess_F (ent);
-		return;
-	}
 	if (Q_stricmp(cmd, "amshakescreen") == 0) {
 		Cmd_ShakeScreen_F (ent);
 		return;
@@ -4841,7 +4842,7 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp (cmd, "say") == 0) {
 
-		if ( ent->client->sess.isSilenced == qtrue )
+		if ( ent->client->sess.isSilenced )
 		{
 			trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
 			trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
@@ -4860,7 +4861,7 @@ void ClientCommand( int clientNum ) {
 		else
 		*/
 		//{
-		if ( ent->client->sess.isSilenced == qtrue )
+		if ( ent->client->sess.isSilenced )
 		{
 			trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
 			trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
@@ -4874,7 +4875,7 @@ void ClientCommand( int clientNum ) {
 	}
 	if ( (Q_stricmp (cmd, "tell") == 0) || (Q_stricmp (cmd, "pm") == 0) ) {
 
-		if ( ent->client->sess.isSilenced == qtrue )
+		if ( ent->client->sess.isSilenced )
 		{
 			trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
 			trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
