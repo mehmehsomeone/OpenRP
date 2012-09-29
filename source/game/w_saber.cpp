@@ -187,36 +187,36 @@ int BasicDodgeCosts[MOD_MAX] =
 	-1,		//MOD_UNKNOWN,
 	-1,		//MOD_STUN_BATON,
 	-1,		//MOD_MELEE,
-	-1,		//MOD_SABER,
-	-1,		//MOD_BRYAR_PISTOL,
+	40,		//MOD_SABER,
+	20,		//MOD_BRYAR_PISTOL,
 	-1,		//MOD_BRYAR_PISTOL_ALT,
-	-1,		//MOD_BLASTER,
-	-1,		//MOD_TURBLAST,
-	-1,		//MOD_DISRUPTOR,
-	-1,		//MOD_DISRUPTOR_SPLASH,
-	-1,		//MOD_DISRUPTOR_SNIPER,
-	-1,		//MOD_BOWCASTER,
-	-1,		//MOD_REPEATER,
-	-1,		//MOD_REPEATER_ALT,
-	-1,		//MOD_REPEATER_ALT_SPLASH,
-	-1,		//MOD_DEMP2,
-	-1,		//MOD_DEMP2_ALT,
-	-1,		//MOD_FLECHETTE,
-	-1,		//MOD_FLECHETTE_ALT_SPLASH,
-	-1,		//MOD_ROCKET,
-	-1,		//MOD_ROCKET_SPLASH,
-	-1,		//MOD_ROCKET_HOMING,
-	-1,		//MOD_ROCKET_HOMING_SPLASH,
+	20,		//MOD_BLASTER,
+	20,		//MOD_TURBLAST,
+	20,		//MOD_DISRUPTOR,
+	20,		//MOD_DISRUPTOR_SPLASH,
+	20,		//MOD_DISRUPTOR_SNIPER,
+	20,		//MOD_BOWCASTER,
+	20,		//MOD_REPEATER,
+	20,		//MOD_REPEATER_ALT,
+	20,		//MOD_REPEATER_ALT_SPLASH,
+	20,		//MOD_DEMP2,
+	20,		//MOD_DEMP2_ALT,
+	20,		//MOD_FLECHETTE,
+	20,		//MOD_FLECHETTE_ALT_SPLASH,
+	20,		//MOD_ROCKET,
+	20,		//MOD_ROCKET_SPLASH,
+	20,		//MOD_ROCKET_HOMING,
+	20,		//MOD_ROCKET_HOMING_SPLASH,
 	-1,		//MOD_THERMAL, // 20
 	-1,		//MOD_THERMAL_SPLASH, // 20
-	-1,		//MOD_TRIP_MINE_SPLASH,
-	-1,		//MOD_TIMED_MINE_SPLASH,
-	-1,		//MOD_DET_PACK_SPLASH,
+	20,		//MOD_TRIP_MINE_SPLASH,
+	20,		//MOD_TIMED_MINE_SPLASH,
+	20,		//MOD_DET_PACK_SPLASH,
 	-1,		//MOD_VEHICLE,
-	-1,		//MOD_CONC,
-	-1,		//MOD_CONC_ALT,
+	20,		//MOD_CONC,
+	20,		//MOD_CONC_ALT,
 	-1,		//MOD_FORCE_DARK,
-	-1,		//MOD_SENTRY,
+	20,		//MOD_SENTRY,
 	-1,		//MOD_WATER,
 	-1,		//MOD_SLIME,
 	-1,		//MOD_LAVA,
@@ -232,7 +232,7 @@ int BasicDodgeCosts[MOD_MAX] =
 	-1,		//MOD_VEH_EXPLOSION,
 	//[/Asteroids]
 	//[SeekerItemNPC]
-	-1,		//MOD_SEEKER,	//death by player's seeker droid.
+	20,		//MOD_SEEKER,	//death by player's seeker droid.
 	//[/SeekerItemNPC]
 	//MOD_MAX
 };
@@ -6372,7 +6372,7 @@ qboolean G_DoDodge( gentity_t *self, gentity_t *shooter, vec3_t dmgOrigin, int h
 		}
 		return qfalse;
 	}
-
+	/*
 	if ( dodgeAnim != -1 )
 	{
 		if( self->client->ps.forceHandExtend != HANDEXTEND_DODGE //not already in a dodge
@@ -6563,6 +6563,7 @@ qboolean G_DoDodge( gentity_t *self, gentity_t *shooter, vec3_t dmgOrigin, int h
 		}
 			
 	}
+	*/
 	return qfalse;
 }
 //[/DodgeSys]
@@ -10302,8 +10303,10 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 					G_Throw( hitEnt, kickDir, kickPush*10 );
 
 					//[SaberSys]
-					//OpenRP - basejka kicks again
-					if (!(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
+					//made the knockdown behavior of kicks be based on the player's mishap level or low DP and not hold alt attack.
+					if ((hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY
+						|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
+						&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
 					{//knockdown
 						if(hitEnt->client->ps.fd.saberAnimLevel == SS_STAFF)
 						{
@@ -10321,6 +10324,20 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 							}
 						}
 					}
+					else if (ent->client->ps.fd.saberAnimLevel == SS_DESANN
+						&& (hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT
+						|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
+						&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
+					{//knockdown
+						if ( kickPush >= 75.0f && !Q_irand( 0, 2 ) )
+							{
+								G_Knockdown( hitEnt, ent, kickDir, 300, qtrue );
+							}
+						else
+							{
+								G_Knockdown( hitEnt, ent, kickDir, kickPush, qtrue );
+							}
+						}
 					else
 					{//stumble
 						AnimateStun(hitEnt, ent, trace.endpos);   

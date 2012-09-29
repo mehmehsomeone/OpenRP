@@ -1818,10 +1818,10 @@ qboolean BG_InSaberLock( int anim );
 //[SaberSys]
 qboolean BG_InWalk( int anim );
 //[/SaberSys]
-
 //[FatigueSys]
-void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, 
-							float *animSpeed, int broken, int fatigued );
+//Made it so saber moves go slower if your fatigued
+void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, 
+							int broken, int fatigued );
 //void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken );
 //[/FatigueSys]
 

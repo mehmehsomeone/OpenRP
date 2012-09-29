@@ -2376,7 +2376,7 @@ void ClientUserinfoChanged( int clientNum ) {
 	}
 	else if(!strcmp(OPENRP_CLIENTVERSION, s))
 	{
-		client->sess.ojpClientVersion = s;
+		Q_strncpyz( client->sess.ojpClientVersion, s, sizeof(s) );
 		client->sess.ojpClientPlugIn = qtrue;
 	}
 	//[/ClientPlugInDetect]
@@ -4844,6 +4844,7 @@ void ClientDisconnect( int clientNum ) {
 	gentity_t	*ent;
 //	gentity_t	*tent;
 	int			i;
+	extern qboolean isLoggedIn(gentity_t* ent);
 
 	// cleanup if we are kicking a bot that
 	// hasn't spawned yet
@@ -4896,7 +4897,7 @@ void ClientDisconnect( int clientNum ) {
 	//[/BugFix38]
 
 	//[OpenRP]
-	if ( ent->client->sess.loggedinAccount )
+	if ( isLoggedIn( ent ) )
 	{
 		Cmd_AccountLogout_F(ent);
 	}

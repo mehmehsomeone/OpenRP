@@ -7,13 +7,8 @@
 
 using namespace std;
 
-//extern void SaveCharacter(gentity_t * ent);
-extern void SanitizeString2( char *in, char *out );
-extern int M_G_ClientNumberFromName ( const char* name );
-
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
-
-extern void SaveCharacter(gentity_t * ent);
+extern int M_G_ClientNumberFromName ( const char* name );
 
 /*
 =================
@@ -28,6 +23,9 @@ void CheckAdmin(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
+	int accountID;
+	int isAdmin;
+	int adminLevel;
 	
 	//This dictates that you are not logged in.
 	if( !isLoggedIn(ent) )
@@ -36,12 +34,12 @@ void CheckAdmin(gentity_t * ent)
 		return;
 	}
 
-	int accountID = ent->client->sess.accountID;
+	accountID = ent->client->sess.accountID;
 
 	//Checks if the user is admin
-	int isAdmin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", accountID ) );
+	isAdmin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", accountID ) );
 	//Check their adminlevel
-	int adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", accountID ) );
+	adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", accountID ) );
 	if( isAdmin )
 	{//The user is an admin.
 		ent->client->sess.isAdmin = qtrue;
@@ -58,7 +56,6 @@ void CheckAdmin(gentity_t * ent)
 	{
 		ent->client->sess.adminLevel = 11;
 	}
-
 	return;
 }
 
@@ -71,11 +68,16 @@ isLoggedIn
 =====
 */
 //Returns whether we're logged in or not
-qboolean isLoggedIn(gentity_t* ent){
+qboolean isLoggedIn(gentity_t* ent)
+{
 	if(ent->client->sess.loggedinAccount)
+	{
 		return qtrue;
+	}
 	else
+	{
 		return qfalse;
+	}
 }
 
 /*
@@ -92,6 +94,12 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
+	char userName[MAX_STRING_CHARS], userPassword[MAX_STRING_CHARS];
+	string userNameSTR;
+	string DBname;
+	string DBpassword;
+	int accountID;
+
 	//The database is not connected. Please do so.
 	if (!db.Connected())
 	{
@@ -99,10 +107,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 		return;
 	}
 
-	char userName[MAX_STRING_CHARS], userPassword[MAX_STRING_CHARS];
-
 	//Make sure they entered both a username and a password
-	if( trap_Argc() != 3 )
+	if ( trap_Argc() != 3 )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /login <username> <password>\n\"");
 		trap_SendServerCommand( ent-g_entities, "cp \"^2Command Usage: /login <username> <password>\n\"");
@@ -110,21 +116,22 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	}
 
 	//Check if we're already logged in 
-	if( isLoggedIn( ent ) )
+	if ( isLoggedIn( ent ) )
 	{
 		trap_SendServerCommand ( ent-g_entities, "print \"^2Already logged in!\n\"" );
 		trap_SendServerCommand ( ent-g_entities, "cp \"^2Already logged in!\n\"" );
 		return;
 	}
+
 	//Get the username and password
 	trap_Argv( 1, userName, MAX_STRING_CHARS );
-	string userNameSTR = userName;
+	userNameSTR = userName;
 	trap_Argv( 2, userPassword, MAX_STRING_CHARS );
 
 	//Check if this username exists
 	transform(userNameSTR.begin(), userNameSTR.end(),userNameSTR.begin(),::tolower);
-	string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
-	if( DBname.empty() )
+	DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
+	if ( DBname.empty() )
 	{
 		//The username does not exist, thus, the error does.
 		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Username %s does not exist.\n\"", userNameSTR.c_str() ) );
@@ -133,8 +140,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	}
 
 	//Check password
-	string DBpassword = q.get_string( va( "SELECT Password FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
-	if( DBpassword.empty() || strcmp(DBpassword.c_str(), userPassword) != 0 )
+	DBpassword = q.get_string( va( "SELECT Password FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
+	if ( DBpassword.empty() || strcmp(DBpassword.c_str(), userPassword) != 0 )
 	{
 		//Just as there is an incorrect password (and an error), does it tell you.
 		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Incorrect password. \n\"", DBpassword.c_str() ) );
@@ -142,7 +149,7 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	}
 
 	//Log the user in
-	int accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'",userNameSTR.c_str() ) );
+	accountID = q.get_num( va( "SELECT AccountID FROM Users WHERE Username='%s'",userNameSTR.c_str() ) );
 	q.execute( va( "UPDATE Users set ClientID='%i' WHERE AccountID='%i'", ent-g_entities, accountID ) );
 	q.execute( va( "UPDATE Users set LoggedIn='1' WHERE AccountID='%i'", accountID ) );
 	ent->client->sess.accountID = accountID;
@@ -155,8 +162,6 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	trap_SendServerCommand( ent-g_entities, va( "cp \"^2You are now logged in as %s!\n^2Please create a character (/createCharacter) or ^2select one (/character)\n\"", userName ) );
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
-
-	//trap_SendServerCommand( ent-g_entities, "character" );
 
 	return;
 }
@@ -176,6 +181,9 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
+	int i;
+	extern void SaveCharacter(gentity_t * ent);
+
 	//The database is not connected. Please do so.
 	if (!db.Connected())
 	{
@@ -219,22 +227,22 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 
 		
 		//Remove all feats
-		for(int k = 0; k < NUM_FEATS-1; k++)
+		for ( i = 0; i < NUM_FEATS-1; i++)
 		{
-			ent->client->featLevel[k] = FORCE_LEVEL_0;
+			ent->client->featLevel[i] = FORCE_LEVEL_0;
 		}
 
 		//Remove all character skills
-		for(int i = 0; i < NUM_SKILLS-1; i++)
+		for ( i = 0; i < NUM_SKILLS-1; i++)
 		{
 			ent->client->skillLevel[i] = FORCE_LEVEL_0;
 		}
 
 		//Remove all force powers
 		ent->client->ps.fd.forcePowersKnown = 0;
-		for(int j = 0; j < NUM_FORCE_POWERS-1; j++)
+		for ( i = 0; i < NUM_FORCE_POWERS-1; i++)
 		{
-			ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
+			ent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_0;
 		}
 
 		//Change their team to spec.
@@ -257,22 +265,22 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		ent->client->sess.accountID = NULL;
 
 		//Remove all feats
-		for(int k = 0; k < NUM_FEATS-1; k++)
+		for ( i = 0; i < NUM_FEATS-1; i++)
 		{
-			ent->client->featLevel[k] = FORCE_LEVEL_0;
+			ent->client->featLevel[i] = FORCE_LEVEL_0;
 		}
 
 		//Remove all character skills
-		for(int i = 0; i < NUM_SKILLS-1; i++)
+		for ( i = 0; i < NUM_SKILLS-1; i++)
 		{
 			ent->client->skillLevel[i] = FORCE_LEVEL_0;
 		}
 
 		//Remove all force powers
 		ent->client->ps.fd.forcePowersKnown = 0;
-		for(int j = 0; j < NUM_FORCE_POWERS-1; j++)
+		for ( i = 0; i < NUM_FORCE_POWERS-1; i++)
 		{
-			ent->client->ps.fd.forcePowerLevel[j] = FORCE_LEVEL_0;
+			ent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_0;
 		}
 
 		//Change their team to spec.
@@ -302,14 +310,18 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
+	char userName[MAX_STRING_CHARS], userNameCleaned[MAX_STRING_CHARS], userPassword[MAX_STRING_CHARS];
+	string userNameSTR;
+	string DBname;
+	int accountID;
+	extern void SanitizeString2( char *in, char *out );
+
 	//The database is not connected. Please do so.
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
 		return;
 	}
-
-	char userName[MAX_STRING_CHARS], userNameCleaned[MAX_STRING_CHARS], userPassword[MAX_STRING_CHARS];
 
 	//Make sure they entered both a username and a password
 	if( trap_Argc() != 3 )
@@ -321,15 +333,15 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	//Get the user and pass
 	trap_Argv( 1, userName, MAX_STRING_CHARS );
 	SanitizeString2( userName, userNameCleaned );
-	string userNameSTR = userNameCleaned;
+	userNameSTR = userNameCleaned;
 	trap_Argv( 2, userPassword, MAX_STRING_CHARS );
 
 	//Check if that user exists already
 	transform( userNameSTR.begin(), userNameSTR.end(), userNameSTR.begin(), ::tolower );
-	string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'",userNameSTR.c_str() ) );
+	DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'", userNameSTR.c_str() ) );
 	if(!DBname.empty())
 	{
-		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Username %s is already in use.\n\"",DBname.c_str() ) );
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^1Username %s is already in use.\n\"", DBname.c_str() ) );
 		return;
 	}
 
@@ -337,7 +349,7 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	q.execute(va("INSERT INTO Users(Username,Password,ClientID,Admin,AdminLevel,LoggedIn) VALUES('%s','%s','33','0','11','0')", userNameSTR.c_str(), userPassword ) );
 
 	//Log them in automatically
-	int accountID = q.get_num(va("SELECT AccountID FROM Users WHERE Username='%s'",userNameSTR.c_str()));
+	accountID = q.get_num(va("SELECT AccountID FROM Users WHERE Username='%s'",userNameSTR.c_str()));
 	q.execute( va( "UPDATE Users set ClientID='%i' WHERE AccountID='%i'", ent-g_entities, accountID ) );
 	q.execute( va( "UPDATE Users set LoggedIn='1' WHERE AccountID='%i'", accountID ) );
 	ent->client->sess.accountID = accountID;
@@ -366,7 +378,7 @@ Command: accountInfo
 */
 void Cmd_AccountInfo_F(gentity_t * ent)
 {
-	if( !ent->client->sess.loggedinAccount )
+	if( !isLoggedIn(ent) )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1You must be logged in, in order to view your account info.\n\"" );
 		trap_SendServerCommand( ent-g_entities, "cp \"^1You must be logged in, in order to view your account info.\n\"" );
@@ -465,57 +477,63 @@ void Cmd_AccountInfo_F(gentity_t * ent)
 
 void Cmd_EditAccount_F(gentity_t * ent)
 {
-	if( !ent->client->sess.loggedinAccount )
+	Database db(DATABASE_PATH);
+	Query q(db);
+	extern void SanitizeString2( char *in, char *out );
+	char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS], changeCleaned[MAX_STRING_CHARS];
+	string parameterSTR;
+	string changeSTR;
+	string DBname;
+
+	if( !isLoggedIn(ent) )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1You must be logged in to edit your account.\n\"");
 		return;
 	}
-	Database db(DATABASE_PATH);
-	Query q(db);
 	
-		if (!db.Connected())
-		{
-			G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
-			return;
-		}
+	if (!db.Connected())
+	{
+		G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
+		return;
+	}
 		
-		if(trap_Argc() != 3) //If the user doesn't specify both args.
-		{
-			trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /editaccount <username/password> <value> \n\"" ) ;
-			return;
-		}
-		char parameter[MAX_STRING_CHARS], change[MAX_STRING_CHARS], changeCleaned[MAX_STRING_CHARS];
-		trap_Argv( 1, parameter, MAX_STRING_CHARS );
-		string parameterSTR = parameter;
-		trap_Argv( 2, change, MAX_STRING_CHARS );
-		string changeSTR = change;
+	if (trap_Argc() != 3) //If the user doesn't specify both args.
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /editaccount <username/password> <value> \n\"" ) ;
+		return;
+	}
+	
+	trap_Argv( 1, parameter, MAX_STRING_CHARS );
+	parameterSTR = parameter;
+	trap_Argv( 2, change, MAX_STRING_CHARS );
+	changeSTR = change;
 
-		if (!Q_stricmp(parameter, "username"))
+	if (!Q_stricmp(parameter, "username"))
+	{
+		SanitizeString2( change, changeCleaned );
+		changeSTR = changeCleaned;
+		transform( changeSTR.begin(), changeSTR.end(), changeSTR.begin(), ::tolower );
+		DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'",changeSTR.c_str() ) );
+		if(!DBname.empty())
 		{
-			SanitizeString2( change, changeCleaned );
-			changeSTR = changeCleaned;
-			transform( changeSTR.begin(), changeSTR.end(), changeSTR.begin(), ::tolower );
-			string DBname = q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'",changeSTR.c_str() ) );
-			if(!DBname.empty())
-			{
-				trap_SendServerCommand ( ent-g_entities, va( "print \"^1Username %s is already in use.\n\"", DBname.c_str() ) );
-				return;
-			}
-			q.execute( va( "UPDATE Users set Username='%s' WHERE AccountID= '%i'", changeSTR, ent->client->sess.accountID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Username has been changed to ^7%s ^2If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
+			trap_SendServerCommand ( ent-g_entities, va( "print \"^1Username %s is already in use.\n\"", DBname.c_str() ) );
 			return;
 		}
-		else if(!Q_stricmp(parameter, "password"))
-		{
-			q.execute( va( "UPDATE Users set Password='%s' WHERE AccountID='%i'", changeSTR, ent->client->sess.accountID));
-			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Password has been changed to ^7%s\n\"",changeSTR.c_str() ) );
-			return;
-		}
-		else
-		{
-			trap_SendServerCommand ( ent-g_entities, "print \"^2Command Usage: /editaccount <username/password> <value>\n\"" );
-			return;
-		}
+		q.execute( va( "UPDATE Users set Username='%s' WHERE AccountID= '%i'", changeSTR, ent->client->sess.accountID));
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^2Username has been changed to ^7%s ^2If you had colors in the name, they were removed.\n\"",changeSTR.c_str() ) );
+		return;
+	}
+	else if (!Q_stricmp(parameter, "password"))
+	{
+		q.execute( va( "UPDATE Users set Password='%s' WHERE AccountID='%i'", changeSTR, ent->client->sess.accountID));
+		trap_SendServerCommand ( ent-g_entities, va( "print \"^2Password has been changed to ^7%s\n\"",changeSTR.c_str() ) );
+		return;
+	}
+	else
+	{
+		trap_SendServerCommand ( ent-g_entities, "print \"^2Command Usage: /editaccount <username/password> <value>\n\"" );
+		return;
+	}
 }
 
 void Cmd_AccountName_F( gentity_t * ent )
@@ -524,6 +542,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 	Query q(db);
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
+	string usernameSTR;
 
 	if ( !db.Connected() )
 	{
@@ -531,7 +550,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 		return;
 	}
 
-	if ( ( !ent->client->sess.loggedinAccount ) || ( !ent->client->sess.characterChosen ) )
+	if ( ( !isLoggedIn(ent) ) || ( !ent->client->sess.characterChosen ) )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1You must be logged in and have a character selected in order to use this command.\n\"" );
 		return;
@@ -567,9 +586,9 @@ void Cmd_AccountName_F( gentity_t * ent )
 		return; 
 	}
 
-	if ( g_entities[clientid].client->sess.loggedinAccount )
+	if ( isLoggedIn( &g_entities[clientid] ) )
 	{
-		string usernameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", g_entities[clientid].client->sess.accountID ) );
+		usernameSTR = q.get_string( va( "SELECT Username FROM Users WHERE AccountID='%i'", g_entities[clientid].client->sess.accountID ) );
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Account Name: ^7%s\n\"", usernameSTR.c_str() ) );
 		return;
 	}
@@ -578,6 +597,5 @@ void Cmd_AccountName_F( gentity_t * ent )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1% is not logged in.\n\"", g_entities[clientid].client->pers.netname ) );
 	}
-
 	return;
 }

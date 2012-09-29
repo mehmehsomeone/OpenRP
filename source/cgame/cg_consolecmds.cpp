@@ -461,7 +461,6 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand("factiondeposit");
 	trap_AddCommand("factiongencredits");
 	trap_AddCommand("listfactions");
-	trap_AddCommand("transferleader");
 	trap_AddCommand("bounty");
 	trap_AddCommand("amlistadmins");
 	trap_AddCommand("charactername");

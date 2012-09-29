@@ -241,6 +241,7 @@ void WP_InitForcePowers( gentity_t *ent )
 	char readBuf[256];
 	int lastFPKnown = -1;
 	qboolean didEvent = qfalse;
+	extern qboolean isLoggedIn(gentity_t* ent);
 
 	if ( !ent || !ent->client )
 	{
@@ -512,7 +513,7 @@ void WP_InitForcePowers( gentity_t *ent )
 		//with the new experience system, just go ahead and don't force warned clients into the
 		//force powers screen.
 		//if (!ent->client->sess.setForce)
-		if (warnClient || ent->client->sess.loggedinAccount == qfalse)
+		if (warnClient || !isLoggedIn( ent ) )
 		//if (warnClient || !ent->client->sess.setForce)
 		//[/ExpSys]
 		{ //the client's rank is too high for the server and has been autocapped, so tell them
@@ -535,7 +536,7 @@ void WP_InitForcePowers( gentity_t *ent )
 						ent->client->pers.teamState.state = TEAM_BEGIN;
 
 					}
-					if (ent->client->sess.loggedinAccount == qfalse)
+					if ( !isLoggedIn( ent ) )
 					{
 						//Make them a spectator so they can set their powerups up without being bothered.
 						ent->client->sess.sessionTeam = TEAM_SPECTATOR;
@@ -1155,7 +1156,7 @@ void WP_ForcePowerStart( gentity_t *self, forcePowers_t forcePower, int override
 		hearable = qtrue;
 		hearDist = 256;
 		break;
-		case FP_MINDTRICK:
+	case FP_MINDTRICK:
 		hearable = qtrue;
 		hearDist = 256;
 		if (self->client->ps.fd.forcePowerLevel[FP_MINDTRICK] == FORCE_LEVEL_1)
@@ -2665,7 +2666,7 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 	//see if popping the flag is nessicary or not.
 	if(self->client->ps.fd.forcePower <= (self->client->ps.fd.forcePowerMax * FATIGUEDTHRESHHOLD))
 	{//Pop the Fatigued flag
-	//	self->client->ps.userInt3 |= ( 1 << FLAG_FATIGUED );
+		self->client->ps.userInt3 |= ( 1 << FLAG_FATIGUED );
 	}
 	//[/FatigueSys]
 
@@ -3141,7 +3142,9 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 			(self->client->ps.weapon != WP_SABER || !BG_SaberInSpecial(self->client->ps.saberMove)) &&
 			!BG_SaberAttacking(&self->client->ps) && !BG_SaberInTransitionAny(self->client->ps.saberMove)
 			//Don't regen while running
-			&& WalkCheck(self)
+			//[OpenRP - Force regen while running]
+			//&& WalkCheck(self)
+			//[/OpenRP - Force regen while running]
 			&& self->client->ps.groundEntityNum != ENTITYNUM_NONE)  //can't regen while in the air.
 			//(self->client->ps.weapon != WP_SABER || !BG_SaberInSpecial(self->client->ps.saberMove)) )
 			//[/FatigueSys]

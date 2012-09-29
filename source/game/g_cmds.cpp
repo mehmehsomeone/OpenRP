@@ -4511,10 +4511,6 @@ void ClientCommand( int clientNum ) {
 		Cmd_ListFactions_F (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "transferleader") == 0) {
-		Cmd_TransferLeader_F(ent);
-		return;
-	}
 	if (Q_stricmp (cmd, "bounty") == 0) {
 		 Cmd_Bounty_F(ent);
 		return;
@@ -4577,6 +4573,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_ForceMessage_F (ent);
 		return;
 	}
+	if (Q_stricmp(cmd, "faction") == 0) {
+		Cmd_Faction_F (ent);
+		return;
+	}
 	if (Q_stricmp(cmd, "amkick") == 0) {
 		Cmd_amKick_F (ent);
 		return;
@@ -4611,14 +4611,6 @@ void ClientCommand( int clientNum ) {
 	}
 	if(Q_stricmp(cmd, "amprotect") == 0) {
 		Cmd_amProtect_F (ent);
-		return;
-	}
-	if(Q_stricmp(cmd, "amempower") == 0) {
-		Cmd_amEmpower_F (ent);
-		return;
-	}
-	if(Q_stricmp(cmd, "ammerc") == 0) {
-		Cmd_amMerc_F (ent);
 		return;
 	}
 	if(Q_stricmp(cmd, "amannounce") == 0) {

@@ -3403,7 +3403,7 @@ void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int 
 		&& anim != BOTH_LUNGE2_B__T_
 		)
 	{//You're pooped.  Move slower
-		*animSpeed *= .5f;
+	//	*animSpeed *= .5f;
 	}
 	//[/FatigueSys]
 

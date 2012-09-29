@@ -1152,7 +1152,7 @@ static cvarTable_t		gameCvarTable[] = {
 	//[DodgeSys]
 	//toggles the use of Body Dodges, which are matrix-like moves that make the players 
 	//evade damage in exchange for DP.
-	{ &ojp_allowBodyDodge, "ojp_allowBodyDodge", "0", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qtrue },
+	{ &ojp_allowBodyDodge, "ojp_allowBodyDodge", "1", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qtrue },
 	//[/DodgeSys]
 	//[FFARespawnTimer]
 	{ &ojp_ffaRespawnTimer, "ojp_ffaRespawnTimer","0",CVAR_ARCHIVE,0,qtrue},

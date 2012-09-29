@@ -2275,21 +2275,21 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 				{
 					// MJN - Stop running Forcepowers
 					while (i < NUM_FORCE_POWERS)
+					{
+						if ((ent->client->ps.fd.forcePowersActive & (1 << i)) && i != FP_LEVITATION)
 						{
-							if ((ent->client->ps.fd.forcePowersActive & (1 << i)) && i != FP_LEVITATION)
-							{
 							WP_ForcePowerStop(ent, i);
-							}
-							i++;
 						}
+						i++;
+					}
 					ent->client->ps.forceHandExtendTime = level.time + 9999999;
 					ent->client->saberKnockedTime = level.time + 9999999;
-						ent->client->ps.weaponTime = 99999999;
+					ent->client->ps.weaponTime = 99999999;
 					ent->client->emote_num = anim;
 				}
-					else{// basejk
-						ent->client->ps.forceHandExtendTime = level.time + BG_AnimLength(ent->localAnimIndex, (animNumber_t)anim);
-					}
+				else{// basejk
+					ent->client->ps.forceHandExtendTime = level.time + BG_AnimLength(ent->localAnimIndex, (animNumber_t)anim);
+				}
 			}
 			if ( taunt != TAUNT_MEDITATE 
 				&& taunt != TAUNT_BOW && ( taunt < 5 || taunt > MAX_EMOTES ) )

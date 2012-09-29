@@ -1373,54 +1373,54 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 		if (ent->client->ps.eFlags & EF_DUAL_WEAPONS)
 			CalcMuzzlePoint2 ( ent, forward, vright, up, muzzle2 );
 		//[/DualPistols]
-
-		//[OpenRP - disabled the inaccuracy screen shake]
 		
 		//[WeapAccuracy]
 		//bump accuracy based on MP level.
 		if(ent && ent->client)
 		{
-			vec3_t angs; //used for adding in mishap inaccuracy.
-			float slopFactor = MISHAP_MAXINACCURACY * ent->client->ps.saberAttackChainCount/MISHAPLEVEL_MAX;
+			//vec3_t angs; //used for adding in mishap inaccuracy.
+			//float slopFactor = MISHAP_MAXINACCURACY * ent->client->ps.saberAttackChainCount/MISHAPLEVEL_MAX;
 
+			//[OpenRP - disabled screen shake]
+			/*
 			vectoangles( forward, angs );
 			angs[PITCH] += flrand(-slopFactor, slopFactor);
 			angs[YAW] += flrand(-slopFactor, slopFactor);
 			AngleVectors( angs, forward, NULL, NULL );
+			*/
+			//[/OpenRP - disabled screen shake]
 
 			//increase mishap level
 			if(!Q_irand(0, SkillLevelforWeapon(ent, ent->s.weapon)-1) && ent->s.weapon != WP_EMPLACED_GUN )//Sorry but the mishap meter needs to go up more that before.
 			{//failed skill roll, add mishap.
-				//if(PM_InKnockDown(&ent->client->ps))
-				//	G_AddMercBalance(ent,MISHAPLEVEL_FULL);
-				//else if(ent->s.weapon == WP_DISRUPTOR && ent->client->ps.zoomMode == 0)
-				//	G_AddMercBalance(ent, Q_irand(2, 3));// 1 was not enough
-				//else if(ent->s.weapon == WP_FLECHETTE)
-				//	G_AddMercBalance(ent,1);
-				//else if(ent->s.weapon == WP_BRYAR_PISTOL)
-				//	G_AddMercBalance(ent,1);
+				if(PM_InKnockDown(&ent->client->ps))
+					G_AddMercBalance(ent,MISHAPLEVEL_FULL);
+				else if(ent->s.weapon == WP_DISRUPTOR && ent->client->ps.zoomMode == 0)
+					G_AddMercBalance(ent, Q_irand(2, 3));// 1 was not enough
+				else if(ent->s.weapon == WP_FLECHETTE)
+					G_AddMercBalance(ent,1);
+				else if(ent->s.weapon == WP_BRYAR_PISTOL)
+					G_AddMercBalance(ent,1);
 				if(ent->s.weapon == WP_REPEATER)
 				{
 					ent->client->cloneFired++;
 					if(ent->client->cloneFired == 2)
 					{
-						//if(ent->client->pers.cmd.forwardmove == 0 && ent->client->pers.cmd.rightmove ==0)
-							//G_AddMercBalance(ent,1);
-						//else
-						//	G_AddMercBalance(ent,2);
+						if(ent->client->pers.cmd.forwardmove == 0 && ent->client->pers.cmd.rightmove ==0)
+							G_AddMercBalance(ent,1);
+						else
+							G_AddMercBalance(ent,2);
 
 						ent->client->cloneFired=0;
 					}
 				}
-				//else if(ent->s.weapon == WP_TUSKEN_RIFLE)
-					//G_AddMercBalance(ent,MISHAPLEVEL_FULL);
-				//else
-					//G_AddMercBalance(ent, Q_irand(1, 2));// 1 was not enough
+				else if(ent->s.weapon == WP_TUSKEN_RIFLE)
+					G_AddMercBalance(ent,MISHAPLEVEL_FULL);
+				else
+					G_AddMercBalance(ent, Q_irand(1, 2));// 1 was not enough
 			}
 		}
 		//[/WeapAccuracy]
-		
-		//[/OpenRP - disabled the inaccuracy screen shake]
 
 		if(ent->client && ent->client->ps.ammo[weaponData[ent->s.weapon].ammoIndex] == 0)
 		{/*
