@@ -1746,13 +1746,13 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 
 	if (locMsg)
 	{
-		trap_SendServerCommand( other-g_entities, va("%s \"%s\" \"%s\" \"%c\" \"%s\"", 
+		trap_SendServerCommand( other-g_entities, va("%s \"%s\" \"%s\" \"%c\" \"@%s\"", 
 			mode == SAY_TEAM ? "ltchat" : "lchat",
 			name, locMsg, color, message));
 	}
 	else
 	{
-		trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c%s\"", 
+		trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c@%s\"", 
 			mode == SAY_TEAM ? "tchat" : "chat",
 			name, Q_COLOR_ESCAPE, color, message));
 	}
@@ -2117,24 +2117,6 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		{
 			other = &g_entities[j];
 
-			if ( other->client->sess.allChat || (other->client->sess.sessionTeam == TEAM_SPECTATOR || other->client->tempSpectate >= level.time ) )
-			{
-				if ( mode == SAY_ME )
-				{
-					trap_SendServerCommand( j, va( "print \"@^3(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, chatText ) );
-				}
-
-				if ( mode == SAY_IT )
-				{
-					trap_SendServerCommand( j, va( "print \"@^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
-				}
-				G_SayTo( ent, other, mode, color, name, '@'+text, locMsg );
-			}
-			else
-			{
-				continue;
-			}
-
 			if ( Distance( ent->client->ps.origin, other->client->ps.origin ) < distance )
 			{
 				//ent->client->sess.chatCommandExecuted = qfalse;
@@ -2148,6 +2130,24 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 					trap_SendServerCommand( j, va( "print \" ^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
 				}
 				G_SayTo( ent, other, mode, color, name, text, locMsg );
+			}
+
+			if ( other->client->sess.allChat || (other->client->sess.sessionTeam == TEAM_SPECTATOR || other->client->tempSpectate >= level.time ) )
+			{
+				if ( mode == SAY_ME )
+				{
+					trap_SendServerCommand( j, va( "print \"@^3(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, chatText ) );
+				}
+
+				if ( mode == SAY_IT )
+				{
+					trap_SendServerCommand( j, va( "print \"@^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
+				}
+				G_SayTo( ent, other, mode, color, name, text, locMsg );
+			}
+			else
+			{
+				continue;
 			}
 				
 		}

@@ -6251,7 +6251,7 @@ qboolean G_DoDodge( gentity_t *self, gentity_t *shooter, vec3_t dmgOrigin, int h
 		}
 	}
 
-
+	/*
 	if(mod == MOD_REPEATER_ALT_SPLASH 
 		|| mod == MOD_FLECHETTE_ALT_SPLASH
 		|| mod == MOD_ROCKET_SPLASH
@@ -6288,11 +6288,12 @@ qboolean G_DoDodge( gentity_t *self, gentity_t *shooter, vec3_t dmgOrigin, int h
 			return qtrue;
 		}
 	}
-
+	*/
 
 	/*===========================================================================
 	doing a positional dodge for direct hit damage (like sabers or blaster bolts)
 	===========================================================================*/
+	/*
 	if(hitLoc == -1)
 	{//Use the last surface impact data as the hit location
 		//[BugFix12]
@@ -6372,7 +6373,7 @@ qboolean G_DoDodge( gentity_t *self, gentity_t *shooter, vec3_t dmgOrigin, int h
 		}
 		return qfalse;
 	}
-	/*
+
 	if ( dodgeAnim != -1 )
 	{
 		if( self->client->ps.forceHandExtend != HANDEXTEND_DODGE //not already in a dodge
