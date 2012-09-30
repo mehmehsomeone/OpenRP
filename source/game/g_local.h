@@ -29,7 +29,7 @@ void CancelReload(gentity_t *ent);
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
-#define	GAMEVERSION	"OpenRP " OPENRP_CLIENTVERSION
+#define	GAMEVERSION	"OpenRP " OPENRP_SERVERVERSION
 
 #define BODY_QUEUE_SIZE		8
 
@@ -909,8 +909,6 @@ typedef struct {
 	//This is used to determine if the visual weapon events can be sent or not.
 	qboolean ojpClientPlugIn;
 	//[/ClientPlugInDetect]
-
-	char *ojpClientVersion;
 
 } clientSession_t;
 

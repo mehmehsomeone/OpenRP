@@ -1378,17 +1378,13 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 		//bump accuracy based on MP level.
 		if(ent && ent->client)
 		{
-			//vec3_t angs; //used for adding in mishap inaccuracy.
-			//float slopFactor = MISHAP_MAXINACCURACY * ent->client->ps.saberAttackChainCount/MISHAPLEVEL_MAX;
-
-			//[OpenRP - disabled screen shake]
-			/*
+			vec3_t angs; //used for adding in mishap inaccuracy.
+			float slopFactor = MISHAP_MAXINACCURACY * ent->client->ps.saberAttackChainCount/MISHAPLEVEL_MAX;
+			
 			vectoangles( forward, angs );
 			angs[PITCH] += flrand(-slopFactor, slopFactor);
 			angs[YAW] += flrand(-slopFactor, slopFactor);
 			AngleVectors( angs, forward, NULL, NULL );
-			*/
-			//[/OpenRP - disabled screen shake]
 
 			//increase mishap level
 			if(!Q_irand(0, SkillLevelforWeapon(ent, ent->s.weapon)-1) && ent->s.weapon != WP_EMPLACED_GUN )//Sorry but the mishap meter needs to go up more that before.

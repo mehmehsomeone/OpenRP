@@ -23,7 +23,6 @@ void CheckAdmin(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
-	int accountID;
 	int isAdmin;
 	int adminLevel;
 	
@@ -34,20 +33,14 @@ void CheckAdmin(gentity_t * ent)
 		return;
 	}
 
-	accountID = ent->client->sess.accountID;
-
 	//Checks if the user is admin
-	isAdmin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", accountID ) );
+	isAdmin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
 	//Check their adminlevel
-	adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", accountID ) );
+	adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
 	if( isAdmin )
 	{//The user is an admin.
 		ent->client->sess.isAdmin = qtrue;
 		ent->client->sess.adminLevel = adminLevel;
-		if ( G_CheckAdmin( ent, ADMIN_CHEATS ) && !ent->client->pers.hasCheatAccess )
-		{
-			ent->client->pers.hasCheatAccess = qtrue;
-		}
 	}
 	
 	//If they're not an admin, make them an admin level 11, which isn't really an admin level, and it's below all other levels.
@@ -156,6 +149,11 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	ent->client->sess.loggedinAccount = qtrue;
 
 	CheckAdmin(ent);
+
+	if ( G_CheckAdmin( ent, ADMIN_CHEATS ) && !ent->client->pers.hasCheatAccess )
+	{
+		ent->client->pers.hasCheatAccess = qtrue;
+	}
 
 	//You are now logged in as <username>. Congratulations, you can type.
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );

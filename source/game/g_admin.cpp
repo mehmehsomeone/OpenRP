@@ -1503,19 +1503,16 @@ void Cmd_amStatus_F(gentity_t *ent)
 			if ( g_entities[i].client->sess.ojpClientPlugIn )
 			{
 				hasClientSTR = "Yes";
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s - Version: %s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str(), g_entities[i].client->sess.ojpClientVersion  ) );
-		
 			}
 			else
 			{
 				hasClientSTR = "No";
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str() ) );
 			}
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientSTR.c_str() ) );
 		}
 	}
 	return;
 }
-
 /*
 ============
 amrename Function

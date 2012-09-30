@@ -359,16 +359,6 @@ void WP_InitForcePowers( gentity_t *ent )
 	{ //if it's a bot just copy the info directly from its personality
 		Com_sprintf(forcePowers, sizeof(forcePowers), "%s", botstates[ent->s.number]->forceinfo);
 	}
-	
-	std::string powers = forcePowers;
-	int SIZE = powers.size();
-	if(SIZE != NUM_TOTAL_SKILLS+6)
-	{
-		Q_strncpyz(forcePowers,DEFAULT_FORCEPOWERS, sizeof( forcePowers ));
-		Info_SetValueForKey(userinfo,"forcepowers",forcePowers);
-		trap_SetUserinfo( ent->s.number, userinfo);
-		trap_SendServerCommand( ent-g_entities, va("forcechanged x %s\n", DEFAULT_FORCEPOWERS));
-	}
 
 	//rww - parse through the string manually and eat out all the appropriate data
 	i = 0;

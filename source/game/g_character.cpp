@@ -427,6 +427,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	int i;
 	int charID;
 	string factionNameSTR;
+	int charSkillPoints;
 
 	//The database is not connected. Please do so.
 	if ( !db.Connected() )
@@ -479,11 +480,23 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	//Create character
 	q.execute( va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,SkillPoints,FactionID,FactionRank,ForceSensitive,CheckInventory,Credits) VALUES('%i','%s','100','1','1','0','none','%i','0','250')", ent->client->sess.accountID, charNameSTR.c_str(), forceSensitive ) );
 	q.execute( va( "INSERT INTO Items(CharID,E11,Pistol) VALUES('%i', '0', '0')", ent->client->sess.characterID ) );
+	
+	//Check if the character exists
+	transform(charNameSTR.begin(), charNameSTR.end(),charNameSTR.begin(),::tolower);
+	charID = q.get_num(va("SELECT CharID FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID,charNameSTR.c_str()));
+	if( !charID )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^1Character does not exist\n\"");
+		return;
+	}
 
 	if(ent->client->sess.characterChosen )
 	{
 		//Save their character
 		SaveCharacter( ent );
+
+		//Reset skill points
+		ent->client->sess.skillPoints = 1;
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;
@@ -511,29 +524,26 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		{
 			ent->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_0;
 		}
-
-		//Respawn client
-		ent->flags &= ~FL_GODMODE;
-        ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
-        player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 		
-		}
+		//trap_SendServerCommand( ent-g_entities, "print \"^2Deselecting current character and switching to the new character you want...\n\"" );
+	}
 
-		charID = q.get_num( va( "SELECT CharID FROM Characters WHERE AccountID='%i' AND Name='%s'",ent->client->sess.accountID, charNameSTR.c_str() ) );
-		if( !charID )
-		{
-			trap_SendServerCommand( ent-g_entities, "print \"^1Character does not exist\n\"");
-			return;
-		}
+	//Update that we have a character selected
+	ent->client->sess.characterChosen = qtrue;
+	ent->client->sess.characterID = charID;
+	charSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+	ent->client->sess.skillPoints = charSkillPoints;
+	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
+	LoadCharacter(ent);
 
-		//Update that we have a character selected
-		ent->client->sess.characterChosen = qtrue;
-		ent->client->sess.characterID = charID;
-		LoadCharacter(ent);
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character ^7%s ^2(No Faction) created. It is being selected as your current character.\nIf you had colors in the name, they were removed. Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str() ) );
-		trap_SendServerCommand( ent-g_entities, va( "cp \"^2Character ^7%s ^2created. It is being selected as your current character.\n^2If you had colors in the name, they were removed. \n^3Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str() ) );
+	ent->flags &= ~FL_GODMODE;
+	ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
+	player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 
-		return;
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Character ^7%s ^2(No Faction) created. It is being selected as your current character.\nIf you had colors in the name, they were removed. Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Character ^7%s ^2created. It is being selected as your current character.\n^2If you had colors in the name, they were removed. \n^3Remember: You can use /character to switch to another character and /myCharacters to list them.\n\"", charNameSTR.c_str() ) );
+
+	return;
 
 }
 
@@ -638,12 +648,12 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 	LoadCharacter(ent);
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Your character is selected as: ^7%s^2!\nYou can use /characterInfo to view everything about your character.\n\"", charName ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Your character is selected as: ^7%s^2!\n^2You can use /characterInfo to view everything ^2about your character.\n\"", charName ) );
-
 	ent->flags &= ~FL_GODMODE;
 	ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
 	player_die (ent, ent, ent, 100000, MOD_SUICIDE);
+
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Your character is selected as: ^7%s^2!\nYou can use /characterInfo to view everything about your character.\n\"", charName ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Your character is selected as: ^7%s^2!\n^2You can use /characterInfo to view everything ^2about your character.\n\"", charName ) );
 
 	return;
 }
@@ -1008,7 +1018,7 @@ void Cmd_FactionInfo_F( gentity_t * ent )
 		q.get_result( va( "SELECT Name FROM Characters WHERE FactionID='%i' AND FactionRank='Leader'", charFactionID ) );
 		while  (q.fetch_row() )
 		{
-			charFactionNameSTR = q.getstr();
+			charNameSTR = q.getstr();
 
 			trap_SendServerCommand( ent-g_entities, va("print \"^7%s, \"", charNameSTR.c_str()  ) );
 		}
@@ -1087,6 +1097,8 @@ void Cmd_FactionWithdraw_F( gentity_t * ent )
 		trap_SendServerCommand( ent-g_entities, "print \"^1You are not in a faction.\n\"" );
 		return;
 	}
+
+	charFactionRankSTR = q.get_string ( va( "SELECT FactionRank FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 
 	if ( charFactionRankSTR != "Leader" )
 	{
@@ -2142,11 +2154,13 @@ void Cmd_Comm_F(gentity_t *ent)
 		{
 			ent->client->sess.commOn = qtrue;
 			trap_SendServerCommand( ent-g_entities, "print \"^2Comm is now ON.\n\"" );
+			return;
 		}
 		else
 		{
 			ent->client->sess.commOn = qfalse;
 			trap_SendServerCommand( ent-g_entities, "print \"^2Comm is now OFF.\n\"" );
+			return;
 		}
 	}
 
@@ -2353,21 +2367,15 @@ void Cmd_Faction_F( gentity_t * ent )
 	string factionNameSTR;
 	int factionID;
 
-	if(!G_CheckAdmin(ent, ADMIN_FACTION))
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
-		return;
-	}
-
 	if ( !db.Connected() )
 	{
 		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
 		return;
 	}
 
-	if ( trap_Argc() != 3 )
+	if ( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amSetFaction <characterName> <factionName>\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /faction <factionID> \nUse /listfactions for factionIDs.\n\"" );
 		return;
 	}
 

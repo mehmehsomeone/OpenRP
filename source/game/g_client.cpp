@@ -2376,7 +2376,6 @@ void ClientUserinfoChanged( int clientNum ) {
 	}
 	else if(!strcmp(OPENRP_CLIENTVERSION, s))
 	{
-		Q_strncpyz( client->sess.ojpClientVersion, s, sizeof(s) );
 		client->sess.ojpClientPlugIn = qtrue;
 	}
 	//[/ClientPlugInDetect]
@@ -2848,6 +2847,7 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 		}
 
 		ent->client->sess.adminLevel = 11;
+		ent->client->sess.commOn = qtrue;
 
 		// locate ent at a spawn point
 		//[LastManStanding]
@@ -2890,7 +2890,7 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	{//send this client the MOTD for clients using the right version of OpenRP.
 		TextWrapCenterPrint(ojp_clientMOTD.string, motd);
 		if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP ^7%s\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n^2Type /info for a list of commands or /eminfo for a list of emotes.\n\"", OPENRP_CLIENTVERSION, openrp_website.string ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP Server:^7%s\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n^2Type /info for a list of commands or /eminfo for a list of emotes.\n\"", OPENRP_SERVERVERSION, openrp_website.string ) );
 		}
 	}
 	else
