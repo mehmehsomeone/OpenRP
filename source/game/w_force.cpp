@@ -1362,7 +1362,8 @@ qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPo
 	else if(abilityDef <= 0) //Holmes, added
 	{//Ability/Absorb of defender is equal to the ability of the attacker
 		if(defender->client->ps.groundEntityNum == ENTITYNUM_NONE)
-			return qfalse;}
+			return qfalse;
+	}
 	
 	return qtrue;
 

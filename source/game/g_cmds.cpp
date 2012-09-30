@@ -1703,7 +1703,7 @@ G_SayTo
 ==================
 */
 
-static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, char *locMsg )
+static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, char *locMsg, qboolean allChat )
 {
 	if (!other) {
 		return;
@@ -1744,17 +1744,35 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 		break;
 	}
 
-	if (locMsg)
+	if ( !allChat )
 	{
-		trap_SendServerCommand( other-g_entities, va("%s \"%s\" \"%s\" \"%c\" \"@%s\"", 
-			mode == SAY_TEAM ? "ltchat" : "lchat",
-			name, locMsg, color, message));
+		if (locMsg)
+		{
+			trap_SendServerCommand( other-g_entities, va("%s \"%s\" \"%s\" \"%c\" \"%s\"", 
+				mode == SAY_TEAM ? "ltchat" : "lchat",
+				name, locMsg, color, message));
+		}
+		else
+		{
+			trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c%s\"", 
+				mode == SAY_TEAM ? "tchat" : "chat",
+				name, Q_COLOR_ESCAPE, color, message));
+		}
 	}
 	else
 	{
-		trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c@%s\"", 
-			mode == SAY_TEAM ? "tchat" : "chat",
-			name, Q_COLOR_ESCAPE, color, message));
+		if (locMsg)
+		{
+			trap_SendServerCommand( other-g_entities, va("%s \"%s\" \"%s\" \"%c\" \"@%s\"", 
+				mode == SAY_TEAM ? "ltchat" : "lchat",
+				name, locMsg, color, message));
+		}
+		else
+		{
+			trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c@%s\"", 
+				mode == SAY_TEAM ? "tchat" : "chat",
+				name, Q_COLOR_ESCAPE, color, message));
+		}
 	}
 }
 
@@ -2043,7 +2061,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	Q_strncpyz( text, chatText, sizeof(text) );
 
 	if ( target ) {
-		G_SayTo( ent, target, mode, color, name, text, locMsg );
+		G_SayTo( ent, target, mode, color, name, text, locMsg, qfalse );
 		return;
 	}
 
@@ -2129,7 +2147,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 				{
 					trap_SendServerCommand( j, va( "print \" ^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
 				}
-				G_SayTo( ent, other, mode, color, name, text, locMsg );
+				G_SayTo( ent, other, mode, color, name, text, locMsg, qfalse );
 			}
 
 			if ( other->client->sess.allChat || (other->client->sess.sessionTeam == TEAM_SPECTATOR || other->client->tempSpectate >= level.time ) )
@@ -2143,7 +2161,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 				{
 					trap_SendServerCommand( j, va( "print \"@^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
 				}
-				G_SayTo( ent, other, mode, color, name, text, locMsg );
+				G_SayTo( ent, other, mode, color, name, text, locMsg, qtrue );
 			}
 			else
 			{
@@ -2167,7 +2185,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 			{
 				continue;
 			}
-			G_SayTo( ent, other, mode, color, name, text, locMsg );
+			G_SayTo( ent, other, mode, color, name, text, locMsg, qfalse );
 		}
 	}
 }
