@@ -3465,7 +3465,7 @@ void CG_PlayerAnimEventDo( centity_t *cent, animevent_t *animEvent )
 				randomSwing = Q_irand( 7, 9 );
 				break;
 			}
-			swingSound = trap_S_RegisterSound(va("sound/weapons/saber/saberhup%i.wav", randomSwing));
+			swingSound = trap_S_RegisterSound(va("sound/weapons/saber/saberhup%i.mp3", randomSwing));
 		}
 		trap_S_StartSound(cent->currentState.pos.trBase, cent->currentState.number, CHAN_AUTO, swingSound );
 		break;

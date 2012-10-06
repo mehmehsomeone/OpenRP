@@ -376,13 +376,6 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		return;
 	}
 
-	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
-		return;
-	}
-
-
 	if ( trap_Argc() == 1 )
 	{
 		//cm NOTE: This is where you teleport to a the telemark.
@@ -995,6 +988,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 amprotect Function
 ============
 */
+/*
 void Cmd_amProtect_F(gentity_t *ent)
 {
 	char cmdTarget[MAX_STRING_CHARS];
@@ -1078,6 +1072,7 @@ void Cmd_amProtect_F(gentity_t *ent)
 		return;
 	}
 }
+*/
 
 /*
 ============
@@ -2682,4 +2677,85 @@ void Cmd_amWarningList_F(gentity_t *ent)
 		}
 	}
 	return;
+}
+
+//Thanks to Raz0r for posting this command.
+void Cmd_SpawnEnt_F( gentity_t *ent )
+{
+   gentity_t   *obj = G_Spawn(); //This will give us the first free slot in g_entities!
+   char      buf[32]; // arg1
+   trace_t      tr; //For tracing
+   vec3_t      fPos; //We're going to adjust the tr.endpos, and put it in here
+   int         i; //For looping
+   extern qboolean G_CallSpawn( gentity_t *ent );
+
+	if(!G_CheckAdmin(ent, ADMIN_BUILD))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
+		return;
+	}
+
+   //Trace to where we're looking
+   AngleVectors( ent->client->ps.viewangles, fPos, 0, 0 );
+   for (i=0; i<3; i++)
+   {
+      fPos[i] = ent->client->ps.origin[i] + fPos[i]*Q3_INFINITE;
+   }
+   trap_Trace( &tr, ent->client->ps.origin, 0, 0, fPos, ent->s.number, ent->clipmask );
+
+   //Move along the normal of the traced plane
+   VectorMA( tr.endpos, 48.0f, tr.plane.normal, fPos );
+
+   //Grab the first argument (so /spawn misc_ammo_floor_unit)
+   trap_Argv( 1, buf, sizeof( buf ) );
+
+   //Now we have to set the classname and the origin
+   //Then we tell the game to find the appropriate spawn function for the classname/entity
+   obj->classname = buf;
+   VectorCopy( fPos, obj->s.origin );
+   G_CallSpawn( obj ); // Will search through the list of known entities and react accordingly
+
+   //The appropriate spawn function will take care of
+   //any ent->think() ent->die() etc function pointers, so we don't have to worry.
+   return;
+}
+
+//Thanks to Raz0r for posting this command.
+void Cmd_RemoveEntity_F( gentity_t *ent )
+{
+   trace_t   tr;
+   vec3_t   fPos;
+   vec3_t   mins;
+   vec3_t   maxs;
+   int      i;
+   int      ents[8];
+
+	if(!G_CheckAdmin(ent, ADMIN_BUILD))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
+		return;
+	}
+
+   //Trace to where we're looking
+   AngleVectors( ent->client->ps.viewangles, fPos, 0, 0 );
+   for (i=0; i<3; i++)
+   {
+      fPos[i] = ent->client->ps.origin[i] + fPos[i]*Q3_INFINITE;
+   }
+   trap_Trace( &tr, ent->client->ps.origin, 0, 0, fPos, ent->s.number, ent->clipmask );
+
+   //Create a box
+   VectorSet( mins, tr.endpos[0]-64.0f, tr.endpos[1]-64.0f, tr.endpos[2]-64.0f );
+   VectorSet( maxs, tr.endpos[0]+64.0f, tr.endpos[1]+64.0f, tr.endpos[2]+64.0f );
+   trap_EntitiesInBox( mins, maxs, &ents[0], 8 );
+
+   //Anything in this box will be removed
+   for (i=0; i<8; i++)
+   {
+      if ( ents[i] > 0 && ents[i] < 1024 )
+	  {
+         G_FreeEntity( &g_entities[ents[i]] ); // G_FreeEntity will free up the slot in g_entities so it can be re-used!
+	  }
+   }
+   return;
 }

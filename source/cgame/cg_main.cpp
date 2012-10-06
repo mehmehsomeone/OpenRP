@@ -1701,7 +1701,7 @@ static void CG_RegisterSounds( void ) {
 
 	for (i=1 ; i<9 ; i++)
 	{
-		trap_S_RegisterSound(va("sound/weapons/saber/saberhup%i.wav", i));
+		trap_S_RegisterSound(va("sound/weapons/saber/saberhup%i.mp3", i));
 	}
 
 	for (i=1 ; i<10 ; i++)

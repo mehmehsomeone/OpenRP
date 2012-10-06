@@ -13123,9 +13123,9 @@ void PmoveSingle (pmove_t *pmove) {
 		// keep the talk button set tho for when the cmd.serverTime > 66 msec
 		// and the same cmd is used multiple times in Pmove
 		pmove->cmd.buttons = BUTTON_TALK;
-		pmove->cmd.forwardmove = 0;
-		pmove->cmd.rightmove = 0;
-		pmove->cmd.upmove = 0;
+	//	pmove->cmd.forwardmove = 0;
+	//	pmove->cmd.rightmove = 0;
+	//	pmove->cmd.upmove = 0;
 	}
 
 	// clear all pmove local vars

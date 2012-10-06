@@ -2401,3 +2401,114 @@ void Cmd_Faction_F( gentity_t * ent )
 	}
 	return;
 }
+
+void Cmd_ToggleChat_F( gentity_t * ent )
+{
+	string chatModeNameSTR;
+	char chatModeTemp[MAX_STRING_CHARS];
+
+	if ( trap_Argc() < 2 )
+	{
+		if ( !ent->client->sess.chatMode || ent->client->sess.chatMode > 8 )
+		{
+			ent->client->sess.chatMode = 1;
+			ent->client->sess.chatMode++;
+		}
+		else if ( ent->client->sess.chatMode < 6 && !ent->client->sess.isAdmin )
+		{
+			ent->client->sess.chatMode++;
+		}
+		else if ( ent->client->sess.chatMode < 7 && ent->client->sess.isAdmin )
+		{
+			ent->client->sess.chatMode++;
+		}
+		else
+		{
+			ent->client->sess.chatMode = 1;
+		}
+
+		switch ( ent->client->sess.chatMode )
+		{
+		case 1:
+			chatModeNameSTR = "OOC";
+			break;
+		case 2:
+			chatModeNameSTR = "LOOC";
+			break;
+		case 3:
+			chatModeNameSTR = "Yell";
+			break;
+		case 4:
+			chatModeNameSTR = "Whisper";
+			break;
+		case 5:
+			chatModeNameSTR = "Me (Action)";
+			break;
+		case 6:
+			chatModeNameSTR = "It (Environmental Action/Event)";
+			break;
+		case 7:
+			chatModeNameSTR = "Admin";
+			break;
+		default:
+			ent->client->sess.chatMode = 1;
+			chatModeNameSTR = "OOC";
+			break;
+		}
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeNameSTR.c_str() ) );
+		return;
+	}
+
+	trap_Argv( 1, chatModeTemp, MAX_STRING_CHARS );
+
+	if ( !Q_stricmp( chatModeTemp, "OOC" ) )
+	{
+		ent->client->sess.chatMode = 1;
+		chatModeNameSTR = "OOC";
+	}
+	else if ( !Q_stricmp( chatModeTemp, "LOOC" ) )
+	{
+		ent->client->sess.chatMode = 2;
+		chatModeNameSTR = "LOOC";
+	}
+	else if ( !Q_stricmp( chatModeTemp, "yell" ) || !Q_stricmp( chatModeTemp, "y" ) )
+	{
+		ent->client->sess.chatMode = 3;
+		chatModeNameSTR = "Yell";
+	}
+	else if ( !Q_stricmp( chatModeTemp, "whisper" ) || !Q_stricmp( chatModeTemp, "w" ) )
+	{
+		ent->client->sess.chatMode = 4;
+		chatModeNameSTR = "Whisper";
+	}
+	else if ( !Q_stricmp( chatModeTemp, "me" ) )
+	{
+		ent->client->sess.chatMode = 5;
+		chatModeNameSTR = "Me (Action)";
+	}
+	else if ( !Q_stricmp( chatModeTemp, "it" ) )
+	{
+		ent->client->sess.chatMode = 6;
+		chatModeNameSTR = "It (Environmental Action/Event)";
+	}
+	else if ( !Q_stricmp( chatModeTemp, "admin" ) || !Q_stricmp( chatModeTemp, "a" ) )
+	{
+		if ( !ent->client->sess.isAdmin )
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this chat mode.\n\""));
+			return;
+		}
+		else
+		{
+			ent->client->sess.chatMode = 7;
+			chatModeNameSTR = "Admin";
+		}
+	}
+	else
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^1Invalid chat mode.\n\"" );
+		return;
+	}
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeNameSTR.c_str() ) );
+	return;
+}

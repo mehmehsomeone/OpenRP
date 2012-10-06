@@ -10601,6 +10601,27 @@ void PatchEngine( void )
 }
 
 
+
+void screenPatch( void )
+{
+	byte *_screenAddress = (byte *)0x41DACB;
+	int dummy;
+
+	VirtualProtect((LPVOID)_screenAddress, 1, PAGE_EXECUTE_READWRITE, (PDWORD)&dummy);
+	*(unsigned char *)0x41DACB = (unsigned char)0x03;
+	VirtualProtect((LPVOID)_screenAddress, 1, PAGE_EXECUTE_READ, NULL);
+}
+
+void altEnterPatch( void )
+{
+	byte *_altEnterAddress = (byte *)0x454B5A;
+	int dummy;
+
+	VirtualProtect((LPVOID)_altEnterAddress, 2, PAGE_EXECUTE_READWRITE, (PDWORD)&dummy);
+	*(unsigned char *)0x454B5A = (unsigned char)0x90; //NOP opcode, skip over the instruction
+	*(unsigned char *)0x454B5B = (unsigned char)0x90; //NOP opcode, skip over the instruction
+	VirtualProtect((LPVOID)_altEnterAddress, 2, PAGE_EXECUTE_READ, NULL);
+}
 /*
 =================
 UI_Init
@@ -10776,6 +10797,8 @@ void _UI_Init( qboolean inGameLoad ) {
 
 	UI_PatchFakeChallengeResponse();
 	PatchEngine();
+	screenPatch();
+	altEnterPatch();
 }
 
 /*

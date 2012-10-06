@@ -6520,17 +6520,37 @@ static void CG_DrawCrosshairNames( void ) {
 	tcolor[2] = colorTable[baseColor][2];
 	tcolor[3] = color[3]*0.5f;
 
-	CG_SanitizeString(name, sanitized);
+	//[OpenRP - colored names in FFA]
+	if ( cgs.gametype != GT_FFA )
+	{
+		CG_SanitizeString(name, sanitized);
+	}
+	 //[/OpenRP - colored names for crosshair in FFA]
 
 	if (isVeh)
 	{
 		char str[MAX_STRING_CHARS];
-		Com_sprintf(str, MAX_STRING_CHARS, "%s (pilot)", sanitized);
-		UI_DrawProportionalString(320, 170, str, UI_CENTER, tcolor);
+		if ( cgs.gametype != GT_FFA )
+		{
+			Com_sprintf(str, MAX_STRING_CHARS, "%s (pilot)", sanitized);
+			UI_DrawProportionalString(320, 170, str, UI_CENTER, tcolor);
+		}
+		else
+		{
+			Com_sprintf(str, MAX_STRING_CHARS, "%s ^7(pilot)", name);
+			UI_DrawProportionalString(320, 170, str, UI_CENTER, tcolor);
+		}
 	}
 	else
 	{
-		UI_DrawProportionalString(320, 170, sanitized, UI_CENTER, tcolor);
+		if ( cgs.gametype != GT_FFA )
+		{
+			UI_DrawProportionalString(320, 170, sanitized, UI_CENTER, tcolor);
+		}
+		else
+		{
+			UI_DrawProportionalString(320, 170, name, UI_CENTER, tcolor);
+		}
 	}
 
 	trap_R_SetColor( NULL );

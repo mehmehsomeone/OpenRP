@@ -2367,19 +2367,6 @@ void ClientUserinfoChanged( int clientNum ) {
 //	strcpy(redTeam, Info_ValueForKey( userinfo, "g_redteam" ));
 //	strcpy(blueTeam, Info_ValueForKey( userinfo, "g_blueteam" ));
 
-	//[ClientPlugInDetect]
-	s = Info_ValueForKey( userinfo, "ojp_clientplugin" );
-
-	if ( !*s  ) 
-	{
-		client->sess.ojpClientPlugIn = qfalse;
-	}
-	else if(!strcmp(OPENRP_CLIENTVERSION, s))
-	{
-		client->sess.ojpClientPlugIn = qtrue;
-	}
-	//[/ClientPlugInDetect]
-
 	//[RGBSabers]
 	Q_strncpyz(rgb1,Info_ValueForKey(userinfo, "rgb_saber1"), sizeof(rgb1));
 	Q_strncpyz(rgb2,Info_ValueForKey(userinfo, "rgb_saber2"), sizeof(rgb2));
@@ -2539,6 +2526,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	}
 	G_ReadSessionData( client );
 
+	ent->client->sess.chatMode = 1;
+
 	if (firstTime && !isBot)
 	{
 		if(!TmpIP[0])
@@ -2657,6 +2646,7 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	int			spawnCount;
 	//[/BugFix48]
 	char		userinfo[MAX_INFO_VALUE], *modelname;
+	char *s;
 
 	//[ExpandedMOTD]
 	//contains the message of the day that is sent to new players.
@@ -2846,9 +2836,6 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 			}
 		}
 
-		ent->client->sess.adminLevel = 11;
-		ent->client->sess.commOn = qtrue;
-
 		// locate ent at a spawn point
 		//[LastManStanding]
 		if (ojp_lms.integer > 0 && ent->lives < 1 && BG_IsLMSGametype(g_gametype.integer) && LMS_EnoughPlayers() && client->sess.sessionTeam != TEAM_SPECTATOR)
@@ -2884,18 +2871,40 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	}
 	G_LogPrintf( "ClientBegin: %i\n", clientNum );
 
+
+	
+	if ( !client->sess.ojpClientPlugIn )
+	{
+		//[ClientPlugInDetect]
+		s = Info_ValueForKey( userinfo, "ojp_clientplugin" );
+		if(!Q_stricmp(s, OPENRP_CLIENTVERSION))
+		{
+			client->sess.ojpClientPlugIn = qtrue;
+		}
+		else if ( !*s  ) 
+		{
+			client->sess.ojpClientPlugIn = qfalse;
+		}
+		else
+		{
+			client->sess.ojpClientPlugIn = qfalse;
+		}
+		//[/ClientPlugInDetect]
+	}
+
 	//[ExpandedMOTD]
 	//prepare and send MOTD message to new client.
 	if(client->sess.ojpClientPlugIn)
 	{//send this client the MOTD for clients using the right version of OpenRP.
 		TextWrapCenterPrint(ojp_clientMOTD.string, motd);
-		if ( client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP Server:^7%s\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n^2Type /info for a list of commands or /eminfo for a list of emotes.\n\"", OPENRP_SERVERVERSION, openrp_website.string ) );
+		if ( client->sess.sessionTeam != TEAM_SPECTATOR )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP Server:^7%s\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n^2Type /info for a list of commands or /eminfo for a list of emotes.\n\"", OPENRP_SERVERVERSION, openrp_website.string ) );
 		}
 	}
 	else
 	{//send this client the MOTD for clients aren't running OJP or just not the right version.
-TextWrapCenterPrint( va("^1You are missing the OpenRP client, have an outdated version, or ^1this server is outdated and needs to update.\n^2Download OpenRP: ^7openrp.jkhub.org/download\n", OPENRP_CLIENTVERSION), motd);
+		TextWrapCenterPrint( va("^1You are missing the OpenRP client, have an outdated version, or ^1this server is outdated and needs to update.\n^2Download OpenRP: ^7openrp.jkhub.org/download\n", OPENRP_CLIENTVERSION), motd);
 	}
 
 	trap_SendServerCommand( clientNum, va("cp \"%s\n\"", motd ) );

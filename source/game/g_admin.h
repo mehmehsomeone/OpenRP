@@ -42,3 +42,5 @@ void Cmd_AdminChat_F( gentity_t *ent );
 //void Cmd_Invisible_F( gentity_t * ent );
 void Cmd_AllChat_F( gentity_t * ent );
 void Cmd_amWarningList_F( gentity_t * ent );
+void Cmd_SpawnEnt_F( gentity_t *ent );
+void Cmd_RemoveEntity_F( gentity_t *ent );

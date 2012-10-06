@@ -9,7 +9,7 @@
 #define ADMIN_GRANTREMOVEADMIN		128 // Grant or remove admin
 #define ADMIN_MAP					256 // /map
 #define ADMIN_SKILLPOINTS			512 // skillpoint related
-#define ADMIN_PROTECT				1024 // /amprotect
+#define ADMIN_BUILD					1024 // /building related commands
 #define ADMIN_ANNOUNCE				2048 // /amannounce
 #define ADMIN_WARN					4096 // /amwarn
 #define ADMIN_ALLCHAT				8192 // /amAllChat

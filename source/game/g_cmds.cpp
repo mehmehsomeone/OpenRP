@@ -1935,9 +1935,10 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	*/
 	//[/OpenRP - OOC]
 
+	/*
 	//[AdminSys][ChatSpamProtection]
 	
-	if(!(ent->r.svFlags & SVF_BOT) /*&& !ent->client->sess.chatCommandExecuted */ )
+	if(!(ent->r.svFlags & SVF_BOT)  )
 	{//don't chat protect the bots.
 		if(ent->client && ent->client->chatDebounceTime > level.time //debounce isn't up
 			//and we're not bouncing our message back to our self while using SAY_TELL 
@@ -1958,6 +1959,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		}
 	}
 	//[/AdminSys][/ChatSpamProtection]
+	*/
 
 	//[TABBot]
 	//Scan for bot orders
@@ -1973,22 +1975,35 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		distance = 600;
 		break;
 	case SAY_TEAM:
-		G_LogPrintf( "ooc: %s: %s\n", ent->client->pers.netname, chatText );
-		if (Team_GetLocationMsg(ent, location, sizeof(location)))
+		switch ( ent->client->sess.chatMode )
 		{
-			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c"EC": ", 
-				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
-			locMsg = location;
+		case 1:
+			G_Say( ent, target, SAY_OOC, chatText );
+			return;
+		case 2:
+			G_Say( ent, target, SAY_LOOC, chatText );
+			return;
+		case 3:
+			G_Say( ent, target, SAY_YELL, chatText );
+			return;
+		case 4:
+			G_Say( ent, target, SAY_WHISPER, chatText );
+			return;
+		case 5:
+			G_Say( ent, target, SAY_ME, chatText );
+			return;
+		case 6:
+			G_Say( ent, target, SAY_IT, chatText );
+			return;
+		case 7:
+			G_Say( ent, target, SAY_ADMIN, chatText );
+			return;
+		default:
+			ent->client->sess.chatMode = 1;
+			G_Say( ent, target, SAY_OOC, chatText );
+			return;
 		}
-		else
-		{
-		//[OpenRP - OOC]
-			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c"EC": ", 
-				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_RED );
-		}
-		color = COLOR_RED;
-		//[/OpenRP - OOC]
-		break;
+		return;
 	case SAY_TELL:
 		if (target && g_gametype.integer >= GT_TEAM &&
 			target->client->sess.sessionTeam == ent->client->sess.sessionTeam &&
@@ -2037,6 +2052,23 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
 		color = COLOR_MAGENTA;
 		break;
+	case SAY_OOC:
+		G_LogPrintf( "ooc: %s: %s\n", ent->client->pers.netname, chatText );
+		if (Team_GetLocationMsg(ent, location, sizeof(location)))
+		{
+			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c"EC": ", 
+				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_RED );
+			locMsg = location;
+		}
+		else
+		{
+		//[OpenRP - OOC]
+			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c"EC": ", 
+				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_RED );
+		}
+		color = COLOR_RED;
+		//[/OpenRP - OOC]
+		break;
 	case SAY_LOOC:
 		G_LogPrintf( "looc: %s: %s", ent->client->pers.netname, chatText );
 		Com_sprintf (name, sizeof(name), EC"^6<LOOC> ^7%s%c%c"EC": ", 
@@ -2070,64 +2102,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		G_Printf( "%s%s\n", name, text);
 	}
 
-	/*
-	if( !Q_stricmpn( text, "/ooc", 4 ) && !ent->client->sess.chatCommandExecuted )
-	{
-		ent->client->sess.chatCommandExecuted = qtrue;
-		Cmd_Say_f( ent, SAY_TEAM, qfalse, qtrue );
-		return;
-		
-	}
-
-	else if( !Q_stricmpn( text, "/yell", 5 ) && !ent->client->sess.chatCommandExecuted )
-	{
-		ent->client->sess.chatCommandExecuted = qtrue;
-		Cmd_Say_f( ent, SAY_YELL, qfalse, qtrue );
-		return;
-		
-	}
-
-	else if( !Q_stricmpn( text, "/whisper", 8 ) && !ent->client->sess.chatCommandExecuted )
-	{
-		ent->client->sess.chatCommandExecuted = qtrue;
-		Cmd_Say_f( ent, SAY_WHISPER, qfalse, qtrue );
-		return;
-		
-	}
-
-	else if( !Q_stricmpn( text, "/me", 3 ) && !ent->client->sess.chatCommandExecuted )
-	{
-		ent->client->sess.chatCommandExecuted = qtrue;
-		Cmd_Say_f( ent, SAY_ME, qfalse, qtrue );
-		return;
-		
-	}
-
-	else if( !Q_stricmpn( text, "/it", 3 ) && !ent->client->sess.chatCommandExecuted )
-	{
-		ent->client->sess.chatCommandExecuted = qtrue;
-		Cmd_Say_f( ent, SAY_IT, qfalse, qtrue );
-		return;
-		
-	}
-
-	else if( !Q_stricmpn( text, "/admin", 6 ) && !ent->client->sess.chatCommandExecuted )
-	{
-		ent->client->sess.chatCommandExecuted = qtrue;
-		Cmd_Say_f( ent, SAY_ADMIN, qfalse, qtrue );
-		return;
-		
-	}
-
-	else if( !Q_stricmpn( text, "/looc", 5 ) && !ent->client->sess.chatCommandExecuted )
-	{
-		ent->client->sess.chatCommandExecuted = qtrue;
-		Cmd_Say_f( ent, SAY_LOOC, qfalse, qtrue );
-		return;
-	}
-	*/
-
-	// send it to all the apropriate clients
+	// send it to all the appropriate clients
 
 	if ( openrp_allChat.integer == 0 && ( mode == SAY_ALL || mode == SAY_YELL || mode == SAY_WHISPER || mode == SAY_ME || mode == SAY_IT || mode == SAY_LOOC ) )
 	{
@@ -2137,7 +2112,6 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 
 			if ( Distance( ent->client->ps.origin, other->client->ps.origin ) < distance )
 			{
-				//ent->client->sess.chatCommandExecuted = qfalse;
 				if ( mode == SAY_ME )
 				{
 					trap_SendServerCommand( j, va( "print \" ^3(ACTION) - ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
@@ -2176,7 +2150,6 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		for (j = 0; j < level.maxclients; j++)
 		{
 			other = &g_entities[j];
-			//ent->client->sess.chatCommandExecuted = qfalse;
 			if ( mode == SAY_ADMIN && !other->client->sess.isAdmin )
 			{
 				continue;
@@ -4595,6 +4568,10 @@ void ClientCommand( int clientNum ) {
 		Cmd_Faction_F (ent);
 		return;
 	}
+	if (Q_stricmp(cmd, "togglechat") == 0) {
+		Cmd_ToggleChat_F (ent);
+		return;
+	}
 	if (Q_stricmp(cmd, "amkick") == 0) {
 		Cmd_amKick_F (ent);
 		return;
@@ -4627,10 +4604,12 @@ void ClientCommand( int clientNum ) {
 		Cmd_amUnsleep_F (ent);
 		return;
 	}
+	/*
 	if(Q_stricmp(cmd, "amprotect") == 0) {
 		Cmd_amProtect_F (ent);
 		return;
 	}
+	*/
 	if(Q_stricmp(cmd, "amannounce") == 0) {
 		Cmd_amAnnounce_F (ent);
 		return;
@@ -4707,6 +4686,14 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp(cmd, "amlistwarnings") == 0) {
 		Cmd_amWarningList_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "spawnent") == 0) {
+		Cmd_SpawnEnt_F(ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "removeent") == 0) {
+		Cmd_RemoveEntity_F (ent);
 		return;
 	}
 	if( Q_stricmp (cmd, "emsit") == 0) {

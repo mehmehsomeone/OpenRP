@@ -6000,11 +6000,11 @@ extern int DetermineDisruptorCharge(gentity_t *ent);
 //Returns qfalse if hit effects/damage is still suppose to be applied.
 qboolean G_DoDodge( gentity_t *self, gentity_t *shooter, vec3_t dmgOrigin, int hitLoc, int * dmg, int mod )
 {
-	int	dodgeAnim = -1;
+//	int	dodgeAnim = -1;
 	int dpcost = BasicDodgeCosts[mod];
 
 	//saved copy of the original damage level.  This is used determine the kickback power for slashdamage dodges.
-	int savedDmg = *dmg; 
+//	int savedDmg = *dmg; 
 
 	//partial dodge flag
 	qboolean partial = qfalse;

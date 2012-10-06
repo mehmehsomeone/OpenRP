@@ -2610,7 +2610,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 	case EV_SABER_ATTACK:
 		DEBUGNAME("EV_SABER_ATTACK");
 		{
-			qhandle_t swingSound = trap_S_RegisterSound(va("sound/weapons/saber/saberhup%i.wav", Q_irand(1, 8)));
+			qhandle_t swingSound = trap_S_RegisterSound(va("sound/weapons/saber/saberhup%i.mp3", Q_irand(1, 8)));
 			clientInfo_t *client = NULL;
 			if ( cg_entities[es->number].currentState.eType == ET_NPC )
 			{
