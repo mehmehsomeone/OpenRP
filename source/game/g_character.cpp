@@ -2215,11 +2215,11 @@ void Cmd_Comm_F(gentity_t *ent)
 			{
 				if ( !g_entities[clientid].client->sess.commOn )
 				{
-					trap_SendServerCommand(i, va("chat \"@^7Comm ^7%s ^7to ^3%s ^7- ^4%s ^6(Recipient's comm is off.)\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+					trap_SendServerCommand(i, va("chat \"@^7Comm ^7%s ^7to ^7%s ^7- ^4%s ^6(Recipient's comm is off.)\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 				}
 				else
 				{
-					trap_SendServerCommand(i, va("chat \"@^7Comm ^7%s ^7to ^3%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+					trap_SendServerCommand(i, va("chat \"@^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 				}
 			}
 			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 600 )
@@ -2245,8 +2245,8 @@ void Cmd_Comm_F(gentity_t *ent)
 		}
 	}
 
-	trap_SendServerCommand(ent-g_entities, va("chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
-	trap_SendServerCommand(clientid, va("chat \"^7Comm ^3%s ^7to ^3%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+	trap_SendServerCommand(ent-g_entities, va("chat \"^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+	trap_SendServerCommand(clientid, va("chat \"^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	G_LogPrintf("Comm message sent by %s to %s. Message: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
 	return;
 }

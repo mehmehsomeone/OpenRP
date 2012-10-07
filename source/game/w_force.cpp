@@ -503,7 +503,7 @@ void WP_InitForcePowers( gentity_t *ent )
 		//with the new experience system, just go ahead and don't force warned clients into the
 		//force powers screen.
 		//if (!ent->client->sess.setForce)
-		if (warnClient || !isLoggedIn( ent ) )
+		if (warnClient || !isLoggedIn( ent ) || !ent->client->sess.characterChosen )
 		//if (warnClient || !ent->client->sess.setForce)
 		//[/ExpSys]
 		{ //the client's rank is too high for the server and has been autocapped, so tell them
@@ -536,6 +536,17 @@ void WP_InitForcePowers( gentity_t *ent )
 						ent->client->pers.teamState.state = TEAM_BEGIN;
 						trap_SendServerCommand(ent-g_entities, "lui");	// Fire up the login UI
 					}
+					if ( !ent->client->sess.characterChosen )
+					{
+						ent->client->sess.sessionTeam = TEAM_SPECTATOR;
+						ent->client->sess.spectatorState = SPECTATOR_FREE;
+						ent->client->sess.spectatorClient = 0;
+
+						ent->client->pers.teamState.state = TEAM_BEGIN;
+						trap_SendServerCommand( ent-g_entities, "print \"^2Please create a character using /createCharacter or select a character using /character.\n\"" );
+						trap_SendServerCommand( ent-g_entities, "cp \"^2Please create a character using /createCharacter\n^2or select a character using /character.\n\"" );
+					}
+
 				}//[/Account System]
 
 				//Event isn't very reliable, I made it a string. This way I can send it to just one

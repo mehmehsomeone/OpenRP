@@ -2754,7 +2754,10 @@ void Cmd_RemoveEntity_F( gentity_t *ent )
    {
       if ( ents[i] > 0 && ents[i] < 1024 )
 	  {
-         G_FreeEntity( &g_entities[ents[i]] ); // G_FreeEntity will free up the slot in g_entities so it can be re-used!
+		if ( &g_entities[ents[i]].inuse )
+		{
+			G_FreeEntity( &g_entities[ents[i]] ); // G_FreeEntity will free up the slot in g_entities so it can be re-used!
+		}
 	  }
    }
    return;

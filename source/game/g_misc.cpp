@@ -1998,6 +1998,7 @@ void SP_misc_shield_floor_unit( gentity_t *ent )
 	vec3_t dest;
 	trace_t tr;
 
+	/*
 	if (g_gametype.integer != GT_CTF &&
 		g_gametype.integer != GT_CTY &&
 		//[CoOp]
@@ -2009,6 +2010,7 @@ void SP_misc_shield_floor_unit( gentity_t *ent )
 		G_FreeEntity( ent );
 		return;
 	}
+	*/
 
 	VectorSet( ent->r.mins, -16, -16, 0 );
 	VectorSet( ent->r.maxs, 16, 16, 40 );
