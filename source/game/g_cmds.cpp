@@ -2104,7 +2104,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 
 	// send it to all the appropriate clients
 
-	if ( openrp_allChat.integer == 0 && ( mode == SAY_ALL || mode == SAY_YELL || mode == SAY_WHISPER || mode == SAY_ME || mode == SAY_IT || mode == SAY_LOOC ) )
+	if ( !openrp_allChat.integer && ( mode == SAY_ALL || mode == SAY_YELL || mode == SAY_WHISPER || mode == SAY_ME || mode == SAY_IT || mode == SAY_LOOC ) )
 	{
 		for ( j = 0; j < level.maxclients; j++ )
 		{

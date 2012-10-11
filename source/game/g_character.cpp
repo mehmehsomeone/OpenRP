@@ -2207,7 +2207,7 @@ void Cmd_Comm_F(gentity_t *ent)
 		return; 
 	}
 
-	if ( openrp_allChat.integer == 0  )
+	if ( !openrp_allChat.integer  )
 	{
 		for ( i = 0; i < level.maxclients; i++ )
 		{
@@ -2338,7 +2338,7 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 		return; 
 	}
 
-	if ( openrp_allChat.integer == 0  )
+	if ( !openrp_allChat.integer )
 	{
 		for ( i = 0; i < level.maxclients; i++ )
 		{

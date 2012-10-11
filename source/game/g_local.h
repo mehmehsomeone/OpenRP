@@ -897,6 +897,7 @@ typedef struct {
 	qboolean isProtected;
 	qboolean isInvisible;
 	qboolean allChat;
+	qboolean allChatComplete;
 	qboolean isAutoWalking;
 	qboolean chatCommandExecuted;
 	int chatMode;

@@ -2637,25 +2637,34 @@ void Cmd_Invisible_F( gentity_t * ent )
 
 void Cmd_AllChat_F( gentity_t * ent )
 {
+	char parameter[MAX_STRING_CHARS];
 	if(!G_CheckAdmin(ent, ADMIN_ALLCHAT))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
 
-	if ( !ent->client->sess.allChat )
+	if ( trap_Argc() < 2 )
 	{
-		ent->client->sess.allChat =	qtrue;
-		trap_SendServerCommand( ent-g_entities, "print \"^2All chat turned ON.\n\"" );
-		return;
+		if ( !ent->client->sess.allChat )
+		{
+			ent->client->sess.allChat =	qtrue;
+			trap_SendServerCommand( ent-g_entities, "print \"^2All chat turned ON.\n\"" );
+			return;
+		}
+		else
+		{
+			ent->client->sess.allChat =	qfalse;
+			trap_SendServerCommand( ent-g_entities, "print \"^2All chat turned OFF.\n\"" );
+			return;
+		}
 	}
-	else
+
+	trap_Argv( 1, parameter, MAX_STRING_CHARS );
+
+	if( !Q_stricmp( parameter, "complete" ) )
 	{
-		ent->client->sess.allChat =	qfalse;
-		trap_SendServerCommand( ent-g_entities, "print \"^2All chat turned OFF.\n\"" );
-		return;
 	}
-	return;
 }
 
 void Cmd_amWarningList_F(gentity_t *ent)
