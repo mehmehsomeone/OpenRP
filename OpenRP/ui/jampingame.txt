@@ -22,6 +22,7 @@
 	loadMenu { "ui/jamp/ingame_playergunnery.menu"		}
 	loadMenu { "ui/jamp/ingame_playerfeats.menu"		}
 	loadMenu { "ui/jamp/ingame_login.menu"		}
+	loadMenu { "ui/jamp/ingame_character.menu"		}
 	//[/NewMenus]
 
 	loadMenu { "ui/jamp/ingame_saber.menu" 		}
