@@ -2918,16 +2918,6 @@ typedef struct qtime_s {
 #define AS_LOCAL			0
 #define AS_GLOBAL			1
 #define AS_FAVORITES		2
-
-#if !WINDOWXP_COMPILE
-//[OpenRP - eezstreet's multi master servers]
-#define AS_GLOBAL2 3
-#define AS_GLOBAL3 4
-#define AS_GLOBAL4 5
-#define AS_GLOBAL5 6
-//[/OpenRP - eezstreet's multi master servers]
-#endif
-
 #define AS_MPLAYER			3 // (Obsolete)
 
 // cinematic states
