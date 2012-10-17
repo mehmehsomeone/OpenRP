@@ -18,8 +18,7 @@ USER INTERFACE MAIN
 #include "ui_force.h"
 #include "../cgame/animtable.h" //we want this to be compiled into the module because we access it in the shared module.
 #include "../game/bg_saga.h"
-
-#define	WINDOWSXP_COMPILE 0
+#include "ui_shared.h"
 
 #if !WINDOWSXP_COMPILE
 //[FAKE CHALLENGE RESPONSE HIJACK - Thanks to Didz]
@@ -1354,8 +1353,10 @@ void _UI_Shutdown( void ) {
 	trap_LAN_SaveCachedServers();
 	UI_CleanupGhoul2();
 
+#if !WINDOWSXP_COMPILE
 	PatchEngine( qfalse );
 	UI_PatchFakeChallengeResponse( qfalse );
+#endif
 
 	//[DynamicMemory_Sabers]
 	UI_FreeSabers();
@@ -7036,6 +7037,20 @@ static void UI_RunMenuScript(char **args)
 			trap_Cvar_VariableStringBuffer("ui_account_password",password,sizeof(password));
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("register %s %s\n", username, password ) );
 		}
+		else if (Q_stricmp(name, "characterCreate") == 0)
+		{
+			char name[256];
+			char forceSensitive[256];
+			trap_Cvar_VariableStringBuffer("ui_character_name",name,sizeof(name));
+			trap_Cvar_VariableStringBuffer("ui_character_forceSensitive",forceSensitive,sizeof(forceSensitive));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("createcharacter %s %s\n", name, forceSensitive ) );
+		}
+		else if (Q_stricmp(name, "characterSelect") == 0)
+		{
+			char name[256];
+			trap_Cvar_VariableStringBuffer("ui_character_name",name,sizeof(name));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("character %s\n", name ) );
+		}
 		//[/Account System]
 		else if (Q_stricmp(name, "saber_color") == 0) 
 		{
@@ -11035,12 +11050,13 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 			Menus_ActivateByName("ingame_login");
 			UpdateForceUsed();
 		  return;
-		  /*
 		case UIMENU_CHARACTER:
 			trap_Key_SetCatcher( KEYCATCH_UI );
+			UI_BuildPlayerList();
 			Menus_CloseAll();
+			//ingame_player
 			Menus_ActivateByName("ingame_character");
-		 */
+		  return;
 		//[/CoOp]
 		//[Commander]
 			/*
@@ -11436,6 +11452,9 @@ vmCvar_t	ui_account_username;
 vmCvar_t	ui_account_password;
 vmCvar_t	ui_account_loggedin;
 
+vmCvar_t	ui_character_name;
+vmCvar_t	ui_character_forceSensitive;
+
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		cvarTable[] = {
@@ -11567,6 +11586,9 @@ static cvarTable_t		cvarTable[] = {
 	{ &ui_account_username,			"ui_acc_username", "", CVAR_INTERNAL},
 	{ &ui_account_password,			"ui_acc_password", "", CVAR_INTERNAL},
 	{ &ui_account_loggedin,			"ui_acc_loggedin", "false", CVAR_INTERNAL},
+
+	{ &ui_character_name,			"ui_char_name", "", CVAR_INTERNAL},
+	{ &ui_character_forceSensitive,	"ui_char_forceSensitive", "", CVAR_INTERNAL},
 };
 
 // bk001129 - made static to avoid aliasing

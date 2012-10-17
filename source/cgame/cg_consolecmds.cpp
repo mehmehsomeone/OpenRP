@@ -493,4 +493,5 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand("amaudio");
 	trap_AddCommand("ooc");
 	trap_AddCommand("force");
+	trap_AddCommand("charui");
 }

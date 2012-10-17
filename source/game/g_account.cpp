@@ -161,6 +161,8 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
 
+	trap_SendServerCommand(ent-g_entities, "charui");
+
 	return;
 }
 
@@ -359,7 +361,7 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
 	
-	//trap_SendServerCommand( ent-g_entities, va( "character" ) );
+	trap_SendServerCommand(ent-g_entities, "charui");
 	
 	return;
 }

@@ -237,46 +237,47 @@ void SaveCharacter(gentity_t * ent)
 	Database db(DATABASE_PATH);
 	Query q(db);
 
+	string featString;
+	string skillString;
+	string forceString;
+
+
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
 		return;
 	}
-
-		string featString;
-		string skillString;
-		string forceString;
-
-//Create feat string
-for(int i = 0; i < NUM_FEATS; i++)
-{
-char tempFeat[2];
-itoa(ent->client->featLevel[i],tempFeat,10);
-		 featString.append(tempFeat);
-        }
-        //Create skill string
-        for(int j = 0; j < NUM_SKILLS; j++)
-        {
-		 char tempSkill[2];
-         itoa(ent->client->skillLevel[j],tempSkill,10);
-		 skillString.append(tempSkill);
-        }
-        //Create force string
-        for(int k = 0; k < NUM_FORCE_POWERS-1; k++)
-        {
-		 char tempForce[2];
-         itoa(ent->client->ps.fd.forcePowerLevel[k],tempForce,10);
-		 forceString.append(tempForce);
-        }
+	
+	//Create feat string
+	for(int i = 0; i < NUM_FEATS; i++)
+	{
+		char tempFeat[2];
+		itoa(ent->client->featLevel[i],tempFeat,10);
+		featString.append(tempFeat);
+	}
+	//Create skill string
+	for(int j = 0; j < NUM_SKILLS; j++)
+	{
+		char tempSkill[2];
+		itoa(ent->client->skillLevel[j],tempSkill,10);
+		skillString.append(tempSkill);
+	}
+	//Create force string
+	for(int k = 0; k < NUM_FORCE_POWERS-1; k++)
+	{
+		char tempForce[2];
+		itoa(ent->client->ps.fd.forcePowerLevel[k],tempForce,10);
+		forceString.append(tempForce);
+	}
       
-      //Update feats in database
-	  q.execute(va("UPDATE Characters set FeatBuild='%s' WHERE CharID='%i'",featString.c_str(),ent->client->sess.characterID));
-      //Update skills in database
-      q.execute(va("UPDATE Characters set SkillBuild='%s' WHERE CharID='%i'",skillString.c_str(),ent->client->sess.characterID));
-      //Update force in database
-      q.execute(va("UPDATE Characters set ForceBuild='%s' WHERE CharID='%i'",forceString.c_str(),ent->client->sess.characterID));
+	//Update feats in database
+	q.execute(va("UPDATE Characters set FeatBuild='%s' WHERE CharID='%i'",featString.c_str(),ent->client->sess.characterID));
+	//Update skills in database
+	q.execute(va("UPDATE Characters set SkillBuild='%s' WHERE CharID='%i'",skillString.c_str(),ent->client->sess.characterID));
+	//Update force in database
+	q.execute(va("UPDATE Characters set ForceBuild='%s' WHERE CharID='%i'",forceString.c_str(),ent->client->sess.characterID));
 	  
-	  return;
+	return;
 }
 
 /*
@@ -292,31 +293,32 @@ void LevelCheck(int charID)
 	Query q(db);
 
 	int i;
-	int nextLevel, neededSkillPoints, timesLeveled;
+	int nextLevel, neededSkillPoints, *timesLeveled = 0;
 	//Get their accountID
 	int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
 	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
 	int loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
 	string charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", charID ) );
-	int charCurrentLevel  = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
 	int charNewCurrentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
-	int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
+	int currentLevelTemp = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
+	int *charCurrentLevel = &currentLevelTemp;
 	int currentSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", charID ) );
 
 	for ( i=0; i < 49; ++i )
 	{
-		if ( currentLevel == 50 )
+		if ( *charCurrentLevel == 50 )
 		{
 			break;
 		}
 		
-		nextLevel = currentLevel + 1;
+		nextLevel = *charCurrentLevel + 1;
 		neededSkillPoints = Q_powf( nextLevel, 2 ) * 2;
 
 		if ( currentSkillPoints >= neededSkillPoints )
 		{
 			q.execute( va( "UPDATE Characters set Level='%i' WHERE CharID='%i'", nextLevel, charID ) );
+			*timesLeveled++;
 		}
 
 		else
@@ -325,11 +327,9 @@ void LevelCheck(int charID)
 		}
 	}
 
-	timesLeveled = charNewCurrentLevel - charCurrentLevel;
-
-	if ( timesLeveled > 0 )
+	if ( *timesLeveled > 0 )
 	{
-		if ( timesLeveled > 1 )
+		if ( *timesLeveled > 1 )
 		{
 			if ( loggedIn )
 			{

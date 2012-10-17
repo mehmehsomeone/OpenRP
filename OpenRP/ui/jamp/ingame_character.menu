@@ -1,5 +1,5 @@
-k//----------------------------------------------------------------------------------------------
-//OpenRP Character Menu - based on the Euka UI Plugin By Nicolas "Scooper" Roblin, modified by Phred.
+//----------------------------------------------------------------------------------------------
+//OpenRP Character menu - based on the Euka UI Plugin by Nicolas "Scooper" Roblin, modified by Phred.
 //----------------------------------------------------------------------------------------------
 {	
 	menuDef 
@@ -7,7 +7,6 @@ k//-----------------------------------------------------------------------------
 		name					"ingame_character"
 		visible				0
 		fullscreen				0
-		outOfBoundsClick			// this closes the window if it gets a click out of the rectangle
 		rect					195 140 250 180
 		focusColor				1 1 1 1
 		style					1
@@ -34,7 +33,7 @@ k//-----------------------------------------------------------------------------
 			disable		main	0	
 			show			main
 			show			title_small_background
-			setfocus		username
+			setfocus		name
 		}
 
 		// Overall window backdrop
@@ -79,7 +78,7 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				select_button
+			name				selectCharacter_button
 			group				none
 			style				WINDOW_STYLE_SHADER
 			rect				18 104 59 32
@@ -91,12 +90,12 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				select
+			name				selectCharacter
 			group				main
 			rect				25 110 40 20	
 			type				ITEM_TYPE_BUTTON
-			text				"Select"
-			descText			"Press to Select Character"
+			text				"Select Character"
+			descText			"Select a current character"
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			4
 			textaligny			-2    
@@ -106,23 +105,23 @@ k//-----------------------------------------------------------------------------
 			visible			1
 			action
 			{
-				play "sound/interface/button1.wav" 
-				uiScript "characterSelect"
+				play "sound/interface/button1.wav"
+				open "ingame_characterSelect"
 				close "ingame_character"
 			}
 			mouseenter 
 			{ 
-				show			select_button
+				show			selectCharacter_button
 			}
 			mouseexit 
 			{ 
-				hide			select_button
+				hide			selectCharacter_button
 			}
 		}
 
 		itemDef 
 		{
-			name				create_button
+			name				createCharacter_button
 			group				none
 			style				WINDOW_STYLE_SHADER
 			rect				12 129 120 32
@@ -134,12 +133,12 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				create
+			name				createCharacter
 			group				main
 			rect				25 135 90 20	
 			type				ITEM_TYPE_BUTTON
 			text				"Create Character"
-			descText			"Create a New Character"
+			descText			"Character a new character"
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			4
 			textaligny			-2
@@ -149,35 +148,137 @@ k//-----------------------------------------------------------------------------
 			visible			1
 			action
 			{
-				play 			"sound/interface/button1.wav" 
-				uiScript "characterCreate"
+				play 			"sound/interface/button1.wav"
+				open "ingame_characterCreate"
 				close "ingame_character"
 			}
 			mouseenter 
 			{ 
-				show			newaccount_button
+				show			createCharacter_button
 			}
 			mouseexit 
 			{ 
-				hide			newaccount_button
+				hide			createCharacter_button
 			}
 			
+		}
+	}
+	
+	menuDef 
+	{
+		name					"ingame_characterCreate"
+		visible				0
+		fullscreen				0
+		rect					195 140 250 180
+		focusColor				1 1 1 1
+		style					1
+		border				1
+		descX					320
+		descY					300
+		descScale				1
+		descColor				1 .682 0 .8 // Focus color for text and items
+		descAlignment			ITEM_ALIGN_CENTER	
+		onESC
+		{
+			close	all
+			hide title_big_background
+			hide title_small_background
+		}
+		onClose
+		{
+			hide main
+			hide title_big_background
+			hide title_small_background
+		}
+		onOpen
+		{
+			disable		main	0	
+			show			main
+			show			title_small_background
+			setfocus		name
+		}
+
+		// Overall window backdrop
+		itemDef 
+		{
+			name				background_pic
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				0 0 250 180
+			background			"gfx/menus/menu_box_ingame"
+			forecolor			1 1 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				title_small_background
+			rect				0 5 250 26
+			style				WINDOW_STYLE_SHADER	
+			background			"gfx/menus/menu_blendbox"
+			visible			1
+			decoration
 		}
 		
 		itemDef 
 		{
-			name				nameText
-			group				main
-			text				"**Force Side #s are 1 (Light) 2 (Dark) 3 (Non-Force). Leave blank if just selecting a character."
+			name				title
+			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
-			rect				20 15 0 0
-			textalign			ITEM_ALIGN_LEFT		
-			textalignx			4
-			textaligny			12
-			font				4
-			textscale			1
+			type				4
+			text				"Character Creation"			
+			textalign			ITEM_ALIGN_CENTER		
+			textalignx			90
+			textaligny			2    
+			font				3
+			textscale			.9
 			forecolor			.549 .854 1 1
+			visible			1
 			decoration
+		}
+
+		itemDef 
+		{
+			name				createCharacter_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				18 104 59 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				createCharacter
+			group				main
+			rect				25 110 40 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Create Character"
+			descText			"Create your character"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2    
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play "sound/interface/button1.wav" 
+				uiScript "characterCreate"
+				close "ingame_characterCreate"
+			}
+			mouseenter 
+			{ 
+				show			createCharacter_button
+			}
+			mouseexit 
+			{ 
+				hide			createCharacter_button
+			}
 		}
 
 		itemDef 
@@ -201,7 +302,7 @@ k//-----------------------------------------------------------------------------
 			name				name
 			group				main
 			style				1
-			descText			"Input Name"
+			descText			"Input Character Name"
 			text				@MENUS_BLANK_1
 			maxchars			16
 			font				2
@@ -221,9 +322,9 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				forceSideNumberText
+			name				forceSensitiveText
 			group				main
-			text				"Force Side #:"
+			text				"Force Sensitive?(yes/no)"
 			style				WINDOW_STYLE_EMPTY
 			rect				20 65 0 0
 			textalign			ITEM_ALIGN_LEFT		
@@ -237,16 +338,16 @@ k//-----------------------------------------------------------------------------
 
 		itemDef 
 		{
-			name				forceSideNumber
+			name				forceSensitive
 			group				main
 			style				1
-			descText			"Input Force Side #"
+			descText			"Is your character force sensitive?(yes/no)"
 			text				@MENUS_BLANK_1
 			maxchars			16
 			font				2
 			textscale			.8
 			type				ITEM_TYPE_EDITFIELD
-			cvar				"ui_character_forceSideNumber"
+			cvar				"ui_character_forceSensitive"
 			rect				90 73 140 25
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			0
@@ -257,24 +358,5 @@ k//-----------------------------------------------------------------------------
 			border			1
 			bordercolor			.79 .64 .22 1
 		}
-
-		//itemDef 
-		//{
-			//name				loginFailed
-			//group				main
-			//text				"Login Failed"
-			//style				WINDOW_STYLE_EMPTY
-			//rect				140 100 0 0
-			//textalign			ITEM_ALIGN_LEFT		
-			//textalignx			4
-			//textaligny			12
-			//font				4
-			//textscale			1
-//			//forecolor			.549 .854 1 1
-			//forecolor			.7 0 0 1
-			//decoration
-			//cvarTest			"ui_e_failedlogin"
-			//hideCvar			{ 0 }  
-		//}
 	}
 }
