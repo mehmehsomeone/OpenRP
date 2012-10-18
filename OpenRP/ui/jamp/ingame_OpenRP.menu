@@ -4,7 +4,7 @@
 {	
 	menuDef 
 	{
-		name					"ingame_character"
+		name					"ingame_OpenRP"
 		visible				0
 		fullscreen				0
 		rect					195 140 250 180
@@ -65,7 +65,7 @@
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
 			type				4
-			text				"Character"			
+			text				"OpenRP"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90
 			textaligny			2    

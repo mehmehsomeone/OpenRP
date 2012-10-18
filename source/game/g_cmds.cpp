@@ -2933,11 +2933,10 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 		Com_sprintf( level.voteString, sizeof( level.voteString ), "vstr nextmap");
 		Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
 	}
-	else if ( !Q_stricmp (arg1, "timelimit" ) )
+	else if ( !Q_stricmp ( arg1, "timelimit" ) )
 	{
-		int n = atoi ( arg2 );
-		
-		Com_sprintf ( level.voteString, sizeof(level.voteString ), "%s %s", arg1, n );
+		int n = Com_Clampi( 0, 35790, atoi( arg2 ) );
+		Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %i", arg1, n );
 	}
 	else
 	{

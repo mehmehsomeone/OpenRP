@@ -11052,7 +11052,6 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 		  return;
 		case UIMENU_CHARACTER:
 			trap_Key_SetCatcher( KEYCATCH_UI );
-			UI_BuildPlayerList();
 			Menus_CloseAll();
 			//ingame_player
 			Menus_ActivateByName("ingame_character");
