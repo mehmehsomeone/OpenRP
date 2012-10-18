@@ -543,8 +543,7 @@ void WP_InitForcePowers( gentity_t *ent )
 						ent->client->sess.spectatorClient = 0;
 
 						ent->client->pers.teamState.state = TEAM_BEGIN;
-						trap_SendServerCommand( ent-g_entities, "print \"^2Please create a character using /createCharacter or select a character using /character.\n\"" );
-						trap_SendServerCommand( ent-g_entities, "cp \"^2Please create a character using /createCharacter\n^2or select a character using /character.\n\"" );
+						trap_SendServerCommand(ent-g_entities, "charui");
 					}
 
 				}//[/Account System]

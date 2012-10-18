@@ -155,12 +155,10 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 		ent->client->pers.hasCheatAccess = qtrue;
 	}
 
-	//You are now logged in as <username>. Congratulations, you can type.
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2You are now logged in as %s!\nPlease create a character (/createCharacter) or select one (/character)\n\"", userName ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2You are now logged in as %s!\n^2Please create a character (/createCharacter) or ^2select one (/character)\n\"", userName ) );
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
 
+	//Open the character selection/creation menu
 	trap_SendServerCommand(ent-g_entities, "charui");
 
 	return;
@@ -355,12 +353,10 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2Account created! You are now logged in as %s.\nPlease create a character (/createCharacter) or select one (/character)\nIf you had colors in the username, they were removed.\n\"", userNameSTR.c_str() ) );
-
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );
 	
+	//Open the character selection/creation menu
 	trap_SendServerCommand(ent-g_entities, "charui");
 	
 	return;

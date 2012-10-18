@@ -81,7 +81,7 @@
 			name				selectCharacter_button
 			group				none
 			style				WINDOW_STYLE_SHADER
-			rect				18 104 59 32
+			rect				46 106 120 32
 			background			"gfx/menus/menu_buttonback"			// Frame around button
 			forecolor			1 1 1 1
 			decoration
@@ -92,7 +92,7 @@
 		{
 			name				selectCharacter
 			group				main
-			rect				25 110 40 20	
+			rect				50 110 110 20	
 			type				ITEM_TYPE_BUTTON
 			text				"Select Character"
 			descText			"Select a current character"
@@ -124,7 +124,7 @@
 			name				createCharacter_button
 			group				none
 			style				WINDOW_STYLE_SHADER
-			rect				12 129 120 32
+			rect				46 76 120 32
 			background			"gfx/menus/menu_buttonback"			// Frame around button
 			forecolor			1 1 1 1
 			decoration
@@ -135,7 +135,7 @@
 		{
 			name				createCharacter
 			group				main
-			rect				25 135 90 20	
+			rect				50 80 110 20	
 			type				ITEM_TYPE_BUTTON
 			text				"Create Character"
 			descText			"Character a new character"
@@ -243,7 +243,7 @@
 			name				createCharacter_button
 			group				none
 			style				WINDOW_STYLE_SHADER
-			rect				18 104 59 32
+			rect				46 126 120 32
 			background			"gfx/menus/menu_buttonback"			// Frame around button
 			forecolor			1 1 1 1
 			decoration
@@ -254,7 +254,7 @@
 		{
 			name				createCharacter
 			group				main
-			rect				25 110 40 20	
+			rect				50 130 110 20	
 			type				ITEM_TYPE_BUTTON
 			text				"Create Character"
 			descText			"Create your character"
@@ -324,7 +324,7 @@
 		{
 			name				forceSensitiveText
 			group				main
-			text				"Force Sensitive?(yes/no)"
+			text				"Force Sensitive(yes/no):"
 			style				WINDOW_STYLE_EMPTY
 			rect				20 65 0 0
 			textalign			ITEM_ALIGN_LEFT		
@@ -341,14 +341,14 @@
 			name				forceSensitive
 			group				main
 			style				1
-			descText			"Is your character force sensitive?(yes/no)"
+			descText			"Is your character force sensitive?"
 			text				@MENUS_BLANK_1
 			maxchars			16
 			font				2
 			textscale			.8
 			type				ITEM_TYPE_EDITFIELD
 			cvar				"ui_character_forceSensitive"
-			rect				90 73 140 25
+			rect				90 100 140 25
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			0
 			textaligny			0
@@ -439,7 +439,7 @@
 			name				selectCharacter_button
 			group				none
 			style				WINDOW_STYLE_SHADER
-			rect				18 104 59 32
+			rect				46 106 120 32
 			background			"gfx/menus/menu_buttonback"			// Frame around button
 			forecolor			1 1 1 1
 			decoration
@@ -450,7 +450,7 @@
 		{
 			name				selectCharacter
 			group				main
-			rect				25 110 40 20	
+			rect				50 110 110 20	
 			type				ITEM_TYPE_BUTTON
 			text				"Select Character"
 			descText			"Select your character"

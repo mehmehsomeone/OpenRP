@@ -2933,6 +2933,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 		Com_sprintf( level.voteString, sizeof( level.voteString ), "vstr nextmap");
 		Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
 	}
+	//Thanks to Raz0r for this fix.
 	else if ( !Q_stricmp ( arg1, "timelimit" ) )
 	{
 		int n = Com_Clampi( 0, 35790, atoi( arg2 ) );
