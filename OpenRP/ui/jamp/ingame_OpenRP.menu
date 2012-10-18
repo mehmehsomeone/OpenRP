@@ -78,7 +78,7 @@
 
 		itemDef 
 		{
-			name				selectCharacter_button
+			name				character_button
 			group				none
 			style				WINDOW_STYLE_SHADER
 			rect				18 104 59 32
@@ -90,7 +90,7 @@
 
 		itemDef 
 		{
-			name				selectCharacter
+			name				character
 			group				main
 			rect				25 110 40 20	
 			type				ITEM_TYPE_BUTTON
@@ -106,22 +106,22 @@
 			action
 			{
 				play "sound/interface/button1.wav"
-				open "ingame_characterSelect"
-				close "ingame_character"
+				open "ingame_OpenRPcharacter"
+				close "ingame_OpenRP"
 			}
 			mouseenter 
 			{ 
-				show			selectCharacter_button
+				show			character_button
 			}
 			mouseexit 
 			{ 
-				hide			selectCharacter_button
+				hide			character_button
 			}
 		}
 
 		itemDef 
 		{
-			name				createCharacter_button
+			name				account_button
 			group				none
 			style				WINDOW_STYLE_SHADER
 			rect				12 129 120 32
@@ -133,7 +133,7 @@
 
 		itemDef 
 		{
-			name				createCharacter
+			name				account
 			group				main
 			rect				25 135 90 20	
 			type				ITEM_TYPE_BUTTON
@@ -149,16 +149,60 @@
 			action
 			{
 				play 			"sound/interface/button1.wav"
-				open "ingame_characterCreate"
+				open "ingame_OpenRPaccount"
 				close "ingame_character"
 			}
 			mouseenter 
 			{ 
-				show			createCharacter_button
+				show			account_button
 			}
 			mouseexit 
 			{ 
-				hide			createCharacter_button
+				hide			account_button
+			}
+			
+		}
+      
+      		itemDef 
+		{
+			name				admin_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				12 129 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				admin
+			group				main
+			rect				25 135 90 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Create Character"
+			descText			"Character a new character"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play 			"sound/interface/button1.wav"
+				open "ingame_OpenRPaccount"
+				close "ingame_character"
+			}
+			mouseenter 
+			{ 
+				show			admin_button
+			}
+			mouseexit 
+			{ 
+				hide			admin_button
 			}
 			
 		}
@@ -166,7 +210,7 @@
 	
 	menuDef 
 	{
-		name					"ingame_characterCreate"
+		name					"ingame_OpenRPCharacter"
 		visible				0
 		fullscreen				0
 		rect					195 140 250 180
@@ -240,7 +284,7 @@
 
 		itemDef 
 		{
-			name				createCharacter_button
+			name				characterCreateSelect_button
 			group				none
 			style				WINDOW_STYLE_SHADER
 			rect				18 104 59 32
@@ -252,12 +296,12 @@
 
 		itemDef 
 		{
-			name				createCharacter
+			name				createSelectCharacter
 			group				main
 			rect				25 110 40 20	
 			type				ITEM_TYPE_BUTTON
-			text				"Create Character"
-			descText			"Create your character"
+			text				"Select or Create Character"
+			descText			"Select or create a character"
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			4
 			textaligny			-2    
@@ -268,95 +312,17 @@
 			action
 			{
 				play "sound/interface/button1.wav" 
-				uiScript "characterCreate"
-				close "ingame_characterCreate"
+				openrp "ingame_character"
+				close "ingame_OpenRPCharacter"
 			}
 			mouseenter 
 			{ 
-				show			createCharacter_button
+				show			characterCreateSelect_button
 			}
 			mouseexit 
 			{ 
-				hide			createCharacter_button
+				hide			characterCreateSelect_button
 			}
-		}
-
-		itemDef 
-		{
-			name				nameText
-			group				main
-			text				"Name:"
-			style				WINDOW_STYLE_EMPTY
-			rect				20 35 0 0
-			textalign			ITEM_ALIGN_LEFT		
-			textalignx			4
-			textaligny			12
-			font				4
-			textscale			1
-			forecolor			.549 .854 1 1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				name
-			group				main
-			style				1
-			descText			"Input Character Name"
-			text				@MENUS_BLANK_1
-			maxchars			16
-			font				2
-			textscale			.8
-			type				ITEM_TYPE_EDITFIELD
-			cvar				"ui_character_name"
-			rect				90 43 140 25
-			textalign			ITEM_ALIGN_LEFT
-			textalignx			0
-			textaligny			0
-			forecolor			1 1 1 1
-			backcolor			.25 .25 .25 .5
-			visible			1
-			border			1
-			bordercolor			.79 .64 .22 1
-		}
-
-		itemDef 
-		{
-			name				forceSensitiveText
-			group				main
-			text				"Force Sensitive?(yes/no)"
-			style				WINDOW_STYLE_EMPTY
-			rect				20 65 0 0
-			textalign			ITEM_ALIGN_LEFT		
-			textalignx			4
-			textaligny			12
-			font				4
-			textscale			1
-			forecolor			.549 .854 1 1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				forceSensitive
-			group				main
-			style				1
-			descText			"Is your character force sensitive?(yes/no)"
-			text				@MENUS_BLANK_1
-			maxchars			16
-			font				2
-			textscale			.8
-			type				ITEM_TYPE_EDITFIELD
-			cvar				"ui_character_forceSensitive"
-			rect				90 73 140 25
-			textalign			ITEM_ALIGN_LEFT
-			textalignx			0
-			textaligny			0
-			forecolor			1 1 1 1
-			backcolor			.25 .25 .25 .5
-			visible			0
-			border			1
-			bordercolor			.79 .64 .22 1
 		}
 	}
 	
