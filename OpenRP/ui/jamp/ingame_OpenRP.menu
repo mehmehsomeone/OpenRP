@@ -430,8 +430,8 @@
 			action
 			{
 				play "sound/interface/button1.wav"
-				open "ingame_OpenRPCharacterEdit"
-				close "ingame_OpenRPCharacter"
+				open "ingame_OpenRPAccountEdit"
+				close "ingame_OpenRPAccount"
 			}
 			mouseenter 
 			{ 
@@ -487,9 +487,9 @@
 			
 		}
 		
-				itemDef 
+		itemDef 
 		{
-			name				loginRegisterAccount_button
+			name				logoutAccount_button
 			group				none
 			style				WINDOW_STYLE_SHADER
 			rect				76 46 120 32
@@ -501,12 +501,12 @@
 
 		itemDef 
 		{
-			name				loginRegisterAccount
+			name				logout
 			group				main
 			rect				80 50 140 20	
 			type				ITEM_TYPE_BUTTON
-			text				"Login/Register"
-			descText			"Login to or register an account"
+			text				"Logout"
+			descText			"Logout of your account"
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			4
 			textaligny			-2
@@ -517,16 +517,16 @@
 			action
 			{
 				play 			"sound/interface/button1.wav"
-				open "ingame_login"
+				uiscript "logout"
 				close "ingame_OpenRPAccount"
 			}
 			mouseenter 
 			{ 
-				show			loginRegisterAccount_button
+				show			logoutAccount_button
 			}
 			mouseexit 
 			{ 
-				hide			loginRegisterAccount_button
+				hide			logoutAccount_button
 			}
 			
 		}
@@ -611,7 +611,7 @@
 			name				editCharacter_button
 			group				none
 			style				WINDOW_STYLE_SHADER
-			rect				76 176 120 32
+			rect				76 106 120 32
 			background			"gfx/menus/menu_buttonback"			// Frame around button
 			forecolor			1 1 1 1
 			decoration
@@ -622,7 +622,7 @@
 		{
 			name				editCharacter
 			group				main
-			rect				80 180 140 20	
+			rect				80 110 140 20	
 			type				ITEM_TYPE_BUTTON
 			text				"Save"
 			descText			"Save Character Information"
@@ -676,7 +676,7 @@
 			font				2
 			textscale			.8
 			type				ITEM_TYPE_EDITFIELD
-			cvar				"ui_character_name"
+			cvar				"ui_characterEdit_name"
 			rect				90 43 140 25
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			0
@@ -715,7 +715,7 @@
 			font				2
 			textscale			.8
 			type				ITEM_TYPE_NUMERICFIELD
-			cvar				"ui_character_modelscale"
+			cvar				"ui_characterEdit_modelscale"
 			rect				90 73 140 25
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			0
@@ -818,7 +818,7 @@
 		{
 			name				editAccount
 			group				main
-			rect				80 180 140 20	
+			rect				80 110 140 20
 			type				ITEM_TYPE_BUTTON
 			text				"Save"
 			descText			"Save Account Information"
@@ -872,7 +872,7 @@
 			font				2
 			textscale			.8
 			type				ITEM_TYPE_EDITFIELD
-			cvar				"ui_account_name"
+			cvar				"ui_accountEdit_name"
 			rect				90 43 140 25
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			0
@@ -911,7 +911,7 @@
 			font				2
 			textscale			.8
 			type				ITEM_TYPE_EDITFIELD
-			cvar				"ui_account_password"
+			cvar				"ui_accountEdit_password"
 			rect				90 73 140 25
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			0

@@ -7057,18 +7057,18 @@ static void UI_RunMenuScript(char **args)
 			char modelscaleTemp[256];
 			int modelscale = 0;
 
-			trap_Cvar_VariableStringBuffer("ui_character_name",charName,sizeof(charName));
-			trap_Cvar_VariableStringBuffer("ui_character_modelscale",modelscaleTemp,sizeof(modelscaleTemp));
+			trap_Cvar_VariableStringBuffer("ui_characterEdit_name",charName,sizeof(charName));
+			trap_Cvar_VariableStringBuffer("ui_characterEdit_modelscale",modelscaleTemp,sizeof(modelscaleTemp));
 			modelscale = atoi( modelscaleTemp );
 
 			if ( (charName[0] != '\0') )
 			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("editcharacter %s\n", charName ) );
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("editcharacter name %s\n", charName ) );
 			}
 
 			if ( modelscale != 0 )
 			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("editcharacter %i\n", modelscale ) );
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("editcharacter modelscale %i\n", modelscale ) );
 			}
 		}
 		else if (Q_stricmp(name, "accountEdit") == 0)
@@ -7076,18 +7076,22 @@ static void UI_RunMenuScript(char **args)
 			char username[256];
 			char password[256];
 
-			trap_Cvar_VariableStringBuffer("ui_account_username",username,sizeof(username));
-			trap_Cvar_VariableStringBuffer("ui_account_password",password,sizeof(password));
+			trap_Cvar_VariableStringBuffer("ui_accountEdit_username",username,sizeof(username));
+			trap_Cvar_VariableStringBuffer("ui_accountEdit_password",password,sizeof(password));
 
 			if ( (username[0] != '\0') )
 			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("editaccount %s\n", name ) );
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("editaccount username %s\n", username ) );
 			}
 
 			if ( (password[0] != '\0') )
 			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("editaccount %i\n", password ) );
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("editaccount password %s\n", password ) );
 			}
+		}
+		else if (Q_stricmp(name, "logout") == 0)
+		{
+			trap_Cmd_ExecuteText(EXEC_APPEND, "logout \n" );
 		}
 		//[/Account System]
 		else if (Q_stricmp(name, "saber_color") == 0) 

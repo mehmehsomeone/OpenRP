@@ -487,6 +487,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	if( !charID )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1Character does not exist\n\"");
+		trap_SendServerCommand( ent-g_entities, "cp \"^1Character does not exist\n\"");
 		return;
 	}
 
@@ -602,6 +603,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	if( !charID )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1Character does not exist\n\"");
+		trap_SendServerCommand( ent-g_entities, "cp \"^1Character does not exist\n\"");
 		return;
 	}
 
