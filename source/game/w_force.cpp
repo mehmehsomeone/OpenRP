@@ -526,7 +526,7 @@ void WP_InitForcePowers( gentity_t *ent )
 						ent->client->pers.teamState.state = TEAM_BEGIN;
 
 					}
-					if ( !isLoggedIn( ent ) )
+					if ( !isLoggedIn( ent ) || !ent->client->sess.characterChosen )
 					{
 						//Make them a spectator so they can set their powerups up without being bothered.
 						ent->client->sess.sessionTeam = TEAM_SPECTATOR;
@@ -534,18 +534,16 @@ void WP_InitForcePowers( gentity_t *ent )
 						ent->client->sess.spectatorClient = 0;
 
 						ent->client->pers.teamState.state = TEAM_BEGIN;
-						trap_SendServerCommand(ent-g_entities, "lui");	// Fire up the login UI
-					}
-					if ( !ent->client->sess.characterChosen )
-					{
-						ent->client->sess.sessionTeam = TEAM_SPECTATOR;
-						ent->client->sess.spectatorState = SPECTATOR_FREE;
-						ent->client->sess.spectatorClient = 0;
 
-						ent->client->pers.teamState.state = TEAM_BEGIN;
-						trap_SendServerCommand(ent-g_entities, "charui");
+						if ( !isLoggedIn( ent ) )
+						{
+							trap_SendServerCommand(ent-g_entities, "lui");	// Fire up the login UI
+						}
+						else
+						{
+							trap_SendServerCommand(ent-g_entities, "charui");
+						}
 					}
-
 				}//[/Account System]
 
 				//Event isn't very reliable, I made it a string. This way I can send it to just one

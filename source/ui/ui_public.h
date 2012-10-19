@@ -210,8 +210,7 @@ typedef enum {
 	//[/CoOp]
 	//Account UI
 	UIMENU_LOGIN,
-	UIMENU_CHARACTER,
-	UIMENU_OPENRP
+	UIMENU_CHARACTER
 };
 typedef int uiMenuCommand_t;
 
