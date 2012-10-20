@@ -293,7 +293,8 @@ void LevelCheck(int charID)
 	Query q(db);
 
 	int i;
-	int nextLevel, neededSkillPoints, *timesLeveled = 0;
+	int num = 0;
+	int nextLevel, neededSkillPoints, *timesLeveled = &num;
 	//Get their accountID
 	int accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
 	//Get their clientID so we can send them messages
