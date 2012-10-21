@@ -2901,12 +2901,13 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 		TextWrapCenterPrint(ojp_clientMOTD.string, motd);
 		if ( client->sess.sessionTeam != TEAM_SPECTATOR )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP Server:^7%s\n^2OpenRP Website: ^7openrp.jkhub.org\n^2Server Website: ^7%s\n^2Type /info for a list of commands or /eminfo for a list of emotes.\n\"", OPENRP_SERVERVERSION, openrp_website.string ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2OpenRP Server:^7%s\n^2OpenRP Website: ^7code.google.com/p/openrp/\n^2Server's Website: ^7%s\n^2Type /info for a list of commands or /eminfo for a list of emotes.\n\"", OPENRP_SERVERVERSION, openrp_website.string) );
 		}
 	}
 	else
 	{//send this client the MOTD for clients aren't running OJP or just not the right version.
-		TextWrapCenterPrint( va("^1You are missing the OpenRP client, have an outdated version, or ^1this server is outdated and needs to update.\n^2Download OpenRP: ^7openrp.jkhub.org/download\n", OPENRP_CLIENTVERSION), motd);
+		trap_SendServerCommand( ent-g_entities, "print \"^1Warning: You don't have OpenRP or have an outdated OpenRP, or this server's OpenRP is outdated.\n^2Download OpenRP: ^7code.google.com/p/openrp/\n^1If you don't download it, continue at risk of crashing.\n\"" );
+		TextWrapCenterPrint( va("^1Warning: You don't have OpenRP or have an outdated OpenRP, or this server's OpenRP is outdated.\n^2Download OpenRP: ^7code.google.com/p/openrp/\n^1If you don't download it, continue at risk of crashing.\n", OPENRP_CLIENTVERSION), motd);
 	}
 
 	trap_SendServerCommand( clientNum, va("cp \"%s\n\"", motd ) );

@@ -2224,11 +2224,11 @@ void Cmd_Comm_F(gentity_t *ent)
 			{
 				if ( !g_entities[clientid].client->sess.commOn )
 				{
-					trap_SendServerCommand(i, va("chat \"@^7Comm ^7%s ^7to ^7%s ^7- ^4%s ^6(Recipient's comm is off.)\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+					trap_SendServerCommand(i, va("chat \"1<All Chat>^7Comm ^7%s ^7to ^7%s ^7- ^4%s ^6(Recipient's comm is off.)\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 				}
 				else
 				{
-					trap_SendServerCommand(i, va("chat \"@^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+					trap_SendServerCommand(i, va("chat \"^1<All Chat>^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 				}
 			}
 			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 600 )
@@ -2353,7 +2353,7 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 		{
 			if ( g_entities[i].client->sess.allChat || ( g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 			{
-				trap_SendServerCommand(i, va("chat \"@^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+				trap_SendServerCommand(i, va("chat \"1<All Chat>^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 			}
 			else
 			{

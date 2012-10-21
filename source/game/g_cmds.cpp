@@ -1763,13 +1763,13 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 	{
 		if (locMsg)
 		{
-			trap_SendServerCommand( other-g_entities, va("%s \"%s\" \"%s\" \"%c\" \"@%s\"", 
+			trap_SendServerCommand( other-g_entities, va("%s \"%s\" \"%s\" \"%c\" \"^1<All Chat>%s\"", 
 				mode == SAY_TEAM ? "ltchat" : "lchat",
 				name, locMsg, color, message));
 		}
 		else
 		{
-			trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c@%s\"", 
+			trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c^1<All Chat>%s\"", 
 				mode == SAY_TEAM ? "tchat" : "chat",
 				name, Q_COLOR_ESCAPE, color, message));
 		}

@@ -1136,7 +1136,7 @@ void Cmd_amEffect_F(gentity_t *ent)
 	fx_runner->s.origin[0] = (int) ent->client->ps.origin[0];
 	SP_fx_runner(fx_runner);
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Effect placed.\n\"" ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Effect placed with ID: ^7%i.\n\"", fx_runner->s.number ) );
 	G_LogPrintf("Effect command executed by %s.\n", ent->client->pers.netname);
 	return;
 }
@@ -2724,20 +2724,18 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
    VectorCopy( fPos, obj->s.origin );
    G_CallSpawn( obj ); // Will search through the list of known entities and react accordingly
 
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Ent with ID: ^7%i ^2spawned.\n\"", obj->s.number ) );
+
    //The appropriate spawn function will take care of
    //any ent->think() ent->die() etc function pointers, so we don't have to worry.
    return;
 }
 
-//Thanks to Raz0r for posting this command.
+//Thanks to Raz0r for his ent tutorial that helped with making this command.
 void Cmd_RemoveEntity_F( gentity_t *ent )
 {
-   trace_t   tr;
-   vec3_t   fPos;
-   vec3_t   mins;
-   vec3_t   maxs;
-   int      i;
-   int      ents[8];
+	int entID;
+	char entIDTemp[MAX_STRING_CHARS];
 
 	if(!G_CheckAdmin(ent, ADMIN_BUILD))
 	{
@@ -2745,29 +2743,23 @@ void Cmd_RemoveEntity_F( gentity_t *ent )
 		return;
 	}
 
-   //Trace to where we're looking
-   AngleVectors( ent->client->ps.viewangles, fPos, 0, 0 );
-   for (i=0; i<3; i++)
-   {
-      fPos[i] = ent->client->ps.origin[i] + fPos[i]*Q3_INFINITE;
-   }
-   trap_Trace( &tr, ent->client->ps.origin, 0, 0, fPos, ent->s.number, ent->clipmask );
+	if ( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /removeEnt <entID>\n\"" );
+		return;
+	}
 
-   //Create a box
-   VectorSet( mins, tr.endpos[0]-64.0f, tr.endpos[1]-64.0f, tr.endpos[2]-64.0f );
-   VectorSet( maxs, tr.endpos[0]+64.0f, tr.endpos[1]+64.0f, tr.endpos[2]+64.0f );
-   trap_EntitiesInBox( mins, maxs, &ents[0], 8 );
+	trap_Argv( 1, entIDTemp, MAX_STRING_CHARS );
+	entID = atoi( entIDTemp );
 
-   //Anything in this box will be removed
-   for (i=0; i<8; i++)
-   {
-      if ( ents[i] > 0 && ents[i] < 1024 )
-	  {
-		if ( &g_entities[ents[i]].inuse )
-		{
-			G_FreeEntity( &g_entities[ents[i]] ); // G_FreeEntity will free up the slot in g_entities so it can be re-used!
-		}
-	  }
-   }
-   return;
+	if ( entID > 31 && entID < 1024 && &g_entities[entID].inuse ) //Make sure the ent isn't a player and is an ID that is in use.
+	{
+		G_FreeEntity( &g_entities[entID] ); // G_FreeEntity will free up the slot in g_entities so it can be re-used!
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Entity with ID: ^7%i ^2removed.\n\"", entID ) );
+	}
+	else
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Invalid entID.\"", entID ) );
+	}
+	return;
 }
