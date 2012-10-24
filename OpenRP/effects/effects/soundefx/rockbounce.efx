@@ -1,9 +1,0 @@
-repeatDelay				300
-
-Sound
-{
-	sounds
-	[
-		sound/effects/fallingrocks.mp3
-	]
-}
