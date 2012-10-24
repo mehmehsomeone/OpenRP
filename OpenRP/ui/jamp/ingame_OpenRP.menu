@@ -1,0 +1,926 @@
+//----------------------------------------------------------------------------------------------
+//OpenRP menu - based on the Euka UI Plugin by Nicolas "Scooper" Roblin, modified by Phred.
+//----------------------------------------------------------------------------------------------
+{	
+	menuDef 
+	{
+		name					"ingame_OpenRP"
+		visible				0
+		fullscreen				0
+		rect					195 140 250 180
+		focusColor				1 1 1 1
+		style					1
+		border				1
+		descX					320
+		descY					300
+		descScale				1
+		descColor				1 .682 0 .8 // Focus color for text and items
+		descAlignment			ITEM_ALIGN_CENTER	
+		onESC
+		{
+			close	all
+			hide title_big_background
+			hide title_small_background
+		}
+		onClose
+		{
+			hide main
+			hide title_big_background
+			hide title_small_background
+		}
+		onOpen
+		{
+			disable		main	0	
+			show			main
+			show			title_small_background
+			setfocus		name
+		}
+
+		// Overall window backdrop
+		itemDef 
+		{
+			name				background_pic
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				0 0 250 180
+			background			"gfx/menus/menu_box_ingame"
+			forecolor			1 1 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				title_small_background
+			rect				0 5 250 26
+			style				WINDOW_STYLE_SHADER	
+			background			"gfx/menus/menu_blendbox"
+			visible			1
+			decoration
+		}
+		
+		itemDef 
+		{
+			name				title
+			rect				30 5 250 26
+			style				WINDOW_STYLE_EMPTY
+			type				4
+			text				"OpenRP"			
+			textalign			ITEM_ALIGN_CENTER		
+			textalignx			90
+			textaligny			2    
+			font				3
+			textscale			.9
+			forecolor			.549 .854 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				character_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				76 106 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				character
+			group				main
+			rect				80 110 110 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Character"
+			descText			"Character-related functions"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2    
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play "sound/interface/button1.wav"
+				open "ingame_OpenRPCharacter"
+				close "ingame_OpenRP"
+			}
+			mouseenter 
+			{ 
+				show			character_button
+			}
+			mouseexit 
+			{ 
+				hide			character_button
+			}
+		}
+
+		itemDef 
+		{
+			name				account_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				76 76 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				account
+			group				main
+			rect				80 80 110 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Account"
+			descText			"Account-related functions"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play 			"sound/interface/button1.wav"
+				open "ingame_OpenRPAccount"
+				close "ingame_OpenRP"
+			}
+			mouseenter 
+			{ 
+				show			account_button
+			}
+			mouseexit 
+			{ 
+				hide			account_button
+			}
+			
+		}
+	}
+	
+	menuDef 
+	{
+		name					"ingame_OpenRPCharacter"
+		visible				0
+		fullscreen				0
+		rect					195 140 250 180
+		focusColor				1 1 1 1
+		style					1
+		border				1
+		descX					320
+		descY					300
+		descScale				1
+		descColor				1 .682 0 .8 // Focus color for text and items
+		descAlignment			ITEM_ALIGN_CENTER	
+		onESC
+		{
+			close	all
+			hide title_big_background
+			hide title_small_background
+		}
+		onClose
+		{
+			hide main
+			hide title_big_background
+			hide title_small_background
+		}
+		onOpen
+		{
+			disable		main	0	
+			show			main
+			show			title_small_background
+			setfocus		name
+		}
+
+		// Overall window backdrop
+		itemDef 
+		{
+			name				background_pic
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				0 0 250 180
+			background			"gfx/menus/menu_box_ingame"
+			forecolor			1 1 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				title_small_background
+			rect				0 5 250 26
+			style				WINDOW_STYLE_SHADER	
+			background			"gfx/menus/menu_blendbox"
+			visible			1
+			decoration
+		}
+		
+		itemDef 
+		{
+			name				title
+			rect				30 5 250 26
+			style				WINDOW_STYLE_EMPTY
+			type				4
+			text				"Character Functions"			
+			textalign			ITEM_ALIGN_CENTER		
+			textalignx			90
+			textaligny			2    
+			font				3
+			textscale			.9
+			forecolor			.549 .854 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				editCharacter_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				76 106 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				editCharacter
+			group				main
+			rect				80 110 140 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Edit Character"
+			descText			"Edit Character Information"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2    
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play "sound/interface/button1.wav"
+				open "ingame_OpenRPCharacterEdit"
+				close "ingame_OpenRPCharacter"
+			}
+			mouseenter 
+			{ 
+				show			editCharacter_button
+			}
+			mouseexit 
+			{ 
+				hide			editCharacter_button
+			}
+		}
+
+		itemDef 
+		{
+			name				selectCreateCharacter_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				76 76 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				selectCreateCharacter
+			group				main
+			rect				80 80 140 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Select or Create Character"
+			descText			"Select or create a character"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play 			"sound/interface/button1.wav"
+				open "ingame_character"
+				close "ingame_OpenRPCharacter"
+			}
+			mouseenter 
+			{ 
+				show			selectCreateCharacter_button
+			}
+			mouseexit 
+			{ 
+				hide			selectCreateCharacter_button
+			}
+			
+		}
+	}
+	
+	menuDef 
+	{
+		name					"ingame_OpenRPAccount"
+		visible				0
+		fullscreen				0
+		rect					195 140 250 180
+		focusColor				1 1 1 1
+		style					1
+		border				1
+		descX					320
+		descY					300
+		descScale				1
+		descColor				1 .682 0 .8 // Focus color for text and items
+		descAlignment			ITEM_ALIGN_CENTER	
+		onESC
+		{
+			close	all
+			hide title_big_background
+			hide title_small_background
+		}
+		onClose
+		{
+			hide main
+			hide title_big_background
+			hide title_small_background
+		}
+		onOpen
+		{
+			disable		main	0	
+			show			main
+			show			title_small_background
+			setfocus		name
+		}
+
+		// Overall window backdrop
+		itemDef 
+		{
+			name				background_pic
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				0 0 250 180
+			background			"gfx/menus/menu_box_ingame"
+			forecolor			1 1 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				title_small_background
+			rect				0 5 250 26
+			style				WINDOW_STYLE_SHADER	
+			background			"gfx/menus/menu_blendbox"
+			visible			1
+			decoration
+		}
+		
+		itemDef 
+		{
+			name				title
+			rect				30 5 250 26
+			style				WINDOW_STYLE_EMPTY
+			type				4
+			text				"Account Functions"			
+			textalign			ITEM_ALIGN_CENTER		
+			textalignx			90
+			textaligny			2    
+			font				3
+			textscale			.9
+			forecolor			.549 .854 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				editAccount_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				76 106 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				editAccount
+			group				main
+			rect				80 110 140 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Edit Account"
+			descText			"Edit Account Information"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2    
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play "sound/interface/button1.wav"
+				open "ingame_OpenRPAccountEdit"
+				close "ingame_OpenRPAccount"
+			}
+			mouseenter 
+			{ 
+				show			editAccount_button
+			}
+			mouseexit 
+			{ 
+				hide			editAccount_button
+			}
+		}
+
+		itemDef 
+		{
+			name				loginRegisterAccount_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				76 76 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				loginRegisterAccount
+			group				main
+			rect				80 80 140 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Login/Register"
+			descText			"Login or register an account"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play 			"sound/interface/button1.wav"
+				open "ingame_accountEdit"
+				close "ingame_OpenRPAccount"
+			}
+			mouseenter 
+			{ 
+				show			loginRegisterAccount_button
+			}
+			mouseexit 
+			{ 
+				hide			loginRegisterAccount_button
+			}
+			
+		}
+		
+		itemDef 
+		{
+			name				logoutAccount_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				76 46 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				logout
+			group				main
+			rect				80 50 140 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Logout"
+			descText			"Logout of your account"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play 			"sound/interface/button1.wav"
+				uiscript "logout"
+				close "ingame_OpenRPAccount"
+			}
+			mouseenter 
+			{ 
+				show			logoutAccount_button
+			}
+			mouseexit 
+			{ 
+				hide			logoutAccount_button
+			}
+			
+		}
+	}
+	
+	menuDef 
+	{
+		name					"ingame_OpenRPCharacterEdit"
+		visible				0
+		fullscreen				0
+		rect					195 140 250 180
+		focusColor				1 1 1 1
+		style					1
+		border				1
+		descX					320
+		descY					300
+		descScale				1
+		descColor				1 .682 0 .8 // Focus color for text and items
+		descAlignment			ITEM_ALIGN_CENTER	
+		onESC
+		{
+			close	all
+			hide title_big_background
+			hide title_small_background
+		}
+		onClose
+		{
+			hide main
+			hide title_big_background
+			hide title_small_background
+		}
+		onOpen
+		{
+			disable		main	0	
+			show			main
+			show			title_small_background
+			setfocus		name
+		}
+
+		// Overall window backdrop
+		itemDef 
+		{
+			name				background_pic
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				0 0 250 180
+			background			"gfx/menus/menu_box_ingame"
+			forecolor			1 1 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				title_small_background
+			rect				0 5 250 26
+			style				WINDOW_STYLE_SHADER	
+			background			"gfx/menus/menu_blendbox"
+			visible			1
+			decoration
+		}
+		
+		itemDef 
+		{
+			name				title
+			rect				30 5 250 26
+			style				WINDOW_STYLE_EMPTY
+			type				4
+			text				"Edit Character"			
+			textalign			ITEM_ALIGN_CENTER		
+			textalignx			90
+			textaligny			2    
+			font				3
+			textscale			.9
+			forecolor			.549 .854 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				editCharacter_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				76 106 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				editCharacter
+			group				main
+			rect				80 110 140 20	
+			type				ITEM_TYPE_BUTTON
+			text				"Save"
+			descText			"Save Character Information"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2    
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play "sound/interface/button1.wav"
+				uiscript "characterEdit"
+				close "ingame_OpenRPCharacterEdit"
+			}
+			mouseenter 
+			{ 
+				show			editCharacter_button
+			}
+			mouseexit 
+			{ 
+				hide			editCharacter_button
+			}
+		}
+		
+		itemDef 
+		{
+			name				nameText
+			group				main
+			text				"Name:"
+			style				WINDOW_STYLE_EMPTY
+			rect				20 35 0 0
+			textalign			ITEM_ALIGN_LEFT		
+			textalignx			4
+			textaligny			12
+			font				4
+			textscale			1
+			forecolor			.549 .854 1 1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				name
+			group				main
+			style				1
+			descText			"Character Name"
+			text				@MENUS_BLANK_1
+			maxchars			16
+			font				2
+			textscale			.8
+			type				ITEM_TYPE_EDITFIELD
+			cvar				"ui_characterEdit_name"
+			rect				90 43 140 25
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			0
+			textaligny			0
+			forecolor			1 1 1 1
+			backcolor			.25 .25 .25 .5
+			visible			1
+			border			1
+			bordercolor			.79 .64 .22 1
+		}
+
+		itemDef 
+		{
+			name				modelscaleText
+			group				main
+			text				"Modelscale:"
+			style				WINDOW_STYLE_EMPTY
+			rect				20 65 0 0
+			textalign			ITEM_ALIGN_LEFT		
+			textalignx			4
+			textaligny			12
+			font				4
+			textscale			1
+			forecolor			.549 .854 1 1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				modelscale
+			group				main
+			style				1
+			descText			"Character Modelscale"
+			text				@MENUS_BLANK_1
+			maxchars			16
+			font				2
+			textscale			.8
+			type				ITEM_TYPE_NUMERICFIELD
+			cvar				"ui_characterEdit_modelscale"
+			rect				90 73 140 25
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			0
+			textaligny			0
+			forecolor			1 1 1 1
+			backcolor			.25 .25 .25 .5
+			visible			0
+			border			1
+			bordercolor			.79 .64 .22 1
+		}	   
+	}
+		
+	menuDef 
+	{
+		name					"ingame_OpenRPAccountEdit"
+		visible				0
+		fullscreen				0
+		rect					195 140 250 180
+		focusColor				1 1 1 1
+		style					1
+		border				1
+		descX					320
+		descY					300
+		descScale				1
+		descColor				1 .682 0 .8 // Focus color for text and items
+		descAlignment			ITEM_ALIGN_CENTER	
+		onESC
+		{
+			close	all
+			hide title_big_background
+			hide title_small_background
+		}
+		onClose
+		{
+			hide main
+			hide title_big_background
+			hide title_small_background
+		}
+		onOpen
+		{
+			disable		main	0	
+			show			main
+			show			title_small_background
+			setfocus		name
+		}
+
+		// Overall window backdrop
+		itemDef 
+		{
+			name				background_pic
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				0 0 250 180
+			background			"gfx/menus/menu_box_ingame"
+			forecolor			1 1 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				title_small_background
+			rect				0 5 250 26
+			style				WINDOW_STYLE_SHADER	
+			background			"gfx/menus/menu_blendbox"
+			visible			1
+			decoration
+		}
+		
+		itemDef 
+		{
+			name				title
+			rect				30 5 250 26
+			style				WINDOW_STYLE_EMPTY
+			type				4
+			text				"Edit Account"			
+			textalign			ITEM_ALIGN_CENTER		
+			textalignx			90
+			textaligny			2    
+			font				3
+			textscale			.9
+			forecolor			.549 .854 1 1
+			visible			1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				editAccount_button
+			group				none
+			style				WINDOW_STYLE_SHADER
+			rect				76 176 120 32
+			background			"gfx/menus/menu_buttonback"			// Frame around button
+			forecolor			1 1 1 1
+			decoration
+			visible			0
+		}
+
+		itemDef 
+		{
+			name				editAccount
+			group				main
+			rect				80 110 140 20
+			type				ITEM_TYPE_BUTTON
+			text				"Save"
+			descText			"Save Account Information"
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			4
+			textaligny			-2    
+			font				2
+			textscale			0.8
+			forecolor			1 .682 0 1
+			visible			1
+			action
+			{
+				play "sound/interface/button1.wav"
+				uiscript "accountEdit"
+				close "ingame_OpenRPAccountEdit"
+			}
+			mouseenter 
+			{ 
+				show			editAccount_button
+			}
+			mouseexit 
+			{ 
+				hide			editAccount_button
+			}
+		}
+		
+		itemDef 
+		{
+			name				usernameText
+			group				main
+			text				"Username:"
+			style				WINDOW_STYLE_EMPTY
+			rect				20 35 0 0
+			textalign			ITEM_ALIGN_LEFT		
+			textalignx			4
+			textaligny			12
+			font				4
+			textscale			1
+			forecolor			.549 .854 1 1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				username
+			group				main
+			style				1
+			descText			"Account Username"
+			text				@MENUS_BLANK_1
+			maxchars			16
+			font				2
+			textscale			.8
+			type				ITEM_TYPE_EDITFIELD
+			cvar				"ui_accountEdit_name"
+			rect				90 43 140 25
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			0
+			textaligny			0
+			forecolor			1 1 1 1
+			backcolor			.25 .25 .25 .5
+			visible			1
+			border			1
+			bordercolor			.79 .64 .22 1
+		}
+
+		itemDef 
+		{
+			name				passwordText
+			group				main
+			text				"Password:"
+			style				WINDOW_STYLE_EMPTY
+			rect				20 65 0 0
+			textalign			ITEM_ALIGN_LEFT		
+			textalignx			4
+			textaligny			12
+			font				4
+			textscale			1
+			forecolor			.549 .854 1 1
+			decoration
+		}
+
+		itemDef 
+		{
+			name				password
+			group				main
+			style				1
+			descText			"Account Password"
+			text				@MENUS_BLANK_1
+			maxchars			16
+			font				2
+			textscale			.8
+			type				ITEM_TYPE_EDITFIELD
+			cvar				"ui_accountEdit_password"
+			rect				90 73 140 25
+			textalign			ITEM_ALIGN_LEFT
+			textalignx			0
+			textaligny			0
+			forecolor			1 1 1 1
+			backcolor			.25 .25 .25 .5
+			visible			0
+			border			1
+			bordercolor			.79 .64 .22 1
+		}	
+	}
+	
