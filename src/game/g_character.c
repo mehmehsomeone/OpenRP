@@ -1706,14 +1706,14 @@ void Cmd_Bounty_F( gentity_t * ent )
 					Q_strncpyz( aliveDead, "Alive", sizeof( aliveDead ) );
 					break;
 				case 2:
-					Q_strncpyz( aliveDead, "Dead or Alive", sizoef( aliveDead ) );
+					Q_strncpyz( aliveDead, "Dead or Alive", sizeof( aliveDead ) );
 				default:
 					Q_strncpyz( aliveDead, "Error", sizeof( aliveDead) );
 					break;
 				}
 
 				trap_SendServerCommand( ent-g_entities, va("print \"^2BountyID: ^7%i ^2Name: ^7%s ^2Reward: ^7%i ^2Wanted: ^7%s\n\"", 
-					bountyID, bountyNameSTR.c_str(), bountyReward, aliveDeadSTR.c_str() ) );
+					bountyID, bountyName, bountyReward, aliveDead ) );
 			}
 			q.free_result();
 			trap_SendServerCommand( ent-g_entities, "print \"\n^2Remember: You can add a bounty with ^2bounty add <characterName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
@@ -1726,8 +1726,8 @@ void Cmd_Bounty_F( gentity_t * ent )
 			trap_SendServerCommand( ent-g_entities, "print \"^2Bounties:\n\n\"" );
 			while  (q.fetch_row() )
 			{
-				bountyCreatorSTR = q.getstr();
-				bountyNameSTR = q.getstr();
+				Q_strncpyz( bountyCreator, q.getstr(), sizeof( bountyCreator ) );
+				Q_strncpyz( bountyName, q.getstr(), sizeof( bountyName ) );
 				bountyReward = q.getval();
 				aliveDeadValue = q.getval();
 				bountyID = q.getval();
@@ -1735,22 +1735,22 @@ void Cmd_Bounty_F( gentity_t * ent )
 				switch ( aliveDeadValue )
 				{
 				case 0:
-					aliveDeadSTR = "Dead";
+					Q_strncpyz( aliveDead, "Dead", sizeof( aliveDead ) );
 					break;
 				case 1:
-					aliveDeadSTR = "Alive";
+					Q_strncpyz( aliveDead, "Alive", sizeof( aliveDead ) );
 					break;
 				case 2:
-					aliveDeadSTR = "Dead or Alive";
+					Q_strncpyz( aliveDead, "Dead or Alive", sizeof( aliveDead ) );
 					break;
 				default:
-					aliveDeadSTR = "Error";
+					Q_strncpyz( aliveDead, "Error", sizeof( aliveDead ) );
 					break;
 				}
 
 				trap_SendServerCommand( ent-g_entities, 
 					va("print \"^2BountyID: ^7%i ^2Bounty Target: ^7%s ^2Bounty Creator: ^7%s ^2Reward: ^7%i ^2Wanted: ^7%s\n\"", 
-					bountyID, bountyNameSTR.c_str(), bountyCreatorSTR.c_str(), bountyReward, aliveDeadSTR.c_str() ) );
+					bountyID, bountyName bountyCreatorSTR.c_str(), bountyReward, aliveDeadSTR.c_str() ) );
 			}
 			q.free_result();
 			trap_SendServerCommand( ent-g_entities, "print \"\n^2Remember: You can add a bounty with ^2bounty add <characterName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
@@ -1760,12 +1760,11 @@ void Cmd_Bounty_F( gentity_t * ent )
 
 	trap_Argv( 1, parameter, MAX_STRING_CHARS );
 	trap_Argv( 2, bountyName, MAX_STRING_CHARS );
-	bountyNameSTR = bountyName;
 	bountyID = atoi( bountyName );
 	trap_Argv( 3, rewardTemp, MAX_STRING_CHARS );
 	reward = atoi( rewardTemp );
-	trap_Argv( 4, aliveDeadTemp, MAX_STRING_CHARS );
-	aliveDead = atoi( aliveDeadTemp );
+	trap_Argv( 4, aliveDead, MAX_STRING_CHARS );
+	aliveDeadValue = atoi( aliveDead );
 
 	if ( !Q_stricmp( parameter, "add" ) )
 	{
@@ -1787,18 +1786,18 @@ void Cmd_Bounty_F( gentity_t * ent )
 		}
 
 		//Check if the character exists
-		transform( bountyNameSTR.begin(), bountyNameSTR.end(), bountyNameSTR.begin(), ::tolower );
+		Q_strlwr( bountyName );
 
-		charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", bountyNameSTR.c_str() ) );
+		charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", bountyName ) );
 
 		if( !charID )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", bountyNameSTR.c_str() ) );
-			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Character %s does not exist.\n\"", bountyNameSTR.c_str() ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", bountyName ) );
+			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Character %s does not exist.\n\"", bountyName) ) );
 			return;
 		}
 
-		bountyCreator = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+		Q_strncpyz( bountyCreator, q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) ), sizeof( bountyCreator ) );
 		currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 		
 
@@ -1808,16 +1807,16 @@ void Cmd_Bounty_F( gentity_t * ent )
 			return;
 		}
 
-		switch ( aliveDead )
+		switch ( aliveDeadValue )
 		{
 		case 0:
-			aliveDeadSTR = "Dead";
+			Q_strncpyz( aliveDead, "Dead", sizeof( aliveDead ) );
 			break;
 		case 1:
-			aliveDeadSTR = "Alive";
+			Q_strncpyz( aliveDead, "Alive", sizeof( aliveDead ) );
 			break;
 		case 2:
-			aliveDeadSTR = "Dead or Alive";
+			Q_strncpyz( aliveDead, "Dead or Alive", sizeof( aliveDead ) );
 			break;
 		default:
 			trap_SendServerCommand( ent-g_entities, "print \"^1Wanted must be 0 (dead), 1 (alive), or 2 (dead or alive).\n\"" );
@@ -1833,8 +1832,8 @@ void Cmd_Bounty_F( gentity_t * ent )
 			return;
 		}
 		q.execute( va( "UPDATE Characters set Credits='%i' WHERE CharID='%i'", newTotalCredits, ent->client->sess.characterID ) );
-		q.execute( va( "INSERT INTO Bounties(BountyCreator,BountyName,Reward,Wanted) VALUES('%s','%s','%i','%i')", bountyCreator.c_str(), bountyNameSTR.c_str(), reward, aliveDead ) );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2You put a bounty on ^7%s (%s)^2with a reward of ^7%i ^2credits.\n\"", bountyName, aliveDeadSTR.c_str(), reward ) );
+		q.execute( va( "INSERT INTO Bounties(BountyCreator,BountyName,Reward,Wanted) VALUES('%s','%s','%i','%i')", bountyCreator, bountyName, reward, aliveDead ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2You put a bounty on ^7%s (%s)^2with a reward of ^7%i ^2credits.\n\"", bountyName, aliveDead, reward ) );
 		return;
 	}
 
@@ -1856,29 +1855,28 @@ void Cmd_Bounty_F( gentity_t * ent )
 				return;
 			}
 
-			bountyCreator = q.get_string( va( "SELECT BountyCreator FROM Bounties WHERE BountyID='%i'", bountyID ) );
+			Q_strncpyz( bountyCreator, q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) ), sizeof( bountyCreator ) );
 			reward = q.get_num( va( "SELECT Reward FROM Bounties WHERE BountyID='%i'", bountyID ) );
-			aliveDead =  q.get_num( va( "SELECT Wanted FROM Bounties WHERE BountyID='%i'", bountyID ) );
-			string aliveDeadSTR;
-			switch ( aliveDead )
+			aliveDeadValue =  q.get_num( va( "SELECT Wanted FROM Bounties WHERE BountyID='%i'", bountyID ) );
+			switch ( aliveDeadValue )
 			{
 			case 0:
-				aliveDeadSTR = "Dead";
+				Q_strncpyz( aliveDead, "Dead", sizeof( aliveDead ) );
 				break;
 			case 1:
-				aliveDeadSTR = "Alive";
+				Q_strncpyz( aliveDead, "Alive", sizeof( aliveDead ) );
 				break;
 			case 2:
-				aliveDeadSTR = "Dead or Alive";
+				Q_strncpyz( aliveDead, "Dead or Alive", sizeof( aliveDead ) );
 				break;
 			default:
-				aliveDeadSTR = "Invalid Wanted Number";
+				Q_strncpyz( aliveDead, "Invalid Wanted Number", sizeof( aliveDead ) );
 				return;
 			}
 			q.execute( va( "DELETE FROM Bounties WHERE BountyID='%i'", bountyID ) );
 			trap_SendServerCommand( ent-g_entities, 
 				va( "print \"^2You have removed the bounty on ^7%s (%s) ^2which had a reward of ^7%i ^2credits.\nThe bounty was put up by ^7%s^2.\n\"", 
-				bountyNameSTR.c_str(), aliveDeadSTR.c_str(), reward, bountyCreator.c_str() ) );
+				bountyName, aliveDead, reward, bountyCreator ) );
 			return;
 		}
 	}
@@ -1898,9 +1896,8 @@ void Cmd_CharName_F( gentity_t * ent )
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
-	char cmdTarget[MAX_STRING_CHARS];
+	char cmdTarget[MAX_STRING_CHARS], charName[MAX_STRING_CHARS];
 	int clientid = -1;
-	string charNameSTR;
 
 	if ( !db.Connected() )
 	{
@@ -1914,40 +1911,40 @@ void Cmd_CharName_F( gentity_t * ent )
 		return;
 	}
 
-	if(trap_Argc() < 2)
+	if( trap_Argc() < 2 )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /characterName <name/clientid>\n\""));
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Command Usage: /characterName <name/clientid>\n\"" ) );
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
+	trap_Argv( 1, cmdTarget, sizeof( cmdTarget ) );
 
 	clientid = M_G_ClientNumberFromName( cmdTarget );
-	if (clientid == -1) 
+	if ( clientid == -1 ) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
+		trap_SendServerCommand( ent-g_entities, va( "print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
 		return; 
 	} 
-	if (clientid == -2) 
+	if  (clientid == -2 ) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
+		trap_SendServerCommand( ent-g_entities, va( "print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
 		return; 
 	}
-	if (clientid >= MAX_CLIENTS || clientid < 0) 
+	if ( clientid >= MAX_CLIENTS || clientid < 0 ) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va( "Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
-	if (!g_entities[clientid].inuse) 
+	if ( !g_entities[clientid].inuse ) 
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
+		trap_SendServerCommand( ent-g_entities, va( "print \"Client %s is not active\n\"", cmdTarget ) ); 
 		return; 
 	}
 
 	if ( g_entities[clientid].client->sess.characterChosen )
 	{
-		charNameSTR = q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", g_entities[clientid].client->sess.characterID ) );
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character Name: ^7%s\n\"", charNameSTR.c_str() ) );
+		Q_strncpyz( charName, q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", g_entities[clientid].client->sess.characterID ) ), sizeof( charName ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character Name: ^7%s\n\"", charName ) );
 		return;
 	}
 	else
@@ -2116,7 +2113,7 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 	}
 
 	//The database is not connected. Please do so.
-	if (!db.Connected())
+	if ( !db.Connected() )
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
 		return;
@@ -2138,7 +2135,7 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 
 	while(*msg)
 	{ 
-		if(msg[0] == '\\' && msg[1] == 'n')
+		if( msg[0] == '\\' && msg[1] == 'n' )
 		{ 
 			msg++;
 			real_msg[pos++] = '\n';
@@ -2158,25 +2155,25 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 		return;
 	}
 
-	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
+	trap_Argv( 1, cmdTarget, MAX_STRING_CHARS );
 
 	clientid = M_G_ClientNumberFromName( cmdTarget );
-	if (clientid == -1) 
+	if ( clientid == -1 ) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
 		return; 
 	} 
-	if (clientid == -2) 
+	if ( clientid == -2 ) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
 		return; 
 	}
-	if (clientid >= MAX_CLIENTS || clientid < 0) 
+	if ( clientid >= MAX_CLIENTS || clientid < 0 ) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
-	if (!g_entities[clientid].inuse) 
+	if ( !g_entities[clientid].inuse ) 
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
 		return; 
@@ -2207,8 +2204,7 @@ void Cmd_Faction_F( gentity_t * ent )
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
-	char factionIDTemp[MAX_STRING_CHARS];
-	string factionNameSTR;
+	char factionIDTemp[MAX_STRING_CHARS], factionName[MAX_STRING_CHARS];
 	int factionID;
 
 	if ( !db.Connected() )
@@ -2236,11 +2232,11 @@ void Cmd_Faction_F( gentity_t * ent )
 	}
 	else
 	{
-		factionNameSTR = q.get_string( va( "SELECT Name FROM Factions WHERE ID='%i'", factionID ) );
+		Q_strncpyz( factionName, q.get_string( va( "SELECT Name FROM Factions WHERE ID='%i'", factionID ) ), sizeof( factionName ) );
 		q.execute( va( "UPDATE Characters set FactionID='%i' WHERE CharID='%i'", factionID, ent->client->sess.characterID  ) );
 		q.execute( va( "UPDATE Characters set FactionRank='Member' WHERE CharID='%i'", ent->client->sess.characterID  ) );
 			
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2You have joined the %s faction!\nYou can use /factionInfo to view info about it.\n\"", factionNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2You have joined the %s faction!\nYou can use /factionInfo to view info about it.\n\"", factionName ) );
 
 	}
 	return;
@@ -2248,8 +2244,7 @@ void Cmd_Faction_F( gentity_t * ent )
 
 void Cmd_ToggleChat_F( gentity_t * ent )
 {
-	string chatModeNameSTR;
-	char chatModeTemp[MAX_STRING_CHARS];
+	char chatModeName[MAX_STRING_CHARS];
 
 	if ( trap_Argc() < 2 )
 	{
@@ -2274,68 +2269,68 @@ void Cmd_ToggleChat_F( gentity_t * ent )
 		switch ( ent->client->sess.chatMode )
 		{
 		case 1:
-			chatModeNameSTR = "OOC";
+			Q_strncpyz( chatModeName, "OOC", sizeof( chatModeName ) );
 			break;
 		case 2:
-			chatModeNameSTR = "LOOC";
+			Q_strncpyz( chatModeName, "LOOC", sizeof( chatModeName ) );
 			break;
 		case 3:
-			chatModeNameSTR = "Yell";
+			Q_strncpyz( chatModeName, "Yell", sizeof( chatModeName ) );
 			break;
 		case 4:
-			chatModeNameSTR = "Whisper";
+			Q_strncpyz( chatModeName, "Whisper", sizeof( chatModeName ) );
 			break;
 		case 5:
-			chatModeNameSTR = "Me (Action)";
+			Q_strncpyz( chatModeName, "Me (Action)", sizeof( chatModeName ) );
 			break;
 		case 6:
-			chatModeNameSTR = "It (Environmental Action/Event)";
+			Q_strncpyz( chatModeName, "It (Environmental Action/Event)", sizeof( chatModeName ) );
 			break;
 		case 7:
-			chatModeNameSTR = "Admin";
+			Q_strncpyz( chatModeName, "Admin", sizeof( chatModeName ) );
 			break;
 		default:
 			ent->client->sess.chatMode = 1;
-			chatModeNameSTR = "OOC";
+			Q_strncpyz( chatModeName, "OOC", sizeof( chatModeName ) );
 			break;
 		}
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeName ) );
 		return;
 	}
 
-	trap_Argv( 1, chatModeTemp, MAX_STRING_CHARS );
+	trap_Argv( 1, chatModeName, MAX_STRING_CHARS );
 
-	if ( !Q_stricmp( chatModeTemp, "OOC" ) )
+	if ( !Q_stricmp( chatModeName, "OOC" ) )
 	{
 		ent->client->sess.chatMode = 1;
-		chatModeNameSTR = "OOC";
+		Q_strncpyz( chatModeName, "OOC", sizeof( chatModeName ) );
 	}
-	else if ( !Q_stricmp( chatModeTemp, "LOOC" ) )
+	else if ( !Q_stricmp( chatModeName, "LOOC" ) )
 	{
 		ent->client->sess.chatMode = 2;
-		chatModeNameSTR = "LOOC";
+		Q_strncpyz( chatModeName, "LOOC", sizeof( chatModeName ) );
 	}
-	else if ( !Q_stricmp( chatModeTemp, "yell" ) || !Q_stricmp( chatModeTemp, "y" ) )
+	else if ( !Q_stricmp( chatModeName, "yell" ) || !Q_stricmp( chatModeName, "y" ) )
 	{
 		ent->client->sess.chatMode = 3;
-		chatModeNameSTR = "Yell";
+		Q_strncpyz( chatModeName, "Yell", sizeof( chatModeName ) );
 	}
-	else if ( !Q_stricmp( chatModeTemp, "whisper" ) || !Q_stricmp( chatModeTemp, "w" ) )
+	else if ( !Q_stricmp( chatModeName, "whisper" ) || !Q_stricmp( chatModeName, "w" ) )
 	{
 		ent->client->sess.chatMode = 4;
-		chatModeNameSTR = "Whisper";
+		Q_strncpyz( chatModeName, "Whisper", sizeof( chatModeName ) );
 	}
-	else if ( !Q_stricmp( chatModeTemp, "me" ) )
+	else if ( !Q_stricmp( chatModeName, "me" ) )
 	{
 		ent->client->sess.chatMode = 5;
-		chatModeNameSTR = "Me (Action)";
+		Q_strncpyz( chatModeName, "Me (Action)", sizeof( chatModeName ) );
 	}
-	else if ( !Q_stricmp( chatModeTemp, "it" ) )
+	else if ( !Q_stricmp( chatModeName, "it" ) )
 	{
 		ent->client->sess.chatMode = 6;
-		chatModeNameSTR = "It (Environmental Action/Event)";
+		Q_strncpyz( chatModeName, "It (Environmental Action/Event)", sizeof( chatModeName ) );
 	}
-	else if ( !Q_stricmp( chatModeTemp, "admin" ) || !Q_stricmp( chatModeTemp, "a" ) )
+	else if ( !Q_stricmp( chatModeName, "admin" ) || !Q_stricmp( chatModeName, "a" ) )
 	{
 		if ( !ent->client->sess.isAdmin )
 		{
@@ -2345,7 +2340,7 @@ void Cmd_ToggleChat_F( gentity_t * ent )
 		else
 		{
 			ent->client->sess.chatMode = 7;
-			chatModeNameSTR = "Admin";
+			Q_strncpyz( chatModeName, "Admin", sizeof( chatModeName ) );
 		}
 	}
 	else
@@ -2353,6 +2348,6 @@ void Cmd_ToggleChat_F( gentity_t * ent )
 		trap_SendServerCommand( ent-g_entities, "print \"^1Invalid chat mode.\n\"" );
 		return;
 	}
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeName ) );
 	return;
 }
