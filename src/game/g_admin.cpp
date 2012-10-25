@@ -1,8 +1,11 @@
-#include "g_local.h"
 #include "sqlite3/sqlite3.h"
 #include "sqlite3/libsqlitewrapped.h"
+extern "C"
+{
+#include "g_local.h"
 #include "g_admin.h"
 #include "g_account.h"
+}
 
 qboolean M_PartialMatch( const char * s1, const char * s2 )
 {
@@ -33,7 +36,8 @@ M_SanitizeString
 Remove case and control characters (Same as in g_cmds.c).
 ==================
 */
-static void M_SanitizeString( char *in, char *out ){
+static void M_SanitizeString( char *in, char *out )
+{
 	int i = 0;
 	int r = 0;
 
@@ -204,6 +208,28 @@ int M_G_ClientNumberFromName ( const char* name )
 	return -1;
 }
 
+void Admin_Teleport( gentity_t *ent )
+{
+	vec3_t		origin;
+	char		buffer[MAX_TOKEN_CHARS];
+	int			i;
+
+	if ( trap_Argc() != 4 )
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"^2Command Usage: /amTele <X> <Y> <Z>\ntype in /amOrigin or /amOrigin <name> to find out <X> <Y> <Z>\n\""));
+		return;
+	}
+
+	for ( i = 0 ; i < 3 ; i++ )
+	{
+		trap_Argv( i + 1, buffer, sizeof( buffer ) );
+		origin[i] = atof( buffer );
+	}
+
+	TeleportPlayer( ent, origin, ent->client->ps.viewangles );
+}
+
+
 qboolean G_CheckAdmin(gentity_t *ent, int command)
 {
 	int Bitvalues = 0;
@@ -307,8 +333,7 @@ amban Function
 void Cmd_amBan_F(gentity_t *ent)
 {
 	char cmdTarget[MAX_STRING_CHARS];
-	int clientid = -1;
-	extern void AddIP( char *str );
+	int clientid = -1; 
 
 	if(!G_CheckAdmin(ent, ADMIN_BAN))
 	{
@@ -511,8 +536,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 	int	clientid2 = -1;
 	char	arg1[MAX_STRING_CHARS];
 	char	arg2[MAX_STRING_CHARS];
-	char	buffer[MAX_TOKEN_CHARS];
-	extern void Admin_Teleport( gentity_t *ent );
+	char	buffer[MAX_TOKEN_CHARS]; 
 
 	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
 	{
@@ -730,8 +754,7 @@ amannounce Function
 ============
 */
 void Cmd_amAnnounce_F(gentity_t *ent)
-{
-	extern char	*ConcatArgs( int start );
+{ 
 	int pos = 0;
 	char real_msg[MAX_STRING_CHARS];
 	char *msg = ConcatArgs(2);
@@ -950,9 +973,6 @@ void Cmd_amSleep_F(gentity_t *ent)
 {
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
-	extern int InEmote( int anim );
-	extern int InSpecialEmote( int anim );
-	extern void G_SetTauntAnim( gentity_t *ent, int taunt );
 
 
 	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
@@ -1257,8 +1277,6 @@ amaddeffect Function
 */
 void Cmd_amEffect_F(gentity_t *ent)
 {
-	extern void AddSpawnField(char *field, char *value);
-	extern void SP_fx_runner( gentity_t *ent );
 	char	effect[MAX_STRING_CHARS]; // 16k file size
 	gentity_t *fx_runner = G_Spawn();  
 	
@@ -1772,7 +1790,7 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char username[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS], DBname[MAX_STRING_CHARS];
-	int adminLevel, accountID, i;
+	int adminLevel, accountID;
 
 	if (!db.Connected())
 	{
@@ -1845,7 +1863,7 @@ void Cmd_SVGrantAdmin_F()
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char username[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS], DBname[MAX_STRING_CHARS];
-	int adminLevel, i;
+	int adminLevel;
 
 	if (!db.Connected())
 	{
@@ -1902,7 +1920,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char username[MAX_TOKEN_CHARS];
-	int valid, i;
+	int valid;
 
 	if (!db.Connected())
 	{
@@ -1954,7 +1972,7 @@ void Cmd_SVRemoveAdmin_F()
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char username[MAX_TOKEN_CHARS];
-	int valid, i;
+	int valid;
 
 	if (!db.Connected())
 	{
@@ -2117,7 +2135,6 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 	int loggedIn;
 	int currentCredits;
 	int newCreditsTotal;
-	int i;
 
 	if(!G_CheckAdmin(ent, ADMIN_CREDITS))
 	{
@@ -2191,7 +2208,7 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	Database db(DATABASE_PATH);
 	Query q(db); 
 	char factionName[MAX_STRING_CHARS], DBname[MAX_STRING_CHARS];
-	int charCurrentFactionID, factionID, i;
+	int charCurrentFactionID, factionID;
 
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
@@ -2262,7 +2279,6 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	int clientID;
 	int loggedIn;
 	int factionID;
-	int i;
 
 	if(!G_CheckAdmin(ent, ADMIN_FACTION))
 	{
@@ -2343,14 +2359,13 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
-	char charName[MAX_STRING_CHARS], factionRank[MAX_STRING_CHARS], factionName[MAX_STRING_CHARS], charFactionRank[MAX_STRING_CHARS], cmdUserFactionName[MAX_STRING_CHARS], cmdUserFactionRank[MAX_STRING_CHARS];
+	char charName[MAX_STRING_CHARS], factionRank[MAX_STRING_CHARS], factionName[MAX_STRING_CHARS], charFactionRank[MAX_STRING_CHARS], cmdUserFactionRank[MAX_STRING_CHARS];
 	int accountID;
 	int clientID;
 	int loggedIn;
 	int charFactionID;
 	int cmdUserFactionID;
 	int charID;
-	int i;
 
 	if ( !db.Connected() )
 	{
@@ -2691,7 +2706,6 @@ void Cmd_amOrigin_F( gentity_t * ent )
 
 void Cmd_AdminChat_F( gentity_t *ent )
 {
-	extern char	*ConcatArgs( int start );
 	int pos = 0;
 	char real_msg[MAX_STRING_CHARS];
 	char *msg = ConcatArgs(1);
@@ -2792,8 +2806,7 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 	char buf[32]; // arg1
 	trace_t tr; //For tracing
 	vec3_t fPos; //We're going to adjust the tr.endpos, and put it in here
-	int i; //For looping
-	extern qboolean G_CallSpawn( gentity_t *ent );
+	int i; //For looping 
 	char spawnflags[MAX_STRING_CHARS];
 
 	if(!G_CheckAdmin(ent, ADMIN_BUILD))

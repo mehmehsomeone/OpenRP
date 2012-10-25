@@ -1,10 +1,12 @@
-#include "g_local.h"
 #include "sqlite3/sqlite3.h"
 #include "sqlite3/libsqlitewrapped.h"
+extern "C" 
+{
+#include "g_local.h"
 #include "g_character.h"
 #include "g_account.h"
 #include "g_admin.h"
-
+}
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern int M_G_ClientNumberFromName ( const char* name );
 

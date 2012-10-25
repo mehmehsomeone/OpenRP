@@ -1,8 +1,11 @@
-#include "g_local.h"
 #include "sqlite3/sqlite3.h"
 #include "sqlite3/libsqlitewrapped.h"
+extern "C"
+{
+#include "g_local.h"
 #include "g_account.h"
 #include "g_admin.h"
+}
 
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern int M_G_ClientNumberFromName ( const char* name );
@@ -178,8 +181,6 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 	Database db(DATABASE_PATH);
 	Query q(db);
 	int i;
-	extern void SaveCharacter(gentity_t * ent);
-
 	//The database is not connected. Please do so.
 	if (!db.Connected())
 	{
@@ -199,7 +200,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 	if( ent->client->sess.characterChosen )
 	{
 		//Save their character
-		SaveCharacter( ent );
+		//SaveCharacter( ent );
 
 		//Logout of Account
 		q.execute( va( "UPDATE Users set ClientID='33' WHERE AccountID='%i'", ent->client->sess.accountID ) );
@@ -281,8 +282,7 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char userName[MAX_STRING_CHARS], userNameCleaned[MAX_STRING_CHARS], userPassword[MAX_STRING_CHARS], DBname[MAX_STRING_CHARS];
-	int accountID, i;
-	extern void SanitizeString2( char *in, char *out );
+	int accountID, i; 
 
 	//The database is not connected. Please do so.
 	if (!db.Connected())

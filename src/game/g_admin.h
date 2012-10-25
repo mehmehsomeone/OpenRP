@@ -75,3 +75,8 @@ void Cmd_AllChat_F( gentity_t * ent );
 void Cmd_amWarningList_F( gentity_t * ent );
 void Cmd_SpawnEnt_F( gentity_t *ent );
 void Cmd_RemoveEntity_F( gentity_t *ent );
+
+void AddIP( char *str );
+void Admin_Teleport( gentity_t *ent );
+char *ConcatArgs( int start );
+qboolean G_CallSpawn( gentity_t *ent );
