@@ -356,13 +356,6 @@ typedef enum {qfalse, qtrue}	qboolean;
 #define	qboolean	int		//don't want strict type checking on the qboolean
 #endif
 
-enum bool_s
-{
-	false = 0,
-	true
-} bool_t;
-typedef unsigned char bool;
-
 typedef int		qhandle_t;
 typedef int		thandle_t; //rwwRMG - inserted
 typedef int		fxHandle_t;

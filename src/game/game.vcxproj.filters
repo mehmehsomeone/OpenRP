@@ -46,22 +46,13 @@
     <ClCompile Include="FighterNPC.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="g_account.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="g_active.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g_admin.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="g_arenas.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="g_bot.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g_character.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="g_client.c">
@@ -287,6 +278,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sqlite3\StderrLog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g_account.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g_character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g_admin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
