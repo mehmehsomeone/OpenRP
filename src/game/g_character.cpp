@@ -394,7 +394,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		//SaveCharacter( ent );
 
 		//Reset skill points
-		ent->client->sess.skillPoints = 1;
+		//ent->client->sess.skillPoints = 1;
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;
@@ -415,8 +415,8 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	ent->client->sess.characterChosen = qtrue;
 	ent->client->sess.characterID = charID;
 	charSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-	ent->client->sess.skillPoints = charSkillPoints;
-	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
+//	ent->client->sess.skillPoints = charSkillPoints;
+//	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 	LoadCharacter(ent);
 
 	if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR )
@@ -495,7 +495,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 		//SaveCharacter( ent );
 
 		//Reset skill points
-		ent->client->sess.skillPoints = 1;
+//		ent->client->sess.skillPoints = 1;
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;
@@ -516,8 +516,8 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	ent->client->sess.characterChosen = qtrue;
 	ent->client->sess.characterID = charID;
 	charSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-	ent->client->sess.skillPoints = charSkillPoints;
-	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
+//	ent->client->sess.skillPoints = charSkillPoints;
+//	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 	LoadCharacter(ent);
 
 	if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR )
@@ -1670,7 +1670,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 	Database db(DATABASE_PATH, &log);
 	Query q(db);
 	char parameter[MAX_STRING_CHARS], bountyName[MAX_STRING_CHARS], rewardTemp[MAX_STRING_CHARS], aliveDead[MAX_STRING_CHARS], bountyCreator[MAX_STRING_CHARS];
-	int bountyReward, aliveDeadValue, bountyID, reward, aliveDead, charID, currentCredits, newTotalCredits;
+	int bountyReward, aliveDeadValue, bountyID, reward, charID, currentCredits, newTotalCredits;
 
 	if ( !db.Connected() )
 	{
@@ -1750,7 +1750,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 
 				trap_SendServerCommand( ent-g_entities, 
 					va("print \"^2BountyID: ^7%i ^2Bounty Target: ^7%s ^2Bounty Creator: ^7%s ^2Reward: ^7%i ^2Wanted: ^7%s\n\"", 
-					bountyID, bountyName bountyCreatorSTR.c_str(), bountyReward, aliveDeadSTR.c_str() ) );
+					bountyID, bountyName, bountyCreator, bountyReward, aliveDead ) );
 			}
 			q.free_result();
 			trap_SendServerCommand( ent-g_entities, "print \"\n^2Remember: You can add a bounty with ^2bounty add <characterName> <reward> <0(dead)/1(alive)/2(dead or alive)>\n\"" );
@@ -1793,7 +1793,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 		if( !charID )
 		{
 			trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", bountyName ) );
-			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Character %s does not exist.\n\"", bountyName) ) );
+			trap_SendServerCommand( ent-g_entities, va( "cp \"^1Character %s does not exist.\n\"", bountyName ) );
 			return;
 		}
 

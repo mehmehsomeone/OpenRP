@@ -227,14 +227,14 @@
     <ResourceCompile Include="..\win32\cgame.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cgame.def" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{0e615462-c3d6-4ec8-a75c-6d40fbeaa239}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{a92fa33d-911f-4078-8a20-7f05e9bac782}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cgame.def" />
   </ItemGroup>
 </Project>

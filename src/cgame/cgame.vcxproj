@@ -221,10 +221,10 @@
     <ClInclude Include="..\ui\ui_shared.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cgame.def" />
+    <ResourceCompile Include="..\win32\cgame.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\win32\cgame.rc" />
+    <None Include="cgame.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

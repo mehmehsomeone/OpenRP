@@ -75,22 +75,22 @@ void	G_DebugBoxLines(vec3_t mins, vec3_t maxs, int duration)
 #endif
 
 //general check for performing certain attacks against others
-bool G_CanBeEnemy( gentity_t *self, gentity_t *enemy )
+qboolean G_CanBeEnemy( gentity_t *self, gentity_t *enemy )
 {
 	//ptrs!
 	if ( !self->inuse || !enemy->inuse || !self->client || !enemy->client )
-		return false;
+		return qfalse;
 
 	if (g_gametype.integer < GT_TEAM)
-		return true;
+		return qtrue;
 
 	if ( g_friendlyFire.integer )
-		return true;
+		return qtrue;
 
 	if ( OnSameTeam( self, enemy ) )
-		return false;
+		return qfalse;
 
-	return true;
+	return qtrue;
 }
 
 //This function gets the attack power which is used to decide broken parries,
@@ -1010,28 +1010,28 @@ static GAME_INLINE void G_G2PlayerAngles( gentity_t *ent, vec3_t legs[3], vec3_t
 	}
 }
 
-static GAME_INLINE bool SaberAttacking( gentity_t *self )
+static GAME_INLINE qboolean SaberAttacking( gentity_t *self )
 {
 	if ( PM_SaberInParry(self->client->ps.saberMove) )
-		return false;
+		return qfalse;
 	if ( PM_SaberInBrokenParry(self->client->ps.saberMove) )
-		return false;
+		return qfalse;
 	if ( PM_SaberInDeflect(self->client->ps.saberMove) )
-		return false;
+		return qfalse;
 	if ( PM_SaberInBounce(self->client->ps.saberMove) )
-		return false;
+		return qfalse;
 	if ( PM_SaberInKnockaway(self->client->ps.saberMove) )
-		return false;
+		return qfalse;
 
 	//if we're firing and not blocking, then we're attacking.
 	if (BG_SaberInAttack(self->client->ps.saberMove))
 		if (self->client->ps.weaponstate == WEAPON_FIRING && self->client->ps.saberBlocked == BLOCKED_NONE)
-			return true;
+			return qtrue;
 
 	if ( BG_SaberInSpecial( self->client->ps.saberMove ) )
-		return true;
+		return qtrue;
 
-	return false;
+	return qfalse;
 }
 
 typedef enum
@@ -2267,11 +2267,11 @@ static GAME_INLINE float G_GetAnimPoint(gentity_t *self)
 	return animPercentage;
 }
 
-static GAME_INLINE bool G_ClientIdleInWorld(gentity_t *ent)
+static GAME_INLINE qboolean G_ClientIdleInWorld(gentity_t *ent)
 {
 	if (ent->s.eType == ET_NPC)
 	{
-		return false;
+		return qfalse;
 	}
 
 	if (!ent->client->pers.cmd.upmove && !ent->client->pers.cmd.forwardmove && !ent->client->pers.cmd.rightmove &&
@@ -2282,9 +2282,9 @@ static GAME_INLINE bool G_ClientIdleInWorld(gentity_t *ent)
 		!(ent->client->pers.cmd.buttons & BUTTON_FORCE_LIGHTNING) &&
 		!(ent->client->pers.cmd.buttons & BUTTON_FORCE_DRAIN) &&
 		!(ent->client->pers.cmd.buttons & BUTTON_ATTACK))
-		return true;
+		return qtrue;
 
-	return false;
+	return qfalse;
 }
 
 static GAME_INLINE qboolean G_G2TraceCollide(trace_t *tr, vec3_t lastValidStart, vec3_t lastValidEnd, vec3_t traceMins, vec3_t traceMaxs)

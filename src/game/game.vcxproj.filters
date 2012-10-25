@@ -452,14 +452,14 @@
     <ResourceCompile Include="..\win32\game.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="game.def" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{42e61269-41c8-4123-ab6a-614272e421f1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{76cb6e1f-9847-44de-81fc-516ce3cc0c48}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="game.def" />
   </ItemGroup>
 </Project>

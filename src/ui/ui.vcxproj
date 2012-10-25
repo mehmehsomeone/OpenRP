@@ -180,10 +180,10 @@
     <ClInclude Include="ui_shared.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ui.def" />
+    <ResourceCompile Include="..\win32\ui.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\win32\ui.rc" />
+    <None Include="ui.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

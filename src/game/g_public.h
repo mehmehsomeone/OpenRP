@@ -725,9 +725,11 @@ class CTaskManager;
 extern CSequencer	*gSequencers[MAX_GENTITIES];
 extern CTaskManager	*gTaskManagers[MAX_GENTITIES];
 
+/*
 #include "../shared/icarus/icarus.h"
 #include "../icarus/sequencer.h"
 #include "../icarus/taskmanager.h"
+*/
 #endif
 
 //

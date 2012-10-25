@@ -2044,4 +2044,3 @@ void trap_RMG_Init(int terrainID);
 
 void trap_Bot_UpdateWaypoints(int wpnum, wpobject_t **wps);
 void trap_Bot_CalculatePaths(int rmg);
-

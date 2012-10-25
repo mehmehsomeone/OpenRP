@@ -997,11 +997,14 @@ void Cmd_amSleep_F(gentity_t *ent)
 		return;
 	}
 
+	//TODO
+	/*
 	// MJN - are they in an emote?  Then unemote them :P
 	if (InEmote(g_entities[clientid].client->emote_num ) || InSpecialEmote(g_entities[clientid].client->emote_num ))
 	{
 		G_SetTauntAnim(&g_entities[clientid], g_entities[clientid].client->emote_num);
 	}
+	*/
 
 	if( !g_entities[clientid].client->sess.isSleeping )
 	{
@@ -1012,7 +1015,8 @@ void Cmd_amSleep_F(gentity_t *ent)
 		trap_SendServerCommand( ent-g_entities, va( "print \"^1Player %s ^1is already sleeping. You can unsleep them with /amunsleep %s\n\"", g_entities[clientid].client->pers.netname, g_entities[clientid].client->pers.netname ) );
 		return;
 	}
-
+	//TODO
+	/*
 	M_HolsterThoseSabers(&g_entities[clientid]);
 
 	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVERIGHT;
@@ -1023,6 +1027,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVEDOWN;
 	g_entities[clientid].client->frozenTime = level.time+Q3_INFINITE;
 	g_entities[clientid].client->ps.userInt3 |= (1 << FLAG_FROZEN);
+	*/
 	g_entities[clientid].client->ps.legsTimer = ent->client->ps.torsoTimer=level.time+Q3_INFINITE;
 
 	g_entities[clientid].client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
@@ -1103,7 +1108,8 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 
 	g_entities[clientid].client->sess.isSleeping = qfalse;
 
-
+	//TODO
+	/*
 	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVERIGHT;
 	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVELEFT;
 	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVEFORWARD;
@@ -1113,6 +1119,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 	g_entities[clientid].client->frozenTime = 0;
 	g_entities[clientid].client->ps.userInt3 &= ~(1 << FLAG_FROZEN);
 	g_entities[clientid].client->ps.legsTimer = ent->client->ps.torsoTimer=0;
+	*/
 
 	g_entities[clientid].client->ps.forceDodgeAnim = 0;
 	g_entities[clientid].client->ps.forceHandExtendTime = 0;
@@ -1639,6 +1646,9 @@ void Cmd_amStatus_F(gentity_t *ent)
 	{ 
 		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
+			Q_strncpyz( hasClientText, "Unknown", sizeof( hasClientText ) );
+			//TODO
+			/*
 			if ( g_entities[i].client->sess.ojpClientPlugIn )
 			{
 				Q_strncpyz( hasClientText, "Yes", sizeof( hasClientText ) );
@@ -1647,6 +1657,7 @@ void Cmd_amStatus_F(gentity_t *ent)
 			{
 				Q_strncpyz( hasClientText, "No", sizeof( hasClientText ) );
 			}
+			*/
 			trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientText ) );
 		}
 	}
@@ -1833,7 +1844,7 @@ void Cmd_SVGrantAdmin_F()
 {
 	Database db(DATABASE_PATH);
 	Query q(db);
-	char username[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS], username[MAX_STRING_CHARS], DBname[MAX_STRING_CHARS];
+	char username[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS], DBname[MAX_STRING_CHARS];
 	int adminLevel, i;
 
 	if (!db.Connected())
@@ -2411,11 +2422,10 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 		}
 
 		cmdUserFactionID = q.get_num( va ("SELECT FactionID FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-		Q_strncpyz( cmdUserFactionName, q.get_string( va( "SELECT Name FROM Factions WHERE FactionID='%i'", cmdUserFactionID ) ), sizeof( cmdUserFactionName ) );
 
-		if( factionName[0] == '\0' )
+		if( !cmdUserFactionID )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1Faction with FactionID ^7%i ^1does not exist.\n\"", cmdUserFactionID ) );
+			trap_SendServerCommand( ent-g_entities, "print \"^1You aren't in a faction.\n\"" );
 			return;
 		}
 
@@ -2449,7 +2459,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 		if ( cmdUserFactionID != charFactionID )
 		{
-			trap_SendServerCommand( ent-g_entities, va ( "print \"^1You aren't in the same faction as %s. You can't change their rank.", charName) ) );
+			trap_SendServerCommand( ent-g_entities, va ( "print \"^1You aren't in the same faction as %s. You can't change their rank.", charName ) );
 			return;
 		}
 
@@ -2457,7 +2467,7 @@ void Cmd_SetFactionRank_F( gentity_t * ent )
 
 		if ( loggedIn )
 		{
-			trap_SendServerCommand( clientID, va( "print \"^2You are now the %s rank in the %s faction!\n\"", charFactionRank, factionName) ) );
+			trap_SendServerCommand( clientID, va( "print \"^2You are now the %s rank in the %s faction!\n\"", charFactionRank, factionName ) );
 			trap_SendServerCommand( clientID, va( "cp \"^2You are now the %s rank in the %s faction!\n\"", charFactionRank, factionName ) );
 		}
 

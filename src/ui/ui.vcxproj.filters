@@ -104,14 +104,14 @@
     <ResourceCompile Include="..\win32\ui.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ui.def" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{c2c0f122-1617-4c16-966c-be1c0351ec93}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{b4774043-ef9a-4ae9-82d9-a81e09561b89}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ui.def" />
   </ItemGroup>
 </Project>

@@ -310,10 +310,10 @@
     <ClInclude Include="w_saber.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="game.def" />
+    <ResourceCompile Include="..\win32\game.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\win32\game.rc" />
+    <None Include="game.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
