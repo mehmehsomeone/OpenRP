@@ -422,7 +422,7 @@ typedef struct bgEntity_s
 #ifdef __GCC__
 } _bgEntity_t;
 #else
-};
+} bgEntity_t;
 #endif
 
 typedef struct {
@@ -995,14 +995,14 @@ typedef enum {
 
 
 
-typedef enum {
+enum {
 	TEAM_FREE,
 	TEAM_RED,
 	TEAM_BLUE,
 	TEAM_SPECTATOR,
 
 	TEAM_NUM_TEAMS
-} team_t;
+}; typedef int team_t;
 
 typedef enum {
 	DUELTEAM_FREE,

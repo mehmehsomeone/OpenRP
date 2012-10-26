@@ -1,6 +1,6 @@
 #include "sqlite3/sqlite3.h"
 #include "sqlite3/libsqlitewrapped.h"
-extern "C" 
+extern "C"
 {
 #include "g_local.h"
 #include "g_character.h"
@@ -928,7 +928,7 @@ void Cmd_FactionWithdraw_F( gentity_t * ent )
 	Query q(db);
 	char temp[MAX_STRING_CHARS];
 	int changedCredits, charFactionID, factionBank, characterCredits, newTotalFactionBank, newTotalCharacterCredits;
-	char charFactionName[MAX_STRING_CHARS], characterName[MAX_STRING_CHARS], charFactionRank[MAX_STRING_CHARS];
+	char charFactionName[MAX_STRING_CHARS], charFactionRank[MAX_STRING_CHARS];
 
 	if ( !db.Connected() )
 	{
