@@ -768,6 +768,10 @@ struct gclient_s {
 	//fallen duelist
 	qboolean	iAmALoser;
 
+	//[OpenRP - Emotes System]
+	qboolean	emote_freeze;
+	//[OpenRP - Emotes System
+
 	int			lastGenCmd;
 	int			lastGenCmdTime;
 };

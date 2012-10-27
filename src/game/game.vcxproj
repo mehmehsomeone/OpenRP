@@ -172,6 +172,7 @@
     <ClCompile Include="g_client.c" />
     <ClCompile Include="g_cmds.c" />
     <ClCompile Include="g_combat.c" />
+    <ClCompile Include="g_emotes.c" />
     <ClCompile Include="g_exphysics.c" />
     <ClCompile Include="g_ICARUScb.c" />
     <ClCompile Include="g_items.c" />
@@ -285,6 +286,7 @@
     <ClInclude Include="g_account.h" />
     <ClInclude Include="g_admin.h" />
     <ClInclude Include="g_character.h" />
+    <ClInclude Include="g_emotes.h" />
     <ClInclude Include="g_headers.h" />
     <ClInclude Include="g_ICARUScb.h" />
     <ClInclude Include="g_local.h" />

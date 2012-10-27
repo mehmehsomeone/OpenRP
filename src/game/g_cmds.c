@@ -2,6 +2,10 @@
 //
 #include "g_local.h"
 #include "bg_saga.h"
+#include "g_emotes.h"
+#include "g_account.h"
+#include "g_character.h"
+#include "g_admin.h"
 
 #include "../ui/menudef.h"			// for the voice chats
 
@@ -1504,7 +1508,7 @@ G_Say
 ==================
 */
 
-static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, char *locMsg )
+static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, char *locMsg, qboolean allChat )
 {
 	if (!other) {
 		return;
@@ -1518,9 +1522,15 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 	if ( other->client->pers.connected != CON_CONNECTED ) {
 		return;
 	}
-	if ( mode == SAY_TEAM  && !OnSameTeam(ent, other) ) {
-		return;
+	//[OpenRP - Chat System]
+	if ( g_gametype.integer != GT_FFA )
+	{
+		if ( mode == SAY_TEAM  && !OnSameTeam(ent, other) ) {
+			return;
+		}
 	}
+	//[/OpenRP - Chat System]
+
 	/*
 	// no chatting to players in tournements
 	if ( (g_gametype.integer == GT_DUEL || g_gametype.integer == GT_POWERDUEL)
@@ -1539,18 +1549,40 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 	{ //siege temp spectators should not communicate to ingame players
 		return;
 	}
-
-	if (locMsg)
+	
+	if ( !allChat )
 	{
-		trap_SendServerCommand( other-g_entities, va("%s \"%s\" \"%s\" \"%c\" \"%s\"", 
-			mode == SAY_TEAM ? "ltchat" : "lchat",
-			name, locMsg, color, message));
+		//[OpenRP - Chat System]
+		if (locMsg && g_gametype.integer != GT_FFA )
+		//[/OpenRP - Chat System]
+		{
+			trap_SendServerCommand( other-g_entities, va("%s \"%s\" \"%s\" \"%c\" \"%s\"", 
+				mode == SAY_TEAM ? "ltchat" : "lchat",
+				name, locMsg, color, message));
+		}
+		else
+		{
+			trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c%s\"", 
+				mode == SAY_TEAM ? "tchat" : "chat",
+				name, Q_COLOR_ESCAPE, color, message));
+		}
 	}
 	else
 	{
-		trap_SendServerCommand( other-g_entities, va("%s \"%s%c%c%s\"", 
-			mode == SAY_TEAM ? "tchat" : "chat",
-			name, Q_COLOR_ESCAPE, color, message));
+		//[OpenRP - Chat System]
+		if (locMsg && g_gametype.integer != GT_FFA )
+		//[/OpenRP - Chat System]
+		{
+			trap_SendServerCommand( other-g_entities, va("%s \"^6<All Chat> ^7%s\" \"%s\" \"%c\" \"%s\"", 
+				mode == SAY_TEAM ? "ltchat" : "lchat",
+				name, locMsg, color, message));
+		}
+		else
+		{
+			trap_SendServerCommand( other-g_entities, va("%s \"^6<All Chat> ^7%s%c%c%s\"", 
+				mode == SAY_TEAM ? "tchat" : "chat",
+				name, Q_COLOR_ESCAPE, color, message));
+		}
 	}
 }
 
@@ -1565,33 +1597,56 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	char		text[MAX_SAY_TEXT];
 	char		location[64];
 	char		*locMsg = NULL;
+	int distance = 0;
 
-	if ( g_gametype.integer < GT_TEAM && mode == SAY_TEAM ) {
-		mode = SAY_ALL;
+	//[OpenRP - Chat System]
+	if ( g_gametype.integer != GT_FFA )
+	{
+		if ( g_gametype.integer < GT_TEAM && mode == SAY_TEAM ) {
+			mode = SAY_ALL;
+		}
 	}
+	//[/OpenRP - Chat System]
 
+	//[OpenRP - Chat System]
 	switch ( mode ) {
 	default:
 	case SAY_ALL:
 		G_LogPrintf( "say: %s: %s\n", ent->client->pers.netname, chatText );
 		Com_sprintf (name, sizeof(name), "%s%c%c"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		color = COLOR_GREEN;
+		distance = 600;
 		break;
 	case SAY_TEAM:
-		G_LogPrintf( "sayteam: %s: %s\n", ent->client->pers.netname, chatText );
-		if (Team_GetLocationMsg(ent, location, sizeof(location)))
+		switch ( ent->client->sess.chatMode )
 		{
-			Com_sprintf (name, sizeof(name), EC"(%s%c%c"EC")"EC": ", 
-				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
-			locMsg = location;
+		case 1:
+			G_Say( ent, target, SAY_OOC, chatText );
+			return;
+		case 2:
+			G_Say( ent, target, SAY_LOOC, chatText );
+			return;
+		case 3:
+			G_Say( ent, target, SAY_YELL, chatText );
+			return;
+		case 4:
+			G_Say( ent, target, SAY_WHISPER, chatText );
+			return;
+		case 5:
+			G_Say( ent, target, SAY_ME, chatText );
+			return;
+		case 6:
+			G_Say( ent, target, SAY_IT, chatText );
+			return;
+		case 7:
+			G_Say( ent, target, SAY_ADMIN, chatText );
+			return;
+		default:
+			ent->client->sess.chatMode = 1;
+			G_Say( ent, target, SAY_OOC, chatText );
+			return;
 		}
-		else
-		{
-			Com_sprintf (name, sizeof(name), EC"(%s%c%c"EC")"EC": ", 
-				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
-		}
-		color = COLOR_CYAN;
-		break;
+		return;
 	case SAY_TELL:
 		if (target && g_gametype.integer >= GT_TEAM &&
 			target->client->sess.sessionTeam == ent->client->sess.sessionTeam &&
@@ -1606,12 +1661,81 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		}
 		color = COLOR_MAGENTA;
 		break;
+	case SAY_YELL:
+		G_LogPrintf( "yell: %s: %s", ent->client->pers.netname, chatText );
+		Com_sprintf (name, sizeof(name), EC"^7<YELL> %s%c%c"EC": ", 
+		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+		color = COLOR_GREEN;
+		distance = 1200;
+		break;
+	case SAY_WHISPER:
+		G_LogPrintf( "whisper: %s: %s", ent->client->pers.netname, chatText );
+		Com_sprintf (name, sizeof(name), EC"^7<Whisper> %s%c%c"EC": ", 
+		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+		color = COLOR_GREEN;
+		distance = 150;
+		break;
+	case SAY_ME:
+		G_LogPrintf( "me: %s: %s", ent->client->pers.netname, chatText );
+		Com_sprintf (name, sizeof(name), EC"^3%s%c%c"EC" ", 
+		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+		color = COLOR_YELLOW;
+		distance = 1200;
+		break;
+	case SAY_IT:
+		G_LogPrintf( "it: %s: %s", ent->client->pers.netname, chatText );
+		Com_sprintf (name, sizeof(name), EC""EC"" 
+		);
+		color = COLOR_YELLOW;
+		distance = 1200;
+		break;
+	case SAY_ADMIN:
+		G_LogPrintf( "admin: %s: %s", ent->client->pers.netname, chatText );
+		Com_sprintf (name, sizeof(name), EC"^6<Admin Chat> ^7%s%c%c"EC": ", 
+		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
+		color = COLOR_MAGENTA;
+		break;
+	case SAY_OOC:
+		G_LogPrintf( "ooc: %s: %s\n", ent->client->pers.netname, chatText );
+		if (Team_GetLocationMsg(ent, location, sizeof(location)))
+		{
+			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c"EC": ", 
+				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_RED );
+			locMsg = location;
+		}
+		else
+		{
+			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c"EC": ", 
+				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_RED );
+		}
+		color = COLOR_RED;
+		break;
+	case SAY_LOOC:
+		G_LogPrintf( "looc: %s: %s", ent->client->pers.netname, chatText );
+		Com_sprintf (name, sizeof(name), EC"^6<LOOC> ^7%s%c%c"EC": ", 
+		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
+		color = COLOR_MAGENTA;
+		distance = 1200;
+		break;
+	case SAY_REPORT:
+		if ( ent->client->sess.isAdmin )
+		{
+			trap_SendServerCommand( ent-g_entities, "print \"^1You can't send reports as an admin.\n\"" );
+			return;
+		}
+		G_LogPrintf( "report: %s: %s", ent->client->pers.netname, chatText );
+		trap_SendServerCommand( ent-g_entities, va( "chat \"^6<REPORT!> ^7%s^6: %s\"", ent->client->pers.netname, chatText ) );
+		Com_sprintf (name, sizeof(name), EC"^6<REPORT!> ^7%s%c%c"EC": ", 
+		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
+		color = COLOR_MAGENTA;
+		break;
 	}
+	//[/OpenRP - Chat System]
 
 	Q_strncpyz( text, chatText, sizeof(text) );
 
 	if ( target ) {
-		G_SayTo( ent, target, mode, color, name, text, locMsg );
+		G_SayTo( ent, target, mode, color, name, text, locMsg, qfalse );
 		return;
 	}
 
@@ -1620,10 +1744,78 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		G_Printf( "%s%s\n", name, text);
 	}
 
-	// send it to all the apropriate clients
-	for (j = 0; j < level.maxclients; j++) {
-		other = &g_entities[j];
-		G_SayTo( ent, other, mode, color, name, text, locMsg );
+	if ( !openrp_allChat.integer && ( mode == SAY_ALL || mode == SAY_YELL || mode == SAY_WHISPER || mode == SAY_ME || mode == SAY_IT || mode == SAY_LOOC ) )
+	{
+		for ( j = 0; j < level.maxclients; j++ )
+		{
+			other = &g_entities[j];
+
+			if ( Distance( ent->client->ps.origin, other->client->ps.origin ) < distance )
+			{
+				if ( mode == SAY_ME )
+				{
+					trap_SendServerCommand( j, va( "print \"^3(ACTION) - ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
+				}
+
+				if ( mode == SAY_IT )
+				{
+					trap_SendServerCommand( j, va( "print \"^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
+				}
+				G_SayTo( ent, other, mode, color, name, text, locMsg, qfalse );
+			}
+
+			if ( ( other->client->sess.allChat || (other->client->sess.sessionTeam == TEAM_SPECTATOR || other->client->tempSpectate >= level.time ) ) && Distance( ent->client->ps.origin, other->client->ps.origin ) > distance )
+			{
+				if ( mode == SAY_ME )
+				{
+					trap_SendServerCommand( j, va( "print \"^6<All Chat> ^3(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, chatText ) );
+				}
+
+				if ( mode == SAY_IT )
+				{
+					trap_SendServerCommand( j, va( "print \"^6<All Chat> ^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
+				}
+				G_SayTo( ent, other, mode, color, name, text, locMsg, qtrue );
+			}
+			else if ( other->client->sess.allChatComplete )
+			{
+				if ( mode == SAY_ME )
+				{
+					trap_SendServerCommand( j, va( "print \"^6<All Chat> ^3(ACTION) ^3%s ^3%s\n\"", ent->client->pers.netname, chatText ) );
+				}
+
+				if ( mode == SAY_IT )
+				{
+					trap_SendServerCommand( j, va( "print \"^6<All Chat> ^3(ENV) ^7%s^3: %s\n\"", ent->client->pers.netname, chatText ) );
+				}
+				G_SayTo( ent, other, mode, color, name, text, locMsg, qtrue );
+			}
+			else
+			{
+				continue;
+			}
+				
+		}
+	}
+	else
+	{
+		// send it to all the appropriate clients
+		for (j = 0; j < level.maxclients; j++) {
+			other = &g_entities[j];
+
+			//[OpenRP - Chat System]
+			if ( mode == SAY_ADMIN && !other->client->sess.isAdmin )
+			{
+				continue;
+			}
+			if ( mode == SAY_REPORT && !other->client->sess.isAdmin)
+			{
+				continue;
+			}
+			//[/OpenRP - Chat System]
+
+			G_SayTo( ent, other, mode, color, name, text, locMsg, qfalse );
+		}
 	}
 }
 
@@ -4009,6 +4201,403 @@ void ClientCommand( int clientNum ) {
 		G_SetVehDamageFlags( &g_entities[ent->s.m_iVehicleNum], shipSurf, damageLevel );
 	}
 #endif
+
+	if (Q_stricmp(cmd, "emmyhead") == 0)
+	{
+		TheEmote (BOTH_SONICPAIN_HOLD, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emcower") == 0)
+	{
+		TheEmote (BOTH_COWER1, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emsmack") == 0)
+	{
+		TheEmote (BOTH_TOSS1, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emenraged") == 0)
+	{
+		TheEmote (BOTH_FORCE_RAGE, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emvictory") == 0)
+	{
+		TheEmote (BOTH_TAVION_SWORDPOWER, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emvictory2") == 0)
+	{
+		TheEmote (BOTH_TAVION_SCEPTERGROUND, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emvictory3") == 0)
+	{
+		TheEmote (BOTH_ALORA_TAUNT, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emswirl") == 0)
+	{
+		TheEmote (BOTH_CWCIRCLELOCK, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emdance2") == 0)
+	{
+		TheEmote (BOTH_BUTTERFLY_LEFT, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emdance2") == 0)
+	{
+		TheEmote (BOTH_BUTTERFLY_RIGHT, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emdance3") == 0) 
+	{
+		TheEmote (BOTH_FJSS_TR_BL, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emsit2") == 0)
+	{
+		TheEmote (BOTH_SLEEP6START, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "empoint") == 0)
+	{
+		TheEmote (BOTH_SCEPTER_HOLD, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emkneel2") == 0)
+	{
+		TheEmote (BOTH_ROSH_PAIN, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emkneel") == 0)
+	{
+		TheEmote (BOTH_CROUCH3, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emsleep") == 0)
+	{
+		TheEmote (BOTH_SLEEP1, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "embreakdance") == 0)
+	{
+		TheEmote (BOTH_BACK_FLIP_UP, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emcheer") == 0)
+	{
+		TheEmote (BOTH_TUSKENTAUNT1, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emcomeon") == 0) {
+		TheEmote (BOTH_COME_ON1, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emheadshake") == 0)
+	{
+		TheEmote (BOTH_HEADSHAKE, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emheadnod") == 0)
+	{
+		TheEmote (BOTH_HEADNOD, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emsurrender") == 0)
+	{
+		TheEmote (TORSO_SURRENDER_START, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "ematease") == 0)
+	{
+		TheEmote (BOTH_STAND4, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "empunch") == 0 ){
+		TheEmote (BOTH_LOSE_SABER, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emintimidate") == 0){
+		TheEmote (BOTH_ROSH_HEAL, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emslash") == 0){
+		TheEmote (BOTH_ALORA_SPIN_SLASH, ent, qfalse);
+	}
+	else if (Q_stricmp(cmd, "emsit") == 0) {
+		TheEmote (BOTH_SIT6, ent, qtrue);
+	}
+	else if (Q_stricmp (cmd, "login") == 0) {
+		Cmd_AccountLogin_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "logout") == 0) {
+		Cmd_AccountLogout_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "register") == 0) {
+		Cmd_AccountCreate_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "character") == 0) {
+		Cmd_SelectCharacter_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "mycharacters") == 0) {
+		Cmd_ListCharacters_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "createcharacter") == 0) {
+		Cmd_CreateCharacter_F (ent);
+		
+	}
+	else if (!Q_stricmp (cmd, "accountinfo")) {
+		Cmd_AccountInfo_F (ent);
+		
+	}
+	else if (!Q_stricmp (cmd, "characterinfo")) {
+		Cmd_CharacterInfo_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "grantadmin") == 0) {
+		Cmd_GrantAdmin_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "removeadmin") == 0) {
+		Cmd_RemoveAdmin_F (ent);
+		
+	}
+	/*
+	else if (Q_stricmp (cmd, "giveskillpoints") == 0) {
+		Cmd_GiveSkillPoints_F (ent);
+		
+	}
+	*/
+	else if (Q_stricmp (cmd, "givecredits") == 0) {
+		Cmd_GiveCredits_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "gencredits") == 0) {
+		Cmd_GenerateCredits_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "editaccount") == 0) {
+		Cmd_EditAccount_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "accountname") == 0) {
+		Cmd_AccountName_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "editcharacter") == 0) {
+		Cmd_EditCharacter_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "createfaction") == 0) {
+		Cmd_CreateFaction_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "setfaction") == 0) {
+		Cmd_SetFaction_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "setfactionrank") == 0) {
+		Cmd_SetFactionRank_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "factioninfo") == 0) {
+		Cmd_FactionInfo_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "factionwithdraw") == 0) {
+		Cmd_FactionWithdraw_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "factiondeposit") == 0) {
+		Cmd_FactionDeposit_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "factiongencredits") == 0) {
+		Cmd_FactionGenerateCredits_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "listfactions") == 0) {
+		Cmd_ListFactions_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "bounty") == 0) {
+		 Cmd_Bounty_F(ent);
+		
+	}
+	/*
+	else if (Q_stricmp (cmd, "shop") == 0) {
+		Cmd_Shop_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "checkinventory") == 0 ) {
+		Cmd_CheckInventory_F (ent);
+		
+	}
+	else if (Q_stricmp (cmd, "inventory") == 0) {
+		Cmd_Inventory_F (ent);
+		
+	}
+	*/
+	else if (Q_stricmp(cmd, "amlistadmins") == 0) {
+		Cmd_amListAdmins_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "charactername") == 0) {
+		Cmd_CharName_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "ooc") == 0) {
+		Cmd_Say_f( ent, SAY_TEAM, qfalse );
+		
+	}
+	else if (Q_stricmp(cmd, "yell") == 0) {
+		Cmd_Say_f( ent, SAY_YELL, qfalse );
+		
+	}
+	else if (Q_stricmp(cmd, "whisper") == 0) {
+		Cmd_Say_f( ent, SAY_WHISPER, qfalse );
+		
+	}
+	else if (Q_stricmp(cmd, "me") == 0) {
+		Cmd_Say_f( ent, SAY_ME, qfalse );
+		
+	}
+	else if (Q_stricmp(cmd, "it") == 0) {
+		Cmd_Say_f( ent, SAY_IT, qfalse );
+		
+	}
+	else if (Q_stricmp(cmd, "looc") == 0) {
+		Cmd_Say_f( ent, SAY_LOOC, qfalse );
+		
+	}
+	else if (Q_stricmp(cmd, "report") == 0) {
+		Cmd_Say_f( ent, SAY_REPORT, qfalse );
+		
+	}
+	else if (Q_stricmp(cmd, "comm") == 0) {
+		Cmd_Comm_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "force") == 0) {
+		Cmd_ForceMessage_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "faction") == 0) {
+		Cmd_Faction_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "togglechat") == 0) {
+		Cmd_ToggleChat_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "amkick") == 0) {
+		Cmd_amKick_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "amban") == 0) {
+		Cmd_amBan_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amwarn") == 0) {
+		Cmd_amWarn_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "amtele") == 0) {
+		Cmd_amTeleport_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amsilence") == 0) {
+		Cmd_amSilence_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amunsilence") == 0) {
+		Cmd_amUnSilence_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amsleep") == 0) {
+		Cmd_amSleep_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amunsleep") == 0) {
+		Cmd_amUnsleep_F (ent);
+		
+	}
+	/*
+	else if(Q_stricmp(cmd, "amprotect") == 0) {
+		Cmd_amProtect_F (ent);
+		
+	}
+	*/
+	else if(Q_stricmp(cmd, "amannounce") == 0) {
+		Cmd_amAnnounce_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "ameffect") == 0) {
+		Cmd_amEffect_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amforceteam") == 0) {
+		Cmd_amForceTeam_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amstatus") == 0) {
+		Cmd_amStatus_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amweather") == 0) {
+		Cmd_amWeather_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amweatherplus") == 0) {
+		Cmd_amWeatherPlus_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amtelemark") == 0) {
+		Cmd_amTelemark_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amorigin") == 0) {
+		Cmd_amOrigin_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "info") == 0) {
+		Cmd_info_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "eminfo") == 0) {
+		Cmd_eminfo_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "aminfo") == 0) {
+		Cmd_aminfo_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "ammap") == 0) {
+		Cmd_amMap_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "amrename") == 0) {
+		Cmd_amRename_F (ent);
+		
+	}
+	else if(Q_stricmp(cmd, "admin") == 0) {
+		Cmd_AdminChat_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "amshakescreen") == 0) {
+		Cmd_ShakeScreen_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "amaudio") == 0) {
+		Cmd_Audio_F (ent);
+		
+	}
+	/*
+	else if (Q_stricmp(cmd, "aminvisible") == 0) {
+		Cmd_Invisible_F (ent);
+		
+	}
+	*/
+	else if (Q_stricmp(cmd, "amallchat") == 0) {
+		Cmd_AllChat_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "amlistwarnings") == 0) {
+		Cmd_amWarningList_F (ent);
+		
+	}
+	else if (Q_stricmp(cmd, "spawnent") == 0) {
+		Cmd_SpawnEnt_F(ent);
+		
+	}
+	else if (Q_stricmp(cmd, "removeent") == 0) {
+		Cmd_RemoveEntity_F (ent);
+		
+	}
+
 	else
 	{
 		if (Q_stricmp(cmd, "addbot") == 0)

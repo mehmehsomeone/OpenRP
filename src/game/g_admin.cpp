@@ -1038,22 +1038,14 @@ void Cmd_amSleep_F(gentity_t *ent)
 	//TODO
 	/*
 	M_HolsterThoseSabers(&g_entities[clientid]);
-
-	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVERIGHT;
-	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVELEFT;
-	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVEFORWARD;
-	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVEBACK;
-	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVEUP;
-	g_entities[clientid].client->ps.userInt1 |= LOCK_MOVEDOWN;
-	g_entities[clientid].client->frozenTime = level.time+Q3_INFINITE;
-	g_entities[clientid].client->ps.userInt3 |= (1 << FLAG_FROZEN);
 	*/
-	g_entities[clientid].client->ps.legsTimer = ent->client->ps.torsoTimer=level.time+Q3_INFINITE;
 
 	g_entities[clientid].client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
 	g_entities[clientid].client->ps.forceDodgeAnim = 0;
 	g_entities[clientid].client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
 	g_entities[clientid].client->ps.quickerGetup = qfalse;
+
+	G_SetAnim( &g_entities[clientid], NULL, SETANIM_BOTH, BOTH_STUMBLEDEATH1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
 	
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2%s is now sleeping.\n\"", g_entities[clientid].client->pers.netname ) );
 	trap_SendServerCommand( clientid, "cp \"^2You are now sleeping.\n\"" );
@@ -1128,29 +1120,16 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 
 	g_entities[clientid].client->sess.isSleeping = qfalse;
 
-	//TODO
-	/*
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVERIGHT;
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVELEFT;
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVEFORWARD;
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVEBACK;
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVEUP;
-	g_entities[clientid].client->ps.userInt1 &= ~LOCK_MOVEDOWN;
-	g_entities[clientid].client->frozenTime = 0;
-	g_entities[clientid].client->ps.userInt3 &= ~(1 << FLAG_FROZEN);
-	g_entities[clientid].client->ps.legsTimer = ent->client->ps.torsoTimer=0;
-	*/
-
 	g_entities[clientid].client->ps.forceDodgeAnim = 0;
 	g_entities[clientid].client->ps.forceHandExtendTime = 0;
 	g_entities[clientid].client->ps.quickerGetup = qfalse;
 
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2%s has been unslept.\n\"", g_entities[clientid].client->pers.netname ) );
 
-	trap_SendServerCommand(clientid, va("print \"^2You are no longer sleeping. You can get up by using a movement key.\n\""));
-	trap_SendServerCommand(clientid, va("cp \"^2You are no longer sleeping. You can get up by using a movement key.\n\""));
+	trap_SendServerCommand( clientid, va("print \"^2You are no longer sleeping. You can get up by using a movement key.\n\"" ) );
+	trap_SendServerCommand( clientid, va("cp \"^2You are no longer sleeping. You can get up by using a movement key.\n\"" ) );
 
-	G_LogPrintf("Unsleep admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
+	G_LogPrintf( "Unsleep admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname );
 	return;
 }
 
@@ -2757,6 +2736,10 @@ void Cmd_AllChat_F( gentity_t * ent )
 	{
 		if ( !ent->client->sess.allChat )
 		{
+			if ( ent->client->sess.allChatComplete )
+			{
+				ent->client->sess.allChatComplete = qfalse;
+			}
 			ent->client->sess.allChat =	qtrue;
 			trap_SendServerCommand( ent-g_entities, "print \"^2All chat turned ON.\n\"" );
 			return;
@@ -2773,7 +2756,21 @@ void Cmd_AllChat_F( gentity_t * ent )
 
 	if( !Q_stricmp( parameter, "complete" ) )
 	{
-		//TODO
+		if ( ent->client->sess.allChat )
+		{
+			ent->client->sess.allChat = qfalse;
+		}
+		
+		if ( !ent->client->sess.allChatComplete )
+		{
+			ent->client->sess.allChatComplete = qtrue;
+			trap_SendServerCommand( ent-g_entities, "print \"^2All chat COMPLETE turned ON.\n\"" );
+		}
+		else
+		{
+			ent->client->sess.allChatComplete = qfalse;
+			trap_SendServerCommand( ent-g_entities, "print \"^2All chat COMPLETE turned OFF.\n\"" );
+		}
 	}
 	return;
 }

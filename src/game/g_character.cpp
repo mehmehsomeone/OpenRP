@@ -2048,7 +2048,7 @@ void Cmd_Comm_F(gentity_t *ent)
 		return; 
 	}
 
-	if ( !openrp_allChat.integer  )
+	if ( !openrp_allChat.integer )
 	{
 		for ( i = 0; i < level.maxclients; i++ )
 		{

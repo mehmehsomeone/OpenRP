@@ -3310,7 +3310,10 @@ static void PM_WalkMove( void ) {
 	float		scale;
 	usercmd_t	cmd;
 	float		accelerate;
-	float		vel;
+	//[OpenRP - Ensiform Bugfix]
+	//float		vel;
+	//[/OpenRP - Ensiform Bugfix]
+
 	qboolean	npcMovement = qfalse;
 
 	if ( pm->waterlevel > 2 && DotProduct( pml.forward, pml.groundTrace.plane.normal ) > 0 ) {
@@ -3463,15 +3466,10 @@ static void PM_WalkMove( void ) {
 		pm->ps->velocity[2] -= pm->ps->gravity * pml.frametime;
 	}
 
-	vel = VectorLength(pm->ps->velocity);
-
+	//[OpenRP - Ensiform Bugfix]
 	// slide along the ground plane
-	PM_ClipVelocity (pm->ps->velocity, pml.groundTrace.plane.normal, 
-		pm->ps->velocity, OVERCLIP );
-
-	// don't decrease velocity when going up or down a slope
-	VectorNormalize(pm->ps->velocity);
-	VectorScale(pm->ps->velocity, vel, pm->ps->velocity);
+	PM_ClipVelocity (pm->ps->velocity, pml.groundTrace.plane.normal, pm->ps->velocity, OVERCLIP );
+	//[/OpenRP - Ensiform Bugfix]
 
 	// don't do anything if standing still
 	if (!pm->ps->velocity[0] && !pm->ps->velocity[1]) {
@@ -10529,11 +10527,21 @@ void PmoveSingle (pmove_t *pmove) {
 	}
 
 	// set the talk balloon flag
+	//[OpenRP - Duel Chat Invincibility]
 	if ( pm->cmd.buttons & BUTTON_TALK ) {
 		pm->ps->eFlags |= EF_TALK;
+		if ( !pm->ps->duelInProgress )
+		{
+			pm->ps->eFlags |= EF_INVULNERABLE;
+		}
 	} else {
 		pm->ps->eFlags &= ~EF_TALK;
+		if ( !pm->ps->duelInProgress )
+		{
+			pm->ps->eFlags &= ~EF_INVULNERABLE;
+		}
 	}
+	//[/OpenRP - Duel Chat Invincibility]
 
 	pm_cancelOutZoom = qfalse;
 	if (pm->ps->weapon == WP_DISRUPTOR &&
