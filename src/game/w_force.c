@@ -457,7 +457,7 @@ void WP_InitForcePowers( gentity_t *ent )
 	}
 	else
 	{
-		if (warnClient || !ent->client->sess.setForce)
+		if (warnClient || !ent->client->sess.setForce || !ent->client->sess.loggedinAccount || !ent->client->sess.characterChosen )
 		{ //the client's rank is too high for the server and has been autocapped, so tell them
 			if (g_gametype.integer != GT_HOLOCRON && g_gametype.integer != GT_JEDIMASTER )
 			{
@@ -471,6 +471,26 @@ void WP_InitForcePowers( gentity_t *ent )
 #endif
 				didEvent = qtrue;
 
+				if ( !ent->client->sess.loggedinAccount || !ent->client->sess.characterChosen )
+				{
+					//Make them a spectator so they can set their powerups up without being bothered.
+					ent->client->sess.sessionTeam = TEAM_SPECTATOR;
+					ent->client->sess.spectatorState = SPECTATOR_FREE;
+					ent->client->sess.spectatorClient = 0;
+
+					ent->client->pers.teamState.state = TEAM_BEGIN;
+
+					if ( !ent->client->sess.loggedinAccount )
+					{
+						trap_SendServerCommand(ent-g_entities, "lui");	// Fire up the login UI
+					}
+					else
+					{
+						trap_SendServerCommand(ent-g_entities, "charui");
+					}
+				}
+
+				/*
 //				if (!(ent->r.svFlags & SVF_BOT) && g_gametype.integer != GT_DUEL && g_gametype.integer != GT_POWERDUEL && ent->s.eType != ET_NPC)
 				if (!(ent->r.svFlags & SVF_BOT) && ent->s.eType != ET_NPC)
 				{
@@ -485,6 +505,7 @@ void WP_InitForcePowers( gentity_t *ent )
 						trap_SendServerCommand(ent-g_entities, "spc");	// Fire up the profile menu
 					}
 				}
+				*/
 
 #ifdef EVENT_FORCE_RANK
 				te->s.bolt2 = ent->client->sess.sessionTeam;

@@ -2816,6 +2816,16 @@ void Cmd_SaberAttackCycle_f(gentity_t *ent)
 	{
 		return;
 	}
+
+	//[mt-wudan Bugfix]
+	if ( ent->client->ps.weapon != WP_SABER )
+	//if the client is not currently weilding a saber
+	{
+		//leave this function
+		return;
+	}
+	//[/mt-wudan Bugfix]
+
 	/*
 	if (ent->client->ps.weaponTime > 0)
 	{ //no switching attack level when busy
@@ -4204,11 +4214,11 @@ void ClientCommand( int clientNum ) {
 
 	if (Q_stricmp(cmd, "emmyhead") == 0)
 	{
-		TheEmote (BOTH_SONICPAIN_HOLD, ent, qfalse);
+		TheEmote(BOTH_SONICPAIN_HOLD, ent, qfalse);
 	}
 	else if (Q_stricmp(cmd, "emcower") == 0)
 	{
-		TheEmote (BOTH_COWER1, ent, qfalse);
+		TheEmote(BOTH_COWER1, ent, qfalse);
 	}
 	else if (Q_stricmp(cmd, "emsmack") == 0)
 	{
@@ -4303,299 +4313,244 @@ void ClientCommand( int clientNum ) {
 		TheEmote (BOTH_ALORA_SPIN_SLASH, ent, qfalse);
 	}
 	else if (Q_stricmp(cmd, "emsit") == 0) {
+		TheEmote (BOTH_SIT1, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emsit2") == 0) {
+		TheEmote (BOTH_SIT2, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emsit3") == 0) {
+		TheEmote (BOTH_SIT3, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emsit4") == 0) {
+		TheEmote (BOTH_SIT4, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emsit5") == 0) {
+		TheEmote (BOTH_SIT5, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emsit6") == 0) {
 		TheEmote (BOTH_SIT6, ent, qtrue);
 	}
+	else if (Q_stricmp(cmd, "emsit7") == 0) {
+		TheEmote (BOTH_SIT7, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emtyping") == 0) {
+		TheEmote (BOTH_CONSOLE1, ent, qtrue);
+	}
 	else if (Q_stricmp (cmd, "login") == 0) {
-		Cmd_AccountLogin_F (ent);
-		
+		Cmd_AccountLogin_F (ent);	
 	}
 	else if (Q_stricmp (cmd, "logout") == 0) {
 		Cmd_AccountLogout_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "register") == 0) {
 		Cmd_AccountCreate_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "character") == 0) {
 		Cmd_SelectCharacter_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "mycharacters") == 0) {
 		Cmd_ListCharacters_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "createcharacter") == 0) {
 		Cmd_CreateCharacter_F (ent);
-		
 	}
 	else if (!Q_stricmp (cmd, "accountinfo")) {
 		Cmd_AccountInfo_F (ent);
-		
 	}
 	else if (!Q_stricmp (cmd, "characterinfo")) {
 		Cmd_CharacterInfo_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "grantadmin") == 0) {
-		Cmd_GrantAdmin_F (ent);
-		
+		Cmd_GrantAdmin_F (ent);		
 	}
 	else if (Q_stricmp (cmd, "removeadmin") == 0) {
-		Cmd_RemoveAdmin_F (ent);
-		
+		Cmd_RemoveAdmin_F (ent);		
 	}
 	/*
 	else if (Q_stricmp (cmd, "giveskillpoints") == 0) {
-		Cmd_GiveSkillPoints_F (ent);
-		
+		Cmd_GiveSkillPoints_F (ent);		
 	}
 	*/
 	else if (Q_stricmp (cmd, "givecredits") == 0) {
-		Cmd_GiveCredits_F (ent);
-		
+		Cmd_GiveCredits_F (ent);	
 	}
 	else if (Q_stricmp (cmd, "gencredits") == 0) {
-		Cmd_GenerateCredits_F (ent);
-		
+		Cmd_GenerateCredits_F (ent);		
 	}
 	else if (Q_stricmp (cmd, "editaccount") == 0) {
-		Cmd_EditAccount_F (ent);
-		
+		Cmd_EditAccount_F (ent);		
 	}
 	else if (Q_stricmp(cmd, "accountname") == 0) {
-		Cmd_AccountName_F (ent);
-		
+		Cmd_AccountName_F (ent);		
 	}
 	else if (Q_stricmp (cmd, "editcharacter") == 0) {
-		Cmd_EditCharacter_F (ent);
-		
+		Cmd_EditCharacter_F (ent);	
 	}
 	else if (Q_stricmp (cmd, "createfaction") == 0) {
-		Cmd_CreateFaction_F (ent);
-		
+		Cmd_CreateFaction_F (ent);	
 	}
 	else if (Q_stricmp (cmd, "setfaction") == 0) {
-		Cmd_SetFaction_F (ent);
-		
+		Cmd_SetFaction_F (ent);	
 	}
 	else if (Q_stricmp (cmd, "setfactionrank") == 0) {
 		Cmd_SetFactionRank_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "factioninfo") == 0) {
 		Cmd_FactionInfo_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "factionwithdraw") == 0) {
 		Cmd_FactionWithdraw_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "factiondeposit") == 0) {
-		Cmd_FactionDeposit_F (ent);
-		
+		Cmd_FactionDeposit_F (ent);	
 	}
 	else if (Q_stricmp (cmd, "factiongencredits") == 0) {
 		Cmd_FactionGenerateCredits_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "listfactions") == 0) {
 		Cmd_ListFactions_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "bounty") == 0) {
-		 Cmd_Bounty_F(ent);
-		
+		 Cmd_Bounty_F(ent);	
 	}
 	/*
 	else if (Q_stricmp (cmd, "shop") == 0) {
 		Cmd_Shop_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "checkinventory") == 0 ) {
 		Cmd_CheckInventory_F (ent);
-		
 	}
 	else if (Q_stricmp (cmd, "inventory") == 0) {
-		Cmd_Inventory_F (ent);
-		
+		Cmd_Inventory_F (ent);	
 	}
 	*/
 	else if (Q_stricmp(cmd, "amlistadmins") == 0) {
-		Cmd_amListAdmins_F (ent);
-		
+		Cmd_amListAdmins_F (ent);	
 	}
 	else if (Q_stricmp(cmd, "charactername") == 0) {
 		Cmd_CharName_F (ent);
-		
 	}
 	else if (Q_stricmp(cmd, "ooc") == 0) {
 		Cmd_Say_f( ent, SAY_TEAM, qfalse );
-		
 	}
 	else if (Q_stricmp(cmd, "yell") == 0) {
-		Cmd_Say_f( ent, SAY_YELL, qfalse );
-		
+		Cmd_Say_f( ent, SAY_YELL, qfalse );	
 	}
 	else if (Q_stricmp(cmd, "whisper") == 0) {
 		Cmd_Say_f( ent, SAY_WHISPER, qfalse );
-		
 	}
 	else if (Q_stricmp(cmd, "me") == 0) {
 		Cmd_Say_f( ent, SAY_ME, qfalse );
-		
 	}
 	else if (Q_stricmp(cmd, "it") == 0) {
 		Cmd_Say_f( ent, SAY_IT, qfalse );
-		
 	}
 	else if (Q_stricmp(cmd, "looc") == 0) {
 		Cmd_Say_f( ent, SAY_LOOC, qfalse );
-		
 	}
 	else if (Q_stricmp(cmd, "report") == 0) {
-		Cmd_Say_f( ent, SAY_REPORT, qfalse );
-		
+		Cmd_Say_f( ent, SAY_REPORT, qfalse );		
 	}
 	else if (Q_stricmp(cmd, "comm") == 0) {
-		Cmd_Comm_F (ent);
-		
+		Cmd_Comm_F (ent);		
 	}
 	else if (Q_stricmp(cmd, "force") == 0) {
-		Cmd_ForceMessage_F (ent);
-		
+		Cmd_ForceMessage_F (ent);	
 	}
 	else if (Q_stricmp(cmd, "faction") == 0) {
-		Cmd_Faction_F (ent);
-		
+		Cmd_Faction_F (ent);		
 	}
 	else if (Q_stricmp(cmd, "togglechat") == 0) {
-		Cmd_ToggleChat_F (ent);
-		
+		Cmd_ToggleChat_F (ent);	
 	}
 	else if (Q_stricmp(cmd, "amkick") == 0) {
-		Cmd_amKick_F (ent);
-		
+		Cmd_amKick_F (ent);		
 	}
 	else if (Q_stricmp(cmd, "amban") == 0) {
-		Cmd_amBan_F (ent);
-		
+		Cmd_amBan_F (ent);		
 	}
 	else if(Q_stricmp(cmd, "amwarn") == 0) {
-		Cmd_amWarn_F (ent);
-		
+		Cmd_amWarn_F (ent);	
 	}
 	else if (Q_stricmp(cmd, "amtele") == 0) {
 		Cmd_amTeleport_F (ent);
-		
 	}
 	else if(Q_stricmp(cmd, "amsilence") == 0) {
 		Cmd_amSilence_F (ent);
-		
 	}
 	else if(Q_stricmp(cmd, "amunsilence") == 0) {
-		Cmd_amUnSilence_F (ent);
-		
+		Cmd_amUnSilence_F (ent);	
 	}
 	else if(Q_stricmp(cmd, "amsleep") == 0) {
-		Cmd_amSleep_F (ent);
-		
+		Cmd_amSleep_F (ent);	
 	}
 	else if(Q_stricmp(cmd, "amunsleep") == 0) {
-		Cmd_amUnsleep_F (ent);
-		
+		Cmd_amUnsleep_F (ent);	
 	}
 	/*
 	else if(Q_stricmp(cmd, "amprotect") == 0) {
-		Cmd_amProtect_F (ent);
-		
+		Cmd_amProtect_F (ent);	
 	}
 	*/
 	else if(Q_stricmp(cmd, "amannounce") == 0) {
-		Cmd_amAnnounce_F (ent);
-		
+		Cmd_amAnnounce_F (ent);	
 	}
 	else if(Q_stricmp(cmd, "ameffect") == 0) {
-		Cmd_amEffect_F (ent);
-		
+		Cmd_amEffect_F (ent);	
 	}
 	else if(Q_stricmp(cmd, "amforceteam") == 0) {
-		Cmd_amForceTeam_F (ent);
-		
+		Cmd_amForceTeam_F (ent);		
 	}
 	else if(Q_stricmp(cmd, "amstatus") == 0) {
-		Cmd_amStatus_F (ent);
-		
+		Cmd_amStatus_F (ent);		
 	}
 	else if(Q_stricmp(cmd, "amweather") == 0) {
-		Cmd_amWeather_F (ent);
-		
+		Cmd_amWeather_F (ent);		
 	}
 	else if(Q_stricmp(cmd, "amweatherplus") == 0) {
-		Cmd_amWeatherPlus_F (ent);
-		
+		Cmd_amWeatherPlus_F (ent);		
 	}
 	else if(Q_stricmp(cmd, "amtelemark") == 0) {
-		Cmd_amTelemark_F (ent);
-		
+		Cmd_amTelemark_F (ent);	
 	}
 	else if(Q_stricmp(cmd, "amorigin") == 0) {
-		Cmd_amOrigin_F (ent);
-		
+		Cmd_amOrigin_F (ent);	
 	}
 	else if(Q_stricmp(cmd, "info") == 0) {
 		Cmd_info_F (ent);
-		
 	}
 	else if(Q_stricmp(cmd, "eminfo") == 0) {
 		Cmd_eminfo_F (ent);
-		
 	}
 	else if(Q_stricmp(cmd, "aminfo") == 0) {
 		Cmd_aminfo_F (ent);
-		
 	}
 	else if(Q_stricmp(cmd, "ammap") == 0) {
 		Cmd_amMap_F (ent);
-		
 	}
 	else if(Q_stricmp(cmd, "amrename") == 0) {
 		Cmd_amRename_F (ent);
-		
 	}
 	else if(Q_stricmp(cmd, "admin") == 0) {
 		Cmd_AdminChat_F (ent);
-		
 	}
 	else if (Q_stricmp(cmd, "amshakescreen") == 0) {
 		Cmd_ShakeScreen_F (ent);
-		
 	}
 	else if (Q_stricmp(cmd, "amaudio") == 0) {
 		Cmd_Audio_F (ent);
-		
 	}
-	/*
-	else if (Q_stricmp(cmd, "aminvisible") == 0) {
-		Cmd_Invisible_F (ent);
-		
-	}
-	*/
 	else if (Q_stricmp(cmd, "amallchat") == 0) {
 		Cmd_AllChat_F (ent);
-		
 	}
 	else if (Q_stricmp(cmd, "amlistwarnings") == 0) {
 		Cmd_amWarningList_F (ent);
-		
 	}
 	else if (Q_stricmp(cmd, "spawnent") == 0) {
 		Cmd_SpawnEnt_F(ent);
-		
 	}
 	else if (Q_stricmp(cmd, "removeent") == 0) {
 		Cmd_RemoveEntity_F (ent);
-		
 	}
 
 	else

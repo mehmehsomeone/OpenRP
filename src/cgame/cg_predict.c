@@ -1334,9 +1334,13 @@ void CG_PredictPlayerState( void ) {
 				if ( veh->m_pVehicle->m_ucmd.buttons & BUTTON_TALK )
 				{ //forced input if "chat bubble" is up
 					veh->m_pVehicle->m_ucmd.buttons = BUTTON_TALK;
+					//[OpenRP - run while talking]
+					/*
 					veh->m_pVehicle->m_ucmd.forwardmove = 0;
 					veh->m_pVehicle->m_ucmd.rightmove = 0;
 					veh->m_pVehicle->m_ucmd.upmove = 0;
+					*/
+					//[/OpenRP - run while talking]
 				}
 				cg_vehPmove.ps = &cg.predictedVehicleState;
 				cg_vehPmove.animations = bgAllAnims[veh->localAnimIndex].anims;

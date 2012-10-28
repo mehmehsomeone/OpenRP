@@ -2263,6 +2263,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	char		userinfo[MAX_INFO_STRING];
 	gentity_t	*ent;
 	gentity_t	*te;
+	char *s;
 
 	//[JAC Bugfix]
 	char TmpIP[32] = {0};
@@ -2356,8 +2357,25 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 		}
 	}
 
+	s = Info_ValueForKey( userinfo, "ojp_clientplugin" );
+	if(!Q_stricmp(s, OPENRP_CLIENTVERSION))
+	{
+		client->sess.hasClient = qtrue;
+	}
+	else
+	{
+		client->sess.hasClient = qfalse;
+	}
+
+	if ( client->sess.hasClient )
+	{
+		G_LogPrintf( "ClientConnect: %i with latest client plugin.\n", clientNum );
+	}
+	else
+	{
+		G_LogPrintf( "ClientConnect: %i with old or no client plugin\n", clientNum );
+	}
 	// get and distribute relevent paramters
-	G_LogPrintf( "ClientConnect: %i\n", clientNum );
 	ClientUserinfoChanged( clientNum );
 
 	// don't do the "xxx connected" messages if they were caried over from previous level

@@ -1322,6 +1322,34 @@ static void CG_ServerCommand( void ) {
 		return;
 	}
 
+	if ( !strcmp( cmd, "spc" ) )
+	{
+		trap_Cvar_Set("ui_myteam", "3");
+		trap_OpenUIMenu(UIMENU_PLAYERCONFIG); //UIMENU_CLASSSEL
+		return;
+	}
+	if ( !strcmp( cmd, "lui" ) )
+	{
+	//	trap_Cvar_Set("ui_myteam", "3");
+		trap_OpenUIMenu(UIMENU_LOGIN); //UIMENU_CLASSSEL
+		return;
+	}
+	if ( !strcmp( cmd, "lui_login") )
+	{
+		trap_Cvar_Set("ui_account_loggedIn", "true");
+		return;
+	}
+	if ( !strcmp( cmd, "lui_logout") )
+	{
+		trap_Cvar_Set("ui_account_loggedIn", "false");
+		return;
+	}
+	if ( !strcmp( cmd, "charui" ) )
+	{
+		trap_OpenUIMenu(UIMENU_CHARACTER);
+		return;
+	} 
+
 	if ( !strcmp( cmd, "nfr" ) )
 	{ //"nfr" == "new force rank" (want a short string)
 		int doMenu = 0;

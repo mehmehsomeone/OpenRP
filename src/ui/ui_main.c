@@ -10558,6 +10558,8 @@ void _UI_Init( qboolean inGameLoad ) {
 
 	trap_Cvar_Set("ui_actualNetGameType", va("%d", ui_netGameType.integer));
 
+	trap_Cvar_Set( "ojp_clientplugin", OPENRP_CLIENTVERSION );
+
 #if !WINDOWSXP_COMPILE
 	UI_PatchFakeChallengeResponse( qtrue );
 	PatchEngine( qtrue );

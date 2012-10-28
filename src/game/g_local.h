@@ -446,6 +446,7 @@ typedef struct {
 	int chatMode;
 	int commMode;
 	qboolean commOn;
+	qboolean hasClient;
 
 	//[/OpenRP]
 } clientSession_t;
