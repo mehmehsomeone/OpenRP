@@ -2353,3 +2353,5 @@ void Cmd_ToggleChat_F( gentity_t * ent )
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeName ) );
 	return;
 }
+
+	

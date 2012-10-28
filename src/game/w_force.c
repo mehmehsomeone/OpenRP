@@ -1245,6 +1245,17 @@ void ForceHeal( gentity_t *self )
 	{
 		return;
 	}
+		
+	if (self->client->ps.fd.forcePowerLevel[FP_HEAL] == FORCE_LEVEL_4)
+	{
+		self->health += 50; //This was 50, but that angered the Balance God.
+		
+		if (self->health > self->client->ps.stats[STAT_MAX_HEALTH])
+		{
+			self->health = self->client->ps.stats[STAT_MAX_HEALTH];
+		}
+		BG_ForcePowerDrain( &self->client->ps, FP_HEAL, 0 );
+	}
 
 	if (self->client->ps.fd.forcePowerLevel[FP_HEAL] == FORCE_LEVEL_3)
 	{

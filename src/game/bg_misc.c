@@ -172,8 +172,8 @@ int forceMasteryPoints[NUM_FORCE_MASTERY_LEVELS] =
 
 int bgForcePowerCost[NUM_FORCE_POWERS][NUM_FORCE_POWER_LEVELS] = //0 == neutral
 {
-	{	0,	2,	4,	6	},	// Heal			// FP_HEAL
-	{	0,	0,	2,	6	},	// Jump			//FP_LEVITATION,//hold/duration
+	{	0,	2,	4,	6,  1	},	// Heal			// FP_HEAL
+	{	0,	1,	2,	6 	},	// Jump			//FP_LEVITATION,//hold/duration
 	{	0,	2,	4,	6	},	// Speed		//FP_SPEED,//duration
 	{	0,	1,	3,	6	},	// Push			//FP_PUSH,//hold/duration
 	{	0,	1,	3,	6	},	// Pull			//FP_PULL,//hold/duration
@@ -257,7 +257,7 @@ int WeaponReadyAnim[WP_NUM_WEAPONS] =
 	TORSO_WEAPONREADY10,//TORSO_WEAPONREADY11,//WP_TRIP_MINE,
 	TORSO_WEAPONREADY10,//TORSO_WEAPONREADY12,//WP_DET_PACK,
 	TORSO_WEAPONREADY3,//WP_CONCUSSION
-	TORSO_WEAPONREADY2,//WP_BRYAR_OLD,
+	TORSO_WEAPONREADY3,//WP_BRYAR_OLD,
 
 	//NOT VALID (e.g. should never really be used):
 	BOTH_STAND1,//WP_EMPLACED_GUN,
@@ -308,7 +308,7 @@ int WeaponAttackAnim[WP_NUM_WEAPONS] =
 	BOTH_THERMAL_THROW,//WP_THERMAL,
 	BOTH_ATTACK3,//BOTH_ATTACK11,//WP_TRIP_MINE,
 	BOTH_ATTACK3,//BOTH_ATTACK12,//WP_DET_PACK,
-	BOTH_ATTACK2,//WP_BRYAR_OLD,
+	BOTH_ATTACK3,//WP_BRYAR_OLD,
 
 	//NOT VALID (e.g. should never really be used):
 	BOTH_STAND1,//WP_EMPLACED_GUN,
@@ -678,9 +678,9 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	i = 0;
 	while (i < NUM_FORCE_POWERS)
 	{
-		if (final_Powers[i] > FORCE_LEVEL_3)
+		if (final_Powers[i] > FORCE_LEVEL_4)
 		{
-			final_Powers[i] = FORCE_LEVEL_3;
+			final_Powers[i] = FORCE_LEVEL_4;
 		}
 		i++;
 	}
