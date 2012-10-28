@@ -1301,7 +1301,7 @@ void UI_ForceConfigHandle( int oldindex, int newindex )
 
 		forcePowerRank = iBuf;
 
-		if (forcePowerRank > FORCE_LEVEL_4 || forcePowerRank < 0)
+		if (forcePowerRank > FORCE_LEVEL_3 || forcePowerRank < 0)
 		{ //err..  not correct
 			continue;  // skip this power
 		}
