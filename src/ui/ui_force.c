@@ -50,7 +50,7 @@ qboolean uiForcePowersDisabled[NUM_FORCE_POWERS] = {
 
 int uiForcePowersRank[NUM_FORCE_POWERS] = {
 	0,//FP_HEAL = 0,//instant
-	1,//FP_LEVITATION,//hold/duration, this one defaults to 1 (gives a free point)
+	0,//FP_LEVITATION,//hold/duration, this one defaults to 1 (gives a free point)
 	0,//FP_SPEED,//duration
 	0,//FP_PUSH,//hold/duration
 	0,//FP_PULL,//hold/duration
@@ -64,8 +64,8 @@ int uiForcePowersRank[NUM_FORCE_POWERS] = {
 	0,//FP_TEAM_FORCE,
 	0,//FP_DRAIN,
 	0,//FP_SEE,
-	1,//FP_SABER_OFFENSE, //default to 1 point in attack
-	1,//FP_SABER_DEFENSE, //defualt to 1 point in defense
+	0,//FP_SABER_OFFENSE, //default to 1 point in attack
+	0,//FP_SABER_DEFENSE, //defualt to 1 point in defense
 	0//FP_SABERTHROW,
 };
 
