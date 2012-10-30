@@ -2,10 +2,13 @@
 //
 #include "g_local.h"
 #include "bg_saga.h"
+//OpenRP
 #include "g_emotes.h"
-#include "g_account.h"
-#include "g_character.h"
-#include "g_admin.h"
+#include "g_account.h" 
+#include "g_character.h" 
+#include "g_admin.h" 
+#include "g_mail.h" // mail
+
 
 #include "../ui/menudef.h"			// for the voice chats
 
@@ -4552,7 +4555,12 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp(cmd, "removeent") == 0) {
 		Cmd_RemoveEntity_F (ent);
 	}
+	//[ ASTRAL ]
+	else if (Q_stricmp(cmd, "mail") == 0) {
+		Cmd_Mail_F(ent);
+	}
 
+	//[ /ASTRAL ]
 	else
 	{
 		if (Q_stricmp(cmd, "addbot") == 0)

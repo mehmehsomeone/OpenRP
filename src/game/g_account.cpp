@@ -35,10 +35,12 @@ void CheckAdmin(gentity_t * ent)
 
 	//Checks if the user is admin
 	isAdmin = q.get_num( va( "SELECT Admin FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
-	//Check their adminlevel
-	adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+
 	if( isAdmin )
 	{//The user is an admin.
+		//Check their adminlevel
+		adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
+		// ^ this was outside the if condition before, how silly.
 		ent->client->sess.isAdmin = qtrue;
 		ent->client->sess.adminLevel = adminLevel;
 	}

@@ -344,7 +344,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	//Make sure they entered a name and FS
 	if( trap_Argc() != 3 )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /createCharacter <name> <forceSensitive>\nForceSensitive: yes/no\nExample: /createCharacter luke yes\n\"");
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /createCharacter <name> <forceSensitive>\nForceSensitive: (yes/true) or (no/false)\nExample: /createCharacter luke yes\n\"");
 		return;
 	}
 
@@ -354,12 +354,13 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
 
-	if ( !Q_stricmp( temp, "yes" ) )
+	// as: added true/false for these, just in case.
+	if ( !Q_stricmp( temp, "yes" ) || Q_stricmp( temp, "true" ) )
 	{
 		forceSensitive = 1;
 	}
 
-	else if ( !Q_stricmp( temp, "no" ) )
+	else if ( !Q_stricmp( temp, "no" ) || Q_stricmp( temp, "false" ) )
 	{
 		forceSensitive = 0;
 	}

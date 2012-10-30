@@ -178,7 +178,7 @@ int bgForcePowerCost[NUM_FORCE_POWERS][NUM_FORCE_POWER_LEVELS] = //0 == neutral
 	{	0,	1,	3,	6	},	// Push			//FP_PUSH,//hold/duration
 	{	0,	1,	3,	6	},	// Pull			//FP_PULL,//hold/duration
 	{	0,	4,	6,	8	},	// Mind Trick	//FP_TELEPATHY,//instant
-	{	0,	1,	3,	6	// Grip			//FP_GRIP,//hold/duration
+	{	0,	1,	3,	6	},// Grip			//FP_GRIP,//hold/duration
 	{	0,	2,	5,	8	},	// Lightning	//FP_LIGHTNING,//hold/duration
 	{	0,	4,	6,	8	},	// Dark Rage	//FP_RAGE,//duration
 	{	0,	2,	5,	8	},	// Protection	//FP_PROTECT,//duration
