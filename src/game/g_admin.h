@@ -29,6 +29,14 @@
 #define ADMIN_AUDIO					134217728 // /amaudio
 #define ADMIN_BOUNTY				268435456 // /bounty remove
 
+void AddSpawnField(char *field, char *value);
+void SP_fx_runner( gentity_t *ent );
+void AddIP( char *str );
+void Admin_Teleport( gentity_t *ent );
+char *ConcatArgs( int start );
+qboolean G_CallSpawn( gentity_t *ent );
+void CheckAdmin(gentity_t * ent);
+
 void Cmd_amBan_F(gentity_t *ent);
 void Cmd_amKick_F(gentity_t *ent);
 void Cmd_amWarn_F(gentity_t *ent);
@@ -75,8 +83,3 @@ void Cmd_AllChat_F( gentity_t * ent );
 void Cmd_amWarningList_F( gentity_t * ent );
 void Cmd_SpawnEnt_F( gentity_t *ent );
 void Cmd_RemoveEntity_F( gentity_t *ent );
-
-void AddIP( char *str );
-void Admin_Teleport( gentity_t *ent );
-char *ConcatArgs( int start );
-qboolean G_CallSpawn( gentity_t *ent );

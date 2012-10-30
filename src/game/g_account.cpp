@@ -1,11 +1,12 @@
-#include "sqlite3/sqlite3.h"
-#include "sqlite3/libsqlitewrapped.h"
+#include "g_OpenRP.h"
+
 extern "C"
 {
 #include "g_local.h"
 #include "g_account.h"
-#include "g_admin.h"
 }
+
+#define DATABASE_PATH openrp_databasePath.string
 
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern int M_G_ClientNumberFromName ( const char* name );

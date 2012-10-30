@@ -1,5 +1,5 @@
-#include "sqlite3/sqlite3.h"
-#include "sqlite3/libsqlitewrapped.h"
+#include "g_OpenRP.h"
+
 extern "C"
 {
 #include "g_local.h"

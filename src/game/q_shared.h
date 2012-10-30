@@ -2465,6 +2465,10 @@ typedef struct siegePers_s
 
 #define BUTTON_FORCE_DRAIN		2048
 
+//[LF - MeleeButton]
+#define BUTTON_MELEE	 4096
+//[/LF - MeleeButton]
+
 // Here's an interesting bit.  The bots in TA used buttons to do additional gestures.
 // I ripped them out because I didn't want too many buttons given the fact that I was already adding some for JK2.
 // We can always add some back in if we want though.

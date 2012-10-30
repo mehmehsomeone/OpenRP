@@ -1,10 +1,9 @@
-#include "sqlite3/sqlite3.h"
-#include "sqlite3/libsqlitewrapped.h"
+#include "g_OpenRP.h"
+
 extern "C"
 {
 #include "g_local.h"
 #include "g_admin.h"
-#include "g_account.h"
 }
 
 qboolean M_PartialMatch( const char * s1, const char * s2 )

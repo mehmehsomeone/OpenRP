@@ -2116,7 +2116,9 @@ static qboolean PM_CheckJump( void )
 	else if ( pm->cmd.upmove > 0 && pm->waterlevel < 2 &&
 		pm->ps->fd.forcePowerLevel[FP_LEVITATION] > FORCE_LEVEL_0 &&
 		!(pm->ps->pm_flags&PMF_JUMP_HELD) &&
-		(pm->ps->weapon == WP_SABER || pm->ps->weapon == WP_MELEE) &&
+		//[LF - Wallrun with More Weapons]
+		(pm->ps->weapon == WP_SABER || pm->ps->weapon == WP_MELEE || pm->ps->weapon == WP_BRYAR_PISTOL) &&
+		//[/LF - Wallrun with More Weapons]
 		!PM_IsRocketTrooper() &&
 		!BG_HasYsalamiri(pm->gametype, pm->ps) &&
 		BG_CanUseFPNow(pm->gametype, pm->ps, pm->cmd.serverTime, FP_LEVITATION) )
@@ -7041,6 +7043,38 @@ static void PM_Weapon( void )
 	{
 		pm->ps->saberHolstered = 0;
 	}
+
+	//[LF - MeleeButton]
+	if ((pm->cmd.buttons & BUTTON_MELEE))
+	{ //ok, try a kick I guess.
+		if (!BG_KickingAnim(pm->ps->torsoAnim) &&
+			!BG_KickingAnim(pm->ps->legsAnim))
+		{
+			int kickMove = LS_KICK_F;
+			if (kickMove != -1)
+			{
+				int kickAnim = saberMoveData[kickMove].animToUse;
+
+				if (kickAnim != -1)
+				{
+					PM_SetAnim(SETANIM_BOTH, kickAnim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
+					if (pm->ps->legsAnim == kickAnim)
+					{
+						pm->ps->weaponTime = pm->ps->legsTimer;
+						return;
+					}
+				}
+			}
+			//if got here then no move to do so put torso into leg idle or whatever
+			if (pm->ps->torsoAnim != pm->ps->legsAnim)
+			{
+				PM_SetAnim(SETANIM_BOTH, pm->ps->legsAnim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
+			}
+			pm->ps->weaponTime = 0;
+			return;
+		}
+	}
+	//[/LF - MeleeButton]
 
 	if (PM_CanSetWeaponAnims())
 	{

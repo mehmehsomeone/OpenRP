@@ -177,7 +177,9 @@
     <ClCompile Include="g_ICARUScb.c" />
     <ClCompile Include="g_items.c" />
     <ClCompile Include="g_log.c" />
-    <ClCompile Include="g_mail.c" />
+    <ClCompile Include="g_mail.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
     <ClCompile Include="g_main.c" />
     <ClCompile Include="g_mem.c" />
     <ClCompile Include="g_misc.c" />
@@ -293,6 +295,7 @@
     <ClInclude Include="g_local.h" />
     <ClInclude Include="g_mail.h" />
     <ClInclude Include="g_nav.h" />
+    <ClInclude Include="g_OpenRP.h" />
     <ClInclude Include="g_public.h" />
     <ClInclude Include="g_team.h" />
     <ClInclude Include="..\shared\ICARUS\interpreter.h" />

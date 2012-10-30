@@ -292,7 +292,7 @@
     <ClCompile Include="g_emotes.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="g_mail.c">
+    <ClCompile Include="g_mail.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -457,6 +457,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="g_mail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g_OpenRP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,12 @@
+#include "g_OpenRP.h"
+
+extern "C"
+{
+#include "g_local.h"
 #include "g_mail.h"
+}
+
+#define DATABASE_PATH openrp_databasePath.string
 
 void M_Send_F( gentity_t *ent )
 {
@@ -84,13 +92,4 @@ void Cmd_Mail_F( gentity_t *ent ) // Sort mail cmd and carry it to respective fu
 
 }
 
-
-
-
-
-
-
-
-
-}
 
