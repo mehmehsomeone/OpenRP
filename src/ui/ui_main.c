@@ -52,9 +52,23 @@ USER INTERFACE MAIN
 #elif defined(MACOS_X)
         #error q3queryboom hook not yet available on Mac OSX
 #endif
-#endif
 //[/JKH Bugfix]
 //[/LF Bugfix]
+
+/*
+#ifdef _WIN32
+	static unsigned char *PRIM_HOOKPOS = (unsigned char *)0x4AC360;       //      .text   8B 0D 24 30 FE          mov ecx, dword_FE3024
+	static unsigned char *PRIM_RETPOS = (unsigned char *)0x4AC366;        //     
+
+	static unsigned char PRIM_ORIGBYTES[] = { 0x8B, 0x0D, 0x24, 0x30, 0xFE };
+#elif defined(MACOS_X)
+	#error HOOK_PRIM not available on Mac OSX
+#endif
+*/
+
+#endif
+
+
 
 extern void UI_SaberAttachToChar( itemDef_t *item );
 
@@ -554,7 +568,56 @@ void altEnterPatch( void )
 	*(unsigned char *)0x454B5B = (unsigned char)0x90; //NOP opcode, skip over the instruction
 	VirtualProtect((LPVOID)_altEnterAddress, 2, PAGE_EXECUTE_READ, NULL);
 }
+
+ //--------------------------------
+//      Name:   r_primitives patch
+//      Desc:   Players are often tricked into typing bogus values for r_primitives,
+//                              resulting in the renderer not updating the screen
+//      Hook:   ?????
+//      Retn:   ?????
+//--------------------------------
+/*
+static void __declspec( naked ) Hook_Primitives ( void )
+{
+	static char prim_msg[] = "Invalid r_primitives setting detected, reverting to 0\n";
+	static char prim_cvar[] = "r_primitives";
+	static char prim_value[] = "0";
+
+	__asm1__( pushad );
+	__asm2__( mov ecx, ds:[0xFE3024] );
+	__asm2__( mov ecx, [ecx+0x20] );
+	__asm2__( cmp ecx, 3 );
+	__asm1__( jna allok );
+ 
+	// Bad value, revert to 0
+	__asm1__( push 1 );                                     // Force
+	__asm1__( push offset prim_value );     // Cvar Value
+	__asm1__( push offset prim_cvar );      // Cvar Name
+	__asm1__( call trap_Cvar_Set );
+	__asm2__( add esp, 0x0c );
+	__asm1__( push offset prim_msg );
+	__asm1__( call Com_Printf );
+	__asm2__( add esp, 0x4 );
+ 
+	__asmL__(allok: );
+	__asm1__( popad );
+	__asm2__( mov ecx, DS:[0xFE3024] );
+	__asm1__( push PRIM_RETPOS );
+	__asm1__( ret );
+}
+
+void primitivesPatch( void )
+{
+	int dummy;
+
+	VirtualProtect( (LPVOID)PRIM_HOOKPOS, sizeof( PRIM_ORIGBYTES ), PAGE_EXECUTE_READWRITE, (PDWORD)&dummy );
+	*PRIM_HOOKPOS = 0xE8; // replace with CALL opcode
+	*(unsigned int *)(PRIM_HOOKPOS + 1) = (unsigned int)Hook_Primitives - (unsigned int)(PRIM_HOOKPOS + 5);
+	VirtualProtect( (LPVOID)PRIM_HOOKPOS, sizeof( PRIM_ORIGBYTES ), PAGE_EXECUTE_READ, (PDWORD)&dummy );       
+}
+*/
 #endif
+
 
 /*
 ======================
@@ -10558,13 +10621,16 @@ void _UI_Init( qboolean inGameLoad ) {
 
 	trap_Cvar_Set("ui_actualNetGameType", va("%d", ui_netGameType.integer));
 
+	//[OpenRP - ClientPlugin]
 	trap_Cvar_Set( "ojp_clientplugin", OPENRP_CLIENTVERSION );
+	//[/OpenRP - ClientPlugin]
 
 #if !WINDOWSXP_COMPILE
 	UI_PatchFakeChallengeResponse( qtrue );
 	PatchEngine( qtrue );
 	screenPatch();
 	altEnterPatch();
+	//primitivesPatch();
 #endif
 }
 

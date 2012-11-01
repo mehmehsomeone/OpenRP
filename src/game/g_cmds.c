@@ -4555,6 +4555,10 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp(cmd, "removeent") == 0) {
 		Cmd_RemoveEntity_F (ent);
 	}
+	else if (Q_stricmp(cmd, "amlistents") == 0) {
+		Cmd_ListEnts_F (ent);
+	}
+
 	//[ ASTRAL ]
 	else if (Q_stricmp(cmd, "mail") == 0) {
 		Cmd_Mail_F(ent);

@@ -447,6 +447,8 @@ typedef struct {
 	int commMode;
 	qboolean commOn;
 	qboolean hasClient;
+	char entListNames[128][128];
+	int entListIDs[128];
 
 	//[/OpenRP]
 } clientSession_t;

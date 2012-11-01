@@ -1256,7 +1256,8 @@ amaddeffect Function
 void Cmd_amEffect_F(gentity_t *ent)
 {
 	char	effect[MAX_STRING_CHARS]; // 16k file size
-	gentity_t *fx_runner = G_Spawn();  
+	gentity_t *fx_runner = G_Spawn();
+	int i = 0;
 	
 	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
 	{
@@ -1284,6 +1285,16 @@ void Cmd_amEffect_F(gentity_t *ent)
 	SP_fx_runner(fx_runner);
 
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Effect placed with ID: ^7%i.\n\"", fx_runner->s.number ) );
+
+	for ( i = 0; i < 127; i++ )
+	{
+		if ( ent->client->sess.entListIDs[i] )
+			continue;
+
+		ent->client->sess.entListIDs[i] = fx_runner->s.number;
+		Q_strncpyz( ent->client->sess.entListNames[i], effect, sizeof( ent->client->sess.entListNames[i] ) );
+	}
+
 	G_LogPrintf("Effect command executed by %s.\n", ent->client->pers.netname);
 	return;
 }
@@ -2848,6 +2859,14 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 		G_CallSpawn( obj ); // Will search through the list of known entities and react accordingly
 
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Ent with ID: ^7%i ^2and spawnflags: ^7%s ^2spawned.\n\"", obj->s.number, spawnflags ) );
+		for ( i = 0; i < 127; i++ )
+		{
+			if ( ent->client->sess.entListIDs[i] )
+				continue;
+
+			ent->client->sess.entListIDs[i] = obj->s.number;
+			Q_strncpyz( ent->client->sess.entListNames[i], buf, sizeof( ent->client->sess.entListNames[i] ) );
+		}
 	}
 	else
 	{
@@ -2859,6 +2878,15 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 		G_CallSpawn( obj ); // Will search through the list of known entities and react accordingly
 
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Ent with ID: ^7%i ^2spawned.\n\"", obj->s.number ) );
+
+		for ( i = 0; i < 127; i++ )
+		{
+			if ( ent->client->sess.entListIDs[i] )
+				continue;
+
+			ent->client->sess.entListIDs[i] = obj->s.number;
+			Q_strncpyz( ent->client->sess.entListNames[i], buf, sizeof( ent->client->sess.entListNames[i] ) );
+		}
 	}
 	//The appropriate spawn function will take care of
 	//any ent->think() ent->die() etc function pointers, so we don't have to worry.
@@ -2926,6 +2954,27 @@ void Cmd_RemoveEntity_F( gentity_t *ent )
 	else
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Invalid entID.\"", entID ) );
+	}
+	return;
+}
+
+void Cmd_ListEnts_F( gentity_t *ent )
+{
+	int i = 0;
+
+	if ( !G_CheckAdmin( ent, ADMIN_BUILD ) )
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1You are not allowed to use this command.\n\"" ) );
+		return;
+	}
+
+	trap_SendServerCommand( ent-g_entities, "print \"^2Your entities:\n\"" );
+	for ( i = 0; i < 127; i++ )
+	{
+		if ( !ent->client->sess.entListIDs[i] )
+			continue;
+
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2# %i Name: %s\n\"", ent->client->sess.entListIDs[i], ent->client->sess.entListNames[i] ) );
 	}
 	return;
 }
