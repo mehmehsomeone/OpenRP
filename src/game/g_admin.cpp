@@ -1292,7 +1292,7 @@ void Cmd_amEffect_F(gentity_t *ent)
 			continue;
 
 		ent->client->sess.entListIDs[i] = fx_runner->s.number;
-		Q_strncpyz( ent->client->sess.entListNames[i], effect, sizeof( ent->client->sess.entListNames[i] ) );
+		Q_strncpyz( ent->client->sess.entListNames[i][128], effect, sizeof( ent->client->sess.entListNames[i][128] ) );
 	}
 
 	G_LogPrintf("Effect command executed by %s.\n", ent->client->pers.netname);
@@ -2865,7 +2865,7 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 				continue;
 
 			ent->client->sess.entListIDs[i] = obj->s.number;
-			Q_strncpyz( ent->client->sess.entListNames[i], buf, sizeof( ent->client->sess.entListNames[i] ) );
+			Q_strncpyz( ent->client->sess.entListNames[i][128], buf, sizeof( ent->client->sess.entListNames[i][128] ) );
 		}
 	}
 	else
@@ -2885,7 +2885,7 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 				continue;
 
 			ent->client->sess.entListIDs[i] = obj->s.number;
-			Q_strncpyz( ent->client->sess.entListNames[i], buf, sizeof( ent->client->sess.entListNames[i] ) );
+			Q_strncpyz( ent->client->sess.entListNames[i][128], buf, sizeof( ent->client->sess.entListNames[i][128] ) );
 		}
 	}
 	//The appropriate spawn function will take care of
@@ -2974,7 +2974,7 @@ void Cmd_ListEnts_F( gentity_t *ent )
 		if ( !ent->client->sess.entListIDs[i] )
 			continue;
 
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2# %i Name: %s\n\"", ent->client->sess.entListIDs[i], ent->client->sess.entListNames[i] ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2# %i Name: %s\n\"", ent->client->sess.entListIDs[i], ent->client->sess.entListNames[i][128] ) );
 	}
 	return;
 }
