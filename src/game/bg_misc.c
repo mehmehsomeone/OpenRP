@@ -512,13 +512,13 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 
 	//final_Powers now contains all the stuff from the string
 	//Set the maximum allowed points used based on the max rank level, and count the points actually used.
-	allowedPoints = forceMasteryPoints[maxRank];
+	//[OJP - Skillpoints]
+	allowedPoints = maxRank;
+	//[OJP - Skillpoints]
 
 	i = 0;
 	while (i < NUM_FORCE_POWERS)
 	{ //if this power doesn't match the side we're on, then 0 it now.
-		//[OJP - LightDark Force]
-		/*
 		if (final_Powers[i] &&
 			forcePowerDarkLight[i] &&
 			forcePowerDarkLight[i] != final_Side)
@@ -526,8 +526,6 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 			final_Powers[i] = 0;
 			//This is only likely to happen with g_forceBasedTeams. Let it slide.
 		}
-		*/
-		//[/OJP - LightDark Force]
 
 		if ( final_Powers[i] &&
 			(fpDisabled & (1 << i)) )

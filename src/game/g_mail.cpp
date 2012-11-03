@@ -6,6 +6,7 @@ extern "C"
 #include "g_mail.h"
 }
 
+/*
 void M_Send_F( gentity_t *ent )
 {
 	char destination[256]; 
@@ -24,8 +25,8 @@ void M_Send_F( gentity_t *ent )
 	*message += strlen(destination) + 1; // Cutting off the name
 	recipientID = q.getnum( va("SELECT CharID FROM Characters WHERE Name='%s'", destination) );
 
-	q.execute(va("INSERT INTO Mail(Sender, Recipient, Message) VALUES('%i','%i', '%s', '%i')", ent->client->sess.characterID, recipientID, 0 /*TODO: date & time*/ ) );
-}
+	q.execute(va("INSERT INTO Mail(Sender, Recipient, Message) VALUES('%i','%i', '%s', '%i')", ent->client->sess.characterID, recipientID, 0 *//*TODO: date & time*/ //) );
+//}
 
 void M_Read_F( gentity_t *ent )
 {
@@ -78,6 +79,7 @@ void Cmd_Mail_F( gentity_t *ent ) // Sort mail cmd and carry it to respective fu
 	char arg[512];
 	trap_Argv( 1, arg, sizeof(arg) );
 
+	/*
 	if (Q_stricmp(arg, "send") ) 
 		M_Send_F(ent);
 	else if(Q_stricmp(arg, "read") )
@@ -86,7 +88,6 @@ void Cmd_Mail_F( gentity_t *ent ) // Sort mail cmd and carry it to respective fu
 		M_Delete_F(ent);
 	else if(trap_Argc() <= 1) //
 		M_List_F(ent);
+	*/
 
 }
-
-

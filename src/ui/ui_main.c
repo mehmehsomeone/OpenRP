@@ -2063,6 +2063,9 @@ static void UI_DrawGenericNum(rectDef_t *rect, float scale, vec4_t color, int te
 static void UI_DrawForceMastery(rectDef_t *rect, float scale, vec4_t color, int textStyle, int val, int min, int max, int iMenuFont)
 {
 	int i;
+	//[OJP - Skillpoints]
+	int x;
+	//[/OJP - Skillpoints]
 	char *s;
 
 	i = val;
@@ -2075,7 +2078,21 @@ static void UI_DrawForceMastery(rectDef_t *rect, float scale, vec4_t color, int 
 		i = max;
 	}
 
-	s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[i]);
+	//[OJP - Skillpoints]
+	s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[0]);
+
+	//allowing for dynamic skill point totals.  Determine rank based on the highest mastery
+	//level the player has points for.
+	for(x = NUM_FORCE_MASTERY_LEVELS-1; x >= 0; x--)
+	{
+		if(i >= forceMasteryPoints[x])
+		{//we've found the highest level mastery that we have the skill points for.
+			s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[x]);
+			break;
+		}
+	}
+	//[/OJP - Skillpoints]
+
 	Text_Paint(rect->x, rect->y, scale, color, s, 0, 0, textStyle, iMenuFont);
 }
 
@@ -3025,12 +3042,26 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale) {
 		break;
     case UI_FORCE_RANK:
 		i = uiForceRank;
+
+		//[OJP - Skillpoints]
+		for(findex = NUM_FORCE_MASTERY_LEVELS-1; findex >= 0; findex--)
+		{
+			if(i >= forceMasteryPoints[findex])
+			{//we've found the highest level mastery that we have the skill points for.
+				s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[findex]);
+				break;
+			}
+		}
+		//[/OJP - Skillpoints]
+
+		/*
 		if (i < 1 || i > MAX_FORCE_RANK) {
 			i = 1;
 		}
 
 		s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[i]);
 		break;
+		*/
 	case UI_FORCE_RANK_HEAL:
 	case UI_FORCE_RANK_LEVITATION:
 	case UI_FORCE_RANK_SPEED:

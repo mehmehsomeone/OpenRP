@@ -3001,3 +3001,26 @@ void Cmd_ListEnts_F( gentity_t *ent )
 	}
 	return;
 }
+
+void Cmd_Invisible_F( gentity_t *ent )
+{
+	   if ( ent->client->sess.isInvisible )
+        {
+                ent->client->sess.isInvisible = qfalse;
+                ent->r.contents = CONTENTS_SOLID;
+                ent->clipmask = CONTENTS_SOLID|CONTENTS_BODY;
+                ent->s.trickedentindex = 0; ent->s.trickedentindex2 = 0; //This is entirely for client-side prediction. Please fix me.
+                trap_SendServerCommand( ent-g_entities, "cp \"^5Unghosted\n\"" );
+        }
+        else
+        {
+                ent->client->sess.isInvisible = qtrue;
+                ent->r.contents = CONTENTS_BODY;
+                ent->clipmask = 267009/*CONTENTS_SOLID*/;
+                {//This is *entirely* for client-side prediction. Do not rely on it. Please fix me.
+                        ent->client->ps.fd.forceMindtrickTargetIndex = ~(1<<ent-g_entities);
+                        ent->client->ps.fd.forceMindtrickTargetIndex2 = ~(1<<ent-g_entities);
+                }
+                trap_SendServerCommand( ent-g_entities, "cp \"You are now a ^5ghost\n\"" );
+        }
+}

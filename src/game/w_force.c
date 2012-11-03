@@ -140,7 +140,9 @@ void WP_InitForcePowers( gentity_t *ent )
 {
 	int i;
 	int i_r;
-	int maxRank = g_maxForceRank.integer;
+	//[OJP - Skillpoints]
+	int maxRank = ent->client->sess.skillPoints;
+	//[OJP - Skillpoints]
 	qboolean warnClient = qfalse;
 	qboolean warnClientLimit = qfalse;
 	char userinfo[MAX_INFO_STRING];
@@ -457,7 +459,9 @@ void WP_InitForcePowers( gentity_t *ent )
 	}
 	else
 	{
-		if (warnClient || !ent->client->sess.setForce || !ent->client->sess.loggedinAccount || !ent->client->sess.characterChosen )
+		//[OJP - Beginning Stuff]
+		if (warnClient || !ent->client->sess.loggedinAccount || !ent->client->sess.characterChosen )
+		//[/OJP - Beginning Stuff]
 		{ //the client's rank is too high for the server and has been autocapped, so tell them
 			if (g_gametype.integer != GT_HOLOCRON && g_gametype.integer != GT_JEDIMASTER )
 			{
@@ -486,7 +490,7 @@ void WP_InitForcePowers( gentity_t *ent )
 					}
 					else
 					{
-						trap_SendServerCommand(ent-g_entities, "charui");
+						trap_SendServerCommand(ent-g_entities, "charui"); //Open the character menu.
 					}
 				}
 

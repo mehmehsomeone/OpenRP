@@ -418,8 +418,8 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	ent->client->sess.characterChosen = qtrue;
 	ent->client->sess.characterID = charID;
 	charSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-//	ent->client->sess.skillPoints = charSkillPoints;
-//	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
+	ent->client->sess.skillPoints = charSkillPoints;
+	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 	LoadCharacter(ent);
 
 	if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR )
@@ -519,8 +519,8 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	ent->client->sess.characterChosen = qtrue;
 	ent->client->sess.characterID = charID;
 	charSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-//	ent->client->sess.skillPoints = charSkillPoints;
-//	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
+	ent->client->sess.skillPoints = charSkillPoints;
+	trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
 	LoadCharacter(ent);
 
 	if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR )
@@ -1140,7 +1140,7 @@ void Cmd_Shop_F( gentity_t * ent )
 	int itemCost, itemLevel, newTotal;
 	int currentCredits;
 	int currentLevel;
-	int forceSensitive;
+	//int forceSensitive;
 	int newTotalCredits;
 	int currentTotal;
 
@@ -1171,7 +1171,7 @@ void Cmd_Shop_F( gentity_t * ent )
 
 	currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-	forceSensitive = q.get_num( va( "SELECT ForceSensitive FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+	//forceSensitive = q.get_num( va( "SELECT ForceSensitive FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 
 	trap_Argv( 1, parameter, MAX_STRING_CHARS );
 	trap_Argv( 2, itemName, MAX_STRING_CHARS );
@@ -1181,11 +1181,13 @@ void Cmd_Shop_F( gentity_t * ent )
 	{
 		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
 		{
-			if ( forceSensitive == 1 )
+			/*
+			if ( forceSensitive )
 			{
 				trap_SendServerCommand( ent-g_entities, "print \"^1You cannot buy guns as a force sensitive.\n\"" );
 				return;
 			}
+			*/
 
 			itemCost = openrp_pistolBuyCost.integer;
 			itemLevel = openrp_pistolLevel.integer;
@@ -1193,11 +1195,13 @@ void Cmd_Shop_F( gentity_t * ent )
 		
 		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
 		{
-			if ( forceSensitive == 1 )
+			/*
+			if ( forceSensitive )
 			{
 				trap_SendServerCommand( ent-g_entities, "print \"^1You cannot buy guns as a force sensitive.\n\"" );
 				return;
 			}
+			*/
 
 			itemCost = openrp_e11BuyCost.integer;
 			itemLevel = openrp_e11Level.integer;

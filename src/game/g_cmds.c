@@ -4207,7 +4207,7 @@ void ClientCommand( int clientNum ) {
 	}
 #endif
 
-	if (Q_stricmp(cmd, "emmyhead") == 0)
+	else if (Q_stricmp(cmd, "emmyhead") == 0)
 	{
 		TheEmote(BOTH_SONICPAIN_HOLD, ent, qfalse);
 	}
@@ -4361,11 +4361,9 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "removeadmin") == 0) {
 		Cmd_RemoveAdmin_F (ent);		
 	}
-	/*
 	else if (Q_stricmp (cmd, "giveskillpoints") == 0) {
 		Cmd_GiveSkillPoints_F (ent);		
 	}
-	*/
 	else if (Q_stricmp (cmd, "givecredits") == 0) {
 		Cmd_GiveCredits_F (ent);	
 	}
@@ -4552,9 +4550,11 @@ void ClientCommand( int clientNum ) {
 	}
 
 	//[ ASTRAL ]
+	/*
 	else if (Q_stricmp(cmd, "mail") == 0) {
 		Cmd_Mail_F(ent);
 	}
+	*/
 
 	//[ /ASTRAL ]
 	else

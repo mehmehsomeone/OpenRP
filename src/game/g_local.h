@@ -449,6 +449,8 @@ typedef struct {
 	qboolean hasClient;
 	char *entListNames[128][128];
 	int entListIDs[128];
+	qboolean isInvisible;
+	int skillPoints;
 
 	//[/OpenRP]
 } clientSession_t;
@@ -834,6 +836,8 @@ typedef struct alertEvent_s
 	float				addLight;	//additional light- makes it more noticable, even in darkness
 	int					ID;			//unique... if get a ridiculous number, this will repeat, but should not be a problem as it's just comparing it to your lastAlertID
 	int					timestamp;	//when it was created
+
+	qboolean			onGround;
 } alertEvent_t;
 
 //

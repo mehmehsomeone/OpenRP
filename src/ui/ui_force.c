@@ -289,12 +289,15 @@ void UpdateForceUsed()
 {
 	int curpower, currank;
 	menuDef_t *menu;
+	char loggedIn[256];
 
 	// Currently we don't make a distinction between those that wish to play Jedi of lower than maximum skill.
 	uiForceRank = uiMaxRank;
 
 	uiForceUsed = 0;
-	uiForceAvailable = forceMasteryPoints[uiForceRank];
+	//[OJP - Skillpoints]
+	uiForceAvailable = uiMaxRank;
+	//[/OJP - Skillpoints]
 
 	// Make sure that we have one freebie in jump.
 	if (uiForcePowersRank[FP_LEVITATION]<1)
@@ -418,6 +421,18 @@ void UpdateForceUsed()
 			}
 		}
 	}
+
+	//[OJP/OpenRP - Account System]
+	trap_Cvar_VariableStringBuffer( "ui_account_loggedin", loggedIn, sizeof( loggedIn ) );
+
+	if( strcmp( loggedIn,"false" ) == 0 || strcmp( loggedIn,"" ) == 0 )
+	{
+		for ( curpower = 0; curpower < NUM_FORCE_POWERS; curpower++ )
+		{
+			uiForcePowersRank[curpower]=0;
+		}
+	}
+	//[OJP/OpenRP - Account System]
 
 	// Make sure that we're still legal.
 	for (curpower=0;curpower<NUM_FORCE_POWERS;curpower++)
@@ -563,7 +578,9 @@ void UI_ReadLegalForce(void)
 		c++;
 	}
 	uiForceUsed = 0;
-	uiForceAvailable = forceMasteryPoints[uiForceRank];
+	//[OJP - Skillpoints]
+	uiForceAvailable = uiMaxRank;
+	//[/OJP - Skillpoints]
 	gTouchedForce = qtrue;
 
 	for (c=0;fcfString[i]&&c<NUM_FORCE_POWERS;c++,i++)
@@ -1285,7 +1302,7 @@ void UI_ForceConfigHandle( int oldindex, int newindex )
 		c++;
 	}
 	uiForceUsed = 0;
-	uiForceAvailable = forceMasteryPoints[uiForceRank];
+	uiForceAvailable = uiMaxRank;
 	gTouchedForce = qtrue;
 
 	for (c=0;fcfBuffer[i]&&c<NUM_FORCE_POWERS;c++,i++)
