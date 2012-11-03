@@ -206,7 +206,7 @@ typedef enum {
 	UIMENU_CLASSSEL,
 	
 	UIMENU_LOGIN,
-	UIMENU_CHARACTER
+	UIMENU_CHARACTER,
 };
 typedef int uiMenuCommand_t;
 

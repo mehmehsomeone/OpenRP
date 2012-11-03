@@ -64,7 +64,7 @@ void LoadForcePowers(gentity_t * ent)
 	//The database is not connected. Please do so.
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 	
@@ -156,7 +156,7 @@ void SaveCharacter(gentity_t * ent)
 
 	if (!db.Connected())
 	{
-		G_Printf("Database not connected, %s\n",DATABASE_PATH);
+		G_Printf("Database not connected: %s\n",DATABASE_PATH);
 		return;
 	}
 	
@@ -281,7 +281,7 @@ void Cmd_ListCharacters_F(gentity_t * ent)
 	//The database is not connected. Please do so.
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -330,7 +330,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	//The database is not connected. Please do so.
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -460,7 +460,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 	//The database is not connected. Please do so.
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -557,7 +557,7 @@ void Cmd_GiveCredits_F(gentity_t * ent)
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -679,7 +679,7 @@ void Cmd_CharacterInfo_F(gentity_t * ent)
 
 	if (!db.Connected())
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -847,7 +847,7 @@ void Cmd_FactionInfo_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf("Database not connected, %s\n",DATABASE_PATH);
+		G_Printf("Database not connected: %s\n",DATABASE_PATH);
 		return;
 	}
 
@@ -933,7 +933,7 @@ void Cmd_FactionWithdraw_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf("Database not connected, %s\n",DATABASE_PATH);
+		G_Printf("Database not connected: %s\n",DATABASE_PATH);
 		return;
 	}
 
@@ -1023,7 +1023,7 @@ void Cmd_FactionDeposit_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -1104,7 +1104,7 @@ void Cmd_ListFactions_F(gentity_t * ent)
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -1146,7 +1146,7 @@ void Cmd_Shop_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -1303,7 +1303,7 @@ void Cmd_CheckInventory_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -1399,7 +1399,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 
@@ -1590,7 +1590,7 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 	
 	if (!db.Connected())
 	{
-			G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
+			G_Printf( "Database not connected: %s\n", DATABASE_PATH);
 			return;
 	}
 
@@ -1677,7 +1677,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH);
 		return;
 	}
 
@@ -1710,6 +1710,7 @@ void Cmd_Bounty_F( gentity_t * ent )
 					break;
 				case 2:
 					Q_strncpyz( aliveDead, "Dead or Alive", sizeof( aliveDead ) );
+					break;
 				default:
 					Q_strncpyz( aliveDead, "Error", sizeof( aliveDead) );
 					break;
@@ -1904,7 +1905,7 @@ void Cmd_CharName_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH);
 		return;
 	}
 
@@ -2091,7 +2092,6 @@ void Cmd_Comm_F(gentity_t *ent)
 
 	trap_SendServerCommand(ent-g_entities, va("chat \"^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	trap_SendServerCommand(clientid, va("chat \"^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
-	G_LogPrintf("Comm message sent by %s to %s. Message: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
 	return;
 }
 
@@ -2118,7 +2118,7 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 	//The database is not connected. Please do so.
 	if ( !db.Connected() )
 	{
-		G_Printf("Database not connected, %s\n",DATABASE_PATH);
+		G_Printf("Database not connected: %s\n",DATABASE_PATH);
 		return;
 	}
 
@@ -2186,9 +2186,9 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 	{
 		for ( i = 0; i < level.maxclients; i++ )
 		{
-			if ( g_entities[i].client->sess.allChat || ( g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
+			if ( ( g_entities[i].client->sess.allChat && Q_stricmp( ent->client->pers.netname, g_entities[clientid].client->pers.netname ) ) || g_entities[i].client->sess.allChatComplete || ( g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 			{
-				trap_SendServerCommand(i, va("chat \"1<All Chat>^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+				trap_SendServerCommand(i, va("chat \"^1<All Chat>^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 			}
 			else
 			{
@@ -2199,7 +2199,6 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 
 	trap_SendServerCommand(ent-g_entities, va("chat \"^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	trap_SendServerCommand(clientid, va("chat \"^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
-	G_LogPrintf("Force message sent by %s to %s. Message: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
 	return;
 }
 
@@ -2212,7 +2211,7 @@ void Cmd_Faction_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH );
 		return;
 	}
 

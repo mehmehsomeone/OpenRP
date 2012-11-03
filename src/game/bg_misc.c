@@ -308,10 +308,13 @@ int WeaponAttackAnim[WP_NUM_WEAPONS] =
 	BOTH_THERMAL_THROW,//WP_THERMAL,
 	BOTH_ATTACK3,//BOTH_ATTACK11,//WP_TRIP_MINE,
 	BOTH_ATTACK3,//BOTH_ATTACK12,//WP_DET_PACK,
-	BOTH_ATTACK3,//WP_BRYAR_OLD,
+	BOTH_ATTACK3,//WP_CONCUSSION, //Raz: Fixed bryar pistol animation
+	BOTH_ATTACK2,//WP_BRYAR_OLD,
 
 	//NOT VALID (e.g. should never really be used):
 	BOTH_STAND1,//WP_EMPLACED_GUN,
+
+
 	BOTH_ATTACK1//WP_TURRET,
 };
 
@@ -514,6 +517,8 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	i = 0;
 	while (i < NUM_FORCE_POWERS)
 	{ //if this power doesn't match the side we're on, then 0 it now.
+		//[OJP - LightDark Force]
+		/*
 		if (final_Powers[i] &&
 			forcePowerDarkLight[i] &&
 			forcePowerDarkLight[i] != final_Side)
@@ -521,6 +526,8 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 			final_Powers[i] = 0;
 			//This is only likely to happen with g_forceBasedTeams. Let it slide.
 		}
+		*/
+		//[/OJP - LightDark Force]
 
 		if ( final_Powers[i] &&
 			(fpDisabled & (1 << i)) )

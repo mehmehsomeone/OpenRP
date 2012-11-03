@@ -314,7 +314,7 @@ qboolean G_AdminControl(int UserAdmin, int TargetAdmin)
 	}
 
 	//Less than is used instead of greater than because admin level 1 is higher than admin level 2
-	if(openrp_adminControl.integer == 1 && UserAdmin <= TargetAdmin)
+	if( ( openrp_adminControl.integer == 1 ) && ( UserAdmin <= TargetAdmin ) )
 	{					
 		return qtrue;
 	}
@@ -376,10 +376,13 @@ void Cmd_amBan_F(gentity_t *ent)
 	//	return;
 	//}
 
-	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	if ( g_entities[clientid].client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
+		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+			return;
+		}
 	}
 
 	if (!(g_entities[clientid].r.svFlags & SVF_BOT))
@@ -439,10 +442,13 @@ void Cmd_amKick_F(gentity_t *ent)
 		return; 
 	}
 
-	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	if ( g_entities[clientid].client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
+		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+			return;
+		}
 	}
 
 	trap_SendServerCommand(ent-g_entities, va("print \"^2The IP of the person you kicked is %s\n\"", g_entities[clientid].client->sess.IP));
@@ -497,10 +503,13 @@ void Cmd_amWarn_F(gentity_t *ent)
 		return; 
 	}
 
-	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	if ( g_entities[clientid].client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
+		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+			return;
+		}
 	}
 
 	g_entities[clientid].client->sess.warnings++;
@@ -880,10 +889,13 @@ void Cmd_amSilence_F(gentity_t *ent)
 		return; 
 	}
 
-	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	if ( g_entities[clientid].client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
+		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+			return;
+		}
 	}
 
 	if( !g_entities[clientid].client->sess.isSilenced )
@@ -949,12 +961,14 @@ void Cmd_amUnSilence_F(gentity_t *ent)
 		return;
 	}
 
-	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	if ( g_entities[clientid].client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
+		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+			return;
+		}
 	}
-
 	g_entities[clientid].client->sess.isSilenced = qfalse;
 	
 	trap_SendServerCommand(ent-g_entities, va("print \"^2Player unsilenced.\n\""));
@@ -1010,10 +1024,13 @@ void Cmd_amSleep_F(gentity_t *ent)
 		return; 
 	}
 
-	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	if ( g_entities[clientid].client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
+		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+			return;
+		}
 	}
 
 	//TODO
@@ -1111,10 +1128,13 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 		return;
 	}
 
-	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	if ( g_entities[clientid].client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
+		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+			return;
+		}
 	}
 
 	g_entities[clientid].client->sess.isSleeping = qfalse;
@@ -1194,10 +1214,13 @@ void Cmd_amProtect_F(gentity_t *ent)
 		return; 
 	}
 
-	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	if ( g_entities[clientid].client->sess.isAdmin )
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-		return;
+		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+			return;
+		}
 	}
 
 	if ( !g_entities[clientid].client->sess.isProtected )

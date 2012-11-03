@@ -24,7 +24,7 @@ void M_Send_F( gentity_t *ent )
 	*message += strlen(destination) + 1; // Cutting off the name
 	recipientID = q.getnum( va("SELECT CharID FROM Characters WHERE Name='%s'", destination) );
 
-	q.execute(va("INSERT INTO Mail(Sender, Recipient, Message) VALUES('%i','%i', '%s', '%i')", ent->client->sess.characterID, recipientID, 0 /*TODO: date & time*/ //) );
+	q.execute(va("INSERT INTO Mail(Sender, Recipient, Message) VALUES('%i','%i', '%s', '%i')", ent->client->sess.characterID, recipientID, 0 /*TODO: date & time*/ ) );
 }
 
 void M_Read_F( gentity_t *ent )

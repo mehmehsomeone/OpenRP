@@ -21,9 +21,9 @@ USER INTERFACE MAIN
 
 #include "../cgame/holocronicons.h"
 
-//[OpenRP - Engine patch enabler/disabler]
+//[OpenRP - Compile for WinXP]
 #define	WINDOWSXP_COMPILE 0
-//[/OpenRP - Engine patch enabler/disabler]
+//[/OpenRP - Compile for WinXP]
 
 //[LF Bugfix]
 //[JKH Bugfix]
@@ -544,18 +544,6 @@ void PatchEngine( qboolean patch )
 			memcpy( qb_hookAddress, &qb_originalBytes, sizeof(qb_originalBytes) );
 			VirtualProtect( (LPVOID)qb_hookAddress, sizeof(qb_originalBytes), PAGE_EXECUTE_READ, NULL);
 		}
-}
-
-
-
-void screenPatch( void )
-{
-	byte *_screenAddress = (byte *)0x41DACB;
-	int dummy;
-
-	VirtualProtect((LPVOID)_screenAddress, 1, PAGE_EXECUTE_READWRITE, (PDWORD)&dummy);
-	*(unsigned char *)0x41DACB = (unsigned char)0x03;
-	VirtualProtect((LPVOID)_screenAddress, 1, PAGE_EXECUTE_READ, NULL);
 }
 
 void altEnterPatch( void )
@@ -10628,7 +10616,6 @@ void _UI_Init( qboolean inGameLoad ) {
 #if !WINDOWSXP_COMPILE
 	UI_PatchFakeChallengeResponse( qtrue );
 	PatchEngine( qtrue );
-	screenPatch();
 	altEnterPatch();
 	//primitivesPatch();
 #endif
@@ -10733,9 +10720,12 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 			trap_Key_SetCatcher( KEYCATCH_UI );
 			//trap_S_StartLocalSound( trap_S_RegisterSound("sound/misc/menu_background.wav", qfalse) , CHAN_LOCAL_SOUND );
 			//trap_S_StartBackgroundTrack("sound/misc/menu_background.wav", NULL);
+			
 			if (uiInfo.inGameLoad) 
 			{
-//				UI_LoadNonIngame();
+				//[JKH Bugfix]
+				UI_LoadNonIngame();
+				//[/JKH Bugfix]
 			}
 			
 			Menus_CloseAll();
@@ -10831,6 +10821,14 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 			trap_Key_SetCatcher( KEYCATCH_UI );
 			Menus_CloseAll();
 			Menus_ActivateByName("ingame_siegeclass");
+	  case UIMENU_LOGIN:
+			trap_Key_SetCatcher( KEYCATCH_UI );
+			Menus_CloseAll();
+			Menus_ActivateByName("ingame_login");
+	  case UIMENU_CHARACTER:
+			trap_Key_SetCatcher( KEYCATCH_UI );
+			Menus_CloseAll();
+			Menus_ActivateByName("ingame_character");
 		  return;
 	  }
   }

@@ -42,8 +42,15 @@ void CheckAdmin(gentity_t * ent)
 		//Check their adminlevel
 		adminLevel = q.get_num( va( "SELECT AdminLevel FROM Users WHERE AccountID='%i'", ent->client->sess.accountID ) );
 		// ^ this was outside the if condition before, how silly.
-		ent->client->sess.isAdmin = qtrue;
-		ent->client->sess.adminLevel = adminLevel;
+		if ( adminLevel != 11 )
+		{
+			ent->client->sess.isAdmin = qtrue;
+			ent->client->sess.adminLevel = adminLevel;
+		}
+		else
+		{
+			ent->client->sess.adminLevel = 11;
+		}
 	}
 	
 	//If they're not an admin, make them an admin level 11, which isn't really an admin level, and it's below all other levels.
@@ -466,7 +473,7 @@ void Cmd_EditAccount_F(gentity_t * ent)
 	
 	if (!db.Connected())
 	{
-		G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH);
 		return;
 	}
 		
@@ -503,7 +510,7 @@ void Cmd_EditAccount_F(gentity_t * ent)
 	else if ( !Q_stricmp( parameter, "password" ) )
 	{
 		q.execute( va( "UPDATE Users set Password='%s' WHERE AccountID='%i'", change, ent->client->sess.accountID ) );
-		trap_SendServerCommand ( ent-g_entities, va( "print \"^2Password has been changed to ^7%s\n\"", change ) );
+		trap_SendServerCommand ( ent-g_entities, "print \"^2Password has been changed.\n\"" );
 		return;
 	}
 	else
@@ -522,7 +529,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 
 	if ( !db.Connected() )
 	{
-		G_Printf( "Database not Connected,%s\n", DATABASE_PATH);
+		G_Printf( "Database not connected: %s\n", DATABASE_PATH);
 		return;
 	}
 

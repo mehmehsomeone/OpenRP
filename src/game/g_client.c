@@ -3848,6 +3848,7 @@ void ClientDisconnect( int clientNum ) {
 	gentity_t	*ent;
 	gentity_t	*tent;
 	int			i;
+	extern void Cmd_AccountLogout_F( gentity_t * ent );
 
 	// cleanup if we are kicking a bot that
 	// hasn't spawned yet
@@ -3894,6 +3895,13 @@ void ClientDisconnect( int clientNum ) {
 			ent->client->pers.connected = pCon;
 		}
 	}
+
+	//[OpenRP]
+	if ( ent->client->sess.loggedinAccount )
+	{
+		Cmd_AccountLogout_F(ent);
+	}
+	//[/OpenRP]
 
 	// stop any following clients
 	for ( i = 0 ; i < level.maxclients ; i++ ) {

@@ -7658,7 +7658,17 @@ static void PM_Weapon( void )
 	}
 	else
 	{
-		PM_StartTorsoAnim( WeaponAttackAnim[pm->ps->weapon] );
+		//[LF Bugfix]
+		//#ifndef QAGAME
+			//Raz: Hacky fix here
+			int weapon = pm->ps->weapon;
+			if ( pm->ps->weapon == WP_CONCUSSION || pm->ps->weapon == WP_BRYAR_OLD )
+				weapon++;
+			PM_StartTorsoAnim( WeaponAttackAnim[weapon] );
+		//#else
+			PM_StartTorsoAnim( WeaponAttackAnim[pm->ps->weapon] );
+		//#endif
+		//[/LF Bugfix]
 	}
 
 	if ( pm->cmd.buttons & BUTTON_ALT_ATTACK )

@@ -1665,41 +1665,35 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		color = COLOR_MAGENTA;
 		break;
 	case SAY_YELL:
-		G_LogPrintf( "yell: %s: %s", ent->client->pers.netname, chatText );
 		Com_sprintf (name, sizeof(name), EC"^7<YELL> %s%c%c"EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		color = COLOR_GREEN;
 		distance = 1200;
 		break;
 	case SAY_WHISPER:
-		G_LogPrintf( "whisper: %s: %s", ent->client->pers.netname, chatText );
 		Com_sprintf (name, sizeof(name), EC"^7<Whisper> %s%c%c"EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		color = COLOR_GREEN;
 		distance = 150;
 		break;
 	case SAY_ME:
-		G_LogPrintf( "me: %s: %s", ent->client->pers.netname, chatText );
 		Com_sprintf (name, sizeof(name), EC"^3%s%c%c"EC" ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		color = COLOR_YELLOW;
 		distance = 1200;
 		break;
 	case SAY_IT:
-		G_LogPrintf( "it: %s: %s", ent->client->pers.netname, chatText );
 		Com_sprintf (name, sizeof(name), EC""EC"" 
 		);
 		color = COLOR_YELLOW;
 		distance = 1200;
 		break;
 	case SAY_ADMIN:
-		G_LogPrintf( "admin: %s: %s", ent->client->pers.netname, chatText );
 		Com_sprintf (name, sizeof(name), EC"^6<Admin Chat> ^7%s%c%c"EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
 		color = COLOR_MAGENTA;
 		break;
 	case SAY_OOC:
-		G_LogPrintf( "ooc: %s: %s\n", ent->client->pers.netname, chatText );
 		if (Team_GetLocationMsg(ent, location, sizeof(location)))
 		{
 			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c"EC": ", 
@@ -1714,7 +1708,6 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		color = COLOR_RED;
 		break;
 	case SAY_LOOC:
-		G_LogPrintf( "looc: %s: %s", ent->client->pers.netname, chatText );
 		Com_sprintf (name, sizeof(name), EC"^6<LOOC> ^7%s%c%c"EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
 		color = COLOR_MAGENTA;
@@ -1726,7 +1719,6 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 			trap_SendServerCommand( ent-g_entities, "print \"^1You can't send reports as an admin.\n\"" );
 			return;
 		}
-		G_LogPrintf( "report: %s: %s", ent->client->pers.netname, chatText );
 		trap_SendServerCommand( ent-g_entities, va( "chat \"^6<REPORT!> ^7%s^6: %s\"", ent->client->pers.netname, chatText ) );
 		Com_sprintf (name, sizeof(name), EC"^6<REPORT!> ^7%s%c%c"EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
