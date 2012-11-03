@@ -4,6 +4,28 @@ extern "C"
 {
 #include "g_local.h"
 #include "g_admin.h"
+#include "g_character.h"
+}
+
+void AddSkill(gentity_t *self, int amount)
+{//add skill points to self
+	//[OpenRP - Skillpoint System]
+	
+	if(amount == 0)
+	{
+		return;
+	}
+
+	
+	if( (self->client->sess.skillPoints + amount) < 1)
+	{
+		G_Printf("Error: Failed to give %i skill points to %s because they would have < 1 skill point if they were given.", amount, self->client->pers.netname );
+		return;
+	}
+
+	self->client->sess.skillPoints += amount;
+	trap_SendServerCommand(self->s.number, va("nfr %i %i %i", self->client->sess.skillPoints, 0, self->client->sess.sessionTeam)); //mark that we've updated our skill points so we can update the player's client.
+
 }
 
 qboolean M_PartialMatch( const char * s1, const char * s2 )
@@ -2025,7 +2047,6 @@ Give Skill Points
 
 =====
 */
-/*
 void Cmd_GiveSkillPoints_F(gentity_t * ent)
 {
 	Database db(DATABASE_PATH);
@@ -2063,21 +2084,23 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 
 	//Character name
 	trap_Argv( 1, charName, MAX_STRING_CHARS );
-	charNameSTR = charName;
 
 	//XP Added or removed.
 	trap_Argv( 2, temp, MAX_STRING_CHARS );
 	changedSkillPoints = atoi(temp);
 
 	//Check if the character exists
-	transform( charNameSTR.begin(), charNameSTR.end(), charNameSTR.begin(), ::tolower );
+	for( i = 0; charName[i]; i++ )
+	{
+		charName[i] = tolower( charName[i] );
+	}
 
-	charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charNameSTR.c_str() ) );
+	charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charName ) );
 
 	if( !charID )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", charNameSTR.c_str() ) );
-		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Character %s does not exist.\n\"", charNameSTR.c_str() ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", charName ) );
+		trap_SendServerCommand( ent-g_entities, va( "cp \"^1Character %s does not exist.\n\"", charName ) );
 		return;
 	}
 
@@ -2122,11 +2145,10 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 			break;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2%i skill points have been given to character %s.\n\"", changedSkillPoints, charNameSTR.c_str() ) );
-	trap_SendServerCommand( ent-g_entities, va( "cp \"^2%i skill points have been given to character %s.\n\"", changedSkillPoints, charNameSTR.c_str() ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2%i skill points have been given to character %s.\n\"", changedSkillPoints, charName ) );
+	trap_SendServerCommand( ent-g_entities, va( "cp \"^2%i skill points have been given to character %s.\n\"", changedSkillPoints, charName ) );
 	return;
 }
-*/
 
 /*
 =================

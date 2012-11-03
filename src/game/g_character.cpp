@@ -110,7 +110,7 @@ void LoadAttributes(gentity_t * ent)
 
 	//Model scale
 	modelScale = q.get_num( va( "SELECT ModelScale FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-	ent->client->ps.iModelScale = modelScale;
+	ent->client->ps.iModelScale = ent->client->sess.modelScale = modelScale;
 
 	return;
 }
@@ -404,7 +404,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		ent->client->sess.characterID = NULL;
 
 		//Reset modelscale
-		ent->client->ps.iModelScale = 100;
+		ent->client->ps.iModelScale = ent->client->sess.modelScale = 100;
 
 		//Remove all force powers
 		ent->client->ps.fd.forcePowersKnown = 0;
@@ -505,7 +505,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 		ent->client->sess.characterID = NULL;
 
 		//Reset modelscale
-		ent->client->ps.iModelScale = 100;
+		ent->client->ps.iModelScale = ent->client->sess.modelScale = 100;
 
 		//Remove all force powers
 		ent->client->ps.fd.forcePowersKnown = 0;
@@ -1639,7 +1639,7 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 		{
 			if (modelscale > 65 && modelscale < 140 )
 			{
-				ent->client->ps.iModelScale = modelscale;
+				ent->client->ps.iModelScale = ent->client->sess.modelScale = modelscale;
 				q.execute( va( "UPDATE Characters set ModelScale='%i' WHERE CharID='%i'", modelscale, ent->client->sess.characterID));
 				trap_SendServerCommand ( ent-g_entities, va( "print \"^2Modelscale has been changed to ^7%i^2.\n\"", modelscale ) );
 				return;
@@ -1657,7 +1657,7 @@ void Cmd_EditCharacter_F( gentity_t * ent )
 				trap_SendServerCommand( ent-g_entities, "print \"^1Modelscale cannot be ^70^1, ^7less than 0^1, or ^7greater than 999^1.\n\"" );
 				return;
 			}
-			ent->client->ps.iModelScale = modelscale;
+			ent->client->ps.iModelScale = ent->client->sess.modelScale = modelscale;
 			q.execute( va( "UPDATE Characters set ModelScale='%i' WHERE CharID='%i'", modelscale, ent->client->sess.characterID));
 			trap_SendServerCommand ( ent-g_entities, va( "print \"^2Modelscale has been changed to ^7%i^2.\n\"", modelscale ) );
 			return;

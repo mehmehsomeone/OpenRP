@@ -3829,6 +3829,12 @@ void ClientSpawn(gentity_t *ent) {
 	//rww - make sure client has a valid icarus instance
 	trap_ICARUS_FreeEnt( ent );
 	trap_ICARUS_InitEnt( ent );
+
+	//Keep Modelscale persistent
+	if(ent->client->sess.modelScale != 100)
+	{
+		ent->client->ps.iModelScale = ent->client->sess.modelScale;
+	}
 }
 
 

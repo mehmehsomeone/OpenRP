@@ -36,6 +36,7 @@ void Admin_Teleport( gentity_t *ent );
 char *ConcatArgs( int start );
 qboolean G_CallSpawn( gentity_t *ent );
 void CheckAdmin(gentity_t * ent);
+void AddSkill(gentity_t *self, int amount);
 
 void Cmd_amBan_F(gentity_t *ent);
 void Cmd_amKick_F(gentity_t *ent);

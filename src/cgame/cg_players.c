@@ -9936,7 +9936,7 @@ void CG_Player( centity_t *cent ) {
 	if (cent->currentState.eFlags & EF_INVULNERABLE)
 	{
 		//[OpenRP - Chat Invincibility]
-		if ( !(cent->currentState.eFlags & EF_TALK) || !cent->playerState->duelInProgress )
+		if ( !(cent->currentState.eFlags & EF_TALK) )
 		{
 			CG_DrawPlayerSphere(cent, cent->lerpOrigin, 1.0f, cgs.media.invulnerabilityShader );
 		}

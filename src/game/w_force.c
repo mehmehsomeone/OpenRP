@@ -5389,7 +5389,8 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 
 	i = 0;
 
-	if (!(self->client->ps.fd.forcePowersActive & (1 << FP_TELEPATHY)))
+	//Raz: Don't unset the tricked ents if they're a ghost, they're used for prediction in the JA++ client
+    if (!self->client->sess.isInvisible && !(self->client->ps.fd.forcePowersActive & (1 << FP_TELEPATHY)))
 	{ //clear the mindtrick index values
 		self->client->ps.fd.forceMindtrickTargetIndex = 0;
 		self->client->ps.fd.forceMindtrickTargetIndex2 = 0;

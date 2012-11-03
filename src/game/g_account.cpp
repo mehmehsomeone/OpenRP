@@ -229,7 +229,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		ent->client->sess.characterID = NULL;
 
 		//Reset modelscale
-		ent->client->ps.iModelScale = 100;
+		ent->client->ps.iModelScale = ent->client->sess.modelScale = 100;
 
 		//Remove all force powers
 		ent->client->ps.fd.forcePowersKnown = 0;

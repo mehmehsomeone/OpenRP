@@ -7310,6 +7310,80 @@ static void UI_RunMenuScript(char **args)
 		{
 			UI_ClampMaxPlayers();
 		}
+		//[Account System]
+		else if (Q_stricmp(name, "accountLogin") == 0)
+		{
+			char username[256];
+			char password[256];
+			trap_Cvar_VariableStringBuffer("ui_account_username",username,sizeof(username));
+			trap_Cvar_VariableStringBuffer("ui_account_password",password,sizeof(password));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("login %s %s\n", username, password ) );
+		}
+		else if (Q_stricmp(name, "accountCreate") == 0)
+		{
+			char username[256];
+			char password[256];
+			trap_Cvar_VariableStringBuffer("ui_account_username",username,sizeof(username));
+			trap_Cvar_VariableStringBuffer("ui_account_password",password,sizeof(password));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("register %s %s\n", username, password ) );
+		}
+		else if (Q_stricmp(name, "characterCreate") == 0)
+		{
+			char name[256];
+			char forceSensitive[256];
+			trap_Cvar_VariableStringBuffer("ui_character_name",name,sizeof(name));
+			trap_Cvar_VariableStringBuffer("ui_character_forceSensitive",forceSensitive,sizeof(forceSensitive));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("createcharacter %s %s\n", name, forceSensitive ) );
+		}
+		else if (Q_stricmp(name, "characterSelect") == 0)
+		{
+			char name[256];
+			trap_Cvar_VariableStringBuffer("ui_character_name",name,sizeof(name));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("character %s\n", name ) );
+		}
+		else if (Q_stricmp(name, "characterEdit") == 0)
+		{
+			char charName[256];
+			char modelscaleTemp[256];
+			int modelscale = 0;
+
+			trap_Cvar_VariableStringBuffer("ui_characterEdit_name",charName,sizeof(charName));
+			trap_Cvar_VariableStringBuffer("ui_characterEdit_modelscale",modelscaleTemp,sizeof(modelscaleTemp));
+			modelscale = atoi( modelscaleTemp );
+
+			if ( (charName[0] != '\0') )
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("editcharacter name %s\n", charName ) );
+			}
+
+			if ( modelscale != 0 )
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("editcharacter modelscale %i\n", modelscale ) );
+			}
+		}
+		else if (Q_stricmp(name, "accountEdit") == 0)
+		{
+			char username[256];
+			char password[256];
+
+			trap_Cvar_VariableStringBuffer("ui_accountEdit_username",username,sizeof(username));
+			trap_Cvar_VariableStringBuffer("ui_accountEdit_password",password,sizeof(password));
+
+			if ( (username[0] != '\0') )
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("editaccount username %s\n", username ) );
+			}
+
+			if ( (password[0] != '\0') )
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("editaccount password %s\n", password ) );
+			}
+		}
+		else if (Q_stricmp(name, "logout") == 0)
+		{
+			trap_Cmd_ExecuteText(EXEC_APPEND, "logout \n" );
+		}
+		//[/Account System]
 		else 
 		{
 			Com_Printf("unknown UI script %s\n", name);
@@ -11233,6 +11307,19 @@ vmCvar_t	se_language;
 
 vmCvar_t	ui_bypassMainMenuLoad;
 
+vmCvar_t	ui_account_username;
+vmCvar_t	ui_account_password;
+vmCvar_t	ui_account_loggedin;
+
+vmCvar_t	ui_character_name;
+vmCvar_t	ui_character_forceSensitive;
+
+vmCvar_t ui_characterEdit_name;
+vmCvar_t ui_characterEdit_modelscale;
+
+vmCvar_t ui_accountEdit_username;
+vmCvar_t ui_accountEdit_password;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		cvarTable[] = {
 	{ &ui_ffa_fraglimit, "ui_ffa_fraglimit", "20", CVAR_ARCHIVE|CVAR_INTERNAL },
@@ -11357,6 +11444,20 @@ static cvarTable_t		cvarTable[] = {
 	{ &se_language, "se_language","english", CVAR_ARCHIVE | CVAR_NORESTART},	//text (string ed)
 
 	{ &ui_bypassMainMenuLoad, "ui_bypassMainMenuLoad", "0", CVAR_INTERNAL },
+
+	{ &ui_account_username, "ui_account_username", "0", CVAR_INTERNAL },
+	{ &ui_account_password, "ui_account_password", "0", CVAR_INTERNAL },
+	{ &ui_account_loggedin, "ui_account_loggedin", "0", CVAR_INTERNAL },
+
+	{ &ui_character_name, "ui_character_name", "0", CVAR_INTERNAL },
+	{ &ui_character_forceSensitive, "ui_character_forceSensitive", "0", CVAR_INTERNAL },
+
+	{ &ui_characterEdit_name, "ui_characterEdit_name", "0", CVAR_INTERNAL },
+	{ &ui_characterEdit_modelscale, "ui_characterEdit_modelscale", "0", CVAR_INTERNAL },
+
+	{ &ui_accountEdit_username, "ui_accountEdit_username", "0", CVAR_INTERNAL },
+	{ &ui_accountEdit_password, "ui_accountEdit_password", "0", CVAR_INTERNAL },
+
 //JLFCALLOUT
 #ifdef _XBOX
 	{ &ui_hideAcallout,		"ui_hideAcallout",	"", 0}, 

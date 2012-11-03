@@ -451,6 +451,7 @@ typedef struct {
 	int entListIDs[128];
 	qboolean isInvisible;
 	int skillPoints;
+	int modelScale;
 
 	//[/OpenRP]
 } clientSession_t;
