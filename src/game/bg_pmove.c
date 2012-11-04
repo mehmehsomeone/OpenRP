@@ -10576,7 +10576,7 @@ void PmoveSingle (pmove_t *pmove) {
 	}
 
 	// set the talk balloon flag
-	//[OpenRP - Duel Chat Invincibility]
+	//[OpenRP - Chat Invincibility]
 	if ( pm->cmd.buttons & BUTTON_TALK ) {
 		pm->ps->eFlags |= EF_TALK;
 		if ( !pm->ps->duelInProgress )
@@ -10590,7 +10590,7 @@ void PmoveSingle (pmove_t *pmove) {
 			pm->ps->eFlags &= ~EF_INVULNERABLE;
 		}
 	}
-	//[/OpenRP - Duel Chat Invincibility]
+	//[/OpenRP - Chat Invincibility]
 
 	pm_cancelOutZoom = qfalse;
 	if (pm->ps->weapon == WP_DISRUPTOR &&

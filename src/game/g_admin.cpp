@@ -1333,7 +1333,7 @@ void Cmd_amEffect_F(gentity_t *ent)
 
 	for ( i = 0; i < 127; i++ )
 	{
-		if ( ent->client->sess.entListIDs[i] )
+		if ( ent->client->sess.entListIDs[i] != 0 )
 			continue;
 
 		ent->client->sess.entListIDs[i] = fx_runner->s.number;
@@ -2906,7 +2906,7 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Ent with ID: ^7%i ^2and spawnflags: ^7%s ^2spawned.\n\"", obj->s.number, spawnflags ) );
 		for ( i = 0; i < 127; i++ )
 		{
-			if ( ent->client->sess.entListIDs[i] )
+			if ( ent->client->sess.entListIDs[i] != 0 )
 				continue;
 
 			ent->client->sess.entListIDs[i] = obj->s.number;
@@ -2926,7 +2926,7 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 
 		for ( i = 0; i < 127; i++ )
 		{
-			if ( ent->client->sess.entListIDs[i] )
+			if ( ent->client->sess.entListIDs[i] != 0 )
 				continue;
 
 			ent->client->sess.entListIDs[i] = obj->s.number;

@@ -849,6 +849,7 @@ int	uiSkinColor=TEAM_FREE;
 int	uiHoldSkinColor=TEAM_FREE;	// Stores the skin color so that in non-team games, the player screen remembers the team you chose, in case you're coming back from the force powers screen.
 
 static const serverFilter_t serverFilters[] = {
+	{"MENUS_OPENRP", "OpenRP"},
 	{"MENUS_ALL", "" },
 	{"MENUS_JEDI_ACADEMY", "" },
 };
@@ -7729,12 +7730,21 @@ static void UI_BuildServerDisplayList(qboolean force) {
 				}
 			}
 				
+			//[OJP - SERVERFILTERS]
+			// removed the ui_serverFilterType check to allow our first filter to be for OJP servers.
+			if (Q_stricmp(Info_ValueForKey(info, "game"), serverFilters[ui_serverFilterType.integer].basedir) != 0) {
+				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+				continue;
+			}
+			/*	
 			if (ui_serverFilterType.integer > 0) {
 				if (Q_stricmp(Info_ValueForKey(info, "game"), serverFilters[ui_serverFilterType.integer].basedir) != 0) {
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
 			}
+			*/
+			//[/OJP - SERVERFILTERS]
 			// make sure we never add a favorite server twice
 			if (ui_netSource.integer == AS_FAVORITES) {
 				UI_RemoveServerFromDisplayList(i);

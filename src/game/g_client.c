@@ -3363,6 +3363,13 @@ void ClientSpawn(gentity_t *ent) {
 		wDisable = g_weaponDisable.integer;
 	}
 
+	//[OJP - MELEE]
+	//Give everyone fists as long as they aren't disabled.
+	if (!wDisable || !(wDisable & (1 << WP_MELEE)))
+	{
+		client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE);
+	}
+	//[/OJP - MELEE]
 
 
 	if ( g_gametype.integer != GT_HOLOCRON 
@@ -3483,10 +3490,14 @@ void ClientSpawn(gentity_t *ent) {
 		{
 			client->ps.weapon = WP_SABER;
 		}
+		//[OpenRP - Don't spawn with pistol]
+		/*
 		else if (client->ps.stats[STAT_WEAPONS] & (1 << WP_BRYAR_PISTOL))
 		{
 			client->ps.weapon = WP_BRYAR_PISTOL;
 		}
+		*/
+		//[/OpenRP - Don't spawn with pistol]
 		else
 		{
 			client->ps.weapon = WP_MELEE;
