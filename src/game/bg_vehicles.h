@@ -65,7 +65,9 @@ typedef struct
 
 #define	VWFOFS(x) ((int)&(((vehWeaponInfo_t *)0)->x))
 
-#define MAX_VEH_WEAPONS	16	//sigh... no more than 16 different vehicle weapons
+//[OJP - MOREVEHICLES]
+#define MAX_VEH_WEAPONS	64	//sigh... no more than 16 different vehicle weapons
+//[/OJP - MOREVEHICLES]
 #define VEH_WEAPON_BASE	0
 #define VEH_WEAPON_NONE	-1
 
@@ -358,9 +360,12 @@ typedef struct
 
 #define	VFOFS(x) ((int)&(((vehicleInfo_t *)0)->x))
 
-#define MAX_VEHICLES	16	//sigh... no more than 64 individual vehicles
+//[/OJP - MOREVEHICLES]
+#define MAX_VEHICLES	64	//sigh... no more than 64 individual vehicles
+//[/OJP - MOREVEHICLES]
 #define VEHICLE_BASE	0
 #define VEHICLE_NONE	-1
+
 
 extern vehicleInfo_t g_vehicleInfo[MAX_VEHICLES];
 extern int	numVehicles;

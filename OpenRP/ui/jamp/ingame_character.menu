@@ -64,7 +64,7 @@
 			name				title
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
-			type				4
+			type				ITEM_TYPE_TEXT
 			text				"Character"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90
@@ -226,7 +226,7 @@
 			name				title
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
-			type				4
+			type				ITEM_TYPE_TEXT
 			text				"Character Creation"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90
@@ -422,7 +422,7 @@
 			name				title
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
-			type				4
+			type				ITEM_TYPE_TEXT
 			text				"Character Selection"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90

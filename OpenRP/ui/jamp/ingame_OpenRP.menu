@@ -64,7 +64,7 @@
 			name				title
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
-			type				4
+			type				ITEM_TYPE_TEXT
 			text				"OpenRP"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90
@@ -226,7 +226,7 @@
 			name				title
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
-			type				4
+			type				ITEM_TYPE_TEXT
 			text				"Character Functions"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90
@@ -388,7 +388,7 @@
 			name				title
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
-			type				4
+			type				ITEM_TYPE_TEXT
 			text				"Account Functions"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90
@@ -594,7 +594,7 @@
 			name				title
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
-			type				4
+			type				ITEM_TYPE_TEXT
 			text				"Edit Character"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90
@@ -790,7 +790,7 @@
 			name				title
 			rect				30 5 250 26
 			style				WINDOW_STYLE_EMPTY
-			type				4
+			type				ITEM_TYPE_TEXT
 			text				"Edit Account"			
 			textalign			ITEM_ALIGN_CENTER		
 			textalignx			90

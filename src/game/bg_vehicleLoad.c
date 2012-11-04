@@ -63,8 +63,12 @@ extern stringID_table_t animTable [MAX_ANIMATIONS+1];
 
 // These buffers are filled in with the same contents and then just read from in
 // a few places. We only need one copy on Xbox.
-#define MAX_VEH_WEAPON_DATA_SIZE 0x4000
-#define MAX_VEHICLE_DATA_SIZE 0x10000
+
+//[OJP - MOREVEHICLES]
+#define MAX_VEH_WEAPON_DATA_SIZE 0x10000
+#define MAX_VEHICLE_DATA_SIZE 0x40000
+//[/OJP - MOREVEHICLES]
+
 
 #if !defined(_XBOX) || defined(QAGAME)
 	char	VehWeaponParms[MAX_VEH_WEAPON_DATA_SIZE];
@@ -422,7 +426,9 @@ int VEH_VehWeaponIndexForName( const char *vehWeaponName )
 	//haven't loaded it yet
 	if ( vw >= MAX_VEH_WEAPONS )
 	{//no more room!
-		Com_Printf( S_COLOR_RED"ERROR: Too many Vehicle Weapons (max 16), aborting load on %s!\n", vehWeaponName );
+		//[OJP - MOREVEHICLES]
+		Com_Printf( S_COLOR_RED"ERROR: Too many Vehicle Weapons (max 64), aborting load on %s!\n", vehWeaponName );
+		//[/OJP - MOREVEHICLES]
 		return VEH_WEAPON_NONE;
 	}
 	//we have room for another one, load it up and return the index
