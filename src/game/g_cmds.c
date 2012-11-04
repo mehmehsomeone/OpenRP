@@ -4548,7 +4548,10 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp(cmd, "amlistents") == 0) {
 		Cmd_ListEnts_F (ent);
 	}
-
+	else if (Q_stricmp(cmd, "aminvisible") == 0) {
+		Cmd_Invisible_F (ent);
+	}
+	
 	//[ ASTRAL ]
 	/*
 	else if (Q_stricmp(cmd, "mail") == 0) {
