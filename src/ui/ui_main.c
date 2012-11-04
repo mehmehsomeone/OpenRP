@@ -10936,15 +10936,17 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 			trap_Key_SetCatcher( KEYCATCH_UI );
 			Menus_CloseAll();
 			Menus_ActivateByName("ingame_siegeclass");
+			return;
 	  case UIMENU_LOGIN:
 			trap_Key_SetCatcher( KEYCATCH_UI );
 			Menus_CloseAll();
 			Menus_ActivateByName("ingame_login");
+			return;
 	  case UIMENU_CHARACTER:
 			trap_Key_SetCatcher( KEYCATCH_UI );
 			Menus_CloseAll();
 			Menus_ActivateByName("ingame_character");
-		  return;
+			return;
 	  }
   }
 }
@@ -11455,18 +11457,18 @@ static cvarTable_t		cvarTable[] = {
 
 	{ &ui_bypassMainMenuLoad, "ui_bypassMainMenuLoad", "0", CVAR_INTERNAL },
 
-	{ &ui_account_username, "ui_account_username", "0", CVAR_INTERNAL },
-	{ &ui_account_password, "ui_account_password", "0", CVAR_INTERNAL },
-	{ &ui_account_loggedin, "ui_account_loggedin", "0", CVAR_INTERNAL },
+	{ &ui_account_username, "ui_account_username", "", CVAR_INTERNAL },
+	{ &ui_account_password, "ui_account_password", "", CVAR_INTERNAL },
+	{ &ui_account_loggedin, "ui_account_loggedin", "", CVAR_INTERNAL },
 
-	{ &ui_character_name, "ui_character_name", "0", CVAR_INTERNAL },
-	{ &ui_character_forceSensitive, "ui_character_forceSensitive", "0", CVAR_INTERNAL },
+	{ &ui_character_name, "ui_character_name", "", CVAR_INTERNAL },
+	{ &ui_character_forceSensitive, "ui_character_forceSensitive", "", CVAR_INTERNAL },
 
-	{ &ui_characterEdit_name, "ui_characterEdit_name", "0", CVAR_INTERNAL },
-	{ &ui_characterEdit_modelscale, "ui_characterEdit_modelscale", "0", CVAR_INTERNAL },
+	{ &ui_characterEdit_name, "ui_characterEdit_name", "", CVAR_INTERNAL },
+	{ &ui_characterEdit_modelscale, "ui_characterEdit_modelscale", "", CVAR_INTERNAL },
 
-	{ &ui_accountEdit_username, "ui_accountEdit_username", "0", CVAR_INTERNAL },
-	{ &ui_accountEdit_password, "ui_accountEdit_password", "0", CVAR_INTERNAL },
+	{ &ui_accountEdit_username, "ui_accountEdit_username", "", CVAR_INTERNAL },
+	{ &ui_accountEdit_password, "ui_accountEdit_password", "", CVAR_INTERNAL },
 
 //JLFCALLOUT
 #ifdef _XBOX

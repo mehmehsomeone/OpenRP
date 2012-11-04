@@ -3470,11 +3470,15 @@ void ClientSpawn(gentity_t *ent) {
 
 		if (g_gametype.integer != GT_SIEGE)
 		{
+			//[OJP - Don't spawn with pistol]
+			/*
 			if (!wDisable || !(wDisable & (1 << WP_BRYAR_PISTOL)))
 			{
 				client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_BRYAR_PISTOL );
 			}
-			else if (g_gametype.integer == GT_JEDIMASTER)
+			*/
+			if (g_gametype.integer == GT_JEDIMASTER)
+			//[/OJP - Don't spawn with pistol]
 			{
 				client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_BRYAR_PISTOL );
 			}
@@ -3490,14 +3494,12 @@ void ClientSpawn(gentity_t *ent) {
 		{
 			client->ps.weapon = WP_SABER;
 		}
-		//[OpenRP - Don't spawn with pistol]
-		/*
 		else if (client->ps.stats[STAT_WEAPONS] & (1 << WP_BRYAR_PISTOL))
 		{
-			client->ps.weapon = WP_BRYAR_PISTOL;
+			//[OJP - Don't spawn with pistol]
+			client->ps.weapon = WP_MELEE;
+			//[/OJP - Don't spawn with pistol]
 		}
-		*/
-		//[/OpenRP - Don't spawn with pistol]
 		else
 		{
 			client->ps.weapon = WP_MELEE;

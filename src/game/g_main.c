@@ -1826,7 +1826,11 @@ void CalculateRanks( void ) {
 	level.numNonSpectatorClients = 0;
 	level.numPlayingClients = 0;
 	level.numVotingClients = 0;		// don't count bots
-	for ( i = 0; i < TEAM_NUM_TEAMS; i++ ) {
+	//[OJP - BUGFIX8 - stack overflow in CalculateRanks()]
+	//fixed a data overflow problem here.  Thanks to orion2486 for the heads up.
+	for ( i = 0; i < 2; i++ ) {
+	//for ( i = 0; i < TEAM_NUM_TEAMS; i++ ) {
+	//[/OJP - BUGFIX8 - stack overflow in CalculateRanks()]
 		level.numteamVotingClients[i] = 0;
 	}
 	for ( i = 0 ; i < level.maxclients ; i++ ) {

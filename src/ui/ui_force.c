@@ -432,7 +432,7 @@ void UpdateForceUsed()
 			uiForcePowersRank[curpower]=0;
 		}
 	}
-	//[OJP/OpenRP - Account System]
+	//[/OJP/OpenRP - Account System]
 
 	// Make sure that we're still legal.
 	for (curpower=0;curpower<NUM_FORCE_POWERS;curpower++)

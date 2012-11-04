@@ -3761,6 +3761,13 @@ void WP_SaberDoClash( gentity_t *self, int saberNum, int bladeNum )
 		te->s.weapon = saberNum;
 		te->s.legsAnim = bladeNum;
 	}
+
+	//[OJP - BugFix5 - saber clash effect logic]
+	//I think the clasheffect is repeating for each blade on a saber.
+	//This is bad, so I'm hacking it to reset saberDoClashEffect to prevent duplicate clashes
+	//from occuring.
+	saberDoClashEffect = qfalse;
+	//[/OJP - BugFix5 - saber clash effect logic]
 }
 
 void WP_SaberBounceSound( gentity_t *ent, int saberNum, int bladeNum )
