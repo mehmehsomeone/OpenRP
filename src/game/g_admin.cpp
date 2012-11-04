@@ -3032,7 +3032,7 @@ void Cmd_Invisible_F( gentity_t *ent )
                 ent->r.contents = CONTENTS_SOLID;
                 ent->clipmask = CONTENTS_SOLID|CONTENTS_BODY;
                 ent->s.trickedentindex = 0; ent->s.trickedentindex2 = 0; //This is entirely for client-side prediction. Please fix me.
-                trap_SendServerCommand( ent-g_entities, "print \"^2You are now invisible.\n\"" );
+                trap_SendServerCommand( ent-g_entities, "print \"^2You are no longer invisible.\n\"" );
         }
         else
         {
@@ -3043,7 +3043,7 @@ void Cmd_Invisible_F( gentity_t *ent )
                         ent->client->ps.fd.forceMindtrickTargetIndex = ~(1<<ent-g_entities);
                         ent->client->ps.fd.forceMindtrickTargetIndex2 = ~(1<<ent-g_entities);
                 }
-                trap_SendServerCommand( ent-g_entities, "print \"^2You are no longer invisible.\n\"" );
+                trap_SendServerCommand( ent-g_entities, "print \"^2You are now invisible.\n\"" );
         }
 	   return;
 }
