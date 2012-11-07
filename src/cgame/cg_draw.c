@@ -784,15 +784,17 @@ void CG_DrawArmor( menuDef_t *menuHUD )
 		// Print armor amount
 		trap_R_SetColor( focusItem->window.foreColor );	
 
+		//[JKH Bugfix]
 		CG_DrawNumField (
-			focusItem->window.rect.x, 
-			focusItem->window.rect.y, 
-			3, 
-			armor, 
-			focusItem->window.rect.w, 
-			focusItem->window.rect.h, 
+			focusItem->window.rect.x,
+			focusItem->window.rect.y,
+			3,
+			ps->stats[STAT_ARMOR],
+			focusItem->window.rect.w,
+			focusItem->window.rect.h,
 			NUM_FONT_SMALL,
 			qfalse);
+		//[/JKH Bugfix]
 	}
 
 	// If armor is low, flash a graphic to warn the player

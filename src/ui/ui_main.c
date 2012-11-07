@@ -7331,10 +7331,19 @@ static void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "characterCreate") == 0)
 		{
 			char name[256];
-			char forceSensitive[256];
-			trap_Cvar_VariableStringBuffer("ui_character_name",name,sizeof(name));
-			trap_Cvar_VariableStringBuffer("ui_character_forceSensitive",forceSensitive,sizeof(forceSensitive));
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("createcharacter %s %s\n", name, forceSensitive ) );
+			char forceSensitiveTemp[256];
+			int forceSensitive;
+			trap_Cvar_VariableStringBuffer( "ui_character_name", name, sizeof (name ) );
+			trap_Cvar_VariableStringBuffer( "ui_character_forceSensitive", forceSensitiveTemp, sizeof( forceSensitiveTemp ) );
+			forceSensitive = atoi( forceSensitiveTemp );
+			if ( forceSensitive == 1 )
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va( "createcharacter %s yes\n", name ) );
+			}
+			else
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va( "createcharacter %s no\n", name ) );
+			}
 		}
 		else if (Q_stricmp(name, "characterSelect") == 0)
 		{

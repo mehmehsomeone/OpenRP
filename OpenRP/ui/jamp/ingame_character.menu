@@ -324,7 +324,7 @@
 		{
 			name				forceSensitiveText
 			group				main
-			text				"Force Sensitive(yes/no):"
+			text				"Force Sensitive:"
 			style				WINDOW_STYLE_EMPTY
 			rect				20 65 0 0
 			textalign			ITEM_ALIGN_LEFT		
@@ -335,7 +335,7 @@
 			forecolor			.549 .854 1 1
 			decoration
 		}
-
+//todo - outline yes/no with the background effect
 		itemDef 
 		{
 			name				forceSensitive
@@ -346,16 +346,15 @@
 			maxchars			16
 			font				2
 			textscale			.8
-			type				ITEM_TYPE_EDITFIELD
+			type				ITEM_TYPE_YESNO
 			cvar				"ui_character_forceSensitive"
 			rect				90 100 140 25
 			textalign			ITEM_ALIGN_LEFT
 			textalignx			0
 			textaligny			0
 			forecolor			1 1 1 1
-			backcolor			.25 .25 .25 .5
 			visible			0
-			border			1
+			border			0
 			bordercolor			.79 .64 .22 1
 		}
 	}

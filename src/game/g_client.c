@@ -1893,7 +1893,9 @@ void ClientUserinfoChanged( int clientNum ) {
 	char	model[MAX_QPATH];
 	//char	headModel[MAX_QPATH];
 	char	forcePowers[MAX_QPATH];
-	char	oldname[MAX_STRING_CHARS];
+	//[eezstreet Bugfix]
+	char	oldname[MAX_NETNAME];
+	//[/eezstreet Bugfix]
 	gclient_t	*client;
 	char	c1[MAX_INFO_STRING];
 	char	c2[MAX_INFO_STRING];
