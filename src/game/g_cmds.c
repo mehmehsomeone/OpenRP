@@ -4251,10 +4251,6 @@ void ClientCommand( int clientNum ) {
 	{
 		TheEmote (BOTH_FJSS_TR_BL, ent, qfalse);
 	}
-	else if (Q_stricmp(cmd, "emsit2") == 0)
-	{
-		TheEmote (BOTH_SLEEP6START, ent, qtrue);
-	}
 	else if (Q_stricmp(cmd, "empoint") == 0)
 	{
 		TheEmote (BOTH_SCEPTER_HOLD, ent, qfalse);
@@ -4330,6 +4326,18 @@ void ClientCommand( int clientNum ) {
 	}
 	else if (Q_stricmp(cmd, "emtyping") == 0) {
 		TheEmote (BOTH_CONSOLE1, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emaim") == 0) {
+		TheEmote (TORSO_WEAPONIDLE4, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emlean") == 0) {
+		TheEmote (BOTH_STAND10, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "emstand") == 0) {
+		TheEmote (BOTH_STAND8, ent, qtrue);
+	}
+	else if (Q_stricmp(cmd, "empoint") == 0) {
+		TheEmote (BOTH_SCEPTER_HOLD, ent, qtrue);
 	}
 	else if (Q_stricmp (cmd, "login") == 0) {
 		Cmd_AccountLogin_F (ent);	

@@ -25,6 +25,7 @@ void AddSkill(gentity_t *self, int amount)
 
 	self->client->sess.skillPoints += amount;
 	trap_SendServerCommand(self->s.number, va("nfr %i %i %i", self->client->sess.skillPoints, 0, self->client->sess.sessionTeam)); //mark that we've updated our skill points so we can update the player's client.
+	//[/OpenRP - Skillpoint System]
 
 }
 
@@ -392,21 +393,18 @@ void Cmd_amBan_F(gentity_t *ent)
 		return; 
 	}
 
-	//if(ent == victim)
-	//{
-	//	trap_SendServerCommand(ent-g_entities, va("print \"^2You can't ban yourself.\n\""));
-	//	return;
-	//}
-
-	if ( g_entities[clientid].client->sess.isAdmin )
+	if(ent-g_entities == clientid)
 	{
-		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-			return;
-		}
+		trap_SendServerCommand(ent-g_entities, va("print \"^2You can't ban yourself.\n\""));
+		return;
 	}
 
+	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
+	}
+	
 	if (!(g_entities[clientid].r.svFlags & SVF_BOT))
 	{
 		AddIP(g_entities[clientid].client->sess.IP);
