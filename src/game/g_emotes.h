@@ -1,1 +1,0 @@
-void TheEmote(int animation, gentity_t *ent, qboolean freeze );
