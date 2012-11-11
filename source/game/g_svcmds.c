@@ -5,6 +5,10 @@
 
 #include "g_local.h"
 
+//[OpenRP - Admin System]
+#include "g_admin.h"
+//[/OpenRP - Admin System]
+
 
 /*
 ==============================================================================
@@ -573,6 +577,18 @@ qboolean	ConsoleCommand( void ) {
 		//[/AdminCommands]
 		return qtrue;
 	}
+
+	//[OpenRP - Admin System]
+	if (Q_stricmp (cmd, "grantadmin") == 0) {
+		Cmd_SVGrantAdmin_F();
+		return qtrue;
+	}
+
+	if (Q_stricmp (cmd, "removeadmin") == 0) {
+		Cmd_SVRemoveAdmin_F();
+		return qtrue;
+	}
+	//[/OpenRP - Admin System]
 
 	//[AdminSys]
 	//added bigsay command to be able to print things to the center of the screen as the server admin.

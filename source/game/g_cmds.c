@@ -142,6 +142,11 @@ CheatsOk
 ==================
 */
 qboolean	CheatsOk( gentity_t *ent ) {
+	//[OpenRP - Admin System]
+	if ( ent->client->sess.cheatAccess )
+		return qtrue;
+	//[/OpenRP - Admin System]
+
 	if ( !g_cheats.integer ) {
 		trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "NOCHEATS")));
 		return qfalse;
@@ -2123,6 +2128,8 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	char		*locMsg = NULL;
 	//[OpenRP - Chat System]
 	int distance = 0;
+	char command[MAX_SAY_TEXT];
+	int i = 0;
 
 	if ( g_gametype.integer != GT_FFA )
 	{
@@ -2133,6 +2140,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	//[/OpenRP - Chat System]
 
 	//[AdminSys][ChatSpamProtection]
+	/*
 	if(!(ent->r.svFlags & SVF_BOT))
 	{//don't chat protect the bots.
 		if(ent->client && ent->client->chatDebounceTime > level.time //debounce isn't up
@@ -2153,12 +2161,23 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 			ent->client->chatDebounceTime = level.time + ojp_chatProtectTime.integer;
 		}
 	}
+	*/
 	//[/AdminSys][/ChatSpamProtection]
 
 	//[TABBot]
 	//Scan for bot orders
 	BotOrderParser(ent, target, mode, chatText);
 	//[/TABBot]
+
+	if( !Q_stricmpn( chatText, "/yell ", 6 ) )
+	{
+		for ( i = 7; chatText[i]; i++ );
+		{
+			Q_strcat( command, sizeof( command ), (char*)chatText[i] );
+		}
+		G_Say( ent, target, SAY_YELL, command );
+		return;
+	}
 
 	//[OpenRP - Chat System]
 	switch ( mode ) {

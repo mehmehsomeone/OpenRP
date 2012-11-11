@@ -561,6 +561,7 @@ typedef struct {
 	qboolean isInvisible;
 	int skillPoints;
 	int modelScale;
+	qboolean cheatAccess;
 
 	//[/OpenRP - Client Session]
 } clientSession_t;
@@ -594,12 +595,10 @@ typedef struct {
 	//[ClientPlugInDetect]
 	//this flag shows weither or not this client is running the right version of OJP on the client side.  
 	//This is used to determine if the visual weapon events can be sent or not.
-	qboolean	ojpClientPlugIn;
+	//sqboolean	ojpClientPlugIn;
 	//[/ClientPlugInDetect]
 
 	//[OpenRP - Admin System]
-	qboolean	hasCheatAccess;		// MJN - Allows to access cheats.
-
 	int	amtelemark1;
 	int	amtelemark2;
 	int	amtelemark3;
@@ -1951,7 +1950,7 @@ extern vmCvar_t		g_corpseRemovalTime;
 
 //[ExpandedMOTD]
 extern vmCvar_t		ojp_clientMOTD;
-extern vmCvar_t		ojp_MOTD;
+//extern vmCvar_t		ojp_MOTD;
 //[/ExpandedMOTD]
 
 //[OpenRP - Cvars]

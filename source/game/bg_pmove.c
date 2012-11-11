@@ -1052,6 +1052,11 @@ void PM_AddTouchEnt( int entityNum ) {
 		}
 	}
 
+#ifdef QAGAME
+        if ( ((gentity_t *)pm_entSelf)->client->sess.isInvisible )
+                return;
+#endif
+
 	// add it
 	pm->touchents[pm->numtouch] = entityNum;
 	pm->numtouch++;

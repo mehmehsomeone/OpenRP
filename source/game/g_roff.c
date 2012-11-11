@@ -274,8 +274,9 @@ static void G_FreeRoff(int index)
 }
 */
 
-
-static qboolean G_InitRoff( char *file, unsigned char *data )
+//[OJP Enhanced Bugfix]
+static qboolean G_InitRoff( char *file, char *data )
+//[OJP Enhanced Bugfix]
 {
 	roff_hdr_t *header = (roff_hdr_t *)data;
 	int	count = (int)header->mCount;

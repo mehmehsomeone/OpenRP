@@ -13855,7 +13855,10 @@ SkipTrueView:
 
 	if (cent->currentState.eFlags & EF_INVULNERABLE)
 	{
-		CG_DrawPlayerSphere(cent, cent->lerpOrigin, 1.0f, cgs.media.invulnerabilityShader );
+		//[OpenRP - Chat Invincibility]
+		if ( !(cent->currentState.eFlags & EF_TALK) )
+			CG_DrawPlayerSphere(cent, cent->lerpOrigin, 1.0f, cgs.media.invulnerabilityShader );
+		//[/OpenRP - Chat Invincibility]
 	}
 stillDoSaber:
 	if ((cent->currentState.eFlags & EF_DEAD) && cent->currentState.weapon == WP_SABER)

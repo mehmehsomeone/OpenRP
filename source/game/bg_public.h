@@ -26,7 +26,7 @@
 #define OPENRP_CLIENTVERSION		"Pre-alpha 6"
 //[/ClientPlugInDetect]
 //[OpenRP - Serverside build date]
-#define OPENRP_SERVERVERSION		"Pre-alpha Built: " __DATE__' '__TIME__
+#define OPENRP_SERVERVERSION		"Pre-alpha Built: " __DATE__" "__TIME__
 //[/OpenRP - Serverside build date]
 
 #define	STEPSIZE		18

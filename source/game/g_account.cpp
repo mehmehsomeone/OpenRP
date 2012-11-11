@@ -46,6 +46,9 @@ void CheckAdmin(gentity_t * ent)
 		{
 			ent->client->sess.isAdmin = qtrue;
 			ent->client->sess.adminLevel = adminLevel;
+
+			if ( !ent->client->sess.cheatAccess && G_CheckAdmin( ent, ADMIN_CHEATS ) )
+				ent->client->sess.cheatAccess = qtrue;
 		}
 		else
 		{
@@ -160,11 +163,6 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	ent->client->sess.loggedinAccount = qtrue;
 
 	CheckAdmin(ent);
-
-	if ( G_CheckAdmin( ent, ADMIN_CHEATS ) && !ent->client->pers.hasCheatAccess )
-	{
-		ent->client->pers.hasCheatAccess = qtrue;
-	}
 
 	//Update the ui
 	trap_SendServerCommand( ent-g_entities, va( "lui_login" ) );

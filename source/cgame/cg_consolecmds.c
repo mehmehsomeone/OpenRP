@@ -285,8 +285,10 @@ static consoleCommand_t	commands[] = {
 	{ "tell_target", CG_TellTarget_f },
 	{ "tell_attacker", CG_TellAttacker_f },
 	{ "tcmd", CG_TargetCommand_f },
-	{ "spWin", CG_spWin_f },
-	{ "spLose", CG_spLose_f },
+	//[OpenRP - Disable spWin and spLose]
+	//{ "spWin", CG_spWin_f },
+	//{ "spLose", CG_spLose_f },
+	//[/OpenRP - Disable spWin and spLose]
 	{ "scoresDown", CG_scrollScoresDown_f },
 	{ "scoresUp", CG_scrollScoresUp_f },
 	{ "startOrbit", CG_StartOrbit_f },
@@ -395,4 +397,66 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand ("stats");
 	trap_AddCommand ("teamtask");
 	trap_AddCommand ("loaddefered");	// spelled wrong, but not changing for demo
+	//[OpenRP - Commands]
+	trap_AddCommand ("lui");
+	trap_AddCommand ("lui_login");
+	trap_AddCommand ("lui_logout");
+	trap_AddCommand("login");
+	trap_AddCommand("logout");
+	trap_AddCommand("register");
+	trap_AddCommand("character");
+	trap_AddCommand("mycharacters");
+	trap_AddCommand("createcharacter");
+	trap_AddCommand("accountinfo");
+	trap_AddCommand("characterinfo");
+	trap_AddCommand("grantadmin");
+	trap_AddCommand("removeadmin");
+	trap_AddCommand("giveskillpoints");
+	trap_AddCommand("givecredits");
+	trap_AddCommand("gencredits");
+	trap_AddCommand("editaccount");
+	trap_AddCommand("accountname");
+	trap_AddCommand("editcharacter");
+	trap_AddCommand("createfaction");
+	trap_AddCommand("setfaction");
+	trap_AddCommand("setfactionrank");
+	trap_AddCommand("faction");
+	trap_AddCommand("factionwithdraw");
+	trap_AddCommand("factiondeposit");
+	trap_AddCommand("factiongencredits");
+	trap_AddCommand("listfactions");
+	trap_AddCommand("bounty");
+	trap_AddCommand("amlistadmins");
+	trap_AddCommand("charactername");
+	trap_AddCommand("comm");
+	trap_AddCommand("amkick");
+	trap_AddCommand("amban");
+	trap_AddCommand("amwarn");
+	trap_AddCommand("amtele");
+	trap_AddCommand("amsilence");
+	trap_AddCommand("amunsilence");
+	trap_AddCommand("amsleep");
+	trap_AddCommand("amunsleep");
+	trap_AddCommand("amprotect");
+	trap_AddCommand("amannounce");
+	trap_AddCommand("ameffect");
+	trap_AddCommand("amforceteam");
+	trap_AddCommand("amstatus");
+	trap_AddCommand("amweather");
+	trap_AddCommand("amweatherplus");
+	trap_AddCommand("amtelemark");
+	trap_AddCommand("amorigin");
+	trap_AddCommand("info");
+	trap_AddCommand("eminfo");
+	trap_AddCommand("aminfo");
+	trap_AddCommand("ammap");
+	trap_AddCommand("amrename");
+	trap_AddCommand("admin");
+	trap_AddCommand("amcheataccess");
+	trap_AddCommand("amshakescreen");
+	trap_AddCommand("amaudio");
+	trap_AddCommand("ooc");
+	trap_AddCommand("force");
+	trap_AddCommand("charui");
+	//[/OpenRP - Commands]
 }

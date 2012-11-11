@@ -505,7 +505,9 @@ void WP_InitForcePowers( gentity_t *ent )
 	}
 	else
 	{
-		if (warnClient || !ent->client->sess.setForce)
+		//[OpenRP - Menus]
+		if (warnClient || !ent->client->sess.loggedinAccount || !ent->client->sess.characterChosen )
+		//[/OpenRP - Menus]
 		{ //the client's rank is too high for the server and has been autocapped, so tell them
 			if (g_gametype.integer != GT_HOLOCRON && g_gametype.integer != GT_JEDIMASTER )
 			{
@@ -524,7 +526,8 @@ void WP_InitForcePowers( gentity_t *ent )
 				//if (!(ent->r.svFlags & SVF_BOT) && ent->s.eType != ET_NPC)
 				//[/BotTweaks]
 				{
-					if (!g_teamAutoJoin.integer)
+					//[OpenRP - Menus]
+					if (!g_teamAutoJoin.integer && ent->client->sess.loggedinAccount && ent->client->sess.characterChosen )
 					{
 						//Make them a spectator so they can set their powerups up without being bothered.
 						ent->client->sess.sessionTeam = TEAM_SPECTATOR;
@@ -534,6 +537,26 @@ void WP_InitForcePowers( gentity_t *ent )
 						ent->client->pers.teamState.state = TEAM_BEGIN;
 						trap_SendServerCommand(ent-g_entities, "spc");	// Fire up the profile menu
 					}
+
+					if ( !ent->client->sess.loggedinAccount || !ent->client->sess.characterChosen )
+					{
+						//Make them a spectator so they can set their powerups up without being bothered.
+						ent->client->sess.sessionTeam = TEAM_SPECTATOR;
+						ent->client->sess.spectatorState = SPECTATOR_FREE;
+						ent->client->sess.spectatorClient = 0;
+
+						ent->client->pers.teamState.state = TEAM_BEGIN;
+
+						if ( !ent->client->sess.loggedinAccount )
+						{
+							trap_SendServerCommand(ent-g_entities, "lui");	// Fire up the login UI
+						}
+						else
+						{
+							trap_SendServerCommand(ent-g_entities, "charui");
+						}
+					}
+					//[/OpenRP - Menus]
 				}
 
 #ifdef EVENT_FORCE_RANK
@@ -5542,7 +5565,7 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 
 	i = 0;
 
-	if (!(self->client->ps.fd.forcePowersActive & (1 << FP_TELEPATHY)))
+	if (!self->client->sess.isInvisible && !(self->client->ps.fd.forcePowersActive & (1 << FP_TELEPATHY)))
 	{ //clear the mindtrick index values
 		self->client->ps.fd.forceMindtrickTargetIndex = 0;
 		self->client->ps.fd.forceMindtrickTargetIndex2 = 0;

@@ -650,6 +650,9 @@ qboolean PM_ClientImpact( trace_t *trace )
 		return qfalse;
 	}
 
+	if ( ((gentity_t *)pm_entSelf)->client->sess.isInvisible )
+		 return qfalse;
+
 	traceEnt = &g_entities[otherEntityNum];
 
 	if( VectorLength( pm->ps->velocity ) >= 100 
