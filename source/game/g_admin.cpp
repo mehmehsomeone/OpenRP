@@ -256,7 +256,8 @@ qboolean G_CheckAdmin(gentity_t *ent, int command)
 {
 	int Bitvalues = 0;
 
-	CheckAdmin( ent );
+	if ( command != ADMIN_CHEATS )
+		CheckAdmin( ent );
 
 	if ( !ent->client->sess.isAdmin )
 	{
