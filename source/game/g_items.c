@@ -3301,9 +3301,11 @@ void G_SpawnItem (gentity_t *ent, gitem_t *item) {
 		wDisable = g_weaponDisable.integer;
 	}
 
-	if (item->giType == IT_WEAPON &&
-		wDisable &&
-		(wDisable & (1 << item->giTag)))
+	//[OpenRP - Disabling map weapon spawns]
+	if (item->giType == IT_WEAPON )//&&
+		//wDisable &&
+		//(wDisable & (1 << item->giTag)))
+	//[/OpenRP - Disabling map weapon spawns]
 	{
 	//[MOREWEAPOPTIONS]
 		//if (g_gametype.integer != GT_JEDIMASTER)
