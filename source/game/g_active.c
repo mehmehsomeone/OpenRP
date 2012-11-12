@@ -1338,6 +1338,12 @@ qboolean G_ActionButtonPressed(int buttons)
 	{
 		return qtrue;
 	}
+	//[LF - MeleeButton]
+	else if (buttons & BUTTON_MELEE)
+	{
+		return qtrue;
+	}
+	//[/LF - MeleeButton]
 
 	return qfalse;
 }

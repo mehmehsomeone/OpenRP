@@ -1971,7 +1971,7 @@ extern vmCvar_t		openrp_pistolDescription;
 
 //Bitvalues for Admins
 extern vmCvar_t		openrp_admin1Bitvalues;
-extern vmCvar_t		openrp_admin2Bitvalues; 
+extern vmCvar_t		openrp_admin2Bitvalues;
 extern vmCvar_t		openrp_admin3Bitvalues;
 extern vmCvar_t		openrp_admin4Bitvalues;
 extern vmCvar_t		openrp_admin5Bitvalues;

@@ -379,11 +379,11 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 	q.execute( 
 		va( "INSERT INTO Characters(AccountID,Name,ModelScale,Level,SkillPoints,FactionID,FactionRank,ForceSensitive,CheckInventory,Credits) VALUES('%i','%s','100','1','1','0','none','%i','0','250')", 
 		ent->client->sess.accountID, charName, forceSensitive ) );
-	q.execute( 
-		va( "INSERT INTO Items(CharID,E11,Pistol) VALUES('%i', '0', '0')", ent->client->sess.characterID ) );
 	
 	//Check if the character exists
 	charID = q.get_num( va( "SELECT CharID FROM Characters WHERE AccountID='%i' AND Name='%s'", ent->client->sess.accountID, charName ) );
+	q.execute( 
+		va( "INSERT INTO Items(CharID,E11,Pistol) VALUES('%i', '0', '0')", charID ) );
 	if( !charID )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1Character does not exist\n\"");
@@ -1244,7 +1244,6 @@ void Cmd_Shop_F( gentity_t * ent )
 			currentTotal = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
 			newTotal = currentTotal + 1;
 			q.execute( va( "UPDATE Items set E11='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
-			
 		}
 
 		else

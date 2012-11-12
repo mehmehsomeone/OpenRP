@@ -3786,6 +3786,9 @@ void ClientSpawn(gentity_t *ent) {
 				if (!wDisable || !(wDisable & (1 << WP_SABER)))
 				{
 					client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER );	//these are precached in g_items, ClearRegisteredItems()
+					//[OpenRP - Spawn with Melee]
+					client->ps.stats[STAT_WEAPONS] |= (1 << WP_MELEE);
+					//[/OpenRP - Spawn with Melee]
 				}
 				//client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SABER );	//these are precached in g_items, ClearRegisteredItems()
 				

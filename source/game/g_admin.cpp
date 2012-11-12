@@ -1332,11 +1332,12 @@ void Cmd_amEffect_F(gentity_t *ent)
 
 	for ( i = 0; i < 127; i++ )
 	{
-		if ( ent->client->sess.entListIDs[i] != 0 )
+		if ( ent->client->sess.entListIDs[i] )
 			continue;
 
 		ent->client->sess.entListIDs[i] = fx_runner->s.number;
-		Q_strncpyz( ent->client->sess.entListNames[i][128], effect, sizeof( ent->client->sess.entListNames[i][128] ) );
+		Q_strncpyz( (char*)ent->client->sess.entListNames[i], effect, sizeof( ent->client->sess.entListNames[i] ) );
+		break;
 	}
 
 	G_LogPrintf("Effect command executed by %s.\n", ent->client->pers.netname);
@@ -2905,11 +2906,12 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Ent with ID: ^7%i ^2and spawnflags: ^7%s ^2spawned.\n\"", obj->s.number, spawnflags ) );
 		for ( i = 0; i < 127; i++ )
 		{
-			if ( ent->client->sess.entListIDs[i] != 0 )
+			if ( ent->client->sess.entListIDs[i] )
 				continue;
 
 			ent->client->sess.entListIDs[i] = obj->s.number;
-			Q_strncpyz( ent->client->sess.entListNames[i][128], buf, sizeof( ent->client->sess.entListNames[i][128] ) );
+			Q_strncpyz( (char*)ent->client->sess.entListNames[i], buf, sizeof( ent->client->sess.entListNames[i] ) );
+			break;
 		}
 	}
 	else
@@ -2925,11 +2927,12 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 
 		for ( i = 0; i < 127; i++ )
 		{
-			if ( ent->client->sess.entListIDs[i] != 0 )
+			if ( ent->client->sess.entListIDs[i] )
 				continue;
 
 			ent->client->sess.entListIDs[i] = obj->s.number;
-			Q_strncpyz( ent->client->sess.entListNames[i][128], buf, sizeof( ent->client->sess.entListNames[i][128] ) );
+			Q_strncpyz( (char*)ent->client->sess.entListNames[i], buf, sizeof( ent->client->sess.entListNames[i] ) );
+			break;
 		}
 	}
 	//The appropriate spawn function will take care of
@@ -2957,6 +2960,9 @@ void Cmd_RemoveEntity_F( gentity_t *ent )
 
 	if ( trap_Argc() < 2 )
 	{
+		trap_SendServerCommand( ent-g_entities, "print \"Command Usage: /removeEnt <entID>\n\"" );
+		return;
+		/*
 		//Trace to where we're looking
 		AngleVectors( ent->client->ps.viewangles, fPos, 0, 0 );
 		for (i=0; i<3; i++)
@@ -2973,7 +2979,7 @@ void Cmd_RemoveEntity_F( gentity_t *ent )
 		//Anything in this box will be removed
 		for (i=0; i<8; i++)
 		{
-			if ( ents[i] > 0 && ents[i] < 1024 &&  &g_entities[ents[i]].inuse )
+			if ( ents[i] > 0 && ents[i] < 1024 && &g_entities[ents[i]].inuse )
 			{
 				G_FreeEntity( &g_entities[ents[i]] ); // G_FreeEntity will free up the slot in g_entities so it can be re-used!
 			}
@@ -2985,6 +2991,7 @@ void Cmd_RemoveEntity_F( gentity_t *ent )
 		}
 		trap_SendServerCommand( ent-g_entities, "print \"^2Ent(s) you were looking at has(have) been removed.\n\"" );
 		return;
+		*/
 	}
 
 	trap_Argv( 1, entIDTemp, MAX_STRING_CHARS );
@@ -3018,7 +3025,7 @@ void Cmd_ListEnts_F( gentity_t *ent )
 		if ( !ent->client->sess.entListIDs[i] )
 			continue;
 
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2# %i Name: %s\n\"", ent->client->sess.entListIDs[i], ent->client->sess.entListNames[i][128] ) );
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2# %i Name: %s\n\"", ent->client->sess.entListIDs[i], ent->client->sess.entListNames[i] ) );
 	}
 	return;
 }

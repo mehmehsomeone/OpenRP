@@ -2128,8 +2128,8 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	char		*locMsg = NULL;
 	//[OpenRP - Chat System]
 	int distance = 0;
-	char command[MAX_SAY_TEXT];
-	int i = 0;
+	//char command[MAX_SAY_TEXT];
+	//int i = 0;
 
 	if ( g_gametype.integer != GT_FFA )
 	{
@@ -2169,6 +2169,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	BotOrderParser(ent, target, mode, chatText);
 	//[/TABBot]
 
+	/*
 	if( !Q_stricmpn( chatText, "/yell ", 6 ) )
 	{
 		for ( i = 7; chatText[i]; i++ );
@@ -2178,6 +2179,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		G_Say( ent, target, SAY_YELL, command );
 		return;
 	}
+	*/
 
 	//[OpenRP - Chat System]
 	switch ( mode ) {
@@ -5372,7 +5374,6 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "bounty") == 0) {
 		 Cmd_Bounty_F(ent);	
 	}
-	/*
 	else if (Q_stricmp (cmd, "shop") == 0) {
 		Cmd_Shop_F (ent);
 	}
@@ -5382,7 +5383,6 @@ void ClientCommand( int clientNum ) {
 	else if (Q_stricmp (cmd, "inventory") == 0) {
 		Cmd_Inventory_F (ent);	
 	}
-	*/
 	else if (Q_stricmp(cmd, "amlistadmins") == 0) {
 		Cmd_amListAdmins_F (ent);	
 	}

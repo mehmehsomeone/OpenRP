@@ -153,7 +153,9 @@ void WP_InitForcePowers( gentity_t *ent )
 {
 	int i;
 	int i_r;
-	int maxRank = g_maxForceRank.integer;
+	//[OJP Enhanced - Skillpoints]
+	int maxRank = ent->client->sess.skillPoints;
+	//[/OJP Enhanced - Skillpoints]
 	qboolean warnClient = qfalse;
 	qboolean warnClientLimit = qfalse;
 	char userinfo[MAX_INFO_STRING];
@@ -162,6 +164,8 @@ void WP_InitForcePowers( gentity_t *ent )
 	int lastFPKnown = -1;
 	qboolean didEvent = qfalse;
 
+	//[OJP Enhanced - Skillpoints]
+	/*
 	if (!maxRank)
 	{ //if server has no max rank, default to max (50)
 		maxRank = FORCE_MASTERY_JEDI_MASTER;
@@ -171,6 +175,8 @@ void WP_InitForcePowers( gentity_t *ent )
 		maxRank = FORCE_MASTERY_JEDI_MASTER;
 		trap_Cvar_Set( "g_maxForceRank", va("%i", maxRank) );
 	}
+	*/
+	//[/OJP Enhanced - Skillpoints]
 
 	/*
 	if (g_forcePowerDisable.integer)
@@ -5565,6 +5571,7 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 
 	i = 0;
 
+	//Raz: Don't unset the tricked ents if they're a ghost, they're used for prediction in the JA++ client
 	if (!self->client->sess.isInvisible && !(self->client->ps.fd.forcePowersActive & (1 << FP_TELEPATHY)))
 	{ //clear the mindtrick index values
 		self->client->ps.fd.forceMindtrickTargetIndex = 0;

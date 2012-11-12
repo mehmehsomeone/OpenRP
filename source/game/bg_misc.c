@@ -529,7 +529,9 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 
 	//final_Powers now contains all the stuff from the string
 	//Set the maximum allowed points used based on the max rank level, and count the points actually used.
-	allowedPoints = forceMasteryPoints[maxRank];
+	//[OJP Enhanced - Skillpoints]
+	allowedPoints = maxRank;
+	//[/OJP Enhanced - Skillpoints]
 
 	i = 0;
 	while (i < NUM_FORCE_POWERS)

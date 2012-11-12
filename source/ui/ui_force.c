@@ -297,7 +297,9 @@ void UpdateForceUsed()
 	uiForceRank = uiMaxRank;
 
 	uiForceUsed = 0;
-	uiForceAvailable = forceMasteryPoints[uiForceRank];
+	//[OJP Enhanced - Skillpoints]
+	uiForceAvailable = uiMaxRank;
+	//[/OJP Enhanced - Skillpoints]
 
 	// Make sure that we have one freebie in jump.
 	if (uiForcePowersRank[FP_LEVITATION]<1)
@@ -578,7 +580,9 @@ void UI_ReadLegalForce(void)
 		c++;
 	}
 	uiForceUsed = 0;
-	uiForceAvailable = forceMasteryPoints[uiForceRank];
+	//[OJP Enhanced - Skillpoints]
+	uiForceAvailable = uiMaxRank;
+	//[/OJP Enhanced - Skillpoints]
 	gTouchedForce = qtrue;
 
 	for (c=0;fcfString[i]&&c<NUM_FORCE_POWERS;c++,i++)
@@ -1300,7 +1304,9 @@ void UI_ForceConfigHandle( int oldindex, int newindex )
 		c++;
 	}
 	uiForceUsed = 0;
-	uiForceAvailable = forceMasteryPoints[uiForceRank];
+	//[OJP Enhanced - Skillpoints]
+	uiForceAvailable = uiMaxRank;
+	//[/OJP Enhanced - Skillpoints]
 	gTouchedForce = qtrue;
 
 	for (c=0;fcfBuffer[i]&&c<NUM_FORCE_POWERS;c++,i++)

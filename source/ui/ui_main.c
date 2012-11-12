@@ -1712,7 +1712,10 @@ void _UI_Refresh( int realtime )
 	}
 #endif
 
-	if (ui_rankChange.integer)
+	//[OJP Enhanced - Skillpoints]
+	//only do this stuff when the your point total has changed.
+	//[/OJP Enhanced - Skillpoints]
+	if (ui_rankChange.integer != uiMaxRank )
 	{
 		//[UITweaks]
 		//not used in basejka code
@@ -1774,7 +1777,10 @@ void _UI_Refresh( int realtime )
 		{
 			uiForcePowersRank[FP_SABER_DEFENSE] = 1;
 		}
-		trap_Cvar_Set("ui_rankChange", "0");
+		//[OJP Enhanced - Skillpoints]
+		//ui_rankChange is now treated like a variable rather than a message sender
+		//trap_Cvar_Set("ui_rankChange", "0");
+		//[/OJP Enhanced - Skillpoints]
 
 		//remember to update the force power count after changing the max rank
 		UpdateForceUsed();
@@ -1836,6 +1842,13 @@ void UI_FreeSabers(void);
 void _UI_Shutdown( void ) {
 	trap_LAN_SaveCachedServers();
 	UI_CleanupGhoul2();
+
+	//[JKH Bugfix]
+#if !WINDOWSXP_COMPILE
+	PatchEngine( qfalse );
+	UI_PatchFakeChallengeResponse( qfalse );
+#endif
+	//[JKH Bugfix]
 
 	//[DynamicMemory_Sabers]
 	UI_FreeSabers();
@@ -2532,8 +2545,13 @@ static void UI_DrawGenericNum(rectDef_t *rect, float scale, vec4_t color, int te
 }
 
 static void UI_DrawForceMastery(rectDef_t *rect, float scale, vec4_t color, int textStyle, int val, int min, int max, int iMenuFont)
-{
+//[OJP Enhanced - Skillpoints]
+{//racc - renders the player's current force mastery level to the screen.
+//[/OJP Enhanced - Skillpoints]
 	int i;
+	//[OJP Enhanced - Skillpoints]
+	int x;
+	//[/OJP Enhanced - Skillpoints]
 	char *s;
 
 	i = val;
@@ -2541,12 +2559,21 @@ static void UI_DrawForceMastery(rectDef_t *rect, float scale, vec4_t color, int 
 	{
 		i = min;
 	}
-	if (i > max)
-	{
-		i = max;
-	}
+	//[OJP Enhanced - Skillpoints]
+	//initialize s to make the compiler happy.  However, the below code shouldn't ever NOT set s.
+	s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[0]);
 
-	s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[i]);
+	//allowing for dynamic skill point totals.  Determine rank based on the highest mastery
+	//level the player has points for.
+	for(x = NUM_FORCE_MASTERY_LEVELS-1; x >= 0; x--)
+	{
+		if(i >= forceMasteryPoints[x])
+		{//we've found the highest level mastery that we have the skill points for.
+			s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[x]);
+			break;
+		}
+	}
+	//[/OJP Enhanced - Skillpoints]
 	Text_Paint(rect->x, rect->y, scale, color, s, 0, 0, textStyle, iMenuFont);
 }
 
@@ -3542,11 +3569,24 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale) {
 		break;
     case UI_FORCE_RANK:
 		i = uiForceRank;
+		//[OJP Enhanced - Skillpoints]
+		//display rank based on player's current relative rank based on their current points.
+		for(findex = NUM_FORCE_MASTERY_LEVELS-1; findex >= 0; findex--)
+		{
+			if(i >= forceMasteryPoints[findex])
+			{//we've found the highest level mastery that we have the skill points for.
+				s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[findex]);
+				break;
+			}
+		}
+		/* basejka code
 		if (i < 1 || i > MAX_FORCE_RANK) {
 			i = 1;
 		}
 
 		s = (char *)UI_GetStringEdString("MP_INGAME", forceMasteryLevels[i]);
+		*/
+		//[/OJP Enhanced - Skillpoints]
 		break;
 	case UI_FORCE_RANK_HEAL:
 	case UI_FORCE_RANK_LEVITATION:
@@ -11771,12 +11811,14 @@ void _UI_Init( qboolean inGameLoad ) {
 	trap_Cvar_Set( "ojp_clientplugin", OPENRP_CLIENTVERSION );
 	//[/OpenRP - ClientPlugin]
 
+	//[JKH Bugfix]
 #if !WINDOWSXP_COMPILE
 	UI_PatchFakeChallengeResponse( qtrue );
 	PatchEngine( qtrue );
 	altEnterPatch();
 	//primitivesPatch();
 #endif
+	//[JKH Bugfix]
 }
 
 #ifdef _XBOX
