@@ -397,7 +397,7 @@ void Cmd_CreateCharacter_F(gentity_t * ent)
 		//SaveCharacter( ent );
 
 		//Reset skill points
-		//ent->client->sess.skillPoints = 1;
+		ent->client->sess.skillPoints = 1;
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;
@@ -498,7 +498,7 @@ void Cmd_SelectCharacter_F(gentity_t * ent)
 		//SaveCharacter( ent );
 
 		//Reset skill points
-//		ent->client->sess.skillPoints = 1;
+		ent->client->sess.skillPoints = 1;
 
 		//Deselect Character
 		ent->client->sess.characterChosen = qfalse;

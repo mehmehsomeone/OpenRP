@@ -30,7 +30,7 @@ Others:
 *Everyone who has given suggestions for the mod
 
 *Open source projects used or that were used:
-The Open Jedi Project (OJP) For fixes, code, and more.
+The Open Jedi Project (OJP) - OJP Basic is the OpenRP code base.
 The Multiplayer Xtra mod by XharocK (Dominic Bodman) author of a lot of the admin system code we use or used and some other code we use or used or base code on,
 ClanMod (permission given to use ClanMod code from eqrulez/NeWaGe), 
 xMod by =X=Master HeX, 
