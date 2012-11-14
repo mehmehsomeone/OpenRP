@@ -1,0 +1,61 @@
+repeatDelay				300
+
+Emitter
+{
+	flags				expensivePhysics useModel useBBox usePhysics useAlpha emitFx
+
+	spawnFlags			orgOnSphere
+
+	count				7 6
+
+	life				2000 4000
+
+	bounce				0.3 0.4
+
+	min					-1 -1 -1
+
+	max					1 1 1
+
+	angle				0 0 0 360 360 360
+
+	angleDelta			-50 -50 -20 50 50 20
+
+	velocity			515 225 225 -225 -225 -225
+
+	gravity				-800 0
+
+	density				8
+
+	alpha
+	{
+		end				0
+		parm			90
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			2 0.8
+		flags			random
+	}
+
+	models
+	[
+		models/chunks/metal/metal1_1.md3
+		models/chunks/metal/metal1_2.md3
+		models/chunks/metal/metal1_3.md3
+		models/chunks/metal/metal1_4.md3
+		models/chunks/metal/metal2_1.md3
+		models/chunks/metal/metal2_2.md3
+		models/chunks/metal/metal2_3.md3
+		models/chunks/metal/metal2_4.md3
+		models/chunks/metal/wmetal1_1.md3
+		models/chunks/metal/wmetal1_2.md3
+		models/chunks/metal/wmetal1_3.md3
+	]
+
+	emitfx
+	[
+		emitter/electric_smoke_trail
+	]
+}

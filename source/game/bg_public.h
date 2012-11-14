@@ -20,14 +20,9 @@
 #define	GAME_VERSION		"basejka-1"
 
 //[ClientPlugInDetect]
-//This is the current keyword used to denote the current client plugin version.  
-//This value should be changed whenever something is changed that would make the new clients 
-//incompatible with previous versions of OpenRP.
 #define OPENRP_CLIENTVERSION		"Pre-alpha 6"
-//[/ClientPlugInDetect]
-//[OpenRP - Serverside build date]
 #define OPENRP_SERVERVERSION		"Pre-alpha Built: " __DATE__" "__TIME__
-//[/OpenRP - Serverside build date]
+//[/ClientPlugInDetect]
 
 #define	STEPSIZE		18
 
@@ -36,7 +31,7 @@
 #define ARMOR_PROTECTION		0.50 // Shields only stop 50% of armor-piercing dmg
 #define ARMOR_REDUCTION_FACTOR	0.50 // Certain damage doesn't take off armor as efficiently
 
-#define	JUMP_VELOCITY		225//270
+#define	JUMP_VELOCITY		320//was 320 -- 270
 
 #define	MAX_ITEMS			256
 
@@ -59,6 +54,99 @@
 #define	DEAD_VIEWHEIGHT		-16
 
 #define MAX_CLIENT_SCORE_SEND 20
+
+//[DodgeSys]
+//[/DodgeDefines]
+//percentage of Dodge points remaining of the full amount required for a Partial Dodge.
+#define DODGE_PARTIAL		.5
+
+//Default amount of Maximum dodge
+#define	DODGE_MAX			100
+
+//The Fatigue (Force) Points to Dodge Points Ratio
+#define	DODGE_FATIGUE		6
+
+//The minimum damage level at which dodge works
+#define DODGE_MINDAM		20
+
+//Velocity at which you hop away from continued damage
+#define DODGE_HOP			g_speed.value
+
+//Distance at which Dodge Saber Blocks occur
+#define	DODGE_SABDIST		200
+//[/DodgeDefines]
+//[/DodgeSys]
+
+//[FatigueSys]
+//[FatigueDefines]
+//Fatigue for backflips
+#define FATIGUE_BACKFLIP		-FATIGUE_JUMP + 3
+#define FATIGUE_BACKFLIP_ATARU		-FATIGUE_JUMP + 1
+//#define FATIGUE_WALLFLIP		-FATIGUE_JUMP + 3 something that isnt working right
+
+//Fatigue for jumps (This is the basic cost of a jump, force jumps cost points in addition to this)
+#define FATIGUE_JUMP			2
+
+//Fatigue for standard melee moves
+#define FATIGUE_MELEE			1
+
+//Fatigue for standard saber attacks
+#define FATIGUE_SABERATTACK		1
+
+//Fatigue Cost for saber transition moves (spins)
+#define FATIGUE_SABERTRANS		1
+
+//percentage of max fatigue at which point your player starts acting fatigued.
+#define FATIGUEDTHRESHHOLD		.1
+
+//the fatigue caused by getting hit by a kick.
+#define FATIGUE_KICKHIT			5
+
+//the fatigue for doing cartwheels.
+#define FATIGUE_CARTWHEEL		-FATIGUE_JUMP + 3
+#define FATIGUE_CARTWHEEL_ATARU -FATIGUE_JUMP + 1
+
+//FP cost of saber ground attacks
+#define FATIGUE_GROUNDATTACK	3	
+	
+//FP cost of saber jump attacks
+#define FATIGUE_JUMPATTACK		-FATIGUE_JUMP + 3
+//[/FatigueDefines]
+//[/FatigueSys]
+
+//[SaberSys]
+#define MISHAPLEVEL_MAX			15  //the max possible amount of MP.  This is currently dictated by network variable size limits.
+#define MISHAPLEVEL_FULL		14  //the point at which full mishaps occur on the balance bar.
+#define MISHAPLEVEL_HEAVY		8
+#define MISHAPLEVEL_LIGHT		5
+#define MISHAPLEVEL_NONE		0
+//[/SaberSys]
+
+//[WeaponSys]
+#define MISHAP_MAXINACCURACY	7  //maximum possible offset angle for weapon accuracy. 
+//[/WeaponSys]
+
+//[DodgeSys]
+//[DodgeDefines]
+//the level below which DP is critical (for the DP meterand desperation regen, etc)
+#define	DODGE_CRITICALLEVEL	   15
+//[/DodgeDefines]
+//[/DodgeSys]
+
+//[ExpSys]
+//[ExpDefines]
+//the current theory is that a player gets 1 SP per player they kill.  
+//The "average" player is assumed to have 100 DP and 100 HP
+#define SKILL_DP_PER_SKILL				200	//the number of DP damage a player has to cause before they get 1 skill point				
+#define SKILL_HP_PER_SKILL				200	//the number of HP damage a player has to cause before they get 1 skill point
+//[/ExpDefines]
+//[/ExpSys]
+
+//[Flamethrower]
+const int FLAMETHROWER_FUELCOST = 3;		//fuel cost of flamethrower per hit trace -- 1.3 was 3
+const float JETPACK_MAXFUEL = 100; //Original 66, issue 15 FIXME: 74 MAX possible?
+const int CLOAK_MAXFUEL = 100;
+//[/Flamethrower]
 
 //[BUGFIX12]
 //as part of this fix I'm giving some defines for the ghoul2 model indexes.
@@ -230,6 +318,7 @@ typedef int gametype_t;
 typedef enum { GENDER_MALE, GENDER_FEMALE, GENDER_NEUTER } gender_t;
 
 extern vec3_t WP_MuzzlePoint[WP_NUM_WEAPONS];
+extern vec3_t WP_MuzzlePoint2[WP_NUM_WEAPONS];//[DualPistols]
 
 #include "../namespace_begin.h"
 extern int forcePowerSorted[NUM_FORCE_POWERS];
@@ -307,91 +396,12 @@ typedef enum
 	NUM_FOOTSTEP_TYPES
 } footstepType_t;
 
-//[ANIMEVENTS]
-//moved all this to cg_players.c to make it cgame only (since it already was)
-/*
-extern stringID_table_t animEventTypeTable[MAX_ANIM_EVENTS+1];
-extern stringID_table_t footstepTypeTable[NUM_FOOTSTEP_TYPES+1];
-
-//size of Anim eventData array...
-#define MAX_RANDOM_ANIM_SOUNDS		4
-#define	AED_ARRAY_SIZE				(MAX_RANDOM_ANIM_SOUNDS+3)
-//indices for AEV_SOUND data
-#define	AED_SOUNDINDEX_START		0
-#define	AED_SOUNDINDEX_END			(MAX_RANDOM_ANIM_SOUNDS-1)
-#define	AED_SOUND_NUMRANDOMSNDS		(MAX_RANDOM_ANIM_SOUNDS)
-#define	AED_SOUND_PROBABILITY		(MAX_RANDOM_ANIM_SOUNDS+1)
-//indices for AEV_SOUNDCHAN data
-#define	AED_SOUNDCHANNEL			(MAX_RANDOM_ANIM_SOUNDS+2)
-//indices for AEV_FOOTSTEP data
-#define	AED_FOOTSTEP_TYPE			0
-#define	AED_FOOTSTEP_PROBABILITY	1
-//indices for AEV_EFFECT data
-#define	AED_EFFECTINDEX				0
-#define	AED_BOLTINDEX				1
-#define	AED_EFFECT_PROBABILITY		2
-#define	AED_MODELINDEX				3
-//indices for AEV_FIRE data
-#define	AED_FIRE_ALT				0
-#define	AED_FIRE_PROBABILITY		1
-//indices for AEV_MOVE data
-#define	AED_MOVE_FWD				0
-#define	AED_MOVE_RT					1
-#define	AED_MOVE_UP					2
-//indices for AEV_SABER_SWING data
-#define	AED_SABER_SWING_SABERNUM	0
-#define	AED_SABER_SWING_TYPE		1
-#define	AED_SABER_SWING_PROBABILITY	2
-//indices for AEV_SABER_SPIN data
-#define	AED_SABER_SPIN_SABERNUM		0
-#define	AED_SABER_SPIN_TYPE			1	//0 = saberspinoff, 1 = saberspin, 2-4 = saberspin1-saberspin3
-#define	AED_SABER_SPIN_PROBABILITY	2	
-
-typedef enum
-{//NOTENOTE:  Be sure to update animEventTypeTable and ParseAnimationEvtBlock(...) if you change this enum list!
-	AEV_NONE,
-	AEV_SOUND,		//# animID AEV_SOUND framenum soundpath randomlow randomhi chancetoplay
-	AEV_FOOTSTEP,	//# animID AEV_FOOTSTEP framenum footstepType chancetoplay
-	AEV_EFFECT,		//# animID AEV_EFFECT framenum effectpath boltName chancetoplay
-	AEV_FIRE,		//# animID AEV_FIRE framenum altfire chancetofire
-	AEV_MOVE,		//# animID AEV_MOVE framenum forwardpush rightpush uppush
-	AEV_SOUNDCHAN,  //# animID AEV_SOUNDCHAN framenum CHANNEL soundpath randomlow randomhi chancetoplay 
-	AEV_SABER_SWING,  //# animID AEV_SABER_SWING framenum CHANNEL randomlow randomhi chancetoplay 
-	AEV_SABER_SPIN,  //# animID AEV_SABER_SPIN framenum CHANNEL chancetoplay 
-	AEV_NUM_AEV
-} animEventType_t;
-
-typedef struct animevent_s 
-{
-	animEventType_t	eventType;
-	unsigned short	keyFrame;			//Frame to play event on
-	signed short	eventData[AED_ARRAY_SIZE];	//Unique IDs, can be soundIndex of sound file to play OR effect index or footstep type, etc.
-	char			*stringData;		//we allow storage of one string, temporarily (in case we have to look up an index later, then make sure to set stringData to NULL so we only do the look-up once)
-} animevent_t;
-*/
-//[/ANIMEVENTS]
-
 typedef struct
 {
 	char			filename[MAX_QPATH];
 	animation_t		*anims;
-//	animsounds_t	torsoAnimSnds[MAX_ANIM_SOUNDS];
-//	animsounds_t	legsAnimSnds[MAX_ANIM_SOUNDS];
-//	qboolean		soundsCached;
 } bgLoadedAnim_t;
 
-//[ANIMEVENTS]
-//moved all this to cg_players.c to make it cgame only (since it already was)
-/*
-typedef struct
-{
-	char			filename[MAX_QPATH];
-	animevent_t		torsoAnimEvents[MAX_ANIM_EVENTS];
-	animevent_t		legsAnimEvents[MAX_ANIM_EVENTS];
-	qboolean		eventsParsed;
-} bgLoadedEvents_t;
-*/
-//[/ANIMEVENTS]
 
 #include "../namespace_begin.h"
 
@@ -458,7 +468,22 @@ enum {
 extern char *forceMasteryLevels[NUM_FORCE_MASTERY_LEVELS];
 extern int forceMasteryPoints[NUM_FORCE_MASTERY_LEVELS];
 
-extern int bgForcePowerCost[NUM_FORCE_POWERS][NUM_FORCE_POWER_LEVELS];
+//[ExpSys]
+//more skills makes this thingy longer
+//moved from ai_main.h since we need now need it in other areas as well.
+#define DEFAULT_FORCEPOWERS		"5-1-000000000000000000000000000000000000000000000000000000000000000000"
+//[/ExpSys]
+
+//Made defines for saber offense/defense level 1 since UpdateForceUsed() manually changes this values based on if sabers are given for free or not.
+//[ExpSys]
+#define SABER_OFFENSE_L1	1  
+#define SABER_DEFENSE_L1	5
+//#define SABER_OFFENSE_L1	4  
+//#define SABER_DEFENSE_L1	4
+//[ExpSys]
+extern int bgForcePowerCost[NUM_TOTAL_SKILLS][NUM_FORCE_POWER_LEVELS];
+//extern int bgForcePowerCost[NUM_FORCE_POWERS][NUM_FORCE_POWER_LEVELS];
+//[/ExpSys]
 #include "../namespace_end.h"
 
 // pmove->pm_flags
@@ -477,6 +502,9 @@ extern int bgForcePowerCost[NUM_FORCE_POWERS][NUM_FORCE_POWER_LEVELS];
 #define PMF_FOLLOW			4096	// spectate following another player
 #define PMF_SCOREBOARD		8192	// spectate as a scoreboard
 #define PMF_STUCK_TO_WALL	16384	// grabbing a wall
+//[Grapple]
+#define PMF_GRAPPLE_PULL	32768   //Grapple
+//[/Grapple]
 
 #define	PMF_ALL_TIMES	(PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)
 
@@ -579,6 +607,13 @@ extern	pmove_t		*pm;
 								 //before end frame
 #define SETANIM_FLAG_RESTART	4//Allow restarting the anim if playing the same one (weapon fires)
 #define SETANIM_FLAG_HOLDLESS	8//Set the new timer
+//[AnimationSys]
+//new flag to be able to restart and override without overriding the same animation.
+//this is useful for situations where you want to have the animation timer pace
+//a repeating animation
+#define SETANIM_FLAG_PACE		16//acts like a SETANIM_FLAG_RESTART but only restarts if the 
+								  //animation is over.
+//[/AnimationSys]
 
 
 // if a full pmove isn't done on the client, you can just update the angles
@@ -603,7 +638,13 @@ typedef enum {
 	STAT_ARMOR,				
 	STAT_DEAD_YAW,					// look this direction when dead (FIXME: get rid of?)
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
-	STAT_MAX_HEALTH					// health / armor limit, changable by handicap
+	//[DodgeSys]
+	STAT_MAX_HEALTH,					// health / armor limit, changable by handicap
+	STAT_DODGE,			//number of Dodge Points the player has.  DP is used for evading/blocking attacks before they hurt you.
+	STAT_MAX_DODGE,		//maximum number of dodge points allowed.
+	//STAT_MAX_HEALTH					// health / armor limit, changable by handicap
+	//[/DodgeSys]
+	STAT_AMMOPOOL//[Reload]
 } statIndex_t;
 
 
@@ -666,8 +707,8 @@ typedef enum {
 
 #define	EF_TALK					(1<<13)		// draw a talk balloon
 #define	EF_CONNECTION			(1<<14)		// draw a connection trouble sprite
-#define	EF_NOT_USED_6			(1<<15)		// not used
-
+//#define	EF_NOT_USED_6			(1<<15)		// not used
+#define EF_WALK					(1<<15)
 //[CoOp]
 #define EF_ANIM_ONCE			(1<<16)		// cycle through all frames just once then stop
 //#define	EF_NOT_USED_2			(1<<16)		// not used
@@ -699,6 +740,8 @@ typedef enum {
 //#define EF_NOT_USED_5			(1<<31)		// not used
 //[/CoOp]
 
+#define	EF_DUAL_WEAPONS			(1<<31) //[DualPistols]
+
 //These new EF2_??? flags were added for NPCs, they really should not be used often.
 //NOTE: we only allow 10 of these!
 #define	EF2_HELD_BY_MONSTER		(1<<0)		// Being held by something, like a Rancor or a Wampa
@@ -710,7 +753,10 @@ typedef enum {
 #define	EF2_BRACKET_ENTITY		(1<<6)		// Draw as bracketed
 #define	EF2_SHIP_DEATH			(1<<7)		// "died in ship" mode
 #define	EF2_NOT_USED_1			(1<<8)		// not used
-
+#define EF2_BOWCASTERSCOPE		(1<<9)//[BowcasterScope]
+//[SPShield]
+#define EF2_PLAYERHIT			(1<<10)
+//[/SPShield]
 
 typedef enum {
 	EFFECT_NONE = 0,
@@ -764,7 +810,7 @@ enum {
 	//PW_DOUBLER, //rww - removed
 	//PW_AMMOREGEN, //rww - removed
 	PW_SPEEDBURST,
-	PW_DISINT_4,
+	PW_DISINT_4,	//racc - used to render the push/pull/grip glow effect on the players.
 	PW_SPEED,
 	PW_CLOAKED,
 	PW_FORCE_ENLIGHTENED_LIGHT,
@@ -798,6 +844,9 @@ enum {
 	HI_AMMODISP,
 	HI_EWEB,
 	HI_CLOAK,
+	//[Flamethrower]
+	HI_FLAMETHROWER,
+	//[/Flamethrower]
 
 	HI_NUM_HOLDABLE
 };
@@ -860,7 +909,11 @@ typedef enum {
 
 	EV_FALL,
 
-	EV_JUMP_PAD,			// boing sound at origin, jump sound on player
+	//[SaberLockSys]
+	//replaced EV_JUMP_PAD with EV_SABERLOCK
+	EV_SABERLOCK,				// Player is in saberlock (render sound/effects)
+	//EV_JUMP_PAD,			// boing sound at origin, jump sound on player
+	//[/SaberLockSys]
 
 	EV_GHOUL2_MARK,			//create a projectile impact mark on something with a client-side g2 instance.
 
@@ -917,7 +970,7 @@ typedef enum {
 	EV_USE_ITEM9,
 	EV_USE_ITEM10,
 	EV_USE_ITEM11,
-	EV_USE_ITEM12,
+	EV_USE_ITEM12,		//use flamethrower
 	EV_USE_ITEM13,
 	EV_USE_ITEM14,
 	EV_USE_ITEM15,
@@ -1092,9 +1145,19 @@ typedef enum {
 	//[Bolted effect]
 	EV_PLAY_EFFECT_BOLTED,	// new effect event that allows server to call effects bolted to ghoul2 ents
 	//[/Bolted effect]
-	
+	EV_CRYOBAN,
+	EV_CRYOBAN_EXPLODE,
+	EV_SMOKEGRENADE,
+	EV_EMPGRENADE,
+	EV_FLASHGRENADE,
+	EV_ROCKETNEEDCROUCH,
+	EV_NUMEVENTS
+
 } entity_event_t;			// There is a maximum of 256 events (8 bits transmission, 2 high bits for uniqueness)
 
+#if EV_NUMEVENTS > 256
+#error "Too many events!"
+#endif
 
 typedef enum {
 	GTS_RED_CAPTURE,
@@ -1202,6 +1265,9 @@ typedef enum {
 	MOD_COLLISION,
 	MOD_VEH_EXPLOSION,
 	//[/Asteroids]
+	//[SeekerItemNPC]
+	MOD_SEEKER,	//death by player's seeker droid.
+	//[/SeekerItemNPC]
 	//AURELIO: when/if you put this back in, remember to make a case for it in all the other places where
 	//mod's are checked. Also, it probably isn't the most elegant solution for what you want - just add
 	//a frag back to the player after you call the player_die (and keep a local of his pre-death score to
@@ -1320,6 +1386,9 @@ typedef enum {
 	ET_PUSH_TRIGGER,
 	ET_TELEPORT_TRIGGER,
 	ET_INVISIBLE,
+	//[Grapple]
+	ET_GRAPPLE,
+	ET_REALGRAPPLE,
 	ET_NPC,					// ghoul2 player-like entity
 	ET_TEAM,
 	ET_BODY,
@@ -1629,7 +1698,7 @@ typedef struct
 	int blocking;
 	saberMoveName_t chain_idle;			// What move to call if the attack button is not pressed at the end of this anim
 	saberMoveName_t chain_attack;		// What move to call if the attack button (and nothing else) is pressed
-	qboolean trailLength;
+	int trailLength;
 } saberMoveData_t;
 
 #include "../namespace_begin.h"
@@ -1716,6 +1785,10 @@ qboolean BG_InSaberStandAnim( int anim );
 qboolean BG_InReboundJump( int anim );
 qboolean BG_InReboundHold( int anim );
 qboolean BG_InReboundRelease( int anim );
+//[LedgeGrab]
+qboolean BG_InLedgeMove( int anim );
+qboolean In_LedgeIdle( int anim );
+//[/LedgeGrab]
 qboolean BG_InBackFlip( int anim );
 qboolean BG_DirectFlippingAnim( int anim );
 qboolean BG_SaberInAttack( int move );
@@ -1728,6 +1801,11 @@ qboolean BG_SaberInSpecialAttack( int anim );
 qboolean BG_SaberInKata( int saberMove );
 qboolean BG_InKataAnim(int anim);
 qboolean BG_KickingAnim( int anim );
+
+//[Melee]
+qboolean BG_PunchAnim( int anim );
+//[/Melee]
+
 int BG_InGrappleMove(int anim);
 int BG_BrokenParryForAttack( int move );
 int BG_BrokenParryForParry( int move );
@@ -1737,7 +1815,15 @@ qboolean BG_InDeathAnim( int anim );
 qboolean BG_InSaberLockOld( int anim );
 qboolean BG_InSaberLock( int anim );
 
-void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken );
+//[SaberSys]
+qboolean BG_InWalk( int anim );
+//[/SaberSys]
+//[FatigueSys]
+//Made it so saber moves go slower if your fatigued
+void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, 
+							int broken, int fatigued );
+//void BG_SaberStartTransAnim( int clientNum, int saberAnimLevel, int weapon, int anim, float *animSpeed, int broken );
+//[/FatigueSys]
 
 void BG_ForcePowerDrain( playerState_t *ps, forcePowers_t forcePower, int overrideAmt );
 
@@ -1783,6 +1869,14 @@ qboolean BG_OutOfMemory ( void );
 //[ExpandedMOTD]
 qboolean BG_IsWhiteSpace(char c);
 //[/ExpandedMOTD]
+//[LastManStanding]
+qboolean BG_IsLMSGametype(int gametype);
+//[/LastManStanding]
+//[ForceSys]
+qboolean BG_IsUsingMediumWeap (playerState_t *ps);
+qboolean BG_IsUsingHeavyWeap (playerState_t *ps);
+//[/ForceSys]
+
 
 void BG_BLADE_ActivateTrail ( bladeInfo_t *blade, float duration );
 void BG_BLADE_DeactivateTrail ( bladeInfo_t *blade, float duration );
@@ -1805,9 +1899,22 @@ extern void BG_AttachToSandCreature( void *ghoul2, float rancYaw, vec3_t rancOri
 extern int WeaponReadyAnim[WP_NUM_WEAPONS];
 extern int WeaponAttackAnim[WP_NUM_WEAPONS];
 
+//[DualPistols]
+extern int WeaponReadyAnim2[WP_NUM_WEAPONS];
+extern int WeaponAttackAnim2[WP_NUM_WEAPONS];
+//[/DualPistols]
+
 extern int forcePowerDarkLight[NUM_FORCE_POWERS];
 
 #include "../namespace_end.h"
+
+//[KnockdownSys]
+//this is the default minimum time for a level 0 player to wait before they can attempt to get up.
+//I'm not sure what this is supposed to be in SP since I don't have the define for this.
+//note that this is in terms of the legsTimer so the higher this value, the faster the
+//player can attempt to get up.
+#define PLAYER_KNOCKDOWN_HOLD_EXTRA_TIME	0
+//[/KnockdownSys]
 
 #define ARENAS_PER_TIER		4
 #define MAX_ARENAS			1024

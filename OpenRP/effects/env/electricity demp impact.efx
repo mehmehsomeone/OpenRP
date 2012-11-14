@@ -1,0 +1,51 @@
+repeatDelay				300
+
+Electricity
+{
+	flags				useModel useBBox usePhysics
+
+	count				10 6
+
+	life				250 350
+
+	bounce				3 8
+
+	origin2				50 50 50 -50 -50 -50
+
+	size
+	{
+		start			4 7
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/blueLine
+	]
+}
+
+OrientedParticle
+{
+	spawnFlags			rgbComponentInterpolation
+
+	count				3 4
+
+	life				500 300
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0 0 1
+		end				0 0 1
+		flags			linear
+	}
+
+	size
+	{
+		start			3
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

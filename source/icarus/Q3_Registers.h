@@ -9,7 +9,7 @@ enum
 	VTYPE_VECTOR,
 };
 
-#ifdef __cplusplus
+#ifdef __cplusplusp
 
 #define	MAX_VARIABLES	32
 

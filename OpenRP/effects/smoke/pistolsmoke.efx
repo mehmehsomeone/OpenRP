@@ -1,0 +1,112 @@
+repeatDelay				300
+
+Particle
+{
+	name				blackwhite
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				7
+
+	life				700 600
+
+	delay				160 100
+
+	radius				3
+
+	height				2
+
+	rotation			0 80
+
+	rotationDelta		-10 10
+
+	velocity			19 18 19 0 -17 -18
+
+	gravity				-25 0
+
+	rgb
+	{
+		start			0 0 0
+		end				0 0 0 0.4863 0.4863 0.4863
+		parm			1
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0.11 0.1
+		parm			40 50
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			0.2
+		end				6
+		parm			4
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				white
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				14 11
+
+	life				600
+
+	delay				160 100
+
+	radius				3
+
+	height				3
+
+	rotation			0 80
+
+	rotationDelta		-10 10
+
+	acceleration		18 18 19 0 -17 -18
+
+	gravity				-25 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		parm			1
+	}
+
+	alpha
+	{
+		start			0.1 0.2
+		end				0
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			0.2
+		end				6
+		parm			4
+		flags			clamp
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke02
+	]
+}

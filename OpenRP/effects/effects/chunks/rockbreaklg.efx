@@ -1,0 +1,107 @@
+Particle
+{
+	name				OrangeGlow
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				0.3 1
+
+	life				700 1600
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			0 -5 -5 0 5 5
+
+	gravity				-10 10
+
+	rgb
+	{
+		start			0.9176 0.9098 0.7765 0.9294 0.8863 0.8039
+	}
+
+	alpha
+	{
+		start			0.8 1
+		end				0
+		parm			70 80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			10 16
+		end				30 35
+		parm			20 50
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}
+
+Particle
+{
+	name				Dust
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				900 1400
+
+	origin				-15 -15 -15 15 15 15
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			0 0 0 10 0 0
+
+	acceleration		-5 -5 -5 5 5 5
+
+	gravity				-10 -50
+
+	rgb
+	{
+		start			0.9176 0.9098 0.7765 0.9294 0.8863 0.8039
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 70
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			6 12
+		end				20 25
+		parm			50 70
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/misc/dotfill_a
+	]
+}
+
+CameraShake
+{
+	name				Shake
+
+	flags				usePhysics
+
+	life				100 200
+
+	bounce				2 4
+
+	radius				200 300
+}

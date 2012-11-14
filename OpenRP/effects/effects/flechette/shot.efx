@@ -1,0 +1,99 @@
+repeatDelay				350
+
+Line
+{
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				25
+
+	delay				1 0
+
+	origin				35 0 0
+
+	origin2				-20 0 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.9529 0.6588 0.04706
+		end				1 0 0
+		parm			1
+		flags			wave
+	}
+
+	alpha
+	{
+		end				0.6 0.9
+		parm			50 65
+		flags			linear wave
+	}
+
+	size
+	{
+		start			3
+	}
+
+	shaders
+	[
+		gfx/effects/blaster_blob
+	]
+}
+
+Line
+{
+	spawnFlags			rgbComponentInterpolation
+
+	life				25
+
+	origin				35 0 0
+
+	origin2				-20 0 0
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843 1 0 0
+		end				0.9529 0.6588 0.04706
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0.8 0.7
+		flags			linear
+	}
+
+	size
+	{
+		start			4
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	life				5
+
+	origin				35 0 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear
+	}
+
+	size
+	{
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/blaster_blob
+	]
+}

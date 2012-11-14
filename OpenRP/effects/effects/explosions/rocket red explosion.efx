@@ -1,0 +1,155 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				25
+
+	life				500
+
+	delay				0 300
+
+	radius				75
+
+	height				50
+
+	acceleration		250 250 235 -250 -450 -400
+
+	gravity				625 -10
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.9922 0.1098 0.007843
+		end				0.9529 0.6588 0.04706
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			33 25
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				Domus
+
+	flags				useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				45
+
+	life				500 600
+
+	delay				0 300
+
+	radius				75
+
+	height				100 10
+
+	acceleration		250 250 235 -250 -450 -400
+
+	gravity				500 -10
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 0.502 0
+		end				1 0.502 0 0.9922 0.1098 0.007843
+		parm			15
+		flags			random wave
+	}
+
+	alpha
+	{
+		start			0.1
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			600 500
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/csparks
+	]
+}
+
+Particle
+{
+	name				Texture
+
+	flags				useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				25
+
+	life				400
+
+	delay				0 300
+
+	radius				45 50
+
+	gravity				100 -10
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear wave
+	}
+
+	alpha
+	{
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			250 340
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/exp02_3
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		explosions/rocketnuke
+	]
+}

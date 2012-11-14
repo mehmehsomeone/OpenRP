@@ -111,7 +111,7 @@ enum
 	NUM_MESSAGES,
 };
 
-#ifdef __cplusplus
+#ifdef __cplusplusp
 typedef struct variable_s
 {
 	char	name[MAX_VAR_NAME];

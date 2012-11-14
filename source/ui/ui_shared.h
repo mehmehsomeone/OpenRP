@@ -7,9 +7,8 @@
 #include "keycodes.h"
 
 //[SVN]
-//[OpenRP]
+//rearraigned repository to make it easier to initially compile.
 #include "../../OpenRP/ui/jamp/menudef.h"
-//[/OpenRP]
 //#include "../../ui/menudef.h"
 //[/SVN]
 
@@ -59,22 +58,10 @@
 #define CURSOR_ARROW				0x00000002
 #define CURSOR_SIZER				0x00000004
 
-#ifdef _XBOX
-
-#ifdef CGAME
-#define STRING_POOL_SIZE 32*1024
-#else
-#define STRING_POOL_SIZE 128*1024
-#endif
-
-#else
-
 #ifdef CGAME
 #define STRING_POOL_SIZE 128*1024
 #else
 #define STRING_POOL_SIZE 384*1024
-#endif
-
 #endif
 
 #define MAX_STRING_HANDLES 4096
@@ -626,6 +613,21 @@ qboolean	trap_G2API_IKMove(void *ghoul2, int time, sharedIKMoveParams_t *params)
 void		trap_G2API_GetSurfaceName(void *ghoul2, int surfNumber, int modelIndex, char *fillBuf);
 
 #include "../namespace_end.h"
+
+//[NewUI]
+typedef struct
+{
+	int		numRanks;
+	int		uiForceRankID;
+	int		skillNum;
+	int		forceSide;
+	qboolean disabled;
+	int		uiForcePowersRank;
+} uiRank_t;
+
+extern uiRank_t uiRank[NUM_TOTAL_SKILLS];
+qboolean IsForceRank(int rank);
+//[/NewUI]
 
 /*
 Ghoul2 Insert End

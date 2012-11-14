@@ -1,0 +1,26 @@
+repeatDelay				300
+
+Light
+{
+	life				40
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			300
+	}
+}
+
+FxRunner
+{
+	count				0 0.6
+
+	playfx
+	[
+		env/beam_bolts
+	]
+}

@@ -1,0 +1,384 @@
+repeatDelay				449
+
+OrientedParticle
+{
+	name				Particle 1
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				1600
+
+	delay				0 1600
+
+	origin				0 0 64
+
+	rotation			90
+
+	velocity			0 0 32 0 0 48
+
+	rgb
+	{
+		start			0.5961 0.451 0.1804
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			32 48
+		end				100
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/wcloud.tga
+	]
+}
+
+OrientedParticle
+{
+	name				Particle2
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				1600
+
+	delay				0 1600
+
+	origin				0 0 -64
+
+	rotation			90
+
+	velocity			0 0 -32 0 0 -48
+
+	rgb
+	{
+		start			0.5961 0.451 0.1804
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			32
+		end				80
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/wcloud.tga
+	]
+}
+
+OrientedParticle
+{
+	name				Particle3
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				1600
+
+	delay				0 1600
+
+	origin				0 -64 0
+
+	rotation			90
+
+	velocity			0 -32 0 0 -48 0
+
+	rgb
+	{
+		start			0.5961 0.451 0.1804
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			32
+		end				80
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/wcloud.tga
+	]
+}
+
+OrientedParticle
+{
+	name				Particle4
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				1600
+
+	delay				0 1600
+
+	origin				0 64 0
+
+	rotation			90
+
+	velocity			0 32 0 0 48 0
+
+	rgb
+	{
+		start			0.5961 0.451 0.1804
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			32
+		end				80
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/wcloud.tga
+	]
+}
+
+OrientedParticle
+{
+	name				Particle5
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				1600
+
+	delay				0 1600
+
+	origin				0 40 40
+
+	rotation			90
+
+	velocity			0 24 24 0 30 30
+
+	rgb
+	{
+		start			0.5961 0.451 0.1804
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			32
+		end				80
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/wcloud.tga
+	]
+}
+
+OrientedParticle
+{
+	name				Particle6
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				1600
+
+	delay				0 1600
+
+	origin				0 -40 -40
+
+	rotation			90
+
+	velocity			0 -24 -24 0 -30 -30
+
+	rgb
+	{
+		start			0.5961 0.451 0.1804
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			32
+		end				128
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/wcloud.tga
+	]
+}
+
+OrientedParticle
+{
+	name				Particle7
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				1600
+
+	delay				0 1600
+
+	origin				0 40 -40
+
+	rotation			90
+
+	velocity			0 24 -24 0 30 -30
+
+	rgb
+	{
+		start			0.5961 0.451 0.1804
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			32
+		end				80
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/wcloud.tga
+	]
+}
+
+OrientedParticle
+{
+	name				Particle8
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				1600
+
+	delay				0 1600
+
+	origin				0 -40 40
+
+	rotation			90
+
+	velocity			0 -24 24 0 -30 30
+
+	rgb
+	{
+		start			0.5961 0.451 0.1804
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			32
+		end				104
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/wcloud.tga
+	]
+}
+
+OrientedParticle
+{
+	name				Particle 0
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				1600
+
+	delay				0 1600
+
+	rotation			90
+
+	rgb
+	{
+		start			0.5961 0.451 0.1804
+	}
+
+	alpha
+	{
+		start			0.3 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			50
+		end				100
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/wcloud.tga
+	]
+}

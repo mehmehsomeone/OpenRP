@@ -1,0 +1,217 @@
+repeatDelay				142
+
+Light
+{
+	name				flash1
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				75
+
+	rgb
+	{
+		start			0.7569 0.7569 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				90
+		flags			linear
+	}
+}
+
+Light
+{
+	name				flash2
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				125
+
+	delay				100 150
+
+	rgb
+	{
+		start			0.9098 0.9098 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				50
+		flags			linear
+	}
+}
+
+Electricity
+{
+	name				lightnings
+
+	flags				useModel useBBox usePhysics
+
+	count				6 8
+
+	life				300 500
+
+	bounce				3
+
+	origin				0 0 -8
+
+	origin2				50 50 50 200 200 200
+
+	rgb
+	{
+		start			0.9098 0.9098 1 0.9608 0.9608 0.9608
+	}
+
+	size
+	{
+		start			3
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/blueLine
+	]
+}
+
+Sound
+{
+	name				sound
+
+	sounds
+	[
+		sound/fearis/sof2_sparks1.mp3
+	]
+}
+
+Light
+{
+	name				flash2
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				75
+
+	delay				600 700
+
+	rgb
+	{
+		start			0.7569 0.7569 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				90
+		flags			linear
+	}
+}
+
+Electricity
+{
+	name				lightnings2
+
+	flags				useModel useBBox usePhysics
+
+	count				2 3
+
+	life				300 400
+
+	delay				600 700
+
+	bounce				3
+
+	origin				0 0 -8
+
+	origin2				50 50 50 200 200 200
+
+	rgb
+	{
+		start			0.9098 0.9098 1 0.9608 0.9608 0.9608
+	}
+
+	size
+	{
+		start			3
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/blueLine
+	]
+}
+
+Light
+{
+	name				flash3
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				75
+
+	delay				900 1100
+
+	rgb
+	{
+		start			0.7569 0.7569 1 1 1 1
+	}
+
+	size
+	{
+		start			125
+		end				90
+		flags			linear
+	}
+}
+
+Electricity
+{
+	name				lightnings3
+
+	flags				useModel useBBox usePhysics
+
+	count				1 2
+
+	life				300 350
+
+	delay				1000 1100
+
+	bounce				3
+
+	origin				0 0 -8
+
+	origin2				60 60 60 200 200 200
+
+	rgb
+	{
+		start			0.9098 0.9098 1 0.9608 0.9608 0.9608
+	}
+
+	size
+	{
+		start			3
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/blueLine
+	]
+}
+
+Sound
+{
+	name				sound2
+
+	delay				700 800
+
+	sounds
+	[
+		g:/base/sound/fearis/sof2_sparks1.mp3
+		g:/base/sound/fearis/sof2_sparks3.mp3
+	]
+}

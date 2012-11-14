@@ -1730,6 +1730,20 @@ typedef enum //# animNumber_e
 	//New anim as per Jarrod's request
 	LEGS_TURN180,
 
+	//[LedgeGrab]
+	BOTH_LEDGE_GRAB, //grabbing ledge animation
+	BOTH_LEDGE_HOLD, //Idle ledge hold frame
+	BOTH_LEDGE_LEFT, //Ledge shimmy left
+	BOTH_LEDGE_RIGHT, //Ledge shimmy right
+	BOTH_LEDGE_MERCPULL, //Ledge merc pull up
+	//[/LedgeGrab]
+
+	//[SaberSys]
+	//dedicated stance animations for the hidden styles
+	BOTH_SABERTAVION_STANCE,
+	BOTH_SABERDESANN_STANCE,
+	//[/SaberSys]
+
 	//======================================================
 	//cinematic anims
 	//======================================================
@@ -1784,7 +1798,11 @@ typedef enum //# animNumber_e
 	BOTH_CIN_48,		//# Level specific cinematic 
 	BOTH_CIN_49,		//# Level specific cinematic 
 	BOTH_CIN_50,		//# Level specific cinematic
-
+	BOTH_P1_S1_B_,		//[backblock]
+	BOTH_P6_S1_B_,		//[backblock]
+	BOTH_P7_S1_B_,		//[backblock]
+	BOTH_SWEEPKICK,
+	BOTH_SWEEPKICKED,
 	//# #eol
 	MAX_ANIMATIONS,
 	MAX_TOTALANIMATIONS,

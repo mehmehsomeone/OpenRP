@@ -1,0 +1,53 @@
+repeatDelay				300
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel evenDistribution rgbComponentInterpolation
+
+	count				7 6
+
+	life				500
+
+	delay				0 300
+
+	radius				4 5
+
+	height				4 8
+
+	acceleration		225 30 23 -30 -40 -35
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.9529 0.6588 0.04706
+		end				1 0 0 1 0.502 0
+		parm			1
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.6 0.4
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				12 20
+		parm			1
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}

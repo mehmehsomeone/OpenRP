@@ -1,0 +1,289 @@
+repeatDelay				250
+
+Tail
+{
+	name				sparks
+
+	count				5
+
+	life				700 1100
+
+	intensity			0.25 0.4
+
+	velocity			120 -120 -120 250 120 120
+
+	gravity				-450 -550
+
+	size
+	{
+		start			0.3 0.45
+	}
+
+	length
+	{
+		start			4 10
+		end				0.1 1
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	count				8
+
+	life				600 900
+
+	intensity			0.25 0.4
+
+	velocity			100 -115 -115 200 115 115
+
+	gravity				-450 -550
+
+	size
+	{
+		start			0.4 0.5
+		end				0
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				13 10
+
+	life				1000 1800
+
+	rotation			-180 180
+
+	rotationDelta		-6 6
+
+	velocity			10 -4 -5 8 5 3
+
+	gravity				2 20
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		start			0.7 0.4
+		end				0.1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 6
+		end				4 7
+		parm			1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke
+	]
+}
+
+OrientedParticle
+{
+	spawnFlags			rgbComponentInterpolation
+
+	count				4
+
+	life				700 1400
+
+	rgb
+	{
+		start			1 0 0
+		end				1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.2
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1.8 2.4
+	}
+
+	shaders
+	[
+		gfx/effects/meltMark
+		gfx/effects/whiteflare
+	]
+}
+
+Decal
+{
+	size
+	{
+		start			6.5 8.5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/bryar/hit_wall.wav
+	]
+}
+
+OrientedParticle
+{
+	name				glow
+
+	count				4
+
+	life				700 1400
+
+	delay				55
+
+	rgb
+	{
+		start			1 0 0
+		end				0.9922 0.1098 0.007843
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			2 3
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Line
+{
+	name				glowmarkplasma
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				5 4
+
+	life				300
+
+	origin				-3 0 0 0 0 0
+
+	origin2				4 0 0 0 0 0
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843 0.9922 0.6157 0.5098
+	}
+
+	alpha
+	{
+		start			0.8 0.9
+		end				0.1 0.2
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			3
+		end				5 3
+		parm			61 115
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+		gfx/misc/exp01_1
+	]
+}
+
+Line
+{
+	name				tailexplosion
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				5 4
+
+	life				300
+
+	origin				-3 0 0 0 0 0
+
+	origin2				5 0 0 0 0 0
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843 0.9922 0.6157 0.5098
+	}
+
+	alpha
+	{
+		start			0.8 0.9
+		end				0.1 0.2
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			9
+		end				17 16
+		parm			2
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/embers
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		bryar/wall_impact
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		smoke/hitexplodesmoke
+	]
+}

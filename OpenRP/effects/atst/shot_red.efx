@@ -1,0 +1,56 @@
+repeatDelay				50
+
+Line
+{
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	origin				100 0 0
+
+	origin2				-20 0 0
+
+	rgb
+	{
+		start			1 0 0 1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		start			0.8 0.9
+	}
+
+	size
+	{
+		start			4
+	}
+
+	shaders
+	[
+		gfx/effects/blaster_blob
+	]
+}
+
+Line
+{
+	spawnFlags			org2isOffset rgbComponentInterpolation
+
+	origin				120 0 0
+
+	origin2				-20 0 0
+
+	rgb
+	{
+		start			1 0.3686 0.1843
+	}
+
+	size
+	{
+		start			8
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

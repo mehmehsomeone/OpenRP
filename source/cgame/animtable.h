@@ -3,9 +3,6 @@
 // moved it from the original header file for PCH reasons...
 //
 
-#if defined(_XBOX) && !defined(_JK2EXE) && !defined(_UI)	// Linker only wants one copy
-extern stringID_table_t animTable[MAX_ANIMATIONS+1];
-#else
 stringID_table_t animTable [MAX_ANIMATIONS+1] =
 {
 	//=================================================
@@ -1730,6 +1727,21 @@ stringID_table_t animTable [MAX_ANIMATIONS+1] =
 	//New anim as per Jarrod's request
 	ENUM2STRING(LEGS_TURN180),
 
+		//[LedgeGrab]
+	ENUM2STRING(BOTH_LEDGE_GRAB), //grabbing ledge
+	ENUM2STRING(BOTH_LEDGE_HOLD), //Idle ledge hold frame
+	ENUM2STRING(BOTH_LEDGE_LEFT), //Ledge shimmy left
+	ENUM2STRING(BOTH_LEDGE_RIGHT), //Ledge shimmy right
+	ENUM2STRING(BOTH_LEDGE_MERCPULL), //Ledge merc pull up
+	//[/LedgeGrab]
+
+	//[SaberSys]
+	//dedicated stance animations for the hidden styles
+	ENUM2STRING(BOTH_SABERTAVION_STANCE),
+	ENUM2STRING(BOTH_SABERDESANN_STANCE),
+	//[/SaberSys]
+	
+
 	//======================================================
 	//cinematic anims
 	//======================================================
@@ -1785,8 +1797,11 @@ stringID_table_t animTable [MAX_ANIMATIONS+1] =
 	ENUM2STRING(BOTH_CIN_48),		//# Level specific cinematic
 	ENUM2STRING(BOTH_CIN_49),		//# Level specific cinematic
 	ENUM2STRING(BOTH_CIN_50),		//# Level specific cinematic
-										
+	ENUM2STRING(BOTH_P1_S1_B_),		//[backblock]
+	ENUM2STRING(BOTH_P6_S1_B_),		//[backblock]
+	ENUM2STRING(BOTH_P7_S1_B_),		//[backblock]	
+	ENUM2STRING(BOTH_SWEEPKICK),
+	ENUM2STRING(BOTH_SWEEPKICKED),
 	//must be terminated
 	NULL,-1
 };
-#endif	// _XBOX / _UI

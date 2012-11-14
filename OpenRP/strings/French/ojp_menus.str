@@ -13,6 +13,216 @@ VERSION             "1"
 CONFIG              "W:\bin\stringed.cfg"
 FILENOTES           "OJP menu strings"
 
+//[ExpSys]
+REFERENCE	    STARTINGSKILLPOINTS
+LANG_ENGLISH	    "Initial Skill Points:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    MAXSKILLPOINTS
+LANG_ENGLISH	    "Maximum Skill Points:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL
+LANG_ENGLISH	    "Skill"
+LANG_FRENCH		"#same"
+
+REFERENCE	    NOTFORCESENSITIVE
+LANG_ENGLISH	    "No Force Powers"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_NOTFORCESENSITIVE
+LANG_ENGLISH	    "Must acquire a minimum rank of 1 in Force Seeing to use other Force Powers."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_JETPACK
+LANG_ENGLISH	    "Jetpack:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_JETPACK
+LANG_ENGLISH	"Gains the user a jetpack.  Additional points give the pack additional fuel."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_PISTOL
+LANG_ENGLISH	    "Pistol:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_PISTOL
+LANG_ENGLISH	"Gains the user a blaster pistol."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_BLASTER
+LANG_ENGLISH	    "Blaster:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_BLASTER
+LANG_ENGLISH	"Gains the user a blaster rifle."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_THERMALS
+LANG_ENGLISH	    "Thermals:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_THERMALS
+LANG_ENGLISH	"Gains the user thermals."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_ROCKET
+LANG_ENGLISH	    "Rocket Launcher:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_ROCKET
+LANG_ENGLISH	"Gains the user a Rocket Launcher."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_BACTA
+LANG_ENGLISH	    "Bacta:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_BACTA
+LANG_ENGLISH	"Gains the user a emergency medical bacta pack.  Additional points makes the pack larger."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_FLAMETHROWER
+LANG_ENGLISH	    "Flamethrower:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_FLAMETHROWER
+LANG_ENGLISH	"Gains the user a Flamethrower."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_BOWCASTER
+LANG_ENGLISH	    "Bowcaster:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_BOWCASTER
+LANG_ENGLISH	"Gains the user a Bowcaster."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_FORCEFIELD
+LANG_ENGLISH	    "Force Field:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_FORCEFIELD
+LANG_ENGLISH	"Gains the user a portable ray shield."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_CLOAK
+LANG_ENGLISH	    "Cloaking Device:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_CLOAK
+LANG_ENGLISH	"Gains the user a cloaking device."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_SEEKER
+LANG_ENGLISH	    "Seeker Droid:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_SEEKER
+LANG_ENGLISH	"Gains the user a seeker droid."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_SENTRY
+LANG_ENGLISH	    "Sentry Gun:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_SENTRY
+LANG_ENGLISH	"Gains the user a sentry gun."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_DETPACK
+LANG_ENGLISH	    "Detpack:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_DETPACK
+LANG_ENGLISH	"Gains the user detpacks."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_REPEATER
+LANG_ENGLISH	"Clone Rifle:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_REPEATER
+LANG_ENGLISH	"Gains the user the Clone Rifle."
+LANG_FRENCH		"#same"
+
+REFERENCE	    SKILL_DISRUPTOR
+LANG_ENGLISH	"Disruptor:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_DISRUPTOR
+LANG_ENGLISH	"Gains the user the Disruptor."
+LANG_FRENCH		"#same"
+
+//[StanceSelection]
+REFERENCE	REQUIRES_BLUESTYLE
+LANG_ENGLISH	"(requires Shii-Cho 1)"
+LANG_FRENCH		"#same"
+
+REFERENCE	SKILL_BLUESTYLE
+LANG_ENGLISH	"Soresu:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_BLUESTYLE
+LANG_ENGLISH	"Gains the user the Soresu style of lightsaber combat."
+LANG_FRENCH		"#same"
+
+REFERENCE	SKILL_YELLOWSTYLE
+LANG_ENGLISH	"Shii-Cho:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_YELLOWSTYLE
+LANG_ENGLISH	"Gains the user a lightsaber and levels in the Shii-Cho style of lightsaber combat."
+LANG_FRENCH		"#same"
+
+REFERENCE	SKILL_REDSTYLE
+LANG_ENGLISH	"Djem So:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_REDSTYLE
+LANG_ENGLISH	"Gains the user the Djem So style of lightsaber combat."
+LANG_FRENCH		"#same"
+
+REFERENCE	SKILL_GREENSTYLE
+LANG_ENGLISH	"Makashi:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_GREENSTYLE
+LANG_ENGLISH	"Gains the user the Makashi style of lightsaber combat."
+LANG_FRENCH		"#same"
+
+REFERENCE	SKILL_PURPLESTYLE
+LANG_ENGLISH	"Juyo:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_PURPLESTYLE
+LANG_ENGLISH	"Gains the user the Juyo style of lightsaber combat."
+LANG_FRENCH		"#same"
+
+REFERENCE	SKILL_DUALSTYLE
+LANG_ENGLISH	"Dual Style:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_DUALSTYLE
+LANG_ENGLISH	"Gains the user the ability to use dual lightsabers."
+LANG_FRENCH		"#same"
+
+REFERENCE	SKILL_STAFFSTYLE
+LANG_ENGLISH	"Staff Style:"
+LANG_FRENCH		"#same"
+
+REFERENCE	    DESC_SKILL_STAFFSTYLE
+LANG_ENGLISH	"Gains the user the ability to use the staff lightsaber."
+LANG_FRENCH		"#same"
+//[/StanceSelection]
+//[/ExpSys]
+
+//[Flamethrower]
+REFERENCE	    ITEM_FLAMETHROWER
+LANG_ENGLISH	    "Flamethrower"
+LANG_FRENCH		"#same"
+//[/Flamethrower]
+
 //[OLDGAMETYPES]
 REFERENCE           JEDIMASTER
 LANG_ENGLISH        "Jedi Master"
@@ -37,10 +247,18 @@ LANG_FRENCH	    "#same"
 //[/HSABERS]
 
 //[SERVERFILTERS]
-REFERENCE	    OPENRP
-LANG_ENGLISH        "OpenRP"
-LANG_FRENCH	    "#same"
+//REFERENCE	    OJP_BASIC
+//LANG_ENGLISH        "OJP Basic"
 
+//REFERENCE	    OJP_ENHANCED
+//LANG_ENGLISH        "OJP Enhanced"
+
+//REFERENCE 		OJP_JKE
+//LANG_ENGLISH		"JKE(LegacyOJP)"
+
+REFERENCE			OPENRP
+LANG_ENGLISH		"OpenRP"
+LANG_FRENCH			"#same"
 //[/SERVERFILTERS]
 
 //[CoOp]
@@ -215,7 +433,7 @@ LANG_ENGLISH	    "Display Holstered Weapons:"
 LANG_FRENCH	    "#same"
 
 REFERENCE	    HOLSTEREDWEAPONS_DESC
-LANG_ENGLISH	    "Displays weaponry on players' models"
+LANG_ENGLISH	    "Displays weaponry on players' models."
 LANG_FRENCH	    "#same"
 
 REFERENCE	    HOLSTEREDWEAPONSPLAYER
@@ -228,12 +446,20 @@ LANG_FRENCH	    "#same"
 //[/VisualWeapons]
 
 //[RGBSabers]
+REFERENCE	    SFXSABERS
+LANG_ENGLISH	    "SFX Sabers:"
+LANG_FRENCH	    "#same"
+
+REFERENCE	    SFXSABERS_DESC
+LANG_ENGLISH	    "Toggle whether to use the SFX Saber effects."
+LANG_FRENCH	    "#same"
+
 REFERENCE	    TEAMRGBSABERS
 LANG_ENGLISH	    "Team RGB Sabers:"
 LANG_FRENCH	    "#same"
 
 REFERENCE	    TEAMRGBSABERS_DESC
-LANG_ENGLISH	    "Displays custom colored sabers in team games"
+LANG_ENGLISH	    "Displays custom colored sabers in team games."
 LANG_FRENCH	    "#same"
 
 REFERENCE	    TEAMRGBSABERSPLAYER
@@ -356,6 +582,34 @@ REFERENCE	    ENEMYTEAM
 LANG_ENGLISH	    "Enemies"
 LANG_FRENCH	    "#same"
 //[/CoOp]
+
+//Control Menu
+
+REFERENCE	    THERMAL_DETONATOR_THROW
+LANG_ENGLISH	"Thermal Detonator Autothrow:"
+LANG_FRENCH	    "#same"
+
+REFERENCE       THERMAL_DETONATOR_THROW_AVAILABLE
+LANG_ENGLISH	"Automatically Throws available Thermal Detonator without being selected in inventory"
+LANG_FRENCH	    "#same"
+
+REFERENCE	   QUICK_PARRY_HOLDBUTTON
+LANG_ENGLISH	"QuickParry/KickBlock Button"
+LANG_FRENCH	    "#same"
+
+
+REFERENCE	   ALLOWS_FOR_QUICK_PARRY
+LANG_ENGLISH	"Holding this allows parrying that doesn't stall enemy saberists or block enemy kicks"
+LANG_FRENCH	    "#same"
+
+REFERENCE		RELOAD
+LANG_ENGLISH	"Reload Button:"
+LANG_FRENCH	    "#same"
+
+REFERENCE	   	USESRELOAD
+LANG_ENGLISH	"Reloads weapon. Cancels reload if you tap it again."
+LANG_FRENCH	    "#same"
+
 
 ENDMARKER
 

@@ -1,0 +1,119 @@
+repeatDelay				300
+
+Line
+{
+	count				1 2
+
+	life				30
+
+	origin2				34 0 0 50 0 0
+
+	alpha
+	{
+		start			0.6 0.8
+		end				0.35
+		flags			linear
+	}
+
+	size
+	{
+		start			15 25
+		end				8
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/bryarSideFlash
+	]
+}
+
+Particle
+{
+	count				2 3
+
+	life				30
+
+	rotation			0 360
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0.2
+		flags			linear
+	}
+
+	size
+	{
+		start			15 35
+		end				8 12
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/bryarFrontFlash
+	]
+}
+
+Light
+{
+	rgb
+	{
+		start			1 0.7 0.2
+	}
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/eweb/eweb_fire.mp3
+	]
+}
+
+CameraShake
+{
+	life				80
+
+	intensity			0.9 1.1
+
+	radius				160
+}
+
+Particle
+{
+	name				muzzle
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				5 3
+
+	life				200 100
+
+	rotation			0 360
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0.2
+		flags			linear
+	}
+
+	size
+	{
+		start			11 20
+		end				9 13
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/flaretailup
+	]
+}

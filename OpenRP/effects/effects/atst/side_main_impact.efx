@@ -1,0 +1,232 @@
+repeatDelay				300
+
+Particle
+{
+	name				explosion_cloud
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				3 4
+
+	life				500 1000
+
+	origin				0 -5 -5 5 5 5
+
+	rotation			0 360
+
+	rotationDelta		-8 8
+
+	velocity			15 -15 -15 40 15 15
+
+	rgb
+	{
+		start			1 1 1 1 0.502 0.502
+	}
+
+	alpha
+	{
+		start			0.7 0.8
+		end				0
+		parm			50
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4 15
+		end				29 25
+		flags			linear
+	}
+
+	shaders
+	[
+		effects/fire
+		gfx/misc/exp02_2
+		gfx/misc/exp02_3
+	]
+}
+
+Particle
+{
+	name				LingeringSmoke
+
+	flags				useAlpha
+
+	count				25 35
+
+	life				1500 3000
+
+	delay				100 1500
+
+	origin				0 -10 -10 10 10 10
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			0 -20 -20 10 20 20
+
+	acceleration		-4 -8 -8 4 8 8
+
+	gravity				3 25
+
+	rgb
+	{
+		start			0.9882 0.9098 0.7882 1 1 0.8078
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.1
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			5 8
+		end				33 36
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke02
+	]
+}
+
+Light
+{
+	name				Flash
+
+	life				150
+
+	cullrange			200
+
+	alpha
+	{
+		end				0
+		flags			random linear
+	}
+
+	size
+	{
+		start			128
+		end				10
+		flags			linear
+	}
+}
+
+Particle
+{
+	name				Dust
+
+	flags				useAlpha
+
+	spawnFlags			evenDistribution
+
+	count				4
+
+	life				900 1400
+
+	delay				250 500
+
+	origin				0 -10 -10 5 10 10
+
+	rotation			-180 180
+
+	rotationDelta		-2 2
+
+	velocity			20 -20 -20 40 20 20
+
+	acceleration		-5 -5 -5 5 5 5
+
+	gravity				-50 -30
+
+	rgb
+	{
+		start			1 1 0.4353 0.9451 0.4078 0.01176
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 70
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			1 3
+		end				15 20
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/dotfill_a
+	]
+}
+
+CameraShake
+{
+	name				Shake
+
+	flags				usePhysics
+
+	life				200 300
+
+	bounce				2 4
+
+	radius				300 400
+}
+
+Sound
+{
+	name				Boom
+
+	cullrange			1500
+
+	sounds
+	[
+		sound/weapons/thermal/explode.wav
+	]
+}
+
+Decal
+{
+	cullrange			1750
+
+	size
+	{
+		start			15.5 19
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+		gfx/damage/burnmark4
+	]
+}
+
+FxRunner
+{
+	name				smoke
+
+	playfx
+	[
+		smoke/detailsmokebigviolent
+	]
+}
+
+FxRunner
+{
+	name				explosion1
+
+	playfx
+	[
+		env/med_explode
+	]
+}

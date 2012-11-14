@@ -1,0 +1,63 @@
+repeatDelay				300
+
+Particle
+{
+	count				3
+
+	life				200 300
+
+	velocity			15 -12 -12 20 12 12
+
+	gravity				12 32
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			50
+		end				65 60
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 0
+
+	count				0 1
+
+	life				35 70
+
+	rotation			0 180
+
+	rotationDelta		0 180
+
+	alpha
+	{
+		start			0.3 0.1
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			35
+		end				80
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/fire_radial
+	]
+}

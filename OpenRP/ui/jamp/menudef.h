@@ -113,13 +113,6 @@
 #define FEEDER_SABER_SINGLE_INFO			0x2b			// saber single
 #define FEEDER_SABER_STAFF_INFO				0x2c			// saber staff
 
-
-// Xbox specific, hope no one minds
-#define FEEDER_XBL_ACCOUNTS					0xA0			// list of available XBL accounts
-#define FEEDER_XBL_PLAYERS					0xA1			// players (current and recent)
-#define FEEDER_XBL_FRIENDS					0xA2			// friends
-#define FEEDER_XBL_SERVERS					0xA3			// results of an optimatch query
-
 // display flags
 #define CG_SHOW_BLUE_TEAM_HAS_REDFLAG     0x00000001
 #define CG_SHOW_RED_TEAM_HAS_BLUEFLAG     0x00000002
@@ -344,9 +337,6 @@
 //extra, for patch
 #define UI_JEDI_NONJEDI 289
 
-// Xbox-only, for complicated passcode entry screen. Sorry.
-#define UI_XBOX_PASSCODE 290
-
 #define UI_CHAT_MAIN		291
 #define UI_CHAT_ATTACK		292
 #define UI_CHAT_DEFEND		293
@@ -354,6 +344,60 @@
 #define UI_CHAT_REPLY		295
 #define UI_CHAT_SPOT		296
 #define UI_CHAT_TACTICAL	297
+
+//[ExpSys]
+#define UI_FORCE_RANK_JETPACK		298		//Jetpack skill rank ownerDraw
+#define UI_FORCE_RANK_PISTOL		299
+#define UI_FORCE_RANK_BLASTER		300
+#define UI_FORCE_RANK_THERMALS		301
+#define UI_FORCE_RANK_ROCKETS		302
+#define UI_FORCE_RANK_BACTA			303
+#define UI_FORCE_RANK_FLAMETHROWER	304
+#define UI_FORCE_RANK_BOWCASTER		305
+#define UI_FORCE_RANK_FORCEFIELD	306
+#define UI_FORCE_RANK_CLOAK			307
+#define UI_FORCE_RANK_SEEKER		308
+#define UI_FORCE_RANK_SENTRY		309
+#define UI_FORCE_RANK_DETPACK		310
+#define UI_FORCE_RANK_REPEATER      311    
+#define UI_FORCE_RANK_DISRUPTOR     312
+//[StanceSelection]
+#define UI_FORCE_RANK_BLUESTYLE		313
+#define UI_FORCE_RANK_REDSTYLE		314
+#define UI_FORCE_RANK_PURPLESTYLE	315
+#define UI_FORCE_RANK_GREENSTYLE	316
+#define UI_FORCE_RANK_DUALSTYLE		317
+#define UI_FORCE_RANK_STAFFSTYLE	318
+//[/StanceSelection]
+#define UI_FORCE_RANK_REPEATERUPGRADE 319//[Repeater]
+#define UI_FORCE_RANK_FLECHETTE		320
+#define UI_FORCE_RANK_BLASTERRATEOFFIRE 321 //[BlasterRateOfFireUpgrade]
+#define UI_FORCE_RANK_TUSKEN_RIFLE	322 //[TuskenRifle]
+#define	UI_FORCE_RANK_SHIELD		323
+#define UI_FORCE_RANK_GRENADE		324//[Grenade]
+#define UI_FORCE_RANK_SMOKEGRENADE  325
+#define UI_FORCE_RANK_FLASHGRENADE  326
+#define UI_FORCE_RANK_CRYOBAN	    327
+#define UI_FORCE_RANK_EMP			328
+#define UI_FORCE_RANK_DEMP		329
+#define UI_FORCE_RANK_CONC		330
+
+//Feats
+#define UI_FORCE_RANK_FEAT_BLASTERS	331
+#define UI_FORCE_RANK_FEAT_RIFLES	332
+#define UI_FORCE_RANK_FEAT_HEAVY_WEAPONS 333
+#define UI_FORCE_RANK_FEAT_SPECIALIST_WEAPONS 334
+#define UI_FORCE_RANK_FEAT_DEMOLITION 335
+#define UI_FORCE_RANK_FEAT_EXPLOSIVES 336
+#define UI_FORCE_RANK_FEAT_ENGINEERING 337
+#define UI_FORCE_RANK_FEAT_SIGHT 338
+#define UI_FORCE_RANK_FEAT_BACTA 339
+#define UI_FORCE_RANK_FEAT_FLAMETHROWER 340
+#define UI_FORCE_RANK_FEAT_JETPACK 341
+#define UI_FORCE_RANK_FEAT_CLOAK 342
+#define UI_FORCE_RANK_FEAT_SHIELDS 343
+#define UI_FORCE_RANK_FEAT_ENERGY 344
+//[/ExpSys]
 
 #define VOICECHAT_GETFLAG			"getflag"				// command someone to get the flag
 #define VOICECHAT_OFFENSE			"offense"				// command someone to go on offense

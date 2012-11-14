@@ -1,0 +1,101 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				115
+
+	life				1000
+
+	radius				150
+
+	height				150
+
+	acceleration		250 250 235 -250 -450 -400
+
+	gravity				225 -10
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				0.9922 0.1098 0.007843
+		parm			55 0
+		flags			random linear nonlinear
+	}
+
+	alpha
+	{
+		start			0.1
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			800 650
+		end				100
+		parm			35
+		flags			clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Copy of Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				120
+
+	life				1000
+
+	radius				125
+
+	height				125
+
+	acceleration		250 250 235 -250 -450 -400
+
+	gravity				225 -10
+
+	rgb
+	{
+		start			0.9882 0.502 0.01176 1 0.9843 0.9412
+		end				0.9922 0.1098 0.007843 1 0.9843 0.9412
+		parm			55 0
+		flags			random linear nonlinear
+	}
+
+	alpha
+	{
+		start			0.1
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			400 350
+		end				100
+		parm			35
+		flags			clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

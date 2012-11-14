@@ -1,0 +1,52 @@
+repeatDelay				300
+
+FxRunner
+{
+	playfx
+	[
+		smoke/smallbestsmok
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/movers/objects/object_destroy6.mp3
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		explosions/rocketnewer
+	]
+}
+
+CameraShake
+{
+	intensity			6 12
+
+	radius				15
+}
+
+FxRunner
+{
+	count				0 1
+
+	playfx
+	[
+		chunks/chunks5
+	]
+}
+
+FxRunner
+{
+	name				lingeringsmoke
+
+	playfx
+	[
+		smoke/lingeringsmoke
+	]
+}

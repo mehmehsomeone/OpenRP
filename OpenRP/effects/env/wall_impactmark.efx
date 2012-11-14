@@ -1,0 +1,98 @@
+repeatDelay				509
+
+FxRunner
+{
+	name				detailsmokesmall
+
+	count				1 0
+
+	playfx
+	[
+		smoke/detailsmoke2
+	]
+}
+
+OrientedParticle
+{
+	name				glowflat
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				2 1
+
+	life				1900 1800
+
+	delay				350
+
+	rgb
+	{
+		start			1 0 0 0.9765 0 0
+	}
+
+	alpha
+	{
+		start			0.7
+		end				0
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			2
+		end				2
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+OrientedParticle
+{
+	name				emberflat
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				2 9
+
+	life				1900 1700
+
+	delay				300 250
+
+	rotation			4
+
+	rgb
+	{
+		start			1 0.502 0
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4 3
+		end				4
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/embers
+	]
+}
+
+FxRunner
+{
+	name				detailsmokelast
+
+	playfx
+	[
+		smoke/detailsmoke3
+	]
+}

@@ -1,0 +1,101 @@
+repeatDelay				4139
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	count				7 5
+
+	life				500
+
+	delay				0 100
+
+	origin				-4 -8 -8 4 8 8
+
+	rotation			349 360
+
+	velocity			2 2 2
+
+	gravity				-2 2
+
+	alpha
+	{
+		end				0
+		parm			60
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			3 5
+		end				15 16
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke2
+	]
+}
+
+Particle
+{
+	name				fleshparts
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				50 30
+
+	life				250 2500
+
+	delay				0 100
+
+	origin				-15 -6 -6 15 6 6
+
+	rotation			0 360
+
+	velocity			-75 -75 -75 75 75 75
+
+	acceleration		-8 -10 -9 10 8 7
+
+	gravity				10 60
+
+	rgb
+	{
+		start			1 0.4 0 0.9961 0.9804 0.3216
+		end				0.502 0 0 0.9922 0.1098 0.007843
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			0.4 0.3
+		end				1 0.6
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+Light
+{
+	life				300
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 0 0
+	}
+}

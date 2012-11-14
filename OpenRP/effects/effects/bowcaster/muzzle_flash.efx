@@ -1,0 +1,88 @@
+repeatDelay				250
+
+Line
+{
+	life				30
+
+	origin2				32 0 0 41 0 0
+
+	alpha
+	{
+		start			0.7 0.8
+		end				0.35
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5.5
+		end				8 6
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/greenSideFlash
+	]
+}
+
+Particle
+{
+	life				30
+
+	origin				8 0 0
+
+	rotation			0 360
+
+	alpha
+	{
+		start			0.8 1
+		end				0.7
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5.5
+		end				7
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/greenFrontFlash
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	life				500 300
+
+	rgb
+	{
+		start			0.6392 1 0.5843 0.1922 0.6431 0
+	}
+
+	size
+	{
+		start			15
+	}
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/bowcaster/fire.wav
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		smoke/muzzleflashbig
+	]
+}

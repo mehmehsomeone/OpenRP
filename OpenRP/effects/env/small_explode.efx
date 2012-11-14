@@ -1,0 +1,174 @@
+repeatDelay				300
+
+Particle
+{
+	flags				setShaderTime useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				3 6
+
+	life				500 600
+
+	origin				-5 -5 -5 5 5 5
+
+	rotation			0 360
+
+	rotationDelta		-2 8
+
+	velocity			-3 -3 -3 3 3 3
+
+	gravity				0 5
+
+	size
+	{
+		start			100
+		end				0
+		parm			5
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/exp/explosion1
+	]
+}
+
+Particle
+{
+	name				smoke
+
+	spawnFlags			orgOnSphere
+
+	count				5 8
+
+	life				1800 2400
+
+	origin				-2 -2 -2 2 2 2
+
+	radius				2
+
+	height				2 3
+
+	rotation			-128 360
+
+	rotationDelta		-3 15
+
+	velocity			-6 -10 -10 6 10 10
+
+	gravity				6 20
+
+	alpha
+	{
+		start			0.5 0.4
+		end				0 0.1
+		parm			65
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			3 4
+		end				20 19
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 2
+
+	flags				usePhysics
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				13 15
+
+	life				700 900
+
+	bounce				0.2
+
+	origin				-2 -2 -2 2 2 2
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			-200 -160 -160 200 160 160
+
+	gravity				-120 -240
+
+	rgb
+	{
+		start			1 1 1 0.9608 0.6627 0
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 60
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			0.3 0.4
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	name				Copy of Copy of Unnamed Particl
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				600
+
+	bounce				0.2
+
+	origin				-2 -2 -2 2 2 2
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	rgb
+	{
+		start			1 1 0 0.9608 0.6627 0
+		end				1 0.502 0 1 1 1
+		flags			linear nonlinear
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 60
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			75
+		end				3 4
+		parm			250 120
+		flags			clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}

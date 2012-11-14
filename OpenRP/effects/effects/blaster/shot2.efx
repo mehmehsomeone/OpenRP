@@ -1,0 +1,110 @@
+repeatDelay				138
+
+Line
+{
+	name				corecenter
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				30
+
+	origin				35 0 0
+
+	origin2				-25 0 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		flags			linear
+	}
+
+	size
+	{
+		start			2
+		end				2
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/blaster_blob
+	]
+}
+
+Line
+{
+	name				coreglow
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				25
+
+	origin				35 0 0
+
+	origin2				-30 0 0
+
+	rgb
+	{
+		start			1 0 0
+		end				0.9922 0.1098 0.007843
+	}
+
+	size
+	{
+		start			2
+		parm			5
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				shapeparticle
+
+	life				25
+
+	origin				-9 0 0
+
+	rgb
+	{
+		start			0.698 0 0 1 0 0
+		end				1 0 0
+		flags			linear
+	}
+
+	size
+	{
+		start			2
+		end				2
+		flags			nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/blaster_blob_gs
+		gfx/effects/whiteGlow
+	]
+}
+
+Light
+{
+	life				25
+
+	rgb
+	{
+		start			0.9922 0.1098 0.007843
+	}
+}

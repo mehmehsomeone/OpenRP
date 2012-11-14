@@ -1,0 +1,207 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder rgbComponentInterpolation
+
+	count				7 6
+
+	life				200
+
+	delay				0 200
+
+	radius				1
+
+	height				1
+
+	acceleration		180 190 185 -190 -190 -185
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.6392 1 0.5843 0 0 1
+		end				0 0 1 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4
+		end				8 9
+		parm			1 2
+		flags			random wave
+	}
+
+	shaders
+	[
+		gfx/effects/embers
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				whitecore
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder rgbComponentInterpolation
+
+	count				3 7
+
+	life				100 200
+
+	delay				0 100
+
+	radius				0.5
+
+	height				1
+
+	rotation			360 8
+
+	acceleration		25 25 23 -25 -45 -40
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0 0 1 1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		end				6 8
+		parm			1
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				boom
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder rgbComponentInterpolation
+
+	count				15 13
+
+	life				100 200
+
+	delay				0 100
+
+	radius				1
+
+	height				1
+
+	acceleration		140 145 140 -145 -145 -140
+
+	gravity				0 -10
+
+	rgb
+	{
+		start			0.6392 1 0.5843 0 0 1
+		end				0 0 1
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4
+		end				15 14
+		parm			1
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/embers
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				rings
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel rgbComponentInterpolation
+
+	count				3
+
+	life				100 200
+
+	delay				0 100
+
+	radius				0.5
+
+	rotation			360 8
+
+	acceleration		25 25 23 -25 -45 -40
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0 0 1 1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		end				3 4
+		parm			1
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/eplosion_wave
+	]
+}

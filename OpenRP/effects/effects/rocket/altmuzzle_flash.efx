@@ -1,0 +1,266 @@
+// Simple muzzle flash effect
+
+Line
+{
+	life		10
+	origin2	24 0 0 	30 0 0
+
+	width
+	{
+		start 	4.75 	6.25
+		end	4.0
+		flags	linear
+	}
+
+	alpha
+	{
+		start	0.5	0.6
+		end	0.35
+		flags	linear
+	}
+
+	shader
+	[
+		gfx/effects/bryarSideFlash
+	]
+}
+
+OrientedParticle
+{
+	life	10
+	origin	5 0 0
+	rotation	0	360
+
+	size
+	{
+		start 	8.0 	10.5
+		end	7.0
+		flags	linear
+	}
+
+	alpha
+	{
+		start	0.65	0.8
+		end	0.5
+		flags	linear
+	}
+
+	shader
+	[
+		gfx/effects/bryarFrontFlash
+	]
+}
+
+Particle
+{
+	count	3	4
+	life	450	800
+
+	origin	6 -1 -1		10 1 1
+
+	rotation	-180 180
+
+	velocity	10 -10 -10		20 10 10
+	gravity	-20	20
+
+	flags	useAlpha
+
+	size
+	{
+		start 	3.0 4.0
+		end	4.0	10.0
+		flags	linear
+	}
+
+	alpha
+	{
+		start	0.6	0.7
+		end 	0.2
+		flags	linear
+	}
+
+	shader
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Light
+{
+	size
+	{
+		start 	300	350
+	}
+
+	rgb
+	{
+		start  1.0 0.7 0.2
+	}
+}
+
+CameraShake
+{
+	life				120
+
+	intensity			0.9 1.1
+
+	radius				60
+}
+
+sound
+{
+	sounds
+	[
+		sound/weapons/rocket/alt_fire.wav
+	]
+}
+
+forcefeedback
+{
+	forces
+	[
+		fffx/weapons/rocket/alt_fire
+	]
+}
+
+Particle
+{
+	spawnFlags			orgOnCylinder axisFromSphere rgbComponentInterpolation
+
+	count				16
+
+	life				2000
+
+	origin				0 0 0 5 0 0
+
+	height				0
+
+	rotation			0 360
+
+	rotationDelta		-4 4
+
+	velocity			70 0 0 80 0 0
+
+	acceleration		-40 0 0 -50 0 0
+
+	gravity				12 24
+
+	rgb
+	{
+		start			0.8863 0.902 0.7843 0.8745 0.8431 0.7686
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			12 15
+		end				20 25
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 0
+
+	spawnFlags			orgOnCylinder axisFromSphere rgbComponentInterpolation
+
+	count				8
+
+	life				3000
+
+	height				0
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			40 0 0
+
+	acceleration		-10 0 0 -12 0 0
+
+	gravity				6 8
+
+	rgb
+	{
+		start			0.8863 0.902 0.7843 0.8745 0.8431 0.7686
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			6 10
+		end				25 35
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 0
+
+	spawnFlags			orgOnCylinder axisFromSphere rgbComponentInterpolation
+
+	count				8
+
+	life				1000
+
+	height				0
+
+	rotation			0 360
+
+	rotationDelta		-4 4
+
+	velocity			100 0 0 110 0 0
+
+	acceleration		-40 0 0 -50 0 0
+
+	gravity				24 40
+
+	rgb
+	{
+		start			0.8863 0.902 0.7843 0.8745 0.8431 0.7686
+	}
+
+	alpha
+	{
+		start			0.3 0.4
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			20 25
+		end				20 25
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}

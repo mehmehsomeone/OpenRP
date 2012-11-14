@@ -1,0 +1,93 @@
+repeatDelay				1002
+
+Particle
+{
+	name				LingeringSmoke
+
+	flags				useAlpha
+
+	spawnFlags			absoluteVel rgbComponentInterpolation
+
+	count				7 5
+
+	life				1000 800
+
+	delay				10 100
+
+	acceleration		25 25 25 -25 -5 -25
+
+	gravity				100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.498 0.498 0.498
+		end				0.4706 0.4706 0.4706 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			1 0.6
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			5 2
+		end				25 15
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	name				glowpunch
+
+	flags				useAlpha
+
+	spawnFlags			absoluteVel rgbComponentInterpolation
+
+	count				5 7
+
+	life				1000 800
+
+	delay				10 100
+
+	acceleration		25 25 25 -25 -5 -25
+
+	gravity				100 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			wave
+	}
+
+	alpha
+	{
+		start			0.1
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		end				25 15
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/puffdark
+	]
+}

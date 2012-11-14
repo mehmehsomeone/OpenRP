@@ -1,0 +1,54 @@
+repeatDelay				250
+
+Particle
+{
+	name				explode
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				10
+
+	life				400 500
+
+	radius				6 5
+
+	height				6
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			5 5 -5 -4 -5 5
+
+	gravity				4 2
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529 1 0.9843 0.9412
+		end				0 0 0
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.8 0.3
+		end				0.1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4 3
+		end				14 13
+		parm			1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke2
+	]
+}

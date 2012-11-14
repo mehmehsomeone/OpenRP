@@ -1,0 +1,51 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution rgbComponentInterpolation
+
+	count				17 20
+
+	life				100
+
+	delay				0 250
+
+	radius				0.2
+
+	height				0.3
+
+	acceleration		25 25 23 -25 -45 -40
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0 0 1 0.9843 0.9412
+		end				1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		end				3
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

@@ -1,0 +1,120 @@
+repeatDelay				250
+
+Tail
+{
+	name				sparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				5 6
+
+	life				110
+
+	bounce				0.25 0.4
+
+	velocity			240 -240 -240 570 240 240
+
+	gravity				-450 -550
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 1 1
+	}
+
+	size
+	{
+		start			0.2
+	}
+
+	length
+	{
+		start			15 23
+		end				3 1
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	count				0
+
+	life				300 400
+
+	intensity			0.25 0.4
+
+	velocity			25 -15 -15 50 5 15
+
+	gravity				-450 -550
+
+	size
+	{
+		start			0.4 0.5
+		end				0.8 0.5
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Decal
+{
+	life				700 800
+
+	size
+	{
+		start			3.5 4.5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/bryar/hit_wall.wav
+	]
+}
+
+FxRunner
+{
+	name				glowhit
+
+	playfx
+	[
+		explosions/pistolhit
+	]
+}
+
+FxRunner
+{
+	name				smoke
+
+	delay				25
+
+	playfx
+	[
+		smoke/pistolsmoke
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		smoke/detailsmoke
+	]
+}

@@ -1,0 +1,9 @@
+repeatDelay				300
+
+Sound
+{
+	sounds
+	[
+		sound/interface/pickup_battery.mp3
+	]
+}

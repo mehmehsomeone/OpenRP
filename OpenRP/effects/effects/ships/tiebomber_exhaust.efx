@@ -1,0 +1,94 @@
+repeatDelay				50
+
+Particle
+{
+	count				2
+
+	life				350
+
+	origin				3 0 0
+
+	velocity			0 125 0
+
+	rgb
+	{
+		start			1 0 0.502
+		end				1 0.05098 0.07451
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			6
+		flags			linear
+	}
+
+	shaders
+	[
+		sun
+	]
+}
+
+Particle
+{
+	count				2
+
+	life				200
+
+	origin				3 0 0
+
+	rgb
+	{
+		start			1 0 0.502
+	}
+
+	alpha
+	{
+		start			0.2
+		end				0
+	}
+
+	size
+	{
+		start			9
+	}
+
+	shaders
+	[
+		sun
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 1
+
+	count				2
+
+	life				200
+
+	origin				3 0 0
+
+	alpha
+	{
+		start			0.1 0.2
+		end				0
+	}
+
+	size
+	{
+		start			5 6
+	}
+
+	shaders
+	[
+		sun
+	]
+}

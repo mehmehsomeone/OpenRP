@@ -9,6 +9,14 @@
 // so there is NO persistant data between levels on the client side.
 // If you absolutely need something stored, it can either be kept
 // by the server in the server stored userinfos, or stashed in a cvar.
+/*#define SQUIRREL
+
+#ifdef SQUIRREL  
+    extern void LoadSquirrel(void);  
+    extern void CloseSquirrel(void);  
+    extern void RunScript(const char* file);  
+    extern void RunFunction(const char* func);  
+#endif  */
 
 #ifndef __LCC__
 #define CGAME_INLINE ID_INLINE
@@ -85,8 +93,11 @@
 
 #define	DEFAULT_MODEL			"kyle"
 
-#define DEFAULT_FORCEPOWERS		"5-1-000000000000000000"
+//[ExpSys]
+//moved to bg_public.h since we need now need it in other areas as well.
+//#define DEFAULT_FORCEPOWERS		"5-1-000000000000000000"
 //"rank-side-heal.lev.speed.push.pull.tele.grip.lightning.rage.protect.absorb.teamheal.teamforce.drain.see"
+//[/ExpSys]
 
 #define DEFAULT_REDTEAM_NAME		"Empire"
 #define DEFAULT_BLUETEAM_NAME		"Rebellion"
@@ -316,10 +327,6 @@ typedef struct {
 
 	int			superSmoothTime; //do crazy amount of smoothing
 
-#ifdef _XBOX
-	int			friendshipStatus;
-#endif
-
 	//[RGBSabers]
 	//[2] array cause there are 2 sabers :)
 
@@ -374,15 +381,16 @@ typedef struct {
 
 	holster_t	holsterData[MAX_HOLSTER];
 	//[/VisualWeapons]
+
+	//[SaberLockSys]
+	int				saberLockFxDebounce;  //debounces the saberlock clash efx.	
+	int				saberLockSoundDebounce;  //debounces the saberlock saber noises.
+	//[/SaberLockSys]
 	
 } clientInfo_t;
 
 //rww - cheap looping sound struct
-#ifdef _XBOX
-#define MAX_CG_LOOPSOUNDS 2
-#else
 #define MAX_CG_LOOPSOUNDS 8
-#endif
 
 typedef struct cgLoopSound_s {
 	int entityNum;
@@ -438,13 +446,6 @@ typedef struct centity_s {
 	vec3_t			lerpOrigin;
 	vec3_t			lerpAngles;
 
-#if 0
-	//add up bone offsets until next client frame before adding them in
-	qboolean		hasRagOffset;
-	vec3_t			ragOffsets;
-	int				ragOffsetTime;
-#endif
-
 	vec3_t			ragLastOrigin;
 	int				ragLastOriginTime;
 
@@ -462,6 +463,7 @@ typedef struct centity_s {
 	int				weapon;
 
 	void			*ghoul2weapon; //rww - pointer to ghoul2 instance of the current 3rd person weapon
+	void			*ghoul2weapon2;//[DualPistols]
 
 	float			radius;
 	int				boltInfo;
@@ -496,7 +498,7 @@ typedef struct centity_s {
 	int				trickAlphaTime;
 
 	int				teamPowerEffectTime;
-	qboolean		teamPowerType; //0 regen, 1 heal, 2 drain, 3 absorb
+	int		teamPowerType; //0 regen, 1 heal, 2 drain, 3 absorb
 
 	qboolean		isRagging;
 	qboolean		ownerRagging;
@@ -716,6 +718,10 @@ typedef struct {
 	int				captures;
 	qboolean	perfect;
 	int				team;
+	//[ExpSys]
+	int				skill;		//number of skill points this player currently has.
+	//[/ExpSys]
+
 } score_t;
 
 
@@ -908,10 +914,6 @@ typedef struct {
 	// view rendering
 	refdef_t	refdef;
 
-#ifdef _XBOX
-	qboolean widescreen;
-#endif
-
 	// zoom key
 	qboolean	zoomed;
 	int			zoomTime;
@@ -1037,6 +1039,11 @@ typedef struct {
 	int			forceHUDNextFlashTime;
 	qboolean	forceHUDActive;				// Flag to show force hud is off/on
 
+	//[DodgeSys]
+	int			dodgeHUDNextFlashTime;
+	qboolean	dodgeHUDActive;
+	//[/DodgeSys]
+
 	// development tool
 	refEntity_t		testModelEntity;
 	char			testModelName[MAX_QPATH];
@@ -1079,10 +1086,6 @@ Ghoul2 Insert End
 
 	chatBoxItem_t		chatItems[MAX_CHATBOX_ITEMS];
 	int					chatItemActive;
-	
-#if 0
-	int					snapshotTimeoutTime;
-#endif
 	
 } cg_t;
 
@@ -1223,6 +1226,54 @@ typedef struct {
 	qhandle_t sfxSaberEndShader;
 	qhandle_t sfxSaberEnd2Shader;
 	//[/SFXSabers]
+
+	//[Movie Sabers]
+	//Original Trilogy Sabers
+	qhandle_t otSaberCoreShader;			
+	qhandle_t redOTGlowShader;				
+	qhandle_t orangeOTGlowShader;			
+	qhandle_t yellowOTGlowShader;			
+	qhandle_t greenOTGlowShader;			
+	qhandle_t blueOTGlowShader;			
+	qhandle_t purpleOTGlowShader;			
+
+	//Episode I Sabers
+	qhandle_t ep1SaberCoreShader;
+	qhandle_t redEp1GlowShader;			
+	qhandle_t orangeEp1GlowShader;			
+	qhandle_t yellowEp1GlowShader;			
+	qhandle_t greenEp1GlowShader;			
+	qhandle_t blueEp1GlowShader;			
+	qhandle_t purpleEp1GlowShader;
+
+	//Episode II Sabers
+	qhandle_t ep2SaberCoreShader;
+	qhandle_t whiteIgniteFlare;
+	qhandle_t blackIgniteFlare;
+	qhandle_t redEp2GlowShader;			
+	qhandle_t orangeEp2GlowShader;			
+	qhandle_t yellowEp2GlowShader;			
+	qhandle_t greenEp2GlowShader;			
+	qhandle_t blueEp2GlowShader;			
+	qhandle_t purpleEp2GlowShader;
+
+	//Episode III Sabers
+	qhandle_t ep3SaberCoreShader;
+	qhandle_t whiteIgniteFlare02;
+	qhandle_t blackIgniteFlare02;
+	qhandle_t redIgniteFlare;
+	qhandle_t greenIgniteFlare;
+	qhandle_t purpleIgniteFlare;
+	qhandle_t blueIgniteFlare;
+	qhandle_t orangeIgniteFlare;
+	qhandle_t yellowIgniteFlare;
+	qhandle_t redEp3GlowShader;			
+	qhandle_t orangeEp3GlowShader;			
+	qhandle_t yellowEp3GlowShader;			
+	qhandle_t greenEp3GlowShader;			
+	qhandle_t blueEp3GlowShader;			
+	qhandle_t purpleEp3GlowShader;			
+	//[Movie Sabers]
 
 	qhandle_t	saberBlurShader;
 	qhandle_t	swordTrailShader;
@@ -1506,6 +1557,9 @@ typedef struct
 	fxHandle_t  disruptorAltMissEffect;	
 	fxHandle_t  disruptorAltHitEffect;	
 
+	fxHandle_t	tuskenProjectileEffect;
+	fxHandle_t  tuskenWallImpactEffect;	
+	fxHandle_t  tuskenFleshImpactEffect;
 	// BOWCASTER
 	fxHandle_t	bowcasterShotEffect;
 	fxHandle_t	bowcasterImpactEffect;
@@ -1526,6 +1580,7 @@ typedef struct
 	fxHandle_t	flechetteShotEffect;
 	fxHandle_t	flechetteAltShotEffect;
 	fxHandle_t	flechetteWallImpactEffect;
+	fxHandle_t	flechetteAltWallImpactEffect;
 	fxHandle_t	flechetteFleshImpactEffect;
 
 	// ROCKET
@@ -1544,6 +1599,10 @@ typedef struct
 	fxHandle_t forceLightning;
 	fxHandle_t forceLightningWide;
 
+	//[Flamethrower]
+	fxHandle_t flamethrower;
+	//[/Flamethrower]
+
 	fxHandle_t forceDrain;
 	fxHandle_t forceDrainWide;
 	fxHandle_t forceDrained;
@@ -1561,6 +1620,10 @@ typedef struct
 	fxHandle_t	mSaberBloodSparks;
 	fxHandle_t	mSaberBloodSparksSmall;
 	fxHandle_t	mSaberBloodSparksMid;
+	//[SaberLockSys]
+	//saber clash effect used for saber locks.  This effect is designed to be rendered on a near frame-by-frame basis.
+	fxHandle_t  mSaberFriction;  
+	//[/SaberLockSys]
 	fxHandle_t	mSpawn;
 	fxHandle_t	mJediSpawn;
 	fxHandle_t	mBlasterDeflect;
@@ -1887,10 +1950,8 @@ extern	vmCvar_t		cg_smoothClients;
 extern	vmCvar_t		ojp_sabermelee;
 //[/MELEE]
 
-#include "../namespace_begin.h"
 extern	vmCvar_t		pmove_fixed;
 extern	vmCvar_t		pmove_msec;
-#include "../namespace_end.h"
 
 //extern	vmCvar_t		cg_pmove_fixed;
 extern	vmCvar_t		cg_cameraOrbit;
@@ -1928,6 +1989,10 @@ extern	vmCvar_t		cg_debugBB;
 Ghoul2 Insert End
 */
 
+//[ClientPlugInDetect]
+extern vmCvar_t	ojp_clientplugin;
+//[/ClientPlugInDetect]
+
 //[RGBSabers]
 extern vmCvar_t	rgb_saber1;
 extern vmCvar_t	rgb_saber2;
@@ -1939,6 +2004,10 @@ extern vmCvar_t ojp_teamrgbsabers;
 //[SFXSabers]
 extern vmCvar_t sfx_sabers;
 //[/SFXSabers]
+
+//[Movie Sabers]
+extern vmCvar_t cg_MovieSaberType;
+//[/Movie Sabers]
 
 //[VisualWeapons]
 extern vmCvar_t	ojp_holsteredweapons;
@@ -2155,7 +2224,7 @@ void TurretClientRun(centity_t *ent);
 //
 // cg_weapons.c
 //
-void CG_GetClientWeaponMuzzleBoltPoint(int clIndex, vec3_t to);
+void CG_GetClientWeaponMuzzleBoltPoint(int clIndex, vec3_t to, qboolean leftweap);
 
 void CG_NextWeapon_f( void );
 void CG_PrevWeapon_f( void );
@@ -2170,7 +2239,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, imp
 void CG_MissileHitPlayer( int weapon, vec3_t origin, vec3_t dir, int entityNum, qboolean alt_fire);
 
 void CG_AddViewWeapon (playerState_t *ps);
-void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team, vec3_t newAngles, qboolean thirdPerson );
+void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team, vec3_t newAngles, qboolean thirdPerson, qboolean leftweap );//[DualPistols]
 void CG_DrawWeaponSelect( void );
 void CG_DrawIconBackground(void);
 
@@ -2290,8 +2359,6 @@ void CG_AdjustEyePos (const char *modelName);
 // system traps
 // These functions are how the cgame communicates with the main game system
 //
-
-#include "../namespace_begin.h"
 
 // print message on the local console
 void		trap_Print( const char *fmt );
@@ -2518,16 +2585,11 @@ void		BG_CycleInven(playerState_t *ps, int direction);
 int			BG_ProperForceIndex(int power);
 void		BG_CycleForce(playerState_t *ps, int direction);
 
-#include "../namespace_end.h"
-
-
 typedef enum {
   SYSTEM_PRINT,
   CHAT_PRINT,
   TEAMCHAT_PRINT
 } q3print_t; // bk001201 - warning: useless keyword or type name in empty declaration
-
-#include "../namespace_begin.h"
 
 int trap_CIN_PlayCinematic( const char *arg0, int xpos, int ypos, int width, int height, int bits);
 e_status trap_CIN_StopCinematic(int handle);
@@ -2588,7 +2650,7 @@ qboolean	trap_ROFF_Purge_Ent( int entID );
 void	trap_TrueMalloc(void **ptr, int size);
 void	trap_TrueFree(void **ptr);
 
-#include "../namespace_end.h"
+
 
 void	CG_ClearParticles (void);
 void	CG_AddParticles (void);
@@ -2631,7 +2693,7 @@ void FX_BlasterProjectileThink( centity_t *cent, const struct weaponInfo_s *weap
 void FX_BlasterAltFireThink( centity_t *cent, const struct weaponInfo_s *weapon );
 void FX_BlasterWeaponHitWall( vec3_t origin, vec3_t normal );
 void FX_BlasterWeaponHitPlayer( vec3_t origin, vec3_t normal, qboolean humanoid );
-
+void FX_TuskenRifleThink(centity_t *cent, const struct weaponInfo_s *weapon);
 
 void FX_ForceDrained(vec3_t origin, vec3_t dir);
 
@@ -2653,8 +2715,7 @@ void FX_BlasterProjectileThink( centity_t *cent, const struct weaponInfo_s *weap
 void FX_BlasterAltFireThink( centity_t *cent, const struct weaponInfo_s *weapon );
 void FX_BlasterWeaponHitWall( vec3_t origin, vec3_t normal );
 void FX_BlasterWeaponHitPlayer( vec3_t origin, vec3_t normal, qboolean humanoid );
-
-#include "../namespace_begin.h"
+void FX_TuskenRifleThink(centity_t *cent, const struct weaponInfo_s *weapon);
 
 void		trap_G2API_CollisionDetect		( CollisionRecord_t *collRecMap, void* ghoul2, const vec3_t angles, const vec3_t position,int frameNumber, int entNum, const vec3_t rayStart, const vec3_t rayEnd, const vec3_t scale, int traceFlags, int useLod, float fRadius );
 void		trap_G2API_CollisionDetectCache		( CollisionRecord_t *collRecMap, void* ghoul2, const vec3_t angles, const vec3_t position,int frameNumber, int entNum, const vec3_t rayStart, const vec3_t rayEnd, const vec3_t scale, int traceFlags, int useLod, float fRadius );
@@ -2742,7 +2803,7 @@ qboolean	trap_G2API_OverrideServer(void *serverInstance);
 
 void		trap_G2API_GetSurfaceName(void *ghoul2, int surfNumber, int modelIndex, char *fillBuf);
 
-#include "../namespace_end.h"
+
 
 void		CG_Init_CG(void);
 void		CG_Init_CGents(void);

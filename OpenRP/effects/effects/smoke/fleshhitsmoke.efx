@@ -1,0 +1,223 @@
+repeatDelay				300
+
+Particle
+{
+	name				blackwhite
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				11 10
+
+	life				900 1000
+
+	delay				10 20
+
+	radius				3
+
+	height				3
+
+	rotation			0 80
+
+	rotationDelta		-10 10
+
+	acceleration		15 15 15 -15 -15 -15
+
+	rgb
+	{
+		start			0 0 0
+		end				0 0 0 0.4863 0.4863 0.4863
+		parm			1
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.3 0.4
+		end				0.2 0.1
+		parm			40 50
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4
+		end				14 15
+		parm			4
+		flags			clamp
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Sound
+{
+}
+
+Particle
+{
+	name				Copy of blackwhite
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				6
+
+	life				1100 1300
+
+	delay				160 100
+
+	radius				7
+
+	height				7
+
+	rotation			0 35
+
+	rotationDelta		-10 10
+
+	acceleration		15 15 15 -15 -15 -15
+
+	rgb
+	{
+		start			0.7529 0.7529 0.7529
+		end				0.7529 0.7529 0.7529 0.4863 0.4863 0.4863
+		parm			1
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.7 0.5
+		end				0.2 0.1
+		parm			40 50
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			6
+		end				15
+		parm			50
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}
+
+Particle
+{
+	name				Copy of blackwhite
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				9 7
+
+	life				1100 1300
+
+	delay				160 100
+
+	radius				4 3
+
+	height				4 3
+
+	rotation			0 80
+
+	rotationDelta		-10 10
+
+	velocity			5 5 5 -5 -5 -5
+
+	acceleration		15 15 15 -15 -15 -15
+
+	rgb
+	{
+		start			0 0 0
+		end				0 0 0 0.4863 0.4863 0.4863
+		parm			1
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.3 0.4
+		end				0.2 0.1
+		parm			40 50
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			3
+		end				10
+		parm			2 1
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	name				explode
+
+	flags				useAlpha
+
+	spawnFlags			absoluteAccel orgOnSphere rgbComponentInterpolation
+
+	count				11 10
+
+	life				400
+
+	radius				4 3
+
+	height				4 3
+
+	rotation			0 80
+
+	rotationDelta		-10 10
+
+	acceleration		15 15 15 -15 -15 -15
+
+	gravity				125
+
+	rgb
+	{
+		start			0 0 0
+		end				0 0 0 0.4863 0.4863 0.4863
+		parm			1
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.5 0.7
+		end				0
+		parm			2
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			2
+		end				22 15
+		parm			2
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}

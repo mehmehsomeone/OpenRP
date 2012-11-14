@@ -11,6 +11,15 @@
 
 #define MAX_TEAMNAME 32
 
+//[SaberLockSys]
+//moved here to support ShortestLineSegBewteen2LineSegs
+#define Q3_INFINITE			16777216 
+//[/SaberLockSys]
+
+//[OpenRP - Engine patch enabler/disabler]
+#define	WINDOWSXP_COMPILE 0
+//[/OpenRP - Engine patch enabler/disabler]
+
 #include "../qcommon/disablewarnings.h"
 
 #include "teams.h" //npc team stuff
@@ -28,19 +37,6 @@
 #define VALIDATEP( a )	if ( a == NULL ) {	assert(0);	return NULL;	}
 
 #define VALIDSTRING( a )	( ( a != 0 ) && ( a[0] != 0 ) )
-
-/*
-#define G2_EHNANCEMENTS
-
-#ifdef G2_EHNANCEMENTS
-//these two will probably explode if they're defined independant of one another.
-//rww - RAGDOLL_BEGIN
-#define JK2_RAGDOLL
-//rww - RAGDOLL_END
-//rww - Bone cache for multiplayer base.
-#define MP_BONECACHE
-#endif
-*/
 
 #ifndef FINAL_BUILD
 #define G2_PERFORMANCE_ANALYSIS
@@ -87,31 +83,6 @@ extern int g_G2AllocServer;
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
-
-// Special min treatment for Xbox C++ version
-
-#ifdef _XBOX
-#define min(x,y) ((x)<(y)?(x):(y))
-#define max(x,y) ((x)>(y)?(x):(y))
-
-#define tvector(T) std::vector< T >
-#define tdeque(T) std::deque< T >
-
-#define tlist(T) std::list< T >
-#define tslist(T) std::slist< T >
-
-#define tset(T) std::set< T, std::less< T > >
-#define tmultiset(T) std::multiset< T, std::less< T > >
-
-#define tcset(T,C) std::set< T, C >
-#define tcmultiset(T,C) std::multiset< T, C >
-
-#define tmap(K,T) std::map< K, T, std::less< K > >
-#define tmultimap(K,T) std::multimap< K, T, std::less< K > >
-
-#define tcmap(K,T,C) std::map< K, T, C >
-#define tcmultimap(K,T,C) std::multimap< K, T, C >
-#endif
 
 #endif
 
@@ -266,7 +237,12 @@ static inline float LittleFloat (const float l) { return FloatSwap(&l); }
 #define stricmp strcasecmp
 
 #define	MAC_STATIC // bk: FIXME
+
+#if defined(_WIN32) && !defined(__GNUC__)
 #define ID_INLINE inline 
+#elif !defined(_WIN32)
+#define ID_INLINE inline 
+#endif
 
 #ifdef __i386__
 #define	CPUSTRING	"linux-i386"
@@ -276,7 +252,11 @@ static inline float LittleFloat (const float l) { return FloatSwap(&l); }
 #define	CPUSTRING	"linux-other"
 #endif
 
+#if defined(_WIN32) && !defined(__GNUC__)
 #define	PATH_SEP '/'
+#elif !defined(_WIN32)
+#define	PATH_SEP '/'
+#endif
 
 // bk001205 - try
 #ifdef Q3_STATIC
@@ -286,7 +266,25 @@ static inline float LittleFloat (const float l) { return FloatSwap(&l); }
 #define	BOTLIB_HARD_LINKED
 #endif
 
-#if !idppc
+#if defined(_WIN32) && !defined(__GNUC__)
+
+#if !idppc 
+inline static short BigShort( short l) { return ShortSwap(l); }
+#define LittleShort
+inline static int BigLong(int l) { return LongSwap(l); }
+#define LittleLong
+inline static float BigFloat(const float *l) { return FloatSwap(l); }
+#define LittleFloat
+#elif
+#define BigShort
+inline static short LittleShort(short l) { return ShortSwap(l); }
+#define BigLong
+inline static int LittleLong (int l) { return LongSwap(l); }
+#define BigFloat
+inline static float LittleFloat (const float *l) { return FloatSwap(l); }
+#endif
+#elif !defined(_WIN32)
+#if !idppc 
 inline static short BigShort( short l) { return ShortSwap(l); }
 #define LittleShort
 inline static int BigLong(int l) { return LongSwap(l); }
@@ -300,6 +298,7 @@ inline static short LittleShort(short l) { return ShortSwap(l); }
 inline static int LittleLong (int l) { return LongSwap(l); }
 #define BigFloat
 inline static float LittleFloat (const float *l) { return FloatSwap(l); }
+#endif
 #endif
 
 #endif
@@ -355,9 +354,6 @@ typedef unsigned long		ulong;
 //[/Linux]
 
 typedef enum {qfalse, qtrue}	qboolean;
-#ifdef _XBOX
-#define	qboolean	int		//don't want strict type checking on the qboolean
-#endif
 
 typedef int		qhandle_t;
 typedef int		thandle_t; //rwwRMG - inserted
@@ -463,11 +459,6 @@ typedef enum {
 
 // font rendering values used by ui and cgame
 
-/*#define PROP_GAP_WIDTH			3
-#define PROP_SPACE_WIDTH		8
-#define PROP_HEIGHT				27
-#define PROP_SMALL_SIZE_SCALE	0.75*/
-
 #define PROP_GAP_WIDTH			2
 //#define PROP_GAP_WIDTH			3
 #define PROP_SPACE_WIDTH		4
@@ -501,7 +492,7 @@ typedef enum {
 #define UI_INVERSE		0x00002000
 #define UI_PULSE		0x00004000
 
-#if defined(_DEBUG) && !defined(BSPC) && !defined(_XBOX)
+#if defined(_DEBUG) && !defined(BSPC)
 	#define HUNK_DEBUG
 #endif
 
@@ -577,7 +568,8 @@ typedef enum {
 	BLOCKED_UPPER_LEFT_PROJ,
 	BLOCKED_LOWER_RIGHT_PROJ,
 	BLOCKED_LOWER_LEFT_PROJ,
-	BLOCKED_TOP_PROJ
+	BLOCKED_TOP_PROJ,
+	BLOCKED_BACK
 } saberBlockedType_t;
 
 
@@ -621,14 +613,14 @@ enum
 	FP_SPEED,//duration
 	FP_PUSH,//hold/duration
 	FP_PULL,//hold/duration
-	FP_TELEPATHY,//instant
+	FP_MINDTRICK,//instant
 	FP_GRIP,//hold/duration
 	FP_LIGHTNING,//hold/duration
 	FP_RAGE,//duration
-	FP_PROTECT,
+	FP_MANIPULATE,
 	FP_ABSORB,
 	FP_TEAM_HEAL,
-	FP_TEAM_FORCE,
+	FP_LIFT,
 	FP_DRAIN,
 	FP_SEE,
 	FP_SABER_OFFENSE,
@@ -637,6 +629,73 @@ enum
 	NUM_FORCE_POWERS
 };
 typedef int forcePowers_t;
+
+//[ExpSys]
+typedef enum
+{
+	SK_JETPACK,		//jetpack skill
+	SK_PISTOL,		//blaster pistol
+	SK_BLASTER,		//blaster rifle skill
+	SK_THERMAL,		//thermal detenator skill
+	SK_ROCKET,		//rocket launcher skill
+	SK_BACTA,		//bacta tank skill
+	SK_FLAMETHROWER,//flamethrower skill
+	SK_BOWCASTER,	//bowcaster skill
+	SK_FORCEFIELD,	//forcefield skill
+	SK_CLOAK,		//cloaking device skill
+	SK_SEEKER,		//seeker droid skill
+	SK_SENTRY,		//sentry gun skill
+	SK_DETPACK,		//detpack skill
+	SK_REPEATER,	//Repeater/clone Rifle skill
+	SK_DISRUPTOR,	//Disruptor/sniper rifle skill
+	//[StanceSelection]
+	SK_BLUESTYLE,	//Yellow lightsaber style
+	SK_REDSTYLE,	//Red lightsaber style
+	SK_PURPLESTYLE,	//Purple lightsaber style
+	SK_GREENSTYLE,	//Green lightsaber style
+	SK_DUALSTYLE,	//Dual lightsaber style
+	SK_STAFFSTYLE,	//Staff lightsaber style
+	//[/StanceSelection]
+	SK_REPEATERUPGRADE,//[Repeater]
+	SK_FLECHETTE,//[Flechette]
+	SK_BLASTERRATEOFFIREUPGRADE,//[BlasterRateOfFire]
+	SK_TUSKEN_RIFLE,
+	SK_SHIELD,
+	SK_GRENADE,
+	SK_SMOKEGRENADE,
+	SK_FLASHGRENADE,
+	SK_CRYOBAN,
+	SK_EMP,
+	//SK_MELEE,//[Melee]
+	SK_DEMP,
+	SK_CONC,
+	NUM_SKILLS
+} skills_t;
+
+typedef enum
+{
+	FT_BLASTERS,
+	FT_RIFLES,
+	FT_HEAVY_WEAPONS,
+	FT_SPECIALIST_WEAPONS,
+	FT_DEMOLITION,
+	FT_EXPLOSIVES,
+	FT_ENGINEERING,
+	FT_SIGHT,
+	FT_BACTA,
+	FT_FLAMETHROWER,
+	FT_JETPACK,
+	FT_CLOAK,
+	FT_SHIELDS,
+	FT_ENERGY,
+
+
+	NUM_FEATS
+
+} feats_t;
+
+#define NUM_TOTAL_SKILLS	(NUM_FORCE_POWERS+NUM_SKILLS+NUM_FEATS)
+//[/ExpSys]
 
 typedef enum
 {
@@ -684,10 +743,10 @@ typedef struct
 	float		lengthMax;
 	float		lengthOld;
 	float		desiredLength;
-	vec3_t		muzzlePoint;
-	vec3_t		muzzlePointOld;
-	vec3_t		muzzleDir;
-	vec3_t		muzzleDirOld;
+	vec3_t		muzzlePoint;		//racc - not updated on cgame side.		
+	vec3_t		muzzlePointOld;		//racc - not updated on cgame side.	
+	vec3_t		muzzleDir;			//racc - not updated on cgame side.	
+	vec3_t		muzzleDirOld;		//racc - not updated on cgame side.	
 	saberTrail_t	trail;
 	int			hitWallDebounceTime;
 	int			storageTime;
@@ -1184,6 +1243,9 @@ extern	vec4_t		colorMdGrey;
 extern	vec4_t		colorDkGrey;
 extern	vec4_t		colorLtBlue;
 extern	vec4_t		colorDkBlue;
+//[UiEnhanceSys]
+extern	vec4_t		colorOrange;
+//[/UiEnhanceSys]
 
 #define Q_COLOR_ESCAPE	'^'
 // you MUST have the last bit on here about colour strings being less than 7 or taiwanese strings register as colour!!!!
@@ -1226,28 +1288,6 @@ extern	vec3_t	axisDefault[3];
 
 #define	IS_NAN(x) (((*(int *)&x)&nanmask)==nanmask)
 
-#ifdef _XBOX
-inline void Q_CastShort2Float(float *f, const short *s)
-{
-	*f = ((float)*s);
-}
-
-inline void Q_CastUShort2Float(float *f, const unsigned short *s)
-{
-	*f = ((float)*s);
-}
-
-inline void Q_CastShort2FloatScale(float *f, const short *s, float scale)
-{
-	*f = ((float)*s) * scale;
-}
-
-inline void Q_CastUShort2FloatScale(float *f, const unsigned short *s, float scale)
-{
-	*f = ((float)*s) * scale;
-}
-#endif // _XBOX
-
 #if idppc
 
 static inline float Q_rsqrt( float number ) {
@@ -1282,139 +1322,36 @@ float Q_rsqrt( float f );		// reciprocal square root
 signed char ClampChar( int i );
 signed short ClampShort( int i );
 
+
+float Q_powf ( float x, int y );
+/*
 //[Linux]
 //[VS2005]
-//#if defined(_WIN32) && !defined(VS2005)
+#if defined(_WIN32) && !defined(VS2005) && !defined(__GNUC__)
 //#ifdef _WIN32
 //[/VS2005]
 //[Test]
 //#if !MAC_PORT //This should also work for the MAC port, so I'm commenting this out for now.
 //[/Test]
-//[JAC Bugfix]
-float Q_powf ( float x, int y );
-//[/JAC Bugfix]
-//#endif
+//float powf ( float x, int y );
+#endif
 //[/Linux]
+*/
 
 // this isn't a real cheap function to call!
 int DirToByte( vec3_t dir );
 void ByteToDir( int b, vec3_t dir );
-
-#ifdef _XBOX
-// SSE Vectorized math functions
-inline vec_t DotProduct( const vec3_t v1, const vec3_t v2 ) {
-#if defined (_XBOX)		/// use xbox stuff
-	float res;
-    __asm {
-        mov     edx, v1
-        movss   xmm1, [edx]
-        movhps  xmm1, [edx+4]
-
-        mov     edx, v2
-        movss   xmm2, [edx]
-        movhps  xmm2, [edx+4]
-
-        mulps   xmm1, xmm2
-
-        movaps  xmm0, xmm1
-
-        shufps  xmm0, xmm0, 32h
-        addps   xmm1, xmm0
-
-        shufps  xmm0, xmm0, 32h
-        addps   xmm1, xmm0
-
-        movss   [res], xmm1
-    }
-    return res;
-#else
-	return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
-#endif
-}
-
-inline void VectorSubtract( const vec3_t veca, const vec3_t vecb, vec3_t o ) {
-#ifdef _XBOX
-	__asm {
-        mov      ecx, veca
-        movss    xmm0, [ecx]
-        movhps   xmm0, [ecx+4]
-
-        mov      edx, vecb
-        movss    xmm1, [edx]
-        movhps   xmm1, [edx+4]
-
-        subps    xmm0, xmm1
-
-        mov      eax, o
-        movss    [eax], xmm0
-        movhps   [eax+4], xmm0
-    }
-#else
-	o[0] = veca[0]-vecb[0];
-	o[1] = veca[1]-vecb[1];
-	o[2] = veca[2]-vecb[2];
-#endif
-}
-
-inline void VectorAdd( const vec3_t veca, const vec3_t vecb, vec3_t o ) {
-#ifdef _XBOX
-  __asm {
-        mov      ecx, veca
-        movss    xmm0, [ecx]
-        movhps   xmm0, [ecx+4]
-
-        mov      edx, vecb
-        movss    xmm1, [edx]
-        movhps   xmm1, [edx+4]
-
-        addps    xmm0, xmm1
-
-        mov      eax, o
-        movss    [eax], xmm0
-        movhps   [eax+4], xmm0
-    }
-#else
-	o[0] = veca[0]+vecb[0];
-	o[1] = veca[1]+vecb[1];
-	o[2] = veca[2]+vecb[2];
-#endif
-}
-
-inline void VectorScale( const vec3_t i, vec_t scale, vec3_t o ) {
-#ifdef _XBOX
-__asm {
-        movss    xmm0, scale
-        shufps   xmm0, xmm0, 0h
-
-        mov      edx, i
-        movss    xmm1, [edx]
-        movhps   xmm1, [edx+4]
-
-        mulps    xmm0, xmm1
-
-        mov      eax, o
-        movss    [eax], xmm0
-        movhps   [eax+4], xmm0
-    }
-#else
-	o[0] = i[0]*scale;
-	o[1] = i[1]*scale;
-	o[2] = i[2]*scale;
-#endif
-}
-#endif	// _XBOX
 
 #if	1
 //rwwRMG - added math defines
 #define minimum(x,y) ((x)<(y)?(x):(y))
 #define maximum(x,y) ((x)>(y)?(x):(y))
 
-#ifndef _XBOX	// Done above to use SSE
 #define DotProduct(x,y)					((x)[0]*(y)[0]+(x)[1]*(y)[1]+(x)[2]*(y)[2])
 #define VectorSubtract(a,b,c)			((c)[0]=(a)[0]-(b)[0],(c)[1]=(a)[1]-(b)[1],(c)[2]=(a)[2]-(b)[2])
 #define VectorAdd(a,b,c)				((c)[0]=(a)[0]+(b)[0],(c)[1]=(a)[1]+(b)[1],(c)[2]=(a)[2]+(b)[2])
 #define	VectorScale(v, s, o)			((o)[0]=(v)[0]*(s),(o)[1]=(v)[1]*(s),(o)[2]=(v)[2]*(s))
-#endif
+
 #define VectorCopy(a,b)					((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2])
 #define VectorCopy4(a,b)				((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2],(b)[3]=(a)[3])
 #define	VectorMA(v, s, b, o)			((o)[0]=(v)[0]+(b)[0]*(s),(o)[1]=(v)[1]+(b)[1]*(s),(o)[2]=(v)[2]+(b)[2]*(s))
@@ -1516,63 +1453,11 @@ static ID_INLINE int VectorCompare( const vec3_t v1, const vec3_t v2 ) {
 }
 
 static ID_INLINE vec_t VectorLength( const vec3_t v ) {
-#ifdef _XBOX
-	float res;
-
-	__asm {
-        mov     edx, v
-        movss   xmm1, [edx]
-        movhps  xmm1, [edx+4]
-
-        movaps  xmm2, xmm1
-
-        mulps   xmm1, xmm2
-
-        movaps  xmm0, xmm1
-
-        shufps  xmm0, xmm0, 32h
-        addps   xmm1, xmm0
-
-        shufps  xmm0, xmm0, 32h
-        addps   xmm1, xmm0
-
-        sqrtss  xmm1, xmm1
-        movss   [res], xmm1
-    }
-
-    return res;
-#else
 	return (vec_t)sqrt (v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-#endif
 }
 
 static ID_INLINE vec_t VectorLengthSquared( const vec3_t v ) {
-#ifdef _XBOX
-	float res;
-	__asm {
-        mov     edx, v
-        movss   xmm1, [edx]
-        movhps  xmm1, [edx+4]
-
-        movaps  xmm2, xmm1
-
-        mulps   xmm1, xmm2
-
-        movaps  xmm0, xmm1
-
-        shufps  xmm0, xmm0, 32h
-        addps   xmm1, xmm0
-
-        shufps  xmm0, xmm0, 32h
-        addps   xmm1, xmm0
-
-        movss   [res], xmm1
-    }
-
-    return res;
-#else
 	return (v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-#endif
 }
 
 static ID_INLINE vec_t Distance( const vec3_t p1, const vec3_t p2 ) {
@@ -1805,18 +1690,6 @@ typedef struct
 } qint64;
 
 //=============================================
-/*
-short	BigShort(short l);
-short	LittleShort(short l);
-int		BigLong (int l);
-int		LittleLong (int l);
-qint64  BigLong64 (qint64 l);
-qint64  LittleLong64 (qint64 l);
-float	BigFloat (const float *l);
-float	LittleFloat (const float *l);
-
-void	Swap_Init (void);
-*/
 //[OverflowProtection]
 char	* QDECL va( char *format, ... );
 //char	* QDECL va(const char *format, ...);
@@ -1974,14 +1847,6 @@ typedef struct {
 	cplane_t	plane;		// surface normal at impact, transformed to world space
 	int			surfaceFlags;	// surface hit
 	int			contents;	// contents on other side of surface hit
-/*
-Ghoul2 Insert Start
-*/
-	//rww - removed this for now, it's just wasting space in the trace structure.
-//	CollisionRecord_t G2CollisionMap[MAX_G2_COLLISIONS];	// map that describes all of the parts of ghoul2 models that got hit
-/*
-Ghoul2 Insert End
-*/
 } trace_t;
 
 // trace->entityNum can also be 0 to (MAX_GENTITIES-1)
@@ -2058,34 +1923,13 @@ typedef int soundChannel_t;
 //
 // per-level limits
 //
-#ifdef _XBOX
-#define MAX_CLIENTS			16
-#else
 #define	MAX_CLIENTS			32		// absolute limit
-#endif
 #define MAX_RADAR_ENTITIES	MAX_GENTITIES
 #define MAX_TERRAINS		1//32 //rwwRMG: inserted
 #define MAX_LOCATIONS		64
 
-#ifdef _XBOX
-#define	GENTITYNUM_BITS	9		// don't need to send any more
-#else
 #define	GENTITYNUM_BITS	10		// don't need to send any more
-#endif
 #define	MAX_GENTITIES	(1<<GENTITYNUM_BITS)
-
-//I am reverting. I guess. For now.
-/*
-#define	GENTITYNUM_BITS		11
-							//rww - I am raising this 1 bit. SP actually has room for 1024 ents - none - world - 1 client.
-							//Which means 1021 useable entities. However we have 32 clients.. so if we keep our limit
-							//at 1024 we are not going to be able to load any SP levels at the edge of the ent limit.
-#define		MAX_GENTITIES	(1024+(MAX_CLIENTS-1))
-							//rww - we do have enough room to send over 2048 ents now. However, I cannot live with the guilt of
-							//actually increasing the entity limit to 2048 (as it would slow down countless things, and
-							//there are tons of ent list traversals all over the place). So I am merely going to give enough
-							//to compensate for our larger maxclients.
-*/
 
 // entitynums are communicated with GENTITY_BITS, so any reserved
 // values thatare going to be communcated over the net need to
@@ -2161,7 +2005,7 @@ typedef struct forcedata_s {
 	float		forceJumpCharge;					//you're current forceJump charge-up level, increases the longer you hold the force jump button down
 	int			forceJumpSound;
 	int			forceJumpAddTime;
-	int			forceGripEntityNum;					//what entity I'm gripping
+	int			forceGripEntityNum;				//what entity I'm gripping
 	int			forceGripDamageDebounceTime;		//debounce for grip damage
 	float		forceGripBeingGripped;				//if > level.time then client is in someone's grip
 	int			forceGripCripple;					//if != 0 then make it so this client can't move quickly (he's being gripped)
@@ -2184,15 +2028,19 @@ typedef struct forcedata_s {
 	int			forceDoInit;
 
 	int			forceSide;
-	int			forceRank;
+	int			forceRank;		//racc - stores the force mastery rank of the player.  Is set but doesn't seem to be used.
 
 	int			forceDeactivateAll;
 
 	int			killSoundEntIndex[TRACK_CHANNEL_MAX]; //this goes here so it doesn't get wiped over respawn
 
-	qboolean	sentryDeployed;
+	//[SentryGun]
+	//racc - This variable isn't used anymore since we allow multiple sentry guns now.
+	//[/SentryGun]
+	//racc - flag for indicating when a player has a sentry gun deployed.  This prevents the player from deploying multiple sentry guns.
+	qboolean	sentryDeployed;	
 
-	int			saberAnimLevelBase;//sigh...
+	int			saberAnimLevelBase;//sigh... //racc - This id's the saber style. SS_DUAL for dual sabers, SS_STAFF for staff sabers, and anything else for single saber. 
 	int			saberAnimLevel;
 	int			saberDrawAnimLevel;
 
@@ -2221,6 +2069,8 @@ typedef enum {
 
 #define FORCE_LIGHTSIDE			1
 #define FORCE_DARKSIDE			2
+#define FORCE_NEUTRAL			3
+#define FORCE_LIGHTSABER		4
 
 #define MAX_FORCE_RANK			7
 
@@ -2428,6 +2278,7 @@ typedef struct playerState_s {
 	int			duelTime;
 	qboolean	duelInProgress;
 
+	//racc - this isn't used anymore in Enhanced thanks to the new saber system.
 	int			saberAttackChainCount;
 
 	int			saberHolstered;
@@ -2501,7 +2352,6 @@ typedef struct playerState_s {
 	//rww - spare values specifically for use by mod authors.
 	//See psf_overrides.txt if you want to increase the send
 	//amount of any of these above 1 bit.
-#ifndef _XBOX
 	int			userInt1;
 	int			userInt2;
 	int			userInt3;
@@ -2510,12 +2360,12 @@ typedef struct playerState_s {
 	float		userFloat3;
 	vec3_t		userVec1;
 	vec3_t		userVec2;
-#endif
 
 #ifdef _ONEBIT_COMBO
 	int			deltaOneBits;
 	int			deltaNumBits;
 #endif
+
 } playerState_t;
 
 typedef struct siegePers_s
@@ -2578,26 +2428,111 @@ typedef struct siegePers_s
 //[RACC] - +button11
 //+force_drain
 
-//[LF - MeleeButton]
-#define BUTTON_MELEE	 4096
-//+button 12
-//[/LF - MeleeButton]
-
-// Here's an interesting bit.  The bots in TA used buttons to do additional gestures.
-// I ripped them out because I didn't want too many buttons given the fact that I was already adding some for JK2.
-// We can always add some back in if we want though.
-/*
-#define BUTTON_AFFIRMATIVE	32
-#define	BUTTON_NEGATIVE		64
-
-#define BUTTON_GETFLAG		128
-#define BUTTON_GUARDBASE	256
-#define BUTTON_PATROL		512
-#define BUTTON_FOLLOWME		1024
-*/
+//[SaberSys]
+//[SaberDefines]
+//new button defines.
+#define	BUTTON_SABERTHROW		4096		//+button12
+//[SnapThrow]
+#define	BUTTON_THERMALTHROW		8192		//+button13
+//[/SnapThrow]
+#define	BUTTON_15				16384		//+button14
+//NOTE: As far as I've been able to test, the buttons seen below don't work because they 
+//aren't set to command buttons in the engine.
+#define	BUTTON_16				32768
+#define	BUTTON_17				65536	//seems to trigger after landing on some and then randomly after that.
+#define	BUTTON_18				131072
+#define	BUTTON_19				262144
+#define	BUTTON_20				524288
+#define	BUTTON_21				1048576
+#define	BUTTON_22				2097152
+#define	BUTTON_23				4194304
+#define	BUTTON_24				8388608
+#define	BUTTON_25				16777216
+#define	BUTTON_26				33554432
+#define	BUTTON_27				67108864
+#define	BUTTON_28				134217728
+#define	BUTTON_29				268435456
+#define	BUTTON_30				536870912
+#define	BUTTON_31				1073741824
+#define	BUTTON_32				2147483648
+//[/SaberDefines]
+//[/SaberSys]
 
 #define	MOVE_RUN			120			// if forwardmove or rightmove are >= MOVE_RUN,
 										// then BUTTON_WALKING should be set
+
+//[SaberSys]
+//playerstate userint1
+//Bitmasks for view locking
+#define	LOCK_RIGHT			1
+#define	LOCK_LEFT			2
+#define LOCK_UP				4
+#define LOCK_DOWN			8
+
+//Bitmasks for move locking
+#define LOCK_MOVERIGHT		16
+#define LOCK_MOVELEFT		32
+#define LOCK_MOVEFORWARD	64
+#define LOCK_MOVEBACK		128
+#define LOCK_MOVEUP			256
+#define LOCK_MOVEDOWN		512
+//[/SaberSys]
+
+//[FatigueSys]
+//entitystate/playerstate userint3
+
+//Flag bits in bit number form
+//use "(1 << flag)"
+	
+//Fatigued Flag.
+#define	FLAG_FATIGUED		1
+	
+//Dodge low flag
+#define FLAG_DODGEROLL		2
+
+//indicates that the current attack/transition is
+//part of a fake.  This makes the attack much stronger
+//forbreaking thru other attacks and blocks.
+#define FLAG_ATTACKFAKE		3
+//[/FatigueSys]
+
+//[SaberSys]
+//This flag indicates that the player should have a slower than usual bounce since they just avoided a mishap by
+//having enough FP/DP.
+#define FLAG_SLOWBOUNCE		4
+//This flag indicates at the player is going into a older, more vulnerable slow bounce animations
+//this must be used in conjunction with the FLAG_SLOWBOUNCE to work right.
+#define FLAG_OLDSLOWBOUNCE	5
+
+//this flag indicates that this player is supposed to win the current saberlock.
+#define FLAG_LOCKWINNER		6
+
+//[Flamethrower]
+//flag indicating that the player's flamethrower is active.
+#define FLAG_FLAMETHROWER	7
+//[/Flamethrower]
+
+//flag indicates that the player was parried.  
+//They won't be able to launch into a combo from the bounce.
+#define FLAG_PARRIED		8
+
+//flag indicates that this block is a pre-block and interruptable
+#define FLAG_PREBLOCK		9
+
+//[QuickParry]
+#define FLAG_QUICKPARRY		10
+//[/QuickParry]
+#define FLAG_BLOCKING       11
+#define FLAG_ATTACKRELEASE  12
+//[SaberDefines]
+#define FLAG_FROZEN			13
+//scaler to the walkspeed
+#define WALKSPEED			1.75//1.35
+//[/SaberDefines]
+//[/SaberSys]
+
+
+
 
 typedef enum
 {
@@ -2609,10 +2544,10 @@ typedef enum
 	GENCMD_FORCE_PULL,
 	GENCMD_FORCE_DISTRACT,
 	GENCMD_FORCE_RAGE,
-	GENCMD_FORCE_PROTECT,
+	GENCMD_FORCE_MANIPULATE,
 	GENCMD_FORCE_ABSORB,
 	GENCMD_FORCE_HEALOTHER,
-	GENCMD_FORCE_FORCEPOWEROTHER,
+	GENCMD_FORCE_LIFT,
 	GENCMD_FORCE_SEEING,
 	GENCMD_USE_SEEKER,
 	GENCMD_USE_FIELD,
@@ -2644,6 +2579,7 @@ typedef struct usercmd_s {
 	byte			invensel;
 	byte			generic_cmd;
 	signed char	forwardmove, rightmove, upmove;
+
 } usercmd_t;
 
 //===================================================================
@@ -2779,7 +2715,6 @@ typedef struct {
 // Different eTypes may use the information in different ways
 // The messages are delta compressed, so it doesn't really matter if
 // the structure size is fairly large
-#ifndef _XBOX	// First, real version for the PC, with all members 32-bits
 
 typedef struct entityState_s {
 	int		number;			// entity index
@@ -2946,163 +2881,6 @@ typedef struct entityState_s {
 	vec3_t		userVec2;
 } entityState_t;
 
-#else
-// Now, XBOX version with members packed in tightly to save gobs of memory
-// This is rather confusing. All members are in 1, 2, or 4 bytes, and then
-// re-ordered within the structure to keep everything aligned.
-
-#pragma pack(push, 1)
-
-typedef struct entityState_s {
-	// Large (32-bit) fields first
-
-	int		number;			// entity index
-	int		eFlags;
-
-	trajectory_t	pos;	// for calculating position
-	trajectory_t	apos;	// for calculating angles
-
-	int		time;
-	int		time2;
-
-	vec3_t	origin;
-	vec3_t	origin2;
-
-	vec3_t	angles;
-	vec3_t	angles2;
-
-	float	speed;
-
-	int		genericenemyindex;
-
-	int		emplacedOwner;
-
-	int		constantLight;	// r + (g<<8) + (b<<16) + (intensity<<24)
-	int		forcePowersActive;
-
-	int		solid;			// for client side prediction, trap_linkentity sets this properly
-
-	byte	customRGBA[4];
-
-	int		surfacesOn; //a bitflag of corresponding surfaces from a lookup table. These surfaces will be forced on.
-	int		surfacesOff; //same as above, but forced off instead.
-
-	//I.. feel bad for doing this, but NPCs really just need to
-	//be able to control this sort of thing from the server sometimes.
-	//At least it's at the end so this stuff is never going to get sent
-	//over for anything that isn't an NPC.
-	vec3_t	boneAngles1; //angles of boneIndex1
-	vec3_t	boneAngles2; //angles of boneIndex2
-	vec3_t	boneAngles3; //angles of boneIndex3
-	vec3_t	boneAngles4; //angles of boneIndex4
-
-
-	// Now, the 16-bit members
-
-
-	word	bolt2;
-	word	trickedentindex; //0-15
-
-	word	trickedentindex2; //16-32
-	word	trickedentindex3; //33-48
-
-	word	trickedentindex4; //49-64
-	word	otherEntityNum;	// shotgun sources, etc
-
-	word	otherEntityNum2;
-	word	groundEntityNum;	// -1 = in air
-
-	short	modelindex;
-	word	clientNum;		// 0 to (MAX_CLIENTS - 1), for players and corpses
-
-	word	frame;
-	word	saberEntityNum;
-
-	word	event;			// impulse events -- muzzle flashes, footsteps, etc
-	word	owner; // so crosshair knows what it's looking at
-
-	word	powerups;		// bit flags
-	word	legsAnim;
-
-	word	torsoAnim;
-	word	forceFrame;		//if non-zero, force the anim frame
-
-	word	ragAttach; //attach to ent while ragging
-	short	iModelScale; //rww - transfer a percentage of the normal scale in a single int instead of 3 x-y-z scale values
-
-	word	lookTarget;
-	word	health;
-
-	word	maxhealth; //so I know how to draw the stupid health bar
-	word	npcSaber1;
-
-	word	npcSaber2;
-	word	boneOrient; //packed with x, y, z orientations for bone angles
-
-	//If non-0, this is the index of the vehicle a player/NPC is riding.
-	word	m_iVehicleNum;
-
-
-	// Now, the 8-bit members. These start out two bytes off, thanks to the above word
-
-
-	byte	eType;			// entityType_t
-	byte	eFlags2;		// EF2_??? used much less frequently
-
-	byte	bolt1;
-	byte	fireflag;
-	byte	activeForcePass;
-	byte	loopSound;		// constantly loop this sound
-
-	byte	loopIsSoundset; //qtrue if the loopSound index is actually a soundset index
-	byte	soundSetIndex;
-	byte	modelGhoul2;
-	byte	g2radius;
-
-	byte	modelindex2;
-	byte	saberInFlight;
-	byte	saberMove;
-	byte	isJediMaster;
-	byte	saberHolstered;//sent in only 2 bytes, should be 0, 1 or 2
-
-	byte	isPortalEnt; //this needs to be seperate for all entities I guess, which is why I couldn't reuse another value.
-	byte	eventParm;
-	byte	teamowner;
-	byte	shouldtarget;
-
-	byte	weapon;			// determines weapon and flash model, etc
-	byte	legsFlip; //set to opposite when the same anim needs restarting, sent over in only 1 bit. Cleaner and makes porting easier than having that god forsaken ANIM_TOGGLEBIT.
-	byte	torsoFlip;
-	byte	generic1;
-
-	byte	heldByClient; //can only be a client index - this client should be holding onto my arm using IK stuff.
-	byte	brokenLimbs;
-	byte	boltToPlayer; //set to index of a real client+1 to bolt the ent to that client. Must be a real client, NOT an NPC.
-	byte	hasLookTarget; //for looking at an entity's origin (NPCs and players)
-
-	//index values for each type of sound, gets the folder the sounds
-	//are in. I wish there were a better way to do this,
-	byte	csSounds_Std;
-	byte	csSounds_Combat;
-	byte	csSounds_Extra;
-	byte	csSounds_Jedi;
-
-	//Allow up to 4 PCJ lookup values to be stored here.
-	//The resolve to configstrings which contain the name of the
-	//desired bone.
-	byte	boneIndex1;
-	byte	boneIndex2;
-	byte	boneIndex3;
-	byte	boneIndex4;
-
-	byte	NPC_class; //we need to see what it is on the client for a few effects.
-	byte	alignPad[3];
-} entityState_t;
-
-#pragma pack(pop)
-
-#endif
-
 typedef enum {
 	CA_UNINITIALIZED,
 	CA_DISCONNECTED, 	// not talking to a server
@@ -3140,7 +2918,6 @@ typedef struct qtime_s {
 #define AS_LOCAL			0
 #define AS_GLOBAL			1
 #define AS_FAVORITES		2
-
 #define AS_MPLAYER			3 // (Obsolete)
 
 // cinematic states
@@ -3177,14 +2954,8 @@ enum _flag_status {
 typedef int flagStatus_t;
 
 
-
-#ifdef _XBOX
-#define	MAX_GLOBAL_SERVERS			50
-#define	MAX_OTHER_SERVERS			16
-#else
 #define	MAX_GLOBAL_SERVERS			2048
 #define	MAX_OTHER_SERVERS			128
-#endif
 #define MAX_PINGREQUESTS			32
 #define MAX_SERVERSTATUSREQUESTS	16
 
@@ -3333,7 +3104,6 @@ enum {
 	FONT_LARGE,
 	FONT_SMALL2
 };
-
 
 
 #endif	// __Q_SHARED_H

@@ -1,0 +1,103 @@
+repeatDelay				250
+
+Particle
+{
+	name				explosion
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				150
+
+	life				1400 1300
+
+	delay				0 300
+
+	radius				75
+
+	height				75
+
+	acceleration		1000 250 250 -1000 -500 -500
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0 0 1 0.502 0
+		end				1 1 0 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			25
+		end				125 250
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				Copy of explosion
+
+	flags				setShaderTime usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				75
+
+	life				1100 1500
+
+	delay				0 300
+
+	radius				75
+
+	height				75
+
+	acceleration		900 125 150 -900 -300 -300
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 1 0 0.8667 0.4235 0.1333
+		end				1 1 0 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			15
+		end				125 250
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}

@@ -1,0 +1,116 @@
+repeatDelay				89
+
+Line
+{
+	life				15
+
+	cullrange			100
+
+	origin				9 0 0
+
+	origin2				-80 0 0
+
+	rgb
+	{
+		start			0.6392 1 0.5843
+	}
+
+	alpha
+	{
+		start			0.7
+	}
+
+	size
+	{
+		start			1 2
+	}
+
+	shaders
+	[
+		gfx/effects/greenShot
+	]
+}
+
+Line
+{
+	life				15
+
+	cullrange			100
+
+	origin				16 0 0
+
+	origin2				-90 0 0
+
+	rgb
+	{
+		start			0.6392 1 0.5843 0.1922 0.6431 0
+	}
+
+	alpha
+	{
+		start			0.8 1
+	}
+
+	size
+	{
+		start			2 3
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	life				10
+
+	cullrange			100
+
+	origin				-5 0 0
+
+	rgb
+	{
+		start			0.6392 1 0.5843
+	}
+
+	alpha
+	{
+		start			0.25 0.35
+		flags			random
+	}
+
+	size
+	{
+		start			12 13
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Tail
+{
+	count				2 1
+
+	life				125
+
+	rgb
+	{
+		start			0 1 0 0 0.502 0
+	}
+
+	length
+	{
+		end				15
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/whiteLine2
+	]
+}

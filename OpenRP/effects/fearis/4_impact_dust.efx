@@ -1,0 +1,155 @@
+repeatDelay				300
+
+Particle
+{
+	name				one
+
+	spawnFlags			orgOnCylinder axisFromSphere rgbComponentInterpolation
+
+	count				12
+
+	life				2000
+
+	origin				0 0 0 5 0 0
+
+	height				0
+
+	rotation			0 360
+
+	rotationDelta		-4 4
+
+	velocity			70 0 0 80 0 0
+
+	acceleration		-40 0 0 -50 0 0
+
+	gravity				12 24
+
+	rgb
+	{
+		start			0.8863 0.902 0.7843 0.8745 0.8431 0.7686
+	}
+
+	alpha
+	{
+		start			0.3 0.4
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			100 120
+		end				160 200
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				two
+
+	spawnFlags			orgOnCylinder axisFromSphere rgbComponentInterpolation
+
+	count				7
+
+	life				3000
+
+	height				0
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			40 0 0
+
+	acceleration		-10 0 0 -12 0 0
+
+	gravity				6 8
+
+	rgb
+	{
+		start			0.8863 0.902 0.7843 0.8745 0.8431 0.7686
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			60 80
+		end				110 130
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				three
+
+	spawnFlags			orgOnCylinder axisFromSphere rgbComponentInterpolation
+
+	count				7
+
+	life				1000
+
+	height				0
+
+	rotation			0 360
+
+	rotationDelta		-4 4
+
+	velocity			100 0 0 110 0 0
+
+	acceleration		-40 0 0 -50 0 0
+
+	gravity				24 40
+
+	rgb
+	{
+		start			0.8863 0.902 0.7843 0.8745 0.8431 0.7686
+	}
+
+	alpha
+	{
+		start			0.2 0.1
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			90 128
+		end				20 25
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Sound
+{
+	name				hit
+
+	sounds
+	[
+		sound/fearis/hit1.wav
+	]
+}

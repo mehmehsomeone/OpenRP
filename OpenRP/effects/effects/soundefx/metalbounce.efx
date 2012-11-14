@@ -1,0 +1,9 @@
+repeatDelay				300
+
+Sound
+{
+	sounds
+	[
+		sound/effects/metal_bounce.mp3
+	]
+}

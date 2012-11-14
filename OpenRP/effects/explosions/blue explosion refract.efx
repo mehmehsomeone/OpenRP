@@ -1,0 +1,646 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				15
+
+	life				1300 1200
+
+	delay				1200 300
+
+	radius				25
+
+	height				25
+
+	acceleration		0 45 45 0 -45 -45
+
+	gravity				25 -10
+
+	rgb
+	{
+		start			0.4275 0.02745 0.9725 0.7294 0.5255 0.9765
+		end				0 0 1 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				earlyfire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				15
+
+	life				1100 1300
+
+	delay				2200 2000
+
+	radius				55
+
+	height				55
+
+	acceleration		0 25 25 0 -25 -25
+
+	gravity				25 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				earlymiddle
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				15
+
+	life				1000 1100
+
+	delay				4200 3000
+
+	radius				45
+
+	height				45
+
+	acceleration		0 25 25 0 -25 -25
+
+	gravity				25 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			1 3
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				latefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				20 26
+
+	life				1000 1100
+
+	delay				6200 3000
+
+	radius				56 45
+
+	height				56 45
+
+	acceleration		25 25 25 -25 -25 -25
+
+	gravity				200 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				middlefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				20 26
+
+	life				1000 1100
+
+	delay				4200 3000
+
+	radius				56 45
+
+	acceleration		25 25 25 -25 -25 -25
+
+	gravity				200 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				latefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				20 26
+
+	life				1000 1100
+
+	delay				1.02e+004 7000
+
+	radius				56 45
+
+	acceleration		25 25 25 -25 -25 -25
+
+	gravity				200 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				latefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				20 26
+
+	life				1000 1100
+
+	delay				8000 9000
+
+	radius				56 45
+
+	acceleration		25 25 25 -25 -25 -25
+
+	gravity				200 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				middlefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				15
+
+	life				1000 1100
+
+	delay				4200 3000
+
+	radius				45
+
+	acceleration		0 25 25 0 -25 -25
+
+	gravity				25 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			1 3
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				middlefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				15
+
+	life				1000 1100
+
+	delay				4200 3000
+
+	radius				45
+
+	acceleration		0 25 25 0 -25 -25
+
+	gravity				25 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			1 3
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				Copy of latefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				25 35
+
+	life				1000 1100
+
+	delay				1.02e+004 7000
+
+	radius				56 45
+
+	acceleration		25 25 25 -25 -25 -25
+
+	gravity				200 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				Copy of latefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				35 26
+
+	life				1000 1100
+
+	delay				1.02e+004 7000
+
+	radius				56 45
+
+	acceleration		25 25 25 -25 -25 -25
+
+	gravity				200 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				latefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				20 26
+
+	life				1000 1100
+
+	delay				1.02e+004 7000
+
+	radius				56 45
+
+	acceleration		25 25 25 -25 -25 -25
+
+	gravity				200 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				latefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				20 26
+
+	life				1000 1100
+
+	delay				1.019e+004 7000
+
+	radius				56 45
+
+	acceleration		25 25 25 -25 -25 -25
+
+	gravity				200 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412
+		end				0.651 0.7922 0.9412 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				25 45
+		parm			5 4
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}

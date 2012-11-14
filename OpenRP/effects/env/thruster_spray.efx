@@ -1,0 +1,47 @@
+repeatDelay				300
+
+Particle
+{
+	flags				useAlpha
+
+	spawnFlags			orgOnCylinder axisFromSphere
+
+	life				500
+
+	height				0
+
+	rotation			15 30
+
+	rotationDelta		-5 5
+
+	velocity			150 0 0 200 0 0
+
+	acceleration		-350 0 0 -500 0 0
+
+	gravity				50 250
+
+	rgb
+	{
+		end				0.498 0.498 0.498
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7
+		end				0.1 0.2
+		flags			linear
+	}
+
+	size
+	{
+		start			10 20
+		end				2 5
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+	]
+}

@@ -1,12 +1,8 @@
 #include "g_OpenRP.h"
-
-extern "C"
-{
 #include "g_local.h"
 #include "g_character.h"
 #include "g_account.h"
 #include "g_admin.h"
-}
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern int M_G_ClientNumberFromName ( const char* name );
 
@@ -200,21 +196,21 @@ void LevelCheck(int charID)
 	int clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
 	int loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
 	char charName[MAX_STRING_CHARS];
-	int charNewCurrentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
-	int currentLevelTemp = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
-	int *charCurrentLevel = &currentLevelTemp;
+	
 	int currentSkillPoints = q.get_num( va( "SELECT SkillPoints FROM Characters WHERE CharID='%i'", charID ) );
 
 	Q_strncpyz( charName, q.get_string( va( "SELECT Name FROM Characters WHERE CharID='%i'", charID ) ), sizeof( charName ) );
 
 	for ( i=0; i < 49; ++i )
 	{
-		if ( *charCurrentLevel == 50 )
+		int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
+
+		if ( currentLevel == 50 )
 		{
 			break;
 		}
 		
-		nextLevel = *charCurrentLevel + 1;
+		nextLevel = currentLevel + 1;
 		neededSkillPoints = Q_powf( nextLevel, 2 ) * 2;
 
 		if ( currentSkillPoints >= neededSkillPoints )
@@ -231,13 +227,15 @@ void LevelCheck(int charID)
 
 	if ( *timesLeveled > 0 )
 	{
+		int currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", charID ) );
+
 		if ( *timesLeveled > 1 )
 		{
 			if ( loggedIn )
 			{
 				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/levelup.mp3" ) );
-				trap_SendServerCommand( clientID, va( "print \"^2Level up! You leveled up %i times and are now a level %i!\n\"", timesLeveled, charNewCurrentLevel ) );
-				trap_SendServerCommand( clientID, va( "cp \"^2Level up! You leveled up %i times and are now a level %i!\n\"", timesLeveled, charNewCurrentLevel ) );
+				trap_SendServerCommand( clientID, va( "print \"^2Level up! You leveled up %i times and are now a level %i!\n\"", timesLeveled, currentLevel ) );
+				trap_SendServerCommand( clientID, va( "cp \"^2Level up! You leveled up %i times and are now a level %i!\n\"", timesLeveled, currentLevel ) );
 			}
 			return;
 		}
@@ -247,8 +245,8 @@ void LevelCheck(int charID)
 			if ( loggedIn )
 			{
 				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/levelup.mp3" ) );
-				trap_SendServerCommand( clientID, va( "print \"^2Level up! You are now a level %i!\n\"", charNewCurrentLevel ) );
-				trap_SendServerCommand( clientID, va( "cp \"^2Level up! You are now a level %i!\n\"", charNewCurrentLevel ) );
+				trap_SendServerCommand( clientID, va( "print \"^2Level up! You are now a level %i!\n\"", currentLevel ) );
+				trap_SendServerCommand( clientID, va( "cp \"^2Level up! You are now a level %i!\n\"", currentLevel ) );
 			}
 			return;
 		}
@@ -1140,7 +1138,6 @@ void Cmd_Shop_F( gentity_t * ent )
 	int itemCost, itemLevel, newTotal;
 	int currentCredits;
 	int currentLevel;
-	//int forceSensitive;
 	int newTotalCredits;
 	int currentTotal;
 
@@ -1158,8 +1155,10 @@ void Cmd_Shop_F( gentity_t * ent )
 	if ( trap_Argc() < 2 )
 	{
 		trap_SendServerCommand( ent-g_entities, 
-			va( "print \"^2Shop:\nWeapons:\n^2Pistol (Level ^7%i^2) - ^7%i ^2credits\nE-11(Level ^7%i^2) - ^7%i ^2credits\nRemember: You can also use /shop <buy/examine> <item>\n\"", 
-			openrp_pistolLevel.integer, openrp_pistolBuyCost.integer, openrp_e11Level.integer, openrp_e11BuyCost.integer ) );
+			va( "print \"^2Shop:\nWeapons:\n^2Pistol (Level ^7%i^2) - ^7%i ^2credits\nE-11(Level ^7%i^2) - ^7%i ^2credits\nDisruptor(Level ^7%i^2) - ^7%i ^2credits\nBowcaster(Level ^7%i^2) - ^7%i ^2credits\nRepeater(Level ^7%i^2) - ^7%i ^2credits\nDEMP2(Level ^7%i^2) - ^7%i ^2credits\nFlechette(Level ^7%i^2) - ^7%i ^2credits\nRocket(Level ^7%i^2) - ^7%i ^2credits\nConcussion(Level ^7%i^2) - ^7%i ^2credits\nBinoculars(Level ^7%i^2) - ^7%i ^2credits\nJetpack(Level ^7%i^2) - ^7%i ^2credits\nCloak(Level ^7%i^2) - ^7%i ^2credits\nTD(Level ^7%i^2) - ^7%i ^2credits\nTripmine(Level ^7%i^2) - ^7%i ^2credits\nDetpack(Level ^7%i^2) - ^7%i ^2credits\nRemember: You can also use /shop <buy/examine> <item>\n\"", 
+			openrp_pistolLevel.integer, openrp_pistolBuyCost.integer, openrp_e11Level.integer, openrp_e11BuyCost.integer, openrp_disruptorLevel.integer, openrp_disruptorBuyCost.integer, openrp_bowcasterLevel.integer, 
+			openrp_bowcasterBuyCost.integer, openrp_repeaterLevel.integer, openrp_repeaterBuyCost.integer, openrp_demp2Level.integer, openrp_demp2BuyCost.integer, openrp_flechetteLevel.integer, openrp_flechetteBuyCost.integer, 
+			openrp_rocketLevel.integer, openrp_rocketBuyCost.integer, openrp_concussionLevel.integer, openrp_concussionBuyCost.integer, openrp_binocularsLevel.integer, openrp_binocularsBuyCost.integer, openrp_jetpackLevel.integer, openrp_jetpackBuyCost.integer, openrp_concussionLevel.integer, openrp_concussionBuyCost.integer, openrp_concussionLevel.integer, openrp_concussionBuyCost.integer, openrp_concussionLevel.integer, openrp_concussionBuyCost.integer, openrp_concussionLevel.integer, openrp_concussionBuyCost.integer ) );
 		return;
 	}
 
@@ -1171,7 +1170,6 @@ void Cmd_Shop_F( gentity_t * ent )
 
 	currentCredits = q.get_num( va( "SELECT Credits FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 	currentLevel = q.get_num( va( "SELECT Level FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
-	//forceSensitive = q.get_num( va( "SELECT ForceSensitive FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 
 	trap_Argv( 1, parameter, MAX_STRING_CHARS );
 	trap_Argv( 2, itemName, MAX_STRING_CHARS );
@@ -1179,34 +1177,82 @@ void Cmd_Shop_F( gentity_t * ent )
 
 	if ( !Q_stricmp( parameter, "buy" ) )
 	{
-		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
+		if ( !Q_stricmp( itemName, "pistol" ) )
 		{
-			/*
-			if ( forceSensitive )
-			{
-				trap_SendServerCommand( ent-g_entities, "print \"^1You cannot buy guns as a force sensitive.\n\"" );
-				return;
-			}
-			*/
 
 			itemCost = openrp_pistolBuyCost.integer;
 			itemLevel = openrp_pistolLevel.integer;
 		}
-		
-		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
+		else if ( !Q_stricmp( itemName, "e-11" ) )
 		{
-			/*
-			if ( forceSensitive )
-			{
-				trap_SendServerCommand( ent-g_entities, "print \"^1You cannot buy guns as a force sensitive.\n\"" );
-				return;
-			}
-			*/
-
 			itemCost = openrp_e11BuyCost.integer;
 			itemLevel = openrp_e11Level.integer;
 		}
-
+		else if ( !Q_stricmp( itemName, "disruptor" ) )
+		{
+			itemCost = openrp_e11BuyCost.integer;
+			itemLevel = openrp_e11Level.integer;
+		}
+		else if ( !Q_stricmp( itemName, "bowcaster" ) )
+		{
+			itemCost = openrp_bowcasterBuyCost.integer;
+			itemLevel = openrp_bowcasterLevel.integer;
+		}
+		else if ( !Q_stricmp( itemName, "repeater" ) )
+		{
+			itemCost = openrp_repeaterBuyCost.integer;
+			itemLevel = openrp_repeaterLevel.integer;
+		}
+		else if ( !Q_stricmp( itemName, "demp2" ) )
+		{
+			itemCost = openrp_demp2BuyCost.integer;
+			itemLevel = openrp_demp2Level.integer;
+		}
+		else if ( !Q_stricmp( itemName, "flechette" ) )
+		{
+			itemCost = openrp_flechetteBuyCost.integer;
+			itemLevel = openrp_flechetteLevel.integer;
+		}
+		else if ( !Q_stricmp( itemName, "rocket" ) )
+		{
+			itemCost = openrp_rocketBuyCost.integer;
+			itemLevel = openrp_rocketLevel.integer;
+		}
+		else if ( !Q_stricmp( itemName, "concussion" ) )
+		{
+			itemCost = openrp_concussionBuyCost.integer;
+			itemLevel = openrp_concussionLevel.integer;
+		}
+		else if ( !Q_stricmp( itemName, "binoculars" ) )
+		{
+			itemCost = openrp_binocularsBuyCost.integer;
+			itemLevel = openrp_binocularsLevel.integer;
+		}
+		else if ( !Q_stricmp( itemName, "jetpack" ) )
+		{
+			itemCost = openrp_jetpackBuyCost.integer;
+			itemLevel = openrp_jetpackLevel.integer;
+		}
+		else if ( !Q_stricmp( itemName, "cloak" ) )
+		{
+			itemCost = openrp_cloakBuyCost.integer;
+			itemLevel = openrp_cloakLevel.integer;
+		}
+			else if ( !Q_stricmp( itemName, "td" ) )
+		{
+			itemCost = openrp_tdBuyCost.integer;
+			itemLevel = openrp_tdLevel.integer;
+		}
+		else if ( !Q_stricmp( itemName, "tripmine" ) )
+		{
+			itemCost = openrp_tripmineBuyCost.integer;
+			itemLevel = openrp_tripmineLevel.integer;
+		}
+		else if ( !Q_stricmp( itemName, "detpack" ) )
+		{
+			itemCost = openrp_detpackBuyCost.integer;
+			itemLevel = openrp_detpackLevel.integer;
+		}
 		else
 		{
 			trap_SendServerCommand( ent-g_entities, "print \"^1This item is not a valid item.\n\"" );
@@ -1218,7 +1264,7 @@ void Cmd_Shop_F( gentity_t * ent )
 		//Trying to buy something while not having enough credits for it
 		if ( newTotalCredits < 0 )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1You don't have enough credits to buy a ^7%s^1. You have ^7%s ^1credits and this costs ^7%s ^1credits.\n\"", 
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1You don't have enough credits to buy a ^7%s^1. You have ^7%i ^1credits and this costs ^7%i ^1credits.\n\"", 
 				itemName, currentCredits, itemCost ) );
 			return;
 		}
@@ -1226,7 +1272,7 @@ void Cmd_Shop_F( gentity_t * ent )
 		//Trying to buy something they can't at their level
 		if ( currentLevel < itemLevel )
 		{
-			trap_SendServerCommand( ent-g_entities, va( "print \"^1You are not a high enough level to buy this. You are level ^7%s ^1and need to be level ^7%s^1.\n\"", currentLevel, itemLevel ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1You are not a high enough level to buy this. You are level ^7%i ^1and need to be level ^7%i^1.\n\"", currentLevel, itemLevel ) );
 			return;
 		}
 
@@ -1238,12 +1284,89 @@ void Cmd_Shop_F( gentity_t * ent )
 			newTotal = currentTotal + 1;
 			q.execute( va( "UPDATE Items set Pistol='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
 		}
-	
 		else if ( !Q_stricmp( itemName, "e-11" ) )
 		{
 			currentTotal = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
 			newTotal = currentTotal + 1;
 			q.execute( va( "UPDATE Items set E11='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "disruptor" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Disruptor FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Disruptor='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "bowcaster" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Bowcaster FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Bowcaster='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "repeater" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Repeater FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Repeater='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "demp2" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Demp2 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Demp2='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "flechette" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Flechette FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Flechette='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "rocket" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Rocket FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Rocket='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "concussion" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Concussion FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Concussion='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "binoculars" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Binoculars FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Binoculars='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "jetpack" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Jetpack FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Jetpack='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "cloak" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Cloak FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Cloak='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+			else if ( !Q_stricmp( itemName, "td" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Td FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Td='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "tripmine" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Tripmine FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Tripmine='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
+		}
+		else if ( !Q_stricmp( itemName, "detpack" ) )
+		{
+			currentTotal = q.get_num( va( "SELECT Detpack FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+			newTotal = currentTotal + 1;
+			q.execute( va( "UPDATE Items set Detpack='%i' WHERE CharID='%i'", newTotal, ent->client->sess.characterID ) );
 		}
 
 		else
@@ -1263,13 +1386,63 @@ void Cmd_Shop_F( gentity_t * ent )
 			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_pistolDescription.string ) );
 			return;
 		}
-	
 		else if ( !Q_stricmp( itemName, "e-11" ) )
 		{
 			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_e11Description.string ) );
 			return;
 		}
-
+		else if ( !Q_stricmp( itemName, "disruptor" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_disruptorDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "bowcaster" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_bowcasterDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "repeater" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_repeaterDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "demp2" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_demp2Description.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "flechette" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_flechetteDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "rocket" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_rocketDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "concussion" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_concussionDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "binoculars" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_binocularsDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "jetpack" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_jetpackDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "cloak" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_cloakDescription.string ) );
+		}
+			else if ( !Q_stricmp( itemName, "td" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_tdDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "tripmine" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_tripmineDescription.string ) );
+		}
+		else if ( !Q_stricmp( itemName, "detpack" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", openrp_detpackDescription.string ) );
+		}
 		else
 		{
 			trap_SendServerCommand( ent-g_entities, "print \"^1This item is not a valid item.\n\"" );
@@ -1294,6 +1467,7 @@ Check someone's inventory
 
 =================
 */
+/*
 void Cmd_CheckInventory_F( gentity_t * ent )
 {
 	Database db(DATABASE_PATH);
@@ -1378,6 +1552,7 @@ void Cmd_CheckInventory_F( gentity_t * ent )
 	}
 
 }
+*/
 
 /*
 =================
@@ -1396,6 +1571,13 @@ void Cmd_Inventory_F( gentity_t * ent )
 	int currentCredits;
 	int pistol;
 	int e11;
+	int disruptor;
+	int bowcaster;
+	int repeater;
+	int demp2;
+	int flechette;
+	int rocket;
+	int concussion;
 	char parameter[MAX_STRING_CHARS], itemName[MAX_STRING_CHARS];
 	int newTotalItems;
 	int newTotalCredits;
@@ -1416,6 +1598,13 @@ void Cmd_Inventory_F( gentity_t * ent )
 	
 	pistol = q.get_num( va( "SELECT Pistol FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
 	e11 = q.get_num( va( "SELECT E11 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+	disruptor = q.get_num( va( "SELECT Disruptor FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+	bowcaster = q.get_num( va( "SELECT Bowcaster FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+	repeater = q.get_num( va( "SELECT Repeater FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+	demp2 = q.get_num( va( "SELECT Demp2 FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+	flechette = q.get_num( va( "SELECT Flechette FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+	rocket = q.get_num( va( "SELECT Rocket FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
+	concussion = q.get_num( va( "SELECT Concussion FROM Items WHERE CharID='%i'", ent->client->sess.characterID ) );
 
 	if ( trap_Argc() < 2 )
 	{
@@ -1434,7 +1623,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 
 	if ( !Q_stricmp( parameter, "use" ) )
 	{
-		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
+		if ( !Q_stricmp( itemName, "pistol" ) )
 		{
 			if ( pistol < 1)
 			{
@@ -1450,7 +1639,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 			}
 		}
 
-		else if ( !Q_stricmp( itemName, "e-11" ) || !Q_stricmp( itemName, "E-11" ) )
+		else if ( !Q_stricmp( itemName, "e-11" ) )
 		{
 			if ( e11 < 1)
 			{
@@ -1465,6 +1654,111 @@ void Cmd_Inventory_F( gentity_t * ent )
 				return;
 			}
 		}
+		else if ( !Q_stricmp( itemName, "disruptor" ) )
+		{
+			if ( disruptor < 1)
+			{
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1You do not have any ^7%ss^1.\n\"", itemName ) );
+				return;
+			}
+
+			else
+			{
+				ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_DISRUPTOR);
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2You have equipped a ^7%s^2.\n\"", itemName ) );
+				return;
+			}
+		}
+		else if ( !Q_stricmp( itemName, "bowcaster" ) )
+		{
+			if ( bowcaster < 1)
+			{
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1You do not have any ^7%ss^1.\n\"", itemName ) );
+				return;
+			}
+
+			else
+			{
+				ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_BOWCASTER);
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2You have equipped a ^7%s^2.\n\"", itemName ) );
+				return;
+			}
+		}
+		else if ( !Q_stricmp( itemName, "repeater" ) )
+		{
+			if ( repeater < 1)
+			{
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1You do not have any ^7%ss^1.\n\"", itemName ) );
+				return;
+			}
+
+			else
+			{
+				ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_REPEATER);
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2You have equipped a ^7%s^2.\n\"", itemName ) );
+				return;
+			}
+		}
+		else if ( !Q_stricmp( itemName, "demp2" ) )
+		{
+			if ( demp2 < 1)
+			{
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1You do not have any ^7%ss^1.\n\"", itemName ) );
+				return;
+			}
+
+			else
+			{
+				ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_DEMP2);
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2You have equipped a ^7%s^2.\n\"", itemName ) );
+				return;
+			}
+		}
+		else if ( !Q_stricmp( itemName, "flechette" ) )
+		{
+			if ( flechette < 1)
+			{
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1You do not have any ^7%ss^1.\n\"", itemName ) );
+				return;
+			}
+
+			else
+			{
+				ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_FLECHETTE);
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2You have equipped a ^7%s^2.\n\"", itemName ) );
+				return;
+			}
+		}
+		else if ( !Q_stricmp( itemName, "rocket" ) )
+		{
+			if ( rocket < 1)
+			{
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1You do not have any ^7%ss^1.\n\"", itemName ) );
+				return;
+			}
+
+			else
+			{
+				ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_ROCKET_LAUNCHER);
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2You have equipped a ^7%s^2.\n\"", itemName ) );
+				return;
+			}
+		}
+		else if ( !Q_stricmp( itemName, "concussion" ) )
+		{
+			if ( concussion < 1)
+			{
+				trap_SendServerCommand( ent-g_entities, va( "print \"^1You do not have any ^7%ss^1.\n\"", itemName ) );
+				return;
+			}
+
+			else
+			{
+				ent->client->ps.stats[STAT_WEAPONS] |=  (1 << WP_CONCUSSION);
+				trap_SendServerCommand( ent-g_entities, va( "print \"^2You have equipped a ^7%s^2.\n\"", itemName ) );
+				return;
+			}
+		}
 
 		else
 		{
@@ -1473,6 +1767,7 @@ void Cmd_Inventory_F( gentity_t * ent )
 		}
 	}
 
+	/*
 	else if ( !Q_stricmp( parameter, "sell" ) )
 	{
 		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
@@ -1561,10 +1856,11 @@ void Cmd_Inventory_F( gentity_t * ent )
 			return;
 		}
 	}
+	*/
 
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /inventory <use/sell/delete> <item> or just inventory to see your own inventory.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /inventory use <item> or just inventory to see your own inventory.\n\"" );
 		return;
 	}
 }
@@ -2356,5 +2652,3 @@ void Cmd_ToggleChat_F( gentity_t * ent )
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeName ) );
 	return;
 }
-
-	

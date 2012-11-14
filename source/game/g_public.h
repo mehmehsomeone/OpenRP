@@ -6,7 +6,10 @@
 
 #define G_PUBLIC_H
 
-#define Q3_INFINITE			16777216 
+//[SaberLockSys]
+//moved to q_shared.h to support ShortestLineSegBewteen2LineSegs
+//#define Q3_INFINITE			16777216 
+//[/SaberLockSys]
 
 #define	GAME_API_VERSION	8
 
@@ -707,7 +710,7 @@ typedef struct
 #define MAX_FAILED_NODES 8
 
 //[Linux]//[Mac]
-#if _WIN32
+#if _WIN32 && !defined(__GNUC__)
 typedef struct Vehicle_s Vehicle_t;
 #endif
 //[/Linux]//[/Mac]
@@ -752,23 +755,10 @@ typedef struct {
 	int				next_roff_time; //rww - npc's need to know when they're getting roff'd
 } sharedEntity_t;
 
-//[OpenRP - Commenting out unneeded Icarus stuff as it gives errors]
-/*
-#ifdef __cplusplus
-class CSequencer;
-class CTaskManager;
 
 //I suppose this could be in another in-engine header or something. But we never want to
 //include an icarus file before sharedentity_t is declared.
-extern CSequencer	*gSequencers[MAX_GENTITIES];
-extern CTaskManager	*gTaskManagers[MAX_GENTITIES];
 
-#include "../icarus/icarus.h"
-#include "../icarus/sequencer.h"
-#include "../icarus/taskmanager.h"
-#endif
-*/
-//[/OpenRP - Commenting out unneeded Icarus stuff as it gives errors]
 
 //
 // functions exported by the game subsystem

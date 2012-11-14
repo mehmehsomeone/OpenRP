@@ -1,0 +1,84 @@
+repeatDelay				300
+
+Particle
+{
+	name				smokeup
+
+	flags				useAlpha
+
+	count				80
+
+	life				700 900
+
+	delay				0 300
+
+	rotation			0 125
+
+	acceleration		-65 -65 -65 65 65 65
+
+	gravity				30 0
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1 3
+		end				15 13
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	name				whitesmokeup
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				80
+
+	life				700 900
+
+	delay				0 250
+
+	rotation			0 125
+
+	acceleration		-65 -65 -65 65 65 65
+
+	gravity				115 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.4863 0.4863 0.4863
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1 3
+		end				15 13
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}

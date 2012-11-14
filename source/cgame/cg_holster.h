@@ -32,6 +32,7 @@ enum
 	HLR_REPEATER,		//repeater
 	HLR_FLECHETTE,		//flechette
 	HLR_DISRUPTOR,		//disruptor
+	HLR_TUSKEN_RIFLE,	//[TuskenRifle]
 	MAX_HOLSTER		//max possible holster weapon positions
 };
 

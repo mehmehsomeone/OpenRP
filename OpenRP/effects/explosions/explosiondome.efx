@@ -1,0 +1,445 @@
+repeatDelay				300
+
+Cylinder
+{
+	spawnFlags			evenDistribution
+
+	life				500
+
+	delay				0 500
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		end				300
+		flags			linear
+	}
+
+	size2
+	{
+		start			300
+	}
+
+	length
+	{
+		start			32
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_c
+	]
+}
+
+Cylinder
+{
+	name				Copy of Unnamed Cylinder 1
+
+	spawnFlags			evenDistribution
+
+	life				500
+
+	delay				0 250
+
+	origin				32 0 0
+
+	rgb
+	{
+		start			1 0.502 0 1 0.3255 0
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		end				270
+		flags			linear
+	}
+
+	size2
+	{
+		start			300
+	}
+
+	length
+	{
+		start			32
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_r
+	]
+}
+
+Cylinder
+{
+	name				Copy of Copy of Unnamed Cylinde
+
+	spawnFlags			evenDistribution rgbComponentInterpolation
+
+	life				500
+
+	delay				0 125
+
+	origin				64 0 0
+
+	rgb
+	{
+		start			1 0.502 0
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		end				230
+		flags			linear
+	}
+
+	size2
+	{
+		start			270
+	}
+
+	length
+	{
+		start			36
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_c
+	]
+}
+
+Cylinder
+{
+	name				Copy of Copy of Copy of Unnamed
+
+	spawnFlags			evenDistribution
+
+	life				500
+
+	delay				0 500
+
+	origin				100 0 0
+
+	rgb
+	{
+		start			1 0.3255 0 1 0.502 0
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		end				180
+		flags			linear
+	}
+
+	size2
+	{
+		start			230
+	}
+
+	length
+	{
+		start			30
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_r
+	]
+}
+
+Cylinder
+{
+	name				Copy of Copy of Copy of Copy of
+
+	spawnFlags			evenDistribution
+
+	life				500
+
+	delay				0 250
+
+	origin				100 0 0
+
+	radius				115 10
+
+	rgb
+	{
+		start			1 0.502 0 1 0.3255 0
+	}
+
+	size
+	{
+		end				110
+		flags			linear
+	}
+
+	size2
+	{
+		start			110
+	}
+
+	length
+	{
+		start			110
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_r
+	]
+}
+
+Cylinder
+{
+	name				Copy of Copy of Copy of Copy of
+
+	spawnFlags			evenDistribution
+
+	count				0
+
+	life				500 400
+
+	delay				0 125
+
+	origin				150 0 0
+
+	rgb
+	{
+		start			1 0.502 0 1 0.3255 0
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		flags			linear
+	}
+
+	size2
+	{
+		start			110
+	}
+
+	length
+	{
+		start			12
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_r
+	]
+}
+
+Cylinder
+{
+	name				Copy of Unnamed Cylinder 0
+
+	spawnFlags			evenDistribution
+
+	life				500
+
+	delay				0 500
+
+	rgb
+	{
+		start			1 0.502 0 1 0.3255 0
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		end				280
+		flags			linear
+	}
+
+	size2
+	{
+		start			300
+	}
+
+	length
+	{
+		start			32
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_c
+	]
+}
+
+Cylinder
+{
+	name				Copy of Copy of Unnamed Cylinde
+
+	spawnFlags			evenDistribution
+
+	life				500
+
+	delay				0 250
+
+	origin				32 0 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		end				250
+		flags			linear
+	}
+
+	size2
+	{
+		start			300
+	}
+
+	length
+	{
+		start			32
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_r
+	]
+}
+
+Cylinder
+{
+	name				Copy of Copy of Copy of Copy of
+
+	spawnFlags			evenDistribution
+
+	life				500
+
+	delay				0 500
+
+	origin				100 0 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		end				200
+		flags			linear
+	}
+
+	size2
+	{
+		start			230
+	}
+
+	length
+	{
+		start			30
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_r
+	]
+}
+
+Cylinder
+{
+	name				Copy of Copy of Copy of Copy of
+
+	spawnFlags			evenDistribution
+
+	count				0
+
+	life				500 400
+
+	delay				0 125
+
+	origin				150 0 0
+
+	rgb
+	{
+		start			1 1 0 0.9922 0.1098 0.007843
+	}
+
+	alpha
+	{
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		end				150
+		flags			linear
+	}
+
+	size2
+	{
+		start			110
+	}
+
+	length
+	{
+		start			12
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_r
+	]
+}

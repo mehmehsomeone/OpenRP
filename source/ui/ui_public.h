@@ -205,14 +205,12 @@ typedef enum {
 	UIMENU_CLOSEALL,
 	//[CoOp]
 	UIMENU_CLASSSEL,
-	//[OpenRP - Menus]
 	UIMENU_BRIEFING,			//briefing menus
 	//UIMENU_CLASSSEL
 	//[/CoOp]
-
+	//Account UI
 	UIMENU_LOGIN,
-	UIMENU_CHARACTER,
-	//[/OpenRP - Menus]
+	UIMENU_CHARACTER
 };
 typedef int uiMenuCommand_t;
 

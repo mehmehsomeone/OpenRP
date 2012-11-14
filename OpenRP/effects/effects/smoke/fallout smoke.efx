@@ -1,0 +1,52 @@
+repeatDelay				4139
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				3 2
+
+	life				1500 1300
+
+	delay				0 100
+
+	radius				4 3
+
+	height				5
+
+	rotation			349 360
+
+	velocity			20 20 20 -20 -20 -20
+
+	gravity				-20 2
+
+	rgb
+	{
+		flags			linear wave
+	}
+
+	alpha
+	{
+		end				0
+		parm			60
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			3 5
+		end				15 16
+		parm			74 35
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke2
+	]
+}

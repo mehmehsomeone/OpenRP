@@ -1,0 +1,136 @@
+repeatDelay				300
+
+Particle
+{
+	spawnFlags			orgOnCylinder axisFromSphere rgbComponentInterpolation
+
+	count				16
+
+	life				2000
+
+	origin				0 0 0 5 0 0
+
+	height				0
+
+	rotation			0 360
+
+	rotationDelta		-4 4
+
+	velocity			70 0 0 80 0 0
+
+	acceleration		-40 0 0 -50 0 0
+
+	gravity				-200
+
+	rgb
+	{
+		start			0.3843 0.3882 0.3922 1 1 1
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			12 15
+		end				20 25
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 0
+
+	spawnFlags			orgOnCylinder axisFromSphere rgbComponentInterpolation
+
+	count				8
+
+	life				3000
+
+	height				0
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			40 0 0
+
+	acceleration		-10 0 0 -12 0 0
+
+	gravity				-20
+
+	rgb
+	{
+		start			0.3843 0.3882 0.3922 1 1 1
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			6 10
+		end				25 35
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	spawnFlags			orgOnCylinder axisFromSphere rgbComponentInterpolation
+
+	count				23 21
+
+	life				500 700
+
+	radius				5 20
+
+	height				0
+
+	velocity			50 50 50
+
+	gravity				-100 -700
+
+	rgb
+	{
+		start			0.3843 0.3882 0.3922 1 1 1
+	}
+
+	size
+	{
+		start			0.5 0.3
+	}
+
+	shaders
+	[
+		gfx/effects/jk_mist
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/player/snow_land.mp3
+	]
+}

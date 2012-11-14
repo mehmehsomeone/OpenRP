@@ -1,0 +1,96 @@
+repeatDelay				300
+
+Particle
+{
+	name				OrangeGlow
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				6 8
+
+	life				1000
+
+	delay				0 150
+
+	origin				-40 -40 -40 20 40 40
+
+	rotation			-180 180
+
+	rotationDelta		-1 1
+
+	velocity			5 -5 -5 10 5 5
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 1 0.502
+		end				0.502 0.251 0.251 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			70 85
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			100 200
+		end				200 300
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+		gfx/misc/steam2
+	]
+}
+
+Emitter
+{
+	name				fire
+
+	flags				emitFx
+
+	count				1 2
+
+	life				80
+
+	velocity			2700 3422 3411 2720 -3422 -3411
+
+	gravity				-700
+
+	density				4
+
+	variance			15 60
+
+	emitfx
+	[
+		fearis/exp_fire
+	]
+}
+
+FxRunner
+{
+	name				throwfireballs
+
+	origin				0 0 200 0 0 300
+
+	playfx
+	[
+		fearis/exp_fireshot
+	]
+}
+
+Sound
+{
+	name				sound
+
+	sounds
+	[
+		sound/fearis/ef_explode10.wav
+		sound/fearis/hit1.wav
+	]
+}

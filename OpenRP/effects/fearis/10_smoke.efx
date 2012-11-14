@@ -1,0 +1,40 @@
+repeatDelay				699
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	life				1300 1400
+
+	origin				20 0 0 10 12 12
+
+	rotation			0 180
+
+	rotationDelta		-8 8
+
+	velocity			0 -12 -12 0 12 12
+
+	gravity				12 16
+
+	alpha
+	{
+		start			0.8
+		end				0.9
+		flags			linear
+	}
+
+	size
+	{
+		start			5 9
+		end				10 12
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+	]
+}

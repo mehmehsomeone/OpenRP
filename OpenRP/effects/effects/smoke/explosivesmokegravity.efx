@@ -1,0 +1,60 @@
+repeatDelay				300
+
+Particle
+{
+	name				blackwhite
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				25 23
+
+	life				5000
+
+	delay				0 300
+
+	origin				10 -35 -35 20 35 35
+
+	radius				90 70
+
+	height				0
+
+	rotation			0 80
+
+	rotationDelta		-10 10
+
+	acceleration		20 20 20 20 -20 -20
+
+	gravity				-205 0
+
+	rgb
+	{
+		start			0.4863 0.4863 0.4863
+		end				0.4863 0.4863 0.4863 0.7529 0.7529 0.7529
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.3 0.8
+		end				0.3 0.2
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			20
+		end				500
+		parm			2
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke
+	]
+}

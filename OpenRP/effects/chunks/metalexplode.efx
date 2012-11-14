@@ -1,0 +1,53 @@
+repeatDelay				300
+
+Emitter
+{
+	flags				useModel useBBox usePhysics impactFx
+
+	spawnFlags			orgOnCylinder
+
+	count				2 3
+
+	life				3000 4500
+
+	bounce				2
+
+	min					3 3 3
+
+	max					3 3 3
+
+	radius				20
+
+	height				20
+
+	angle				180 180 74 360 360 360
+
+	angleDelta			-20 -20 -50 50 50 20
+
+	velocity			350 350 350 -350 -350 -350
+
+	gravity				-500 0
+
+	variance			25 15
+
+	size
+	{
+		start			2
+		end				2
+		flags			nonlinear
+	}
+
+	models
+	[
+		models/chunks/metal/metal1_1.md3
+		models/chunks/metal/metal1_2.md3
+		models/chunks/metal/metal1_3.md3
+		models/chunks/metal/metal1_4.md3
+		models/chunks/metal/metal2_1.md3
+	]
+
+	impactfx
+	[
+		soundefx/metalbounce
+	]
+}

@@ -14,7 +14,8 @@ enum {
 //[/Linux]
 	WP_NONE,
 
-	WP_STUN_BATON,
+	//WP_STUN_BATON,
+	WP_TUSKEN_RIFLE,
 	WP_MELEE,
 	WP_SABER,
 	WP_BRYAR_PISTOL,
@@ -26,7 +27,7 @@ enum {
 	WP_FLECHETTE,
 	WP_ROCKET_LAUNCHER,
 	WP_THERMAL,
-	WP_TRIP_MINE,
+	WP_GRENADE,
 	WP_DET_PACK,
 	WP_CONCUSSION,
 	WP_BRYAR_OLD,
@@ -48,12 +49,11 @@ typedef int weapon_t;
 #define WP_BOT_LASER WP_NUM_WEAPONS+1 // 20
 #define WP_RAPID_FIRE_CONC WP_BOT_LASER+1 // 21
 #define WP_JAWA WP_RAPID_FIRE_CONC+1 // 22
-#define WP_TUSKEN_RIFLE WP_JAWA+1 // 23
-#define WP_TUSKEN_STAFF WP_TUSKEN_RIFLE+1 // 24
-#define WP_SCEPTER WP_TUSKEN_STAFF+1 // 25
-#define WP_NOGHRI_STICK WP_SCEPTER+1 // 26
-#define WP_ATST_MAIN WP_NOGHRI_STICK+1 // 27
-#define WP_ATST_SIDE WP_ATST_MAIN+1 // 28
+#define WP_TUSKEN_STAFF WP_RAPID_FIRE_CONC+1 // 24
+#define WP_SCEPTER WP_TUSKEN_RIFLE+1 // 25
+#define WP_NOGHRI_STICK WP_TUSKEN_STAFF+1 // 26
+#define WP_ATST_MAIN WP_SCEPTER+1 // 27
+#define WP_ATST_SIDE WP_NOGHRI_STICK+1 // 28
 
 //anything > this will be considered not player useable
 #define LAST_USEABLE_WEAPON			WP_BRYAR_OLD
@@ -80,6 +80,7 @@ typedef enum //# ammo_e
 	AMMO_THERMAL,
 	AMMO_TRIPMINE,
 	AMMO_DETPACK,
+	AMMO_TUSKEN_RIFLE,
 	AMMO_MAX
 } ammo_t;
 
@@ -107,11 +108,6 @@ typedef struct weaponData_s
 
 	int		maxCharge;			// stop subtracting once charged for this many ms
 	int		altMaxCharge;		// above for secondary
-
-	//[WEAPONSDAT]
-	int		fireFunctionIndex;	// the function to call when fire is pressed (see fireFunctions array in g_weaponsdat.c)
-	int		altFireFunctionIndex;	// the function to call when alt-fire is pressed (see fireFunctions array in g_weaponsdat.c)
-	//[/WEAPONSDAT]
 } weaponData_t;
 
 
@@ -124,6 +120,7 @@ typedef struct  ammoData_s
 
 extern weaponData_t weaponData[WP_NUM_WEAPONS];
 extern ammoData_t ammoData[AMMO_MAX];
+extern ammoData_t ammoPool[4][WP_NUM_WEAPONS];
 
 
 // Specific weapon information
@@ -140,8 +137,10 @@ extern ammoData_t ammoData[AMMO_MAX];
 
 #define	LIGHTNING_RANGE		768
 
+#define MAX_WEAPONS_IN_SLOT	4
+#define MAX_WEAP_SLOTS		10
+#define LAST_USABLE_SLOT	7
 
-
-
+extern int weaponSlots[MAX_WEAP_SLOTS][MAX_WEAPONS_IN_SLOT];
 
 #endif//#ifndef __WEAPONS_H__

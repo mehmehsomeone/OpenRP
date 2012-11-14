@@ -1,0 +1,99 @@
+repeatDelay				300
+
+Cylinder
+{
+	count				1 2
+
+	life				500 600
+
+	cullrange			500
+
+	origin				108 0 0 -27 0 0
+
+	rgb
+	{
+		start			0 0 1 0 1 1
+		end				0 1 1 0 0 1
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0.6 0.8
+		flags			random linear
+	}
+
+	size
+	{
+		start			70
+		end				15
+		parm			1
+		flags			linear nonlinear
+	}
+
+	size2
+	{
+		start			70
+		end				15
+		parm			1
+	}
+
+	length
+	{
+		start			50
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_c
+	]
+}
+
+Cylinder
+{
+	name				Copy of Unnamed Cylinder 0
+
+	life				800 1000
+
+	cullrange			1800
+
+	origin				108 0 0 -27 0 0
+
+	rgb
+	{
+		start			0 0 1 0 1 1
+		end				0 1 1 0 0 1
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0.6 0.8
+		flags			random linear
+	}
+
+	size
+	{
+		start			70
+		end				15
+		parm			1
+		flags			linear nonlinear
+	}
+
+	size2
+	{
+		start			70
+		end				15
+		parm			1
+	}
+
+	length
+	{
+		start			50
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_c
+	]
+}

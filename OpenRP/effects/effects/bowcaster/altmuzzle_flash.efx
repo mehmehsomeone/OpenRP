@@ -1,0 +1,78 @@
+repeatDelay				300
+
+Line
+{
+	life				30
+
+	origin2				35 0 0
+
+	alpha
+	{
+		start			0.5 0.6
+		end				0.35
+		flags			linear
+	}
+
+	size
+	{
+		start			6 8
+		end				5 4
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/greenSideFlash
+	]
+}
+
+Particle
+{
+	life				30
+
+	origin				8 0 0
+
+	rotation			0 360
+
+	alpha
+	{
+		start			0.8 1
+		end				0.7
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5.5
+		end				4
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/greenFrontFlash
+	]
+}
+
+Light
+{
+	life				0
+
+	rgb
+	{
+		start			0.6392 1 0.5843 0.1922 0.6431 0
+	}
+
+	size
+	{
+		start			150
+	}
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/bowcaster/fire.wav
+	]
+}

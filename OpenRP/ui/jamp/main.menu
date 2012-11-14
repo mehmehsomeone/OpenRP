@@ -12,7 +12,7 @@
 		smallFont				"aurabesh" 18			// font
 		bigFont					"anewhope" 20			// font	
 		small2Font				"arialnb" 	14	
-		cursor					"cursor"			// cursor	
+		cursor					"ojp/menu/cursor"			// cursor	
 		gradientBar				"ui/assets/gradientbar2.tga"	// gradient bar
 		itemFocusSound				"sound/interface/menuroam.wav"	// sound for item getting focus (via keyboard or mouse )	
 
@@ -46,20 +46,20 @@
 		rect					0 0 640 480					// Size and position of the menu
 		visible					1						// Visible on open
 		focusColor				1 1 1 1					// Focus color for text and items
-		descX					320
-		descY					424
-		descScale				1
-		descColor				1 .682 0 .8
+		descX					374
+		descY					452
+		descScale				0.7
+		descColor				0.1 0.7 1 0.9
 		descAlignment				ITEM_ALIGN_CENTER		
 
 		onOpen 
 		{
-			exec				"music music/OpenRP/tlkbuzsong.mp3" ;
+			exec				"music music/mp/tlkbuzsong.mp3" ;
 		}
 									
 		onESC 
 		{ 
-			play				"sound/interface/esc.wav" 
+			play				"sound/interface/pickup_battery.mp3" 
 			close				all 
 			open				quitMenu 
 		}	
@@ -72,47 +72,10 @@
 //----------------------------------------------------------------------------------------------
 		itemDef 
 		{
-			name				background_video
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				200 144 256 256
-			background			"gfx/menus/videologo"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				background_text
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				0 0 160 480
-			background			"gfx/menus/menu_side_text"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				background_text_b
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				480 0 160 480
-			background			"gfx/menus/menu_side_text_right"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}	
-	
-		itemDef 
-		{
-			name				background
-			group				none
+			name				mainbackground
 			style				WINDOW_STYLE_SHADER
 			rect				0 0 640 480
-			background			"gfx/menus/main_background"
+			background			"gfx/menus/background"
 			forecolor			1 1 1 1
 			visible				1
 			decoration
@@ -120,265 +83,85 @@
 
 		itemDef 
 		{
-			name				ring
-			group				none
+			name				overlay
 			style				WINDOW_STYLE_SHADER
-			rect				193 145 256 256
-			background			"gfx/menus/main_ring"
+			rect				0 0 640 480
+			background			"gfx/menus/overlay"
 			forecolor			1 1 1 1
 			visible				1
 			decoration
 		}
-
-		itemDef 
-		{
-			name				centerwindow
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				156 154 320 240
-			background			"gfx/menus/main_centerwindow"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				leftwindow
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				0 150 320 240
-			background			"gfx/menus/main_leftwindow"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				rightwindow
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				320 150 320 240
-			background			"gfx/menus/main_rightwindow"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				starwars
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				107 8 428 112
-			background			"gfx/menus/jediacademy"	
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		//[UITWEAKS]
-		//State OpenRP Title on the page so people know that the mod loaded.
-		itemDef 
-		{
-			name				multiplayer_title
-			style				WINDOW_STYLE_EMPTY
-			rect				350 147 240 24
-			text				@OJP_MENUS_OPENRP
-			font				2
-			textscale			1
-			textaligny			0
-			textalign			ITEM_ALIGN_CENTER
-			textstyle			0
-			textalignx			120
-			forecolor			.466 1 .466 1
-			visible				1  
-			decoration
-		}
-		//[/UITWEAKS]
 
 //----------------------------------------------------------------------------------------------
 //	TOP MENU BUTTONS
 //----------------------------------------------------------------------------------------------
 		itemDef 
 		{
-			name				button_glow
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				0 0 0 0
-			background			"gfx/menus/menu_buttonback"
-			forecolor			1 1 1 1
-			visible				0
-			decoration
-		}
-
-		itemDef 
-		{
-			name				playbutton_undertext
-			group				none
-			style				WINDOW_STYLE_EMPTY
-			type				ITEM_TYPE_BUTTON
-			rect				36 194 130 24
-			text				@MENUS_NEW
-			font				1
-			textscale			.7
-			textaligny			0
-			textalign			ITEM_ALIGN_CENTER
-			textstyle			1
-			textalignx			65
-			forecolor			.02 0 .33 1
-			visible				0
-			decoration
-		}
-		
-		itemDef 
-		{
 			name				playbutton
-			group				main_button
+			group				none
 			style				WINDOW_STYLE_EMPTY
 			type				ITEM_TYPE_BUTTON
-			rect				36 212 130 24
+			rect				50 155 100 25 
 			text				@MENUS_PLAY					
-			descText			@MENUS_START_PLAYING_NOW
-			font				3
-			textscale			1.1
+			descText			"Play OpenRP"
+			font				4
+			textscale			1
 			textaligny			0
+			textalignx			50
 			textalign			ITEM_ALIGN_CENTER
 			textstyle			0
-			textalignx			65
-			forecolor			1 .682 0 1
+			forecolor			0.7 0.7 0.7 1
 			visible				1
 
 			mouseEnter 
 			{ 
 				show			button_glow 
-				setitemrect		button_glow	16 210 210 32
-				show 			playbutton_undertext 
+				setitemrect		button_glow	50 150 100 25
 			}
 			mouseExit 
 			{ 
 				hide			button_glow 
-				hide 			playbutton_undertext 
 			}	  	  
 			action 
 			{ 			
-				play			"sound/interface/button1.wav" ; 
+				play			"sound/interface/legacy.mp3" ; 
 				close			all ; 
 				open			multiplayermenu 
 			}
 		}
 
-		// Big button "PLAYER PROFILE"
-		itemDef 
-		{
-			name				profilebutton_undertext
-			group				none
-			style				WINDOW_STYLE_EMPTY
-			type				ITEM_TYPE_BUTTON
-			rect				36 293 130 24
-			text				@MENUS_LOAD
-			font				1
-			textscale			.7
-			textaligny			0
-			textalign			ITEM_ALIGN_CENTER
-			textstyle			1
-			textalignx			65
-			forecolor			.02 0 .33 1
-			visible				0
-			decoration
-		}
-		
-		itemDef 
-		{
-			name				profilebutton
-			group				main_button
-			text				@MENUS_PROFILE
-			descText			@MENUS_PROFILE_DESC
-			style				WINDOW_STYLE_EMPTY
-			type				ITEM_TYPE_BUTTON
-			rect				36 310 130 24
-			textaligny			0
-			font				3
-			textscale			1.1
-			textalign			ITEM_ALIGN_CENTER
-			textstyle			0
-			textalignx			65
-			forecolor			1 .682 0 1
-			visible				1
-
-			mouseEnter 
-			{ 
-				show			button_glow 
-				setitemrect		button_glow	16 308 210 32
-				show 			profilebutton_undertext 
-			}
-			mouseExit 
-			{ 
-				hide			button_glow 
-				hide 			profilebutton_undertext 
-			}	  	  
-			action 
-			{ 
-				play			"sound/interface/button1.wav" ; 
-				close			all ; 
-				open			playerMenu
-			}
-		}
 
 		// Big button "CONTROLS"
 		itemDef 
 		{
-			name				controlsbutton_undertext
-			group				none
-			style				WINDOW_STYLE_EMPTY
-			type				ITEM_TYPE_BUTTON
-			rect				448 194 146 24
-			text				@MENUS_CONTROLS2
-			font				1
-			textscale			.7
-			textaligny			0
-			textalign			ITEM_ALIGN_CENTER
-			textstyle			1
-			textalignx			65
-			forecolor			.02 0 .33 1
-			visible				0
-			decoration
-		}
-		
-		itemDef 
-		{
 			name				controlsbutton
-			group				main_button
-			text				@MENUS_CONTROLS2
-			descText			@MENUS_CONFIGURE_GAME_CONTROLS
+			group				none
+			text				@MENUS_CONTROLS
+			descText			"Configure your game controls"
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				441 212 160 24
-			font				3
-			textscale			1.1
+			rect				50 215 100 25  
+			font				4
+			textscale			1
 			textaligny			0
+			textalignx			50
 			textalign			ITEM_ALIGN_CENTER
 			textstyle			0
-			textalignx			65
-			backcolor			0 0 0 0
-			forecolor			1 .682 0 1
+			forecolor			0.7 0.7 0.7 1
 			visible				1
 			 
 			mouseEnter 
 			{ 
 				show			button_glow 
-				setitemrect		button_glow	416 210 210 32
-				show 			controlsbutton_undertext 
+				setitemrect		button_glow	50 210 100 25
 			}
 			mouseExit 
 			{ 
 				hide			button_glow 
-				hide 			controlsbutton_undertext 
 			}	  	  
 			action 
 			{
-				play			"sound/interface/button1.wav" ; 
+				play			"sound/interface/legacy.mp3" ; 
 				close			all ; 
 				open			controlsMenu ;
 			}
@@ -387,56 +170,34 @@
 		// Big button "SETUP"
 		itemDef 
 		{
-			name				setupbutton_undertext
-			group				none
-			style				WINDOW_STYLE_EMPTY
-			type				ITEM_TYPE_BUTTON
-			rect				456 292 130 24
-			text				@MENUS_SETUP
-			font				1
-			textscale			.7
-			textaligny			0
-			textalign			ITEM_ALIGN_CENTER
-			textstyle			1
-			textalignx			65
-			forecolor			.02 0 .33 1
-			visible				0
-			decoration
-		}
-
-		itemDef 
-		{
 			name				setupbutton
-			group				main_button
+			group				none
 			text				@MENUS_SETUP
-			descText			@MENUS_CONFIGURE_GAME_SETTINGS
+			descText			"Configure your game settings"
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				456 310 130 24
-			font				3
-			textscale			1.1
+			rect				50 275 100 25  
+			font				4
+			textscale			1
 			textaligny			0
+			textalignx			50
 			textalign			ITEM_ALIGN_CENTER
 			textstyle			0
-			textalignx			65
-			backcolor			0 0 0 0
-			forecolor			1 .682 0 1
+			forecolor			0.7 0.7 0.7 1
 			visible				1
 			 
 			mouseEnter 
 			{ 
 				show			button_glow 
-				setitemrect		button_glow	416 308 210 32
-				show 			setupbutton_undertext 
+				setitemrect		button_glow	50 270 100 25
 			}
 			mouseExit 
 			{ 
 				hide			button_glow 
-				hide 			setupbutton_undertext 
 			}	  	  
 			action 
 			{
-				play			"sound/interface/button1.wav" ; 
+				play			"sound/interface/legacy.mp3" ; 
 				close			all ; 
 				open			setup_menu
 			}
@@ -445,34 +206,38 @@
 //----------------------------------------------------------------------------------------------
 //	OTHER MAIN MENU BUTTONS
 //----------------------------------------------------------------------------------------------
-		// Credits hidden button
+
+		// Credits button
 		itemDef 
 		{
-			name				creditsbutton
+			name				creditsarea
 			group				othermain
-//			text				@CREDITS
+			text				"ABOUT OPENRP"
 			descText			@MENUS_SHOW_GAME_CREDITS
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				200 144 256 256
-			font				2
+			rect				50 335 100 25  
+			font				4
 			textscale			1
 			textaligny			0
+			textalignx			50
 			textalign			ITEM_ALIGN_CENTER
-			textalignx			46
-			backcolor			0 0 0 0
-			forecolor			0.65 0.65 1 1
-			visible				0
+			textstyle			0
+			forecolor			0.7 0.7 0.7 1
+			visible				1
 
-			mouseEnter
-			{
-			}		
-			mouseExit
-			{
-			}		
+			mouseEnter 
+			{ 
+				show			button_glow 
+				setitemrect		button_glow	50 330 100 25
+			}
+			mouseExit 
+			{ 
+				hide			button_glow 
+			}	  	  	
 			action 
 			{ 
-				play			"sound/interface/button1.wav" ; 	
+				play			"sound/weapons/saber/Legacy.mp3" ; 	
 				close			all ; 
 				open			creditsMenu 
 			}
@@ -481,25 +246,25 @@
 		itemDef 
 		{
 			name				exitgamebutton
-			group				othermain
+			group				none
 			text				@MENUS_EXIT
-			descText			@MENUS_LEAVE_JEDI_KNIGHT_II
+			descText			"Exit OpenRP"
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				255 444 130 24 
-			font				3
-			textscale			1.1
+			rect				50 395 100 25  
+			font				4
+			textscale			1
+			textaligny			0
+			textalignx			50
 			textalign			ITEM_ALIGN_CENTER
 			textstyle			0
-			textalignx			65
-			textaligny			-1
-			forecolor			1 .682 0 1
+			forecolor			0.7 0.7 0.7 1
 			visible				1
 
 			mouseEnter 
 			{ 
 				show			button_glow 
-				setitemrect		button_glow	215 440 210 32
+				setitemrect		button_glow	50 390 100 25
 			}
 			mouseExit 
 			{ 
@@ -510,6 +275,71 @@
 				play			"sound/weapons/saber/saberoff.mp3"; 
 				close			all ; 
 				open			quitMenu 
+			}
+		}
+	}
+	
+//----------------------------------------------------------------------------------------------
+//
+//	CREDITS MENU
+//
+//	Shows info about OpenRP and the credits
+//
+//----------------------------------------------------------------------------------------------
+	
+	menuDef 
+	{
+		name					"creditsMenu"
+		fullScreen				1				
+		rect					0 0 640 480						// Size and position of the menu
+		visible					1							// Visible on open
+		focusColor				0 0.4 0.8 1					// Focus color for text and items	
+						
+		onESC 
+		{ 
+			close				creditsMenu ;
+		}
+					
+//----------------------------------------------------------------------------------------------
+//	OJP MENU BACKGROUND
+//----------------------------------------------------------------------------------------------
+		itemDef 
+		{
+			name				background
+			style				WINDOW_STYLE_SHADER
+			rect				0 0 640 480
+			background			"gfx/menus/aboutmenu"
+			forecolor			1 1 1 1
+			visible				1
+			decoration
+		}
+
+//----------------------------------------------------------------------------------------------
+//	BOTTOM MENU BUTTONS
+//----------------------------------------------------------------------------------------------
+		
+		itemDef 
+		{
+			name				playbutton
+			group				main_button
+			style				WINDOW_STYLE_EMPTY
+			type				ITEM_TYPE_BUTTON
+			rect				0 440 130 24
+			text				"Main Menu"				
+			font				3
+			textscale			1.1
+			textaligny			0
+			textalign			ITEM_ALIGN_CENTER
+			textstyle			0
+			textalignx			65
+			forecolor			0 0.4 0.8 1
+			visible				1
+
+
+			action 
+			{ 			
+			play			"sound/interface/legacy.mp3" ; 
+			close			creditsMenu ;
 			}
 		}
 	}

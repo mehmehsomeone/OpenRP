@@ -1,0 +1,257 @@
+repeatDelay				300
+
+Particle
+{
+	name				OrangeGlow
+
+	count				5
+
+	life				700 2000
+
+	delay				0 150
+
+	origin				0 -2000 -2000 500 2000 2000
+
+	rotation			-180 180
+
+	rotationDelta		-1 1
+
+	velocity			500 -500 -500 1000 500 500
+
+	rgb
+	{
+		start			1 0.9725 0.6235 1 0.8353 0.4902
+		end				0.502 0 0 0.9451 0.4078 0.01176
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			70 85
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			1000 2000
+		end				3500 5000
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+		gfx/misc/steam2
+	]
+}
+
+Particle
+{
+	name				LingeringSmoke
+
+	count				6
+
+	life				1500 3000
+
+	delay				50 300
+
+	origin				0 -2500 -2500 2000 2500 2500
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			0 -2000 -2000 1000 2000 2000
+
+	acceleration		-400 -800 -800 400 800 800
+
+	gravity				3 25
+
+	rgb
+	{
+		start			0.9882 0.9098 0.7882 1 1 0.8078
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			500 1000
+		end				4000 6000
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Light
+{
+	name				Flash
+
+	life				150
+
+	size
+	{
+		start			5000
+	}
+}
+
+Particle
+{
+	name				Dust
+
+	flags				useAlpha
+
+	spawnFlags			evenDistribution
+
+	count				8
+
+	life				900 1400
+
+	delay				250 500
+
+	origin				0 -2000 -2000 500 2000 2000
+
+	rotation			-180 180
+
+	rotationDelta		-2 2
+
+	velocity			2000 -2000 -2000 4000 2000 2000
+
+	acceleration		-500 -500 -500 500 500 500
+
+	gravity				-50 -30
+
+	rgb
+	{
+		start			1 1 0.4353 0.9451 0.4078 0.01176
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 70
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			100 600
+		end				4500 5000
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/dotfill_a
+	]
+}
+
+CameraShake
+{
+	name				Shake
+
+	flags				usePhysics
+
+	life				300 400
+
+	bounce				2 10
+
+	radius				1e+004 500
+}
+
+Particle
+{
+	name				Copy of OrangeGlow
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				3
+
+	life				800 1300
+
+	delay				0 150
+
+	origin				0 -2000 -2000 500 2000 2000
+
+	rotation			-180 180
+
+	rotationDelta		-1 1
+
+	velocity			500 -500 -500 1000 500 500
+
+	alpha
+	{
+		start			1 0.8
+		end				0
+		parm			40 60
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			1000 2000
+		end				4500 6500
+		parm			20 40
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/misc/exp01_2
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/explosions/debrisexplode.wav
+	]
+}
+
+Sound
+{
+	name				Copy of Unnamed Sound 6
+
+	delay				300 600
+
+	sounds
+	[
+		sound/weapons/explosions/explode5.wav
+	]
+}
+
+Sound
+{
+	name				Copy of Copy of Unnamed Sound 6
+
+	delay				800 1200
+
+	sounds
+	[
+		sound/weapons/explosions/explosion_huge2.mp3
+	]
+}
+
+Sound
+{
+	name				Copy of Copy of Copy of Unnamed
+
+	delay				0 2000
+
+	sounds
+	[
+		sound/weapons/explosions/explosion_huge3.mp3
+	]
+}

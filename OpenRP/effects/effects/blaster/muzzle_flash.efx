@@ -1,0 +1,84 @@
+repeatDelay				250
+
+Line
+{
+	origin2				24 0 0 30 0 0
+
+	alpha
+	{
+		start			0.5 0.6
+		end				0.35
+		flags			linear
+	}
+
+	size
+	{
+		start			8 9
+		end				3
+		flags			random linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/blasterSideFlash
+	]
+}
+
+Particle
+{
+	life				30
+
+	origin				5 0 0
+
+	rotation			0 360
+
+	alpha
+	{
+		start			0.8 1
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		start			8 10.5
+		end				7
+		flags			random linear
+	}
+
+	shaders
+	[
+		gfx/effects/blasterFrontFlash
+	]
+}
+
+Light
+{
+	rgb
+	{
+		start			1 0.1 0.1
+	}
+
+	size
+	{
+		start			0.3 0.6
+	}
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/blaster/fire.wav
+	]
+}
+
+FxRunner
+{
+	name				muzzleflashsmoke
+
+	playfx
+	[
+		smoke/muzzleflashmedium
+	]
+}

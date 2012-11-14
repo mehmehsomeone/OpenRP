@@ -1,0 +1,19 @@
+// just plays a sound
+
+sound
+{
+	sounds
+	[
+		sound/weapons/laser_trap/fire.wav
+	]
+}
+
+// ...that's what YOU think
+
+forcefeedback
+{
+	forces
+	[
+		fffx/weapons/laser_trap/fire
+	]
+}

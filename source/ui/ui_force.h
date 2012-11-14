@@ -1,6 +1,6 @@
 #include "../qcommon/qfiles.h"
 
-#define NUM_FORCE_STAR_IMAGES  9
+#define NUM_FORCE_STAR_IMAGES  11
 #define FORCE_NONJEDI	0
 #define FORCE_JEDI		1
 
@@ -11,9 +11,17 @@ extern int uiMaxRank;
 extern int uiForceUsed;
 extern int uiForceAvailable;
 extern qboolean gTouchedForce;
+
+//[ExpSys]
+//qboolean uiForcePowersDisabled[NUM_TOTAL_SKILLS];
+extern int uiForcePowersRank[NUM_TOTAL_SKILLS];
+extern int uiForcePowerDarkLight[NUM_TOTAL_SKILLS];
+/*
 extern qboolean uiForcePowersDisabled[NUM_FORCE_POWERS];
 extern int uiForcePowersRank[NUM_FORCE_POWERS];
 extern int uiForcePowerDarkLight[NUM_FORCE_POWERS];
+*/
+//[/ExpSys]
 extern int uiSaberColorShaders[NUM_SABER_COLORS];
 // Dots above or equal to a given rank carry a certain color.
 extern vmCvar_t	ui_freeSaber, ui_forcePowerDisable;
@@ -31,3 +39,6 @@ qboolean UI_JediNonJedi_HandleKey(int flags, float *special, int key, int num, i
 qboolean UI_ForceMaxRank_HandleKey(int flags, float *special, int key, int num, int min, int max, int type);
 qboolean UI_ForcePowerRank_HandleKey(int flags, float *special, int key, int num, int min, int max, int type);
 extern void UI_ForceConfigHandle( int oldindex, int newindex );
+
+//Feats
+void setMenuSkill(int feat, int level);

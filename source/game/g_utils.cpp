@@ -2,19 +2,12 @@
 //
 // g_utils.c -- misc utility functions for game module
 
-
-
-extern "C"
-{
 #include "g_local.h"
 #include "bg_saga.h"
 #include "q_shared.h"
-}
-
-#include "g_navigator.h"
-
-extern "C"
-{
+//[CoOp]
+#include "g_nav.h" //needed for WAYPOINT_NONE define
+//[/CoOp]
 
 typedef struct {
   char oldShader[MAX_QPATH];
@@ -347,12 +340,21 @@ void G_Throw( gentity_t *targ, vec3_t newDir, float push )
 		VectorScale( newDir, g_knockback.value * (float)push / mass, kvel );
 	}
 
+	kvel[2]*=2;
+
 	if ( targ->client )
 	{
 		VectorAdd( targ->client->ps.velocity, kvel, targ->client->ps.velocity );
 	}
 	else if ( targ->s.pos.trType != TR_STATIONARY && targ->s.pos.trType != TR_LINEAR_STOP && targ->s.pos.trType != TR_NONLINEAR_STOP )
 	{
+		VectorAdd( targ->s.pos.trDelta, kvel, targ->s.pos.trDelta );
+		VectorCopy( targ->r.currentOrigin, targ->s.pos.trBase );
+		targ->s.pos.trTime = level.time;
+	}
+	else
+	{
+		targ->s.pos.trType = TR_GRAVITY;
 		VectorAdd( targ->s.pos.trDelta, kvel, targ->s.pos.trDelta );
 		VectorCopy( targ->r.currentOrigin, targ->s.pos.trBase );
 		targ->s.pos.trTime = level.time;
@@ -447,15 +449,6 @@ void G_CreateFakeClient(int entNum, gclient_t **cl)
 	*cl = gClPtrs[entNum];
 }
 
-#ifdef _XBOX
-void G_ClPtrClear(void)
-{
-	for(int i=0; i<MAX_GENTITIES; i++) {
-		gClPtrs[i] = NULL;
-	}
-}
-#endif
-
 //call this on game shutdown to run through and get rid of all the lingering client pointers.
 void G_CleanAllFakeClients(void)
 {
@@ -488,34 +481,9 @@ void BG_SetAnim(playerState_t *ps, animation_t *animations, int setAnimParts,int
 
 void G_SetAnim(gentity_t *ent, usercmd_t *ucmd, int setAnimParts, int anim, int setAnimFlags, int blendTime)
 {
-#if 0 //old hackish way
-	pmove_t pmv;
-
-	assert(ent && ent->inuse && ent->client);
-
-	memset (&pmv, 0, sizeof(pmv));
-	pmv.ps = &ent->client->ps;
-	pmv.animations = bgAllAnims[ent->localAnimIndex].anims;
-	if (!ucmd)
-	{
-		pmv.cmd = ent->client->pers.cmd;
-	}
-	else
-	{
-		pmv.cmd = *ucmd;
-	}
-	pmv.trace = trap_Trace;
-	pmv.pointcontents = trap_PointContents;
-	pmv.gametype = g_gametype.integer;
-
-	//don't need to bother with ghoul2 stuff, it's not even used in PM_SetAnim.
-	pm = &pmv;
-	PM_SetAnim(setAnimParts, anim, setAnimFlags, blendTime);
-#else //new clean and shining way!
 	assert(ent->client);
     BG_SetAnim(&ent->client->ps, bgAllAnims[ent->localAnimIndex].anims, setAnimParts,
 		anim, setAnimFlags, blendTime);
-#endif
 }
 
 
@@ -810,6 +778,17 @@ gentity_t *FindRemoveAbleGent(void)
 	int i;
 	gentity_t *e = NULL;
 
+	e = &g_entities[MAX_CLIENTS];
+	for( i=MAX_CLIENTS; i <level.num_entities;i++)
+	{
+		if(!stricmp(e->classname,"item_shield") || !stricmp(e->classname,"item_seeker") 
+			|| !stricmp(e->classname,"item_binoculars"))
+		{
+			G_Printf("Warning, removing instant medpack to prevent entity overflow.\n");
+			return e;
+		}
+	}
+
 	//we can easily dump player corpses
 	e = &g_entities[MAX_CLIENTS];
 	for ( i = MAX_CLIENTS ; i<level.num_entities ; i++, e++) 
@@ -846,7 +825,13 @@ gentity_t *FindRemoveAbleGent(void)
 			return e;
 		}
 	}
-
+	//Weapon or forcefield entities
+	e = &g_entities[MAX_CLIENTS];
+	for( i = MAX_CLIENTS; i < level.num_entities; i++, e++)
+	{
+		if(e->s.eType == ET_ITEM || e->s.eType == ET_SPECIAL)
+			return e;
+	}
 	//light entities?
 	e = &g_entities[MAX_CLIENTS];
 	for ( i = MAX_CLIENTS ; i<level.num_entities ; i++, e++) 
@@ -856,6 +841,12 @@ gentity_t *FindRemoveAbleGent(void)
 			G_Printf("Warning: FindRemoveAbleGent removed a light entity to prevent a max entity overflow.\n");
 			return e;
 		}
+	}
+	e = &g_entities[MAX_CLIENTS];
+	for( i = MAX_CLIENTS; i < level.num_entities; i++, e++)
+	{
+		if(Q_stricmp(e->classname,"tempEntity") == 0)
+			return e;
 	}
 
 
@@ -1031,14 +1022,6 @@ void G_FreeEntity( gentity_t *ed ) {
 #endif
 		return;
 	}
-
-	//[SPNavCode]
-	//if this entity was blocking a NPC Nav Edge(s), remove it as an obstruction.
-	if (ed->wayedge!=0)
-	{
-		NAV::WayEdgesNowClear(ed);
-	}
-	//[/SPNavCode]
 
 	trap_UnlinkEntity (ed);		// unlink from world
 
@@ -1383,6 +1366,33 @@ gentity_t *G_PlayEffectID(const int fxID, vec3_t org, vec3_t ang)
 	return te;
 }
 
+//[Bolted effect]
+/*
+=============
+G_PlayBoltedEffect
+=============
+*/
+extern qboolean OJP_AllPlayersHaveClientPlugin(void);
+gentity_t *G_PlayBoltedEffect( int fxID, gentity_t *owner, const char *bolt )
+{	//send request to client to play an effect bolted to a bolt on a ghoul2 entity
+	//trap_FX_PlayBoltedEffectID doesn't take inputs for angle or lifetime however :(
+	gentity_t	*te = NULL;
+
+	if(OJP_AllPlayersHaveClientPlugin())
+	{//only transmit this effect if all players are running the OJP client.  If we send this and they don't have the client,
+		//they will drop due to a "unknown event" error.
+		te = G_TempEntity( owner->r.currentOrigin, EV_PLAY_EFFECT_BOLTED );
+
+		te->s.eventParm = fxID;
+		te->s.owner = owner->s.number;
+		te->s.generic1 = trap_G2API_AddBolt( owner->ghoul2, 0, bolt );
+	}
+
+	return te;
+}
+//[/Bolted effect]
+
+
 /*
 =============
 G_ScreenShake
@@ -1523,37 +1533,6 @@ void G_SoundIndexOnEnt( gentity_t *ent, int channel, int soundIndex )
 
 }
 //[/CloakingVehicles]
-
-#ifdef _XBOX
-//-----------------------------
-void G_EntityPosition( int i, vec3_t ret )
-{
-	if ( /*g_entities &&*/ i >= 0 && i < MAX_GENTITIES && g_entities[i].inuse)
-	{
-#if 0	// VVFIXME - Do we really care about doing this? It's slow and unnecessary
-		gentity_t *ent = g_entities + i;
-
-		if (ent->bmodel)
-		{
-			vec3_t mins, maxs;
-			clipHandle_t h = CM_InlineModel( ent->s.modelindex );
-			CM_ModelBounds( cmg, h, mins, maxs );
-			ret[0] = (mins[0] + maxs[0]) / 2 + ent->currentOrigin[0];
-			ret[1] = (mins[1] + maxs[1]) / 2 + ent->currentOrigin[1];
-			ret[2] = (mins[2] + maxs[2]) / 2 + ent->currentOrigin[2];
-		}
-		else
-#endif
-		{
-			VectorCopy(g_entities[i].r.currentOrigin, ret);
-		}
-	}
-	else
-	{
-		ret[0] = ret[1] = ret[2] = 0;
-	}
-}
-#endif
 
 //==============================================================================
 
@@ -1814,26 +1793,6 @@ void TryUse( gentity_t *ent )
 
 	target = &g_entities[trace.entityNum];
 
-//Enable for corpse dragging
-#if 0
-	if (target->inuse && target->s.eType == ET_BODY &&
-		ent->client->bodyGrabTime < level.time)
-	{ //then grab the body
-		target->s.eFlags |= EF_RAG; //make sure it's in rag state
-		if (!ent->s.number)
-		{ //switch cl 0 and entitynum_none, so we can operate on the "if non-0" concept
-			target->s.ragAttach = ENTITYNUM_NONE;
-		}
-		else
-		{
-			target->s.ragAttach = ent->s.number;
-		}
-		ent->client->bodyGrabTime = level.time + 1000;
-		ent->client->bodyGrabIndex = target->s.number;
-		return;
-	}
-#endif
-
 	if (target && target->m_pVehicle && target->client &&
 		target->s.NPC_class == CLASS_VEHICLE &&
 		!ent->client->ps.zoomMode)
@@ -1861,33 +1820,6 @@ void TryUse( gentity_t *ent )
 		}
 	}
 
-#if 0 //ye olde method
-	if (ent->client->ps.stats[STAT_HOLDABLE_ITEM] > 0 &&
-		bg_itemlist[ent->client->ps.stats[STAT_HOLDABLE_ITEM]].giType == IT_HOLDABLE)
-	{
-		if (bg_itemlist[ent->client->ps.stats[STAT_HOLDABLE_ITEM]].giTag == HI_HEALTHDISP ||
-			bg_itemlist[ent->client->ps.stats[STAT_HOLDABLE_ITEM]].giTag == HI_AMMODISP)
-		{ //has a dispenser item selected
-            if (target && target->client && target->health > 0 && OnSameTeam(ent, target) &&
-				G_CanUseDispOn(target, bg_itemlist[ent->client->ps.stats[STAT_HOLDABLE_ITEM]].giTag))
-			{ //a live target that's on my team, we can use him
-				G_UseDispenserOn(ent, bg_itemlist[ent->client->ps.stats[STAT_HOLDABLE_ITEM]].giTag, target);
-
-				//for now, we will use the standard use anim
-				if (ent->client->ps.torsoAnim == BOTH_BUTTON_HOLD)
-				{ //extend the time
-					ent->client->ps.torsoTimer = 500;
-				}
-				else
-				{
-					G_SetAnim( ent, NULL, SETANIM_TORSO, BOTH_BUTTON_HOLD, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0 );
-				}
-				ent->client->ps.weaponTime = ent->client->ps.torsoTimer;
-				return;
-			}
-		}
-	}
-#else
     if ( ((ent->client->ps.stats[STAT_HOLDABLE_ITEMS] & (1 << HI_HEALTHDISP)) || (ent->client->ps.stats[STAT_HOLDABLE_ITEMS] & (1 << HI_AMMODISP))) &&
 		target && target->inuse && target->client && target->health > 0 && OnSameTeam(ent, target) &&
 		(G_CanUseDispOn(target, HI_HEALTHDISP) || G_CanUseDispOn(target, HI_AMMODISP)) )
@@ -1913,8 +1845,6 @@ void TryUse( gentity_t *ent )
 		ent->client->ps.weaponTime = ent->client->ps.torsoTimer;
 		return;
 	}
-
-#endif
 
 	//Check for a use command
 	if ( ValidUseTarget( target ) 
@@ -2066,15 +1996,48 @@ G_SetOrigin
 Sets the pos trajectory for a fixed position
 ================
 */
+//[SPPortComplete]
 void G_SetOrigin( gentity_t *ent, vec3_t origin ) {
 	VectorCopy( origin, ent->s.pos.trBase );
-	ent->s.pos.trType = TR_STATIONARY;
+	//[CoOp]
+	//SP code
+	if(ent->client)
+	{
+		VectorCopy( origin, ent->client->ps.origin );
+		VectorCopy( origin, ent->s.origin );
+	}
+	else
+	{
+		ent->s.pos.trType = TR_STATIONARY;
+	}
+	//ent->s.pos.trType = TR_STATIONARY;
+	//[/CoOp]
 	ent->s.pos.trTime = 0;
 	ent->s.pos.trDuration = 0;
 	VectorClear( ent->s.pos.trDelta );
 
 	VectorCopy( origin, ent->r.currentOrigin );
+
+	//[CoOp]
+	//SP code
+	// clear waypoints
+	if( ent->client && ent->NPC )
+	{
+		//racc - the SP code shows the waypoints as being this.  However the rest of the code uses WAYPOINT_NONE, so I'm trying that.
+		ent->waypoint = WAYPOINT_NONE;
+		ent->lastWaypoint = WAYPOINT_NONE;
+		//ent->waypoint = 0;
+		//ent->lastWaypoint = 0;
+		/* COOPFIXME RAFIXME - Impliment this nav code stuff?
+		if( NAV::HasPath( ent ) )
+		{
+			NAV::ClearPath( ent );
+		}
+		*/
+	}
+	//[/CoOp]
 }
+//[/SPPortComplete]
 
 qboolean G_CheckInSolid (gentity_t *self, qboolean fix)
 {
@@ -2241,6 +2204,9 @@ qboolean G_ExpandPointToBBox( vec3_t point, const vec3_t mins, const vec3_t maxs
 	return qtrue;
 }
 
+
+//[SaberLockSys]
+/* moved this to q_math.c so that it could be used for the new saber lock effects on the client side.
 extern qboolean G_FindClosestPointOnLineSegment( const vec3_t start, const vec3_t end, const vec3_t from, vec3_t result );
 float ShortestLineSegBewteen2LineSegs( vec3_t start1, vec3_t end1, vec3_t start2, vec3_t end2, vec3_t close_pnt1, vec3_t close_pnt2 )
 {
@@ -2345,7 +2311,7 @@ float ShortestLineSegBewteen2LineSegs( vec3_t start1, vec3_t end1, vec3_t start2
 		VectorCopy( new_pnt, close_pnt2 );
 		current_dist = new_dist;
 	}
-	*/
+	*//*
 	//test all the endpoints
 	new_dist = Distance( start1, start2 );
 	if ( new_dist < current_dist )
@@ -2419,6 +2385,9 @@ float ShortestLineSegBewteen2LineSegs( vec3_t start1, vec3_t end1, vec3_t start2
 
 	return current_dist;
 }
+*/
+//[/SaberLockSys]
+
 
 void GetAnglesForDirection( const vec3_t p1, const vec3_t p2, vec3_t out )
 {
@@ -2428,4 +2397,97 @@ void GetAnglesForDirection( const vec3_t p1, const vec3_t p2, vec3_t out )
 	vectoangles( v, out );
 }
 
+
+//[AdminSys]
+void TextWrapCenterPrint(char orgtext[CENTERPRINT_MAXSTRING], char output[CENTERPRINT_MAXSTRING])
+{//this function auto text wraps a centersay message so that it will display correctly on clients that aren't 
+	//running OJP.  Clients running OJP do this text wrapping on the client side.
+	//scan thru print text and add new lines where needed.
+	int orgIndex, outputIndex, charCounter;
+
+	for(orgIndex = 0, outputIndex = 0, charCounter = 0;
+		orgIndex < CENTERPRINT_MAXSTRING && outputIndex < CENTERPRINT_MAXSTRING; 
+		orgIndex++, charCounter++, outputIndex++)
+	{
+		if(orgtext[orgIndex] == '\n')
+		{//manual newline, reset charCounter
+			charCounter = -1;
+		}
+
+		if(charCounter == 50)
+		{//this line is too long for the basejka client, add a line break.
+			if( !BG_IsWhiteSpace(orgtext[orgIndex]) && !BG_IsWhiteSpace(orgtext[orgIndex-1]) )
+			{//we might have cut a word off, attempt to find a spot where we won't cut words off at.
+				int savedOrgIndex = orgIndex;
+				int savedOutputIndex = outputIndex;
+
+				for(; orgIndex >= 0; orgIndex--, outputIndex--)
+				{
+					if(BG_IsWhiteSpace(orgtext[orgIndex]))
+					{//this location is whitespace, line break from this position
+						//advance the orgIndex back to the first letter of the word that we're going to
+						//wrap to the next line.
+						orgIndex++;
+						break;
+					}
+				}
+				if(orgIndex < 0)
+				{//couldn't find a break in the text, just go ahead and cut off the word mid-word.
+					orgIndex = savedOrgIndex;
+					outputIndex = savedOutputIndex;
+				}
+			}
+	
+			//add line break at proper position.
+			output[outputIndex] = '\n';
+
+			//reset charCounter, set to -1 to account for autoincrement
+			charCounter = -1;
+
+			//decrement orgtext index so we'll try to recopy this char on the next pass.
+			orgIndex--;
+			continue;
+		}
+
+		//line isn't too long yet, just straight copy this char to the output.
+		output[outputIndex] = orgtext[orgIndex];
+
+		if(output[outputIndex] == '\0')
+		{//we're done
+			return;
+		}
+	}
 }
+//[/AdminSys]
+
+//[SeekerItemNpc]
+gentity_t *ViewTarget(gentity_t *ent, int length, vec3_t *target, cplane_t *plane){
+	trace_t tr;
+	vec3_t traceVec;
+
+	AngleVectors(ent->client->ps.viewangles, traceVec, 0, 0);
+	//VectorMA(traceVec, length, ent->client->renderInfo.eyePoint, traceVec);
+	traceVec[0] = ent->client->renderInfo.eyePoint[0] + traceVec[0] * length;
+	traceVec[1] = ent->client->renderInfo.eyePoint[1] + traceVec[1] * length;
+	traceVec[2] = ent->client->renderInfo.eyePoint[2] + traceVec[2] * length;
+
+	trap_Trace(&tr, ent->client->renderInfo.eyePoint, vec3_origin, vec3_origin, traceVec, ent->s.number, 
+		CONTENTS_SOLID | CONTENTS_TERRAIN | CONTENTS_BODY);
+	if(tr.fraction >= 1.0f){
+		//in a rare case, we could validly aim at vec3_origin, but we can never aim at ourself.
+		if(target)
+			VectorCopy(ent->r.currentOrigin, *target); 
+		return NULL;
+	}
+	if(plane)
+		memcpy(plane, &tr.plane, sizeof(tr.plane));
+
+	if(target)
+		VectorCopy(tr.endpos, *target);
+
+	if (tr.entityNum >= ENTITYNUM_MAX_NORMAL)
+		return NULL;
+	else
+		return &g_entities[tr.entityNum];
+}
+//[/SeekerItemNpc]

@@ -1,0 +1,48 @@
+repeatDelay				300
+
+Tail
+{
+	name				sparklesparks
+
+	flags				usePhysics
+
+	count				19 18
+
+	life				200 1000
+
+	delay				0 1200
+
+	bounce				0.25 0.4
+
+	velocity			300 -375 -325 450 375 325
+
+	acceleration		-75 0 0
+
+	gravity				-100 -200
+
+	alpha
+	{
+		start			0.6 1
+		end				0
+		parm			50 60
+		flags			random nonlinear
+	}
+
+	size
+	{
+		start			0.45 0.6
+	}
+
+	length
+	{
+		start			12 30
+		end				0.1 12
+		parm			30 55
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}

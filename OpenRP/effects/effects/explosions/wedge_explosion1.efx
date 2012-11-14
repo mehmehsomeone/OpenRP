@@ -1,0 +1,17 @@
+repeatDelay				300
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/tie_fighter/tieexplode.wav
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		explosions/rocketnuke
+	]
+}

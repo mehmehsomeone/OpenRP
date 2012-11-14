@@ -1,0 +1,292 @@
+repeatDelay				250
+
+Tail
+{
+	name				sparks
+
+	flags				usePhysics
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				3 5
+
+	life				300 400
+
+	bounce				0.25 0.4
+
+	radius				1
+
+	height				0
+
+	velocity			120 -96 -120 190 140 134
+
+	acceleration		9 9 5 4 3 4
+
+	gravity				-250 -550
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		flags			wave
+	}
+
+	size
+	{
+		start			0.2 0.35
+	}
+
+	length
+	{
+		start			4 7
+		end				0.1 1
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				16 17
+
+	life				1700
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			7 -10 -10 15 10 10
+
+	gravity				25 20
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 1 1 0 0 0
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.38 0.3
+		end				0
+		parm			0.4 1
+		flags			linear wave
+	}
+
+	size
+	{
+		end				17 35
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Decal
+{
+	name				wallmark
+
+	life				700 800
+
+	size
+	{
+		start			6.5 8.5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	name				BOOM
+
+	sounds
+	[
+		sound/weapons/bryar/hit_wall.wav
+	]
+}
+
+Light
+{
+	spawnFlags			rgbComponentInterpolation
+
+	rgb
+	{
+		start			1 0 0 1 0.9843 0.9412
+	}
+}
+
+FxRunner
+{
+	playfx
+	[
+		explosions/e-webhit
+	]
+}
+
+Tail
+{
+	name				startsparks
+
+	flags				usePhysics
+
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				15
+
+	life				125 50
+
+	bounce				0.25 0.4
+
+	radius				1
+
+	velocity			120 -96 -120 190 140 134
+
+	acceleration		9 9 5 4 3 4
+
+	gravity				-250 -550
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		flags			wave
+	}
+
+	size
+	{
+		start			0.2 0.35
+	}
+
+	length
+	{
+		start			4 7
+		end				0.1 1
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	name				upfastsmoke
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				8 7
+
+	life				1700
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			55 -10 -10 15 10 10
+
+	gravity				25 20
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 1 1 0 0 0
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.38 0.3
+		end				0
+		parm			0.4 1
+		flags			linear wave
+	}
+
+	size
+	{
+		end				17 35
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	name				Copy of upfastsmoke
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				16 17
+
+	life				1700 1800
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			0 -33 -33 0 33 33
+
+	gravity				25 20
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 1 1 0 0 0
+		parm			5000
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.38 0.3
+		end				0
+		parm			0.4 1
+		flags			linear wave
+	}
+
+	size
+	{
+		end				17 35
+		flags			linear nonlinear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		env/sml_explode2
+	]
+}

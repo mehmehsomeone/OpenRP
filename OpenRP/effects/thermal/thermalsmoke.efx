@@ -1,0 +1,150 @@
+Particle
+{
+	name				splode
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				20 26
+
+	life				2500
+
+	delay				400
+
+	radius				150
+
+	height				150
+
+	rotation			-29 27
+
+	rotationDelta		-10 10
+
+	acceleration		20 20 10 20 -20 -10
+
+	gravity				-205 175
+
+	rgb
+	{
+		start			0 0 0
+		end				0 0 0 0.7529 0.7529 0.7529
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.5
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			20
+		end				380
+		parm			17 2
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere
+
+	count				20 26
+
+	life				1000
+
+	delay				2500
+
+	radius				0
+
+	height				0
+
+	rotation			-29 27
+
+	rotationDelta		-10 10
+
+	acceleration		20 20 10 20 -20 -10
+
+	gravity				-205 175
+
+	rgb
+	{
+		start			0 0 0
+		end				0 0 0 0.6353 0.6353 0.6353
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.8
+		end				0.8
+		parm			40 50
+	}
+
+	size
+	{
+		start			380
+		end				1000
+		parm			12 3
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	flags				useAlpha
+
+	count				20 26
+
+	life				1000
+
+	delay				3500
+
+	rotation			-29 27
+
+	rotationDelta		-10 10
+
+	acceleration		20 20 10 20 -20 -10
+
+	gravity				-205 175
+
+	rgb
+	{
+		start			0 0 0
+		end				0 0 0 0.6353 0.6353 0.6353
+		flags			linear wave
+	}
+
+	alpha
+	{
+		start			0.8
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			1000
+		end				0
+		parm			17 2
+	}
+
+	shaders
+	[
+		gfx/misc/black_smoke
+	]
+}

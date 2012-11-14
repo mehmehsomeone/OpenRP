@@ -1,0 +1,392 @@
+repeatDelay				300
+
+Particle
+{
+	name				OrangeGlow
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				6 8
+
+	life				1000
+
+	delay				0 150
+
+	origin				-60 -60 -60 60 60 60
+
+	rotation			-180 180
+
+	rotationDelta		-1 1
+
+	velocity			5 -5 -5 10 5 5
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 1 0.502
+		end				0.502 0.251 0.251 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7 0.6
+		end				0
+		parm			70 85
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			100 200
+		end				125 159
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+		gfx/misc/steam2
+	]
+}
+
+Particle
+{
+	name				LingeringSmoke
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				4 5
+
+	life				2000 4000
+
+	delay				0 150
+
+	origin				0 -25 -25 20 25 25
+
+	rotation			0 360
+
+	rotationDelta		-10 10
+
+	velocity			0 -20 -20 10 20 20
+
+	acceleration		-4 -8 -8 4 8 8
+
+	gravity				-25 25
+
+	rgb
+	{
+		start			0.5843 0.5843 0.5843 0.2667 0.2667 0.2667
+		end				0.502 0.502 0.502
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			30 50
+		end				100 200
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				Dust
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				1 3
+
+	life				1500 2000
+
+	delay				150 250
+
+	origin				-20 -10 -10 5 10 10
+
+	rotation			-180 180
+
+	rotationDelta		-5 5
+
+	velocity			20 -20 -20 40 20 20
+
+	acceleration		-5 -5 -5 5 5 5
+
+	gravity				-20 -30
+
+	rgb
+	{
+		start			1 1 0.4353 0.9922 0.5882 0.2902
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 70
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			80 100
+		end				150 200
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/dotfill_a
+	]
+}
+
+Sound
+{
+	name				Boom
+
+	spawnFlags			lessAttenuation
+
+	sounds
+	[
+		sound/chars/atst/atst_crash1.mp3
+	]
+}
+
+Tail
+{
+	name				spark1
+
+	spawnFlags			orgOnSphere axisFromSphere
+
+	count				8 12
+
+	life				600 800
+
+	origin				-20 0 0 20 0 0
+
+	radius				60 80
+
+	height				20
+
+	velocity			200 0 0 300 0 0
+
+	gravity				-2 -35
+
+	alpha
+	{
+		end				0.2 0.3
+		flags			linear
+	}
+
+	size
+	{
+		start			2 3
+	}
+
+	length
+	{
+		start			15 20
+		end				30 40
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Tail
+{
+	name				spark_delay
+
+	spawnFlags			orgOnSphere axisFromSphere
+
+	count				50
+
+	life				300 200
+
+	delay				150 240
+
+	origin				-20 0 0 20 0 0
+
+	radius				90 80
+
+	height				30
+
+	velocity			800 0 0
+
+	gravity				10 -10
+
+	alpha
+	{
+		start			0.8
+		end				0
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			1.7
+		end				3
+		flags			linear nonlinear
+	}
+
+	length
+	{
+		start			10 15
+		end				15 20
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	name				spark_group
+
+	spawnFlags			orgOnSphere axisFromSphere
+
+	count				0
+
+	life				800 1000
+
+	delay				350 400
+
+	origin				-20 0 0 20 0 0
+
+	radius				60 70
+
+	height				20 17
+
+	rotation			0 360
+
+	rotationDelta		-8 8
+
+	velocity			100 0 0 200 0 0
+
+	gravity				-5 -35
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			20 30
+		end				15 18
+		flags			linear
+	}
+}
+
+Particle
+{
+	name				explosion01
+
+	count				2 3
+
+	life				500 700
+
+	origin				-20 -20 -20 20 20 20
+
+	rotation			0 360
+
+	rotationDelta		-1 1
+
+	velocity			5 -5 -5 10 5 5
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			60 80
+		end				234 265
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/exp01_1
+	]
+}
+
+Particle
+{
+	name				explosion_delay
+
+	count				2 4
+
+	life				1000 1500
+
+	delay				350 400
+
+	origin				-20 -20 -20 20 20 20
+
+	rotation			0 360
+
+	rotationDelta		-5 5
+
+	velocity			5 -5 -5 20 5 5
+
+	rgb
+	{
+		flags			linear nonlinear
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			180 220
+		end				320 380
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/exp/rocket_explosion
+	]
+}
+
+Decal
+{
+	count				1 2
+
+	rotation			0 360
+
+	size
+	{
+		start			100
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark1
+		gfx/damage/burnmark4
+	]
+}

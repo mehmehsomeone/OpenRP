@@ -1,11 +1,7 @@
 #include "g_OpenRP.h"
-
-extern "C"
-{
 #include "g_local.h"
 #include "g_admin.h"
 #include "g_character.h"
-}
 
 void AddSkill(gentity_t *self, int amount)
 {//add skill points to self
@@ -408,8 +404,8 @@ void Cmd_amBan_F(gentity_t *ent)
 	
 	if (!(g_entities[clientid].r.svFlags & SVF_BOT))
 	{
-		AddIP(g_entities[clientid].client->sess.IPstring);
-		trap_SendServerCommand(ent-g_entities, va("print \"^2The IP of the person you banned is ^7%s\n\"", g_entities[clientid].client->sess.IPstring));
+		AddIP(g_entities[clientid].client->sess.IP);
+		trap_SendServerCommand(ent-g_entities, va("print \"^2The IP of the person you banned is ^7%s\n\"", g_entities[clientid].client->sess.IP));
 	}
 	trap_DropClient(clientid, "^1was ^1permanently ^1banned.\n");
 
@@ -472,7 +468,7 @@ void Cmd_amKick_F(gentity_t *ent)
 		}
 	}
 
-	trap_SendServerCommand(ent-g_entities, va("print \"^2The IP of the person you kicked is %s\n\"", g_entities[clientid].client->sess.IPstring));
+	trap_SendServerCommand(ent-g_entities, va("print \"^2The IP of the person you kicked is %s\n\"", g_entities[clientid].client->sess.IP));
 	trap_DropClient(clientid, "^1was ^1kicked.");
 	G_LogPrintf("Kick admin command executed by %s on %s.\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
 	return;
@@ -1710,7 +1706,7 @@ void Cmd_amStatus_F(gentity_t *ent)
 				Q_strncpyz( hasClientText, "No", sizeof( hasClientText ) );
 			}
 			*/
-			trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IPstring, hasClientText ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientText ) );
 		}
 	}
 	return;
@@ -2943,12 +2939,12 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 //Thanks to Raz0r for his ent tutorial that helped with making this command.
 void Cmd_RemoveEntity_F( gentity_t *ent )
 {
-	trace_t   tr;
-	vec3_t   fPos;
-	vec3_t   mins;
-	vec3_t   maxs;
-	int      i;
-	int      ents[8];
+	//trace_t   tr;
+	//vec3_t   fPos;
+	//vec3_t   mins;
+	//vec3_t   maxs;
+	//int      i;
+	//int      ents[8];
 	int entID;
 	char entIDTemp[MAX_STRING_CHARS];
 

@@ -1,0 +1,86 @@
+repeatDelay				300
+
+Line
+{
+	name				Core
+
+	flags				useAlpha
+
+	life				30
+
+	origin				8 0 0
+
+	origin2				-35 0 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 1 1
+	}
+
+	size
+	{
+		start			2
+	}
+
+	shaders
+	[
+		gfx/effects/bryar_blob
+	]
+}
+
+Line
+{
+	name				Glow
+
+	count				0
+
+	life				30
+
+	origin				16 0 0
+
+	origin2				-23 0 0
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	alpha
+	{
+		start			0.8 1
+	}
+
+	size
+	{
+		start			3
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Filler
+
+	life				30
+
+	origin				3 0 0
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	size
+	{
+		start			2
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

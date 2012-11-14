@@ -1,0 +1,95 @@
+repeatDelay				300
+
+Line
+{
+	flags				depthHack
+
+	life				10 20
+
+	cullrange			100
+
+	origin2				24 0 0 30 0 0
+
+	rgb
+	{
+		start			1 0 0
+	}
+
+	alpha
+	{
+		start			0.5 0.6
+		end				0.35
+		flags			linear
+	}
+
+	size
+	{
+		start			4.75 6.25
+		end				4
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/bryarSideFlash
+	]
+}
+
+Particle
+{
+	flags				depthHack
+
+	count				0
+
+	life				20
+
+	origin				5 0 0
+
+	rotation			0 360
+
+	alpha
+	{
+		start			0.65 0.8
+		end				0.5
+		flags			linear
+	}
+
+	size
+	{
+		start			45 12.5
+		end				7
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/bryarFrontFlash
+	]
+}
+
+Light
+{
+	flags				depthHack
+
+	spawnFlags			rgbComponentInterpolation
+
+	rgb
+	{
+		start			1 0.698 0.2
+	}
+
+	size
+	{
+		start			300 350
+	}
+}
+
+Sound
+{
+	flags				depthHack
+
+	sounds
+	[
+		sound/weapons/disruptor/fire.wav
+	]
+}

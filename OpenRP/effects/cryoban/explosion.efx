@@ -1,0 +1,283 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				20 40
+
+	life				1000
+
+	delay				0 850
+
+	radius				75
+
+	height				150
+
+	acceleration		400 250 235 -250 -450 -400
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412 1 0.9843 0.9412
+		end				0.651 0.7922 0.9412 0 0 0.502
+		parm			55 0
+		flags			random linear nonlinear
+	}
+
+	alpha
+	{
+		start			0.1
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			400 250
+		end				0
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				caustics
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution rgbComponentInterpolation
+
+	count				20 40
+
+	life				700 900
+
+	radius				86 90
+
+	height				15 17
+
+	acceleration		400 250 235 -250 -450 -400
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412 1 0.9843 0.9412
+		end				0.651 0.7922 0.9412
+		parm			55 0
+		flags			random linear nonlinear
+	}
+
+	alpha
+	{
+		start			0.1
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			300 250
+		end				0
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/cloakedShader
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/effects/air_burst.mp3
+		sound/weapons/explosions/glassbreak1.wav
+	]
+}
+
+Particle
+{
+	name				stayingfire
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution rgbComponentInterpolation
+
+	count				0
+
+	life				2000 4500
+
+	delay				1150 850
+
+	radius				150
+
+	height				59
+
+	gravity				0 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412 1 0.9843 0.9412
+		end				0.651 0.7922 0.9412 0 0 0.502
+		parm			55 0
+		flags			random linear nonlinear
+	}
+
+	alpha
+	{
+		start			0.1
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			100 150
+		end				0
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Copy of stayingfire
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution rgbComponentInterpolation
+
+	count				0
+
+	life				2000 3500
+
+	delay				1150 850
+
+	radius				100
+
+	gravity				0 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412 1 0.9843 0.9412
+		end				0.651 0.7922 0.9412 0 0 0.502
+		parm			55 0
+		flags			random linear nonlinear
+	}
+
+	alpha
+	{
+		start			0.1
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			100 150
+		end				0
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Copy of Copy of stayingfire
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution rgbComponentInterpolation
+
+	count				0
+
+	life				2000 4500
+
+	delay				1150 850
+
+	radius				50
+
+	gravity				0 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412 1 0.9843 0.9412
+		end				0.651 0.7922 0.9412 0 0 0.502
+		parm			55 0
+		flags			random linear nonlinear
+	}
+
+	alpha
+	{
+		start			0.1
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			100 150
+		end				0
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Decal
+{
+	spawnFlags			rgbComponentInterpolation
+
+	count				1 2
+
+	rotation			55 36
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	alpha
+	{
+		start			0.7
+	}
+
+	size
+	{
+		start			130
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke2
+		gfx/effects/caustic1
+	]
+}

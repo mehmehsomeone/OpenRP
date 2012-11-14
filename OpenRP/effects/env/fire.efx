@@ -1,0 +1,107 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel evenDistribution
+
+	count				4
+
+	life				600 700
+
+	delay				0 300
+
+	origin				15 0 0 -15 0 0
+
+	radius				25 0
+
+	height				0
+
+	acceleration		25 25 23 0 -35 -35
+
+	gravity				125 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.9529 0.6588 0.04706
+		end				1 0 0 0.9882 0.502 0.01176
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.5 0.6
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				12 20
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/misc/fxflare
+	]
+}
+
+Particle
+{
+	name				texturefire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel evenDistribution rgbComponentInterpolation
+
+	count				4
+
+	life				500 800
+
+	delay				0 300
+
+	origin				15 0 0 -15 0 0
+
+	radius				25 0
+
+	acceleration		25 22 0 0 -22 0
+
+	gravity				125 0
+
+	rgb
+	{
+		start			1 0.9843 0.9412 0.9529 0.6588 0.04706
+		end				1 0 0 0 0 1
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.6 0.8
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				12
+		parm			1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/fire2
+		gfx/effects/fire3
+		gfx/effects/fire4
+	]
+}

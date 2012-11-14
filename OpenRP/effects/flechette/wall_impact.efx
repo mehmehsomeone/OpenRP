@@ -1,0 +1,81 @@
+repeatDelay				250
+
+Tail
+{
+	name				sparks
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				6 2
+
+	life				100
+
+	intensity			0.25 0.4
+
+	velocity			420 -420 -420 450 420 420
+
+	gravity				-750
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+	}
+
+	size
+	{
+		start			0.3
+	}
+
+	length
+	{
+		start			13
+		end				4 1
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Decal
+{
+	life				700 800
+
+	size
+	{
+		start			6.5 8.5
+	}
+
+	shaders
+	[
+		gfx/damage/burnmark4
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/weapons/bryar/hit_wall.wav
+	]
+}
+
+FxRunner
+{
+	playfx
+	[
+		explosions/e-webhit
+	]
+}
+
+FxRunner
+{
+	name				smoke
+
+	playfx
+	[
+		smoke/detailsmokebigviolent
+	]
+}

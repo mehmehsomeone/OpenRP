@@ -1,0 +1,191 @@
+repeatDelay				300
+
+Particle
+{
+	name				sparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				16 20
+
+	life				900 1200
+
+	bounce				0.2
+
+	origin				-8 -8 -8 8 8 8
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			-200 -120 -120 200 120 120
+
+	gravity				-120 -320
+
+	rgb
+	{
+		start			1 1 1 0.9608 0.6627 0
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 60
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			0.4 0.9
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	name				sparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				6
+
+	life				700 900
+
+	bounce				0.2
+
+	origin				-8 -8 -8 8 8 8
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			-160 -120 -120 160 120 120
+
+	gravity				-120 -240
+
+	rgb
+	{
+		start			1 1 1 0.9608 0.6627 0
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 60
+		flags			random nonlinear
+	}
+
+	size
+	{
+		start			0.3 1
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/movers/objects/object_destroy3.mp3
+	]
+}
+
+Particle
+{
+	name				backblow
+
+	life				350
+
+	rotation			0 360
+
+	rotationDelta		-2 2
+
+	rgb
+	{
+		start			0 1 0 0 0.502 0
+	}
+
+	alpha
+	{
+		start			0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			16
+		end				96
+		parm			30 20
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+Particle
+{
+	name				bpsmoke
+
+	flags				useAlpha
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				16 18
+
+	life				1800 2400
+
+	radius				5
+
+	height				5
+
+	rotation			5 360
+
+	rotationDelta		-7 3
+
+	velocity			-6 -10 -10 6 10 10
+
+	gravity				6 20
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 1 1
+		flags			wave
+	}
+
+	alpha
+	{
+		start			0.2 0.1
+		end				0
+		parm			25
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4
+		end				29 32
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke01
+		gfx/effects/bp_smoke02
+	]
+}

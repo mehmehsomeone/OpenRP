@@ -1,0 +1,97 @@
+repeatDelay				300
+
+Particle
+{
+	name				smoke
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				15 17
+
+	life				900 1200
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			7 -10 -10 7 10 10
+
+	gravity				15
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 1 1 0 0 0
+		parm			5000
+		flags			nonlinear
+	}
+
+	alpha
+	{
+		start			0.7 0.6
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		end				12 15
+		parm			1 0
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke
+	]
+}
+
+Particle
+{
+	name				Copy of smoke
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				15 17
+
+	life				1000 1100
+
+	rotation			-180 180
+
+	rotationDelta		-10 6
+
+	velocity			7 -10 -10 7 10 10
+
+	rgb
+	{
+		start			1 0.9843 0.9412
+		end				1 1 1 0 0 0
+		parm			5000
+		flags			nonlinear
+	}
+
+	alpha
+	{
+		start			0.7 0.6
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		end				12 15
+		parm			1 0
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/misc/black_smoke
+	]
+}

@@ -1,0 +1,94 @@
+repeatDelay				300
+
+OrientedParticle
+{
+	flags				setShaderTime
+
+	life				350
+
+	rotation			-45
+
+	size
+	{
+		start			60 210
+		end				240 450
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/exp/wookie
+	]
+}
+
+OrientedParticle
+{
+	flags				setShaderTime
+
+	count				0 1
+
+	life				350
+
+	rotation			135
+
+	size
+	{
+		start			60 210
+		end				240 450
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/exp/wookie
+	]
+}
+
+OrientedParticle
+{
+	life				350
+
+	rgb
+	{
+		start			0.2 0.5 0
+	}
+
+	alpha
+	{
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			240
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+CameraShake
+{
+	name				Shake
+
+	flags				usePhysics
+
+	life				500 800
+
+	bounce				0 1
+
+	radius				250
+}
+
+Sound
+{
+	name				Boom
+
+	sounds
+	[
+		sound/vehicles/weapons/turbolaser/impact.mp3
+	]
+}

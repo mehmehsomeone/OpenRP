@@ -1,0 +1,264 @@
+repeatDelay				300
+
+Particle
+{
+	name				explosion
+
+	spawnFlags			orgOnSphere rgbComponentInterpolation
+
+	count				3 2
+
+	life				400 600
+
+	rotation			0 360
+
+	rotationDelta		-4 2
+
+	velocity			-3 -3 -3 3 3 3
+
+	gravity				0 15
+
+	rgb
+	{
+		start			1 0.9843 0.9412 1 1 1
+	}
+
+	alpha
+	{
+		start			1 0.6
+		end				0
+		parm			2 1
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			1 2
+		end				32 54
+		parm			22
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/exp/explosion3
+	]
+}
+
+Particle
+{
+	name				smoke
+
+	count				2 3
+
+	life				400 800
+
+	origin				-8 -8 -8 8 8 8
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			-6 -10 -10 6 10 10
+
+	gravity				6 20
+
+	alpha
+	{
+		start			0.6 0.8
+		end				0
+		parm			50 60
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4
+		end				24 32
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}
+
+Particle
+{
+	name				sparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				4 3
+
+	life				900 800
+
+	bounce				0.2
+
+	origin				-8 -8 -8 8 8 8
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			-200 -120 -120 200 120 120
+
+	gravity				-120 -320
+
+	rgb
+	{
+		start			1 1 1 0.9608 0.6627 0
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 60
+		flags			nonlinear
+	}
+
+	size
+	{
+		start			0.4 0.9
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Particle
+{
+	name				sparks
+
+	flags				usePhysics
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				2 1
+
+	life				700 900
+
+	bounce				0.2
+
+	origin				-8 -8 -8 8 8 8
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			-160 -120 -120 160 120 120
+
+	gravity				-120 -240
+
+	rgb
+	{
+		start			1 1 1 0.9608 0.6627 0
+	}
+
+	alpha
+	{
+		end				0
+		parm			50 60
+		flags			random nonlinear
+	}
+
+	size
+	{
+		start			0.3 1
+	}
+
+	shaders
+	[
+		gfx/misc/spark
+	]
+}
+
+Sound
+{
+	sounds
+	[
+		sound/movers/objects/object_destroy3.mp3
+	]
+}
+
+Particle
+{
+	name				backblow
+
+	life				350
+
+	rotation			0 360
+
+	rotationDelta		-2 2
+
+	rgb
+	{
+		start			1 0.502 0 0.9412 0.7608 0.3412
+	}
+
+	alpha
+	{
+		start			0.5
+		end				0
+		flags			linear
+	}
+
+	size
+	{
+		start			16
+		end				115 125
+		parm			30 20
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlareMult
+	]
+}
+
+Particle
+{
+	name				bpsmoke
+
+	flags				useAlpha
+
+	count				8 7
+
+	life				1800 2400
+
+	origin				-8 -8 -8 8 8 8
+
+	rotation			0 360
+
+	rotationDelta		-3 3
+
+	velocity			-6 -10 -10 6 10 10
+
+	gravity				6 20
+
+	alpha
+	{
+		start			0.2 0.1
+		end				0
+		parm			50 60
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			4
+		end				24 32
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke01
+	]
+}

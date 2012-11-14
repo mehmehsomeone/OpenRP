@@ -1,0 +1,140 @@
+repeatDelay				4139
+
+Particle
+{
+	spawnFlags			cheapOrgCalc evenDistribution rgbComponentInterpolation
+
+	count				14
+
+	life				200 1200
+
+	delay				0 1200
+
+	origin				0 0 40 0 0 50
+
+	rotation			0 360
+
+	rotationDelta		-5 5
+
+	rgb
+	{
+		start			1 1 1 0.7216 0.702 1
+	}
+
+	alpha
+	{
+		end				0
+		parm			80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		start			250 100
+		end				50 1
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/effects/flare1
+		gfx/effects/flare1
+		gfx/effects/whiteFlare
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 0
+
+	spawnFlags			cheapOrgCalc rgbComponentInterpolation
+
+	count				2
+
+	life				2300
+
+	origin				0 0 50 0 0 70
+
+	rotation			0 360
+
+	rotationDelta		20
+
+	rgb
+	{
+		start			0.4235 0.3255 1
+	}
+
+	alpha
+	{
+		start			0.6
+		end				0
+		parm			60
+		flags			random linear nonlinear
+	}
+
+	size
+	{
+		start			20
+		end				450
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/whiteFlare
+	]
+}
+
+Particle
+{
+	name				Copy of Unnamed Particle 0
+
+	spawnFlags			cheapOrgCalc orgOnSphere axisFromSphere rgbComponentInterpolation
+
+	count				300
+
+	life				400 2000
+
+	delay				0 400
+
+	origin				0 0 0 0 0 30
+
+	radius				600
+
+	height				600
+
+	rotation			0 360
+
+	rotationDelta		90
+
+	velocity			-90 -90 -90 -90 90 90
+
+	acceleration		-250 -50 -50 -250 50 50
+
+	rgb
+	{
+		start			0.8706 0.9412 0.9961 1 0.9843 0.9412
+		end				0 0 1 1 1 1
+		flags			linear
+	}
+
+	alpha
+	{
+		end				0
+		parm			80
+		flags			linear nonlinear
+	}
+
+	size
+	{
+		end				8 12
+		flags			random linear
+	}
+
+	shaders
+	[
+		gfx/effects/flare1
+		gfx/effects/flare1
+		gfx/effects/whiteFlare
+	]
+}

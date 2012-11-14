@@ -127,4 +127,4 @@ CONTENTS_SOLID|CONTENTS_OPAQUE|CONTENTS_BODY|CONTENTS_MONSTERCLIP|CONTENTS_BOTCL
 	"plaster",		\
 	"shatterglass",	\
 	"armor",		\
-	"computer"/* this was missing, see enums above, plus ShaderEd2 pulldown options */
+	"computer"

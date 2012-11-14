@@ -1,0 +1,150 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution rgbComponentInterpolation
+
+	count				30 35
+
+	life				466
+
+	delay				0 300
+
+	acceleration		25 25 23 -25 -45 -40
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.502 0 0 1 1 0
+		end				1 0.9843 0.9412 1 0.502 0
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				50
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Copy of Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution rgbComponentInterpolation
+
+	count				25
+
+	life				400 500
+
+	delay				0 100
+
+	radius				20
+
+	height				20
+
+	acceleration		25 50 35 -25 -50 -45
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			1 0.502 0 1 0 0
+		end				1 0.9843 0.9412 0.8667 0.4235 0.1333
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				50
+		parm			0 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				Copy of Copy of Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnCylinder evenDistribution rgbComponentInterpolation
+
+	count				28 30
+
+	life				400
+
+	delay				0 100
+
+	radius				30
+
+	height				20
+
+	acceleration		25 25 23 -25 -25 -25
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.502 0 0 1 0.502 0
+		end				1 0.502 0 1 0 0
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.4 0.5
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			4 5
+		end				50
+		parm			2 1
+		flags			wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}

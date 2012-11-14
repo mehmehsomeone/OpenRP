@@ -1,0 +1,39 @@
+repeatDelay				300
+
+Cylinder
+{
+	spawnFlags			org2fromTrace
+
+	life				2000
+
+	rgb
+	{
+		start			0.502 0 0.502 1 0 0.502
+	}
+
+	alpha
+	{
+		start			0.1
+	}
+
+	size
+	{
+		start			1000
+	}
+
+	size2
+	{
+		start			100
+	}
+
+	length
+	{
+		start			9732
+		flags			linear
+	}
+
+	shaders
+	[
+		textures/common/nightbeam
+	]
+}

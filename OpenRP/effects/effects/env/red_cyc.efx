@@ -1,0 +1,379 @@
+repeatDelay				300
+
+Line
+{
+	spawnFlags			orgOnCylinder rgbComponentInterpolation
+
+	count				17 8
+
+	life				800 1000
+
+	delay				0 400
+
+	origin2				25 1 1 1 1 1
+
+	radius				200
+
+	height				7 6
+
+	rgb
+	{
+		start			0 0 0.502 0.502 0 0.502
+		flags			wave
+	}
+
+	alpha
+	{
+		start			0.8 1
+	}
+
+	size
+	{
+		start			12 50
+		flags			random linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Line
+{
+	name				sky
+
+	spawnFlags			org2fromTrace orgOnCylinder rgbComponentInterpolation
+
+	count				6 13
+
+	life				2000 2100
+
+	origin				-20 -5 0 -20 -50 0
+
+	origin2				100 -100 100
+
+	radius				448
+
+	rgb
+	{
+		start			0 0 0.502 0.502 0 0.502
+	}
+
+	alpha
+	{
+		start			0.6
+	}
+
+	size
+	{
+		start			12 50
+		end				200
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Line
+{
+	name				Copy of Copy of Unnamed Line 1
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				500
+
+	origin				-20 0 50
+
+	origin2				50 50 50
+
+	radius				448
+
+	rgb
+	{
+		start			0 0 0.502 0.502 0 0.502
+	}
+
+	alpha
+	{
+		start			0.8 1
+	}
+
+	size
+	{
+		start			12 50
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Line
+{
+	name				Copy of Copy of Copy of Unnamed
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				500
+
+	origin				-20 0 -50
+
+	origin2				100 0 -100
+
+	radius				448
+
+	rgb
+	{
+		start			1 0 0 1 0.3255 0
+	}
+
+	alpha
+	{
+		start			0.8 1
+	}
+
+	size
+	{
+		start			12 50
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Line
+{
+	name				Copy of Copy of Copy of Copy of
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				500
+
+	origin				-20 -50 -50 -20 -50 -150
+
+	origin2				50 -50 -50
+
+	radius				448
+
+	rgb
+	{
+		start			1 0 0 1 0.3255 0
+	}
+
+	alpha
+	{
+		start			0.8 1
+	}
+
+	size
+	{
+		start			12 50
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Cylinder
+{
+	spawnFlags			rgbComponentInterpolation
+
+	count				20 19
+
+	life				1800 2000
+
+	rgb
+	{
+		start			0 0 0.502 0.502 0 0.502
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+	}
+
+	size
+	{
+		start			15
+		flags			linear wave
+	}
+
+	size2
+	{
+		start			50
+		end				45
+		flags			linear wave
+	}
+
+	length
+	{
+		start			50
+		end				450
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_c
+		gfx/misc/ftailside_r
+	]
+}
+
+Line
+{
+	name				Copy of Copy of Copy of Copy of
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				500
+
+	origin				-20 50 50
+
+	origin2				50 50 50 -50 -50 -50
+
+	radius				448
+
+	rgb
+	{
+		start			1 0 0 1 0.3255 0
+	}
+
+	alpha
+	{
+		start			0.8 1
+	}
+
+	size
+	{
+		start			12 50
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Line
+{
+	name				Copy of Copy of Copy of Copy of
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				500
+
+	origin				-20 -50 50
+
+	origin2				50 -50 50
+
+	radius				448
+
+	rgb
+	{
+		start			1 0 0 1 0.3255 0
+	}
+
+	alpha
+	{
+		start			0.8 1
+	}
+
+	size
+	{
+		start			12 50
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Line
+{
+	name				Copy of Copy of Copy of Copy of
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				500
+
+	origin				-20 50 -50
+
+	origin2				50 50 -50
+
+	radius				448
+
+	rgb
+	{
+		start			1 0 0 1 0.3255 0
+	}
+
+	alpha
+	{
+		start			0.8 1
+	}
+
+	size
+	{
+		start			12 50
+		flags			random
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Cylinder
+{
+	name				Copy of Unnamed Cylinder 9
+
+	spawnFlags			evenDistribution
+
+	life				500
+
+	delay				0 500
+
+	origin				50 50 50 -50 -50 -50
+
+	rgb
+	{
+		start			1 0 0 1 0.3255 0
+	}
+
+	size
+	{
+		start			60
+	}
+
+	size2
+	{
+		start			100
+	}
+
+	length
+	{
+		start			50
+	}
+
+	shaders
+	[
+		gfx/misc/ftailside_c
+		gfx/misc/ftailside_r
+	]
+}

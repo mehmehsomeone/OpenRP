@@ -1,0 +1,87 @@
+repeatDelay				300
+
+Particle
+{
+	name				SnowBits
+
+	spawnFlags			rgbComponentInterpolation
+
+	count				15 16
+
+	life				800 900
+
+	cullrange			200
+
+	velocity			80 -20 -20 90 20 20
+
+	gravity				-400 -500
+
+	rgb
+	{
+		start			0.2157 0.2157 0.2157 1 1 1
+	}
+
+	alpha
+	{
+		end				0
+		parm			45 60
+	}
+
+	size
+	{
+		start			0.2 0.3
+		end				0.5
+	}
+
+	shaders
+	[
+		gfx/effects/jk_mist
+	]
+}
+
+Particle
+{
+	name				Snowcloud
+
+	flags				useAlpha
+
+	spawnFlags			rgbComponentInterpolation
+
+	life				500 600
+
+	rotation			0 360
+
+	rotationDelta		-6 6
+
+	velocity			80 0 0
+
+	acceleration		-150 0 0
+
+	gravity				-30 -50
+
+	rgb
+	{
+		start			0.8588 0.8745 0.902 0.9961 0.9961 0.9961
+	}
+
+	alpha
+	{
+		start			1 0.8
+		end				0
+		parm			50
+		flags			linear
+	}
+
+	size
+	{
+		start			7 8
+		end				24
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/bp_smoke01
+		gfx/effects/bp_smoke02
+	]
+}

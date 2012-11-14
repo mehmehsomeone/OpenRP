@@ -1,0 +1,50 @@
+repeatDelay				1002
+
+Particle
+{
+	name				LingeringSmoke
+
+	spawnFlags			absoluteVel rgbComponentInterpolation
+
+	count				2
+
+	life				2000 1800
+
+	delay				10 100
+
+	rotation			0 -40
+
+	rotationDelta		-10 10
+
+	velocity			0 0 50 0 0 30
+
+	rgb
+	{
+		start			0.498 0.498 0.498
+		end				0.4706 0.4706 0.4706
+		flags			linear
+	}
+
+	alpha
+	{
+		start			1 0.6
+		end				0
+		parm			40 50
+		flags			linear
+	}
+
+	size
+	{
+		start			5 2
+		end				65 42
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+		gfx/effects/alpha_smoke2
+		gfx/misc/black_smoke
+		gfx/misc/steam
+	]
+}

@@ -1,0 +1,48 @@
+repeatDelay				300
+
+Emitter
+{
+	name				fire
+
+	flags				emitFx
+
+	count				2 3
+
+	life				100
+
+	velocity			2700 3422 3411 2720 -3422 -3411
+
+	gravity				-700
+
+	density				3
+
+	variance			10 100
+
+	emitfx
+	[
+		fearis/exp_fire
+	]
+}
+
+FxRunner
+{
+	name				throwfireballs
+
+	origin				0 0 200 0 0 300
+
+	playfx
+	[
+		fearis/exp_fireshot
+	]
+}
+
+Sound
+{
+	name				sound
+
+	sounds
+	[
+		sound/fearis/ef_explode10.wav
+		sound/fearis/hit2.wav
+	]
+}

@@ -2,6 +2,7 @@
 //
 // g_local.h -- local definitions for game module
 
+//testing
 #include "q_shared.h"
 #include "bg_public.h"
 #include "bg_vehicles.h"
@@ -23,10 +24,12 @@ extern int gPainMOD;
 extern int gPainHitLoc;
 extern vec3_t gPainPoint;
 
+
+void CancelReload(gentity_t *ent);
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
-#define	GAMEVERSION	OPENRP_CLIENTVERSION
+#define	GAMEVERSION	"OpenRP " OPENRP_SERVERVERSION
 
 #define BODY_QUEUE_SIZE		8
 
@@ -34,6 +37,7 @@ extern vec3_t gPainPoint;
 #ifndef G_INFINITE
 #define G_INFINITE			1000000
 #endif
+
 /*#ifndef INFINITE
 #define INFINITE			1000000
 #endif*/
@@ -94,6 +98,355 @@ extern vec3_t gPainPoint;
 
 #define	MAX_G_SHARED_BUFFER_SIZE		8192
 extern char gSharedBuffer[MAX_G_SHARED_BUFFER_SIZE];
+
+typedef struct {
+	vmCvar_t	*vmCvar;
+	char		*cvarName;
+	char		*defaultString;
+	int			cvarFlags;
+	int			modificationCount;  // for tracking changes
+	qboolean	trackChange;	    // track this variable, and announce if changed
+  qboolean teamShader;        // track and if changed, update shader state
+} cvarTable_t;
+
+extern	vmCvar_t	g_gametype;
+extern	vmCvar_t	g_dedicated;
+extern	vmCvar_t	g_developer;
+extern	vmCvar_t	g_cheats;
+extern	vmCvar_t	g_maxclients;			// allow this many total, including spectators
+extern	vmCvar_t	g_maxGameClients;		// allow this many active
+extern	vmCvar_t	g_restarted;
+
+extern	vmCvar_t	g_trueJedi;
+
+extern	vmCvar_t	g_autoMapCycle;
+extern	vmCvar_t	g_dmflags;
+//[OpenRP - Skillpoint System]
+//[ExpSys]
+//extern	vmCvar_t	g_minForceRank;
+//[/ExpSys]
+//[/OpenRP - Skillpoint System]
+extern	vmCvar_t	g_maxForceRank;
+extern	vmCvar_t	g_forceBasedTeams;
+extern	vmCvar_t	g_privateDuel;
+
+extern	vmCvar_t	g_allowNPC;
+
+//[ROQFILES]
+extern  vmCvar_t	g_allowROQ;
+//[/ROQFILES]
+
+//[LastManStanding]
+extern vmCvar_t		ojp_lms;
+extern vmCvar_t		ojp_lmslives;
+//[Coop]
+extern vmCvar_t		ojp_liveExp;
+extern vmCvar_t		ojp_dodgemulti;
+//[/Coop]
+//[/LastManStanding]
+
+extern	vmCvar_t	g_armBreakage;
+
+extern	vmCvar_t	g_saberLocking;
+extern	vmCvar_t	g_saberLockFactor;
+extern	vmCvar_t	g_saberTraceSaberFirst;
+
+extern	vmCvar_t	d_saberKickTweak;
+
+//[SaberSys]
+extern	vmCvar_t	d_saberBodyCheck;
+//[/SaberSys]
+
+extern	vmCvar_t	d_powerDuelPrint;
+
+extern	vmCvar_t	d_saberGhoul2Collision;
+extern	vmCvar_t	g_saberBladeFaces;
+extern	vmCvar_t	d_saberAlwaysBoxTrace;
+extern	vmCvar_t	d_saberBoxTraceSize;
+
+extern	vmCvar_t	d_siegeSeekerNPC;
+
+extern	vmCvar_t	g_debugMelee;
+extern	vmCvar_t	g_stepSlideFix;
+
+extern	vmCvar_t	g_noSpecMove;
+
+#ifdef _DEBUG
+extern	vmCvar_t	g_disableServerG2;
+#endif
+
+extern	vmCvar_t	d_perPlayerGhoul2;
+
+extern	vmCvar_t	d_projectileGhoul2Collision;
+
+extern	vmCvar_t	g_g2TraceLod;
+
+extern	vmCvar_t	g_optvehtrace;
+
+extern	vmCvar_t	g_locationBasedDamage;
+
+extern	vmCvar_t	g_allowHighPingDuelist;
+
+extern	vmCvar_t	g_logClientInfo;
+
+extern	vmCvar_t	g_slowmoDuelEnd;
+
+extern	vmCvar_t	g_saberDamageScale;
+
+//[/SaberSys]
+extern	vmCvar_t	g_saberanimspeed;
+//[/SaberSys]
+
+//[ForceSys]
+//extern	vmCvar_t	g_useWhileThrowing;
+//[/ForceSys]
+
+extern	vmCvar_t	g_RMG;
+
+extern	vmCvar_t	g_svfps;
+
+//[PrivatePasswordFix]
+extern	vmCvar_t	sv_privatepassword;
+//[/PrivatePasswordFix]
+
+extern	vmCvar_t	g_forceRegenTime;
+
+//[DodgeSys]
+extern	vmCvar_t	g_dodgeRegenTime;
+//[/DodgeSys]
+
+//[SaberSys]
+extern  vmCvar_t	g_mishapRegenTime;
+//[/SaberSys]
+
+extern	vmCvar_t	g_spawnInvulnerability;
+extern	vmCvar_t	g_forcePowerDisable;
+extern	vmCvar_t	g_weaponDisable;
+
+extern	vmCvar_t	g_allowDuelSuicide;
+extern	vmCvar_t	g_fraglimitVoteCorrection;
+
+extern	vmCvar_t	g_duelWeaponDisable;
+extern	vmCvar_t	g_fraglimit;
+extern	vmCvar_t	g_duel_fraglimit;
+extern	vmCvar_t	g_timelimit;
+extern	vmCvar_t	g_capturelimit;
+extern	vmCvar_t	d_saberInterpolate;
+//[test]
+extern	vmCvar_t	d_test;
+//[/test]
+extern	vmCvar_t	g_friendlyFire;
+extern	vmCvar_t	g_friendlySaber;
+extern	vmCvar_t	g_password;
+extern	vmCvar_t	g_needpass;
+extern	vmCvar_t	g_gravity;
+//[CoOp]
+extern	vmCvar_t	storyhead;
+extern	vmCvar_t	tier_storyinfo;
+extern  vmCvar_t	tiers_complete;
+//[/CoOp]
+extern	vmCvar_t	g_speed;
+extern	vmCvar_t	g_knockback;
+extern	vmCvar_t	g_quadfactor;
+extern	vmCvar_t	g_forcerespawn;
+extern	vmCvar_t	g_siegeRespawn;
+extern	vmCvar_t	g_inactivity;
+extern	vmCvar_t	g_debugMove;
+extern	vmCvar_t	g_debugAlloc;
+#ifndef FINAL_BUILD
+extern	vmCvar_t	g_debugDamage;
+//[SaberSys]
+extern	vmCvar_t	g_debugviewlock;
+//[/SaberSys]
+#endif
+extern	vmCvar_t	g_debugServerSkel;
+extern	vmCvar_t	g_weaponRespawn;
+extern	vmCvar_t	g_weaponTeamRespawn;
+extern	vmCvar_t	g_adaptRespawn;
+extern	vmCvar_t	g_synchronousClients;
+extern	vmCvar_t	g_motd;
+extern	vmCvar_t	g_warmup;
+extern	vmCvar_t	g_doWarmup;
+extern	vmCvar_t	g_blood;
+extern	vmCvar_t	g_allowVote;
+//[AdminSys]
+extern	vmCvar_t	g_allowTeamVote;
+extern	vmCvar_t	g_allowGametypeVote;
+extern	vmCvar_t	g_AllowMapVote;
+extern	vmCvar_t	g_AllowKickVote;
+
+//[ChatSpamProtection]
+extern	vmCvar_t	ojp_chatProtectTime;
+//[/ChatSpamProtection]
+//[/AdminSys]
+extern	vmCvar_t	g_teamAutoJoin;
+extern	vmCvar_t	g_teamForceBalance;
+extern	vmCvar_t	g_banIPs;
+extern	vmCvar_t	g_filterBan;
+extern	vmCvar_t	g_debugForward;
+extern	vmCvar_t	g_debugRight;
+extern	vmCvar_t	g_debugUp;
+//extern	vmCvar_t	g_redteam;
+//extern	vmCvar_t	g_blueteam;
+extern	vmCvar_t	g_smoothClients;
+
+#include "../namespace_begin.h"
+extern	vmCvar_t	pmove_fixed;
+extern	vmCvar_t	pmove_msec;
+#include "../namespace_end.h"
+
+extern	vmCvar_t	g_enableBreath;
+extern	vmCvar_t	g_singlePlayer;
+extern	vmCvar_t	g_dismember;
+extern	vmCvar_t	g_forceDodge;
+extern	vmCvar_t	g_timeouttospec;
+
+extern	vmCvar_t	g_saberDmgVelocityScale;
+extern	vmCvar_t	g_saberDmgDelay_Idle;
+extern	vmCvar_t	g_saberDmgDelay_Wound;
+
+#ifndef FINAL_BUILD
+extern	vmCvar_t	g_saberDebugPrint;
+#endif
+
+extern	vmCvar_t	g_siegeTeamSwitch;
+
+extern	vmCvar_t	bg_fighterAltControl;
+
+#ifdef DEBUG_SABER_BOX
+extern vmCvar_t	g_saberDebugBox;
+#endif
+
+//NPC nav debug
+extern vmCvar_t		d_altRoutes;
+extern vmCvar_t		d_patched;
+extern	vmCvar_t	d_noIntermissionWait;
+
+extern	vmCvar_t	g_siegeTeam1;
+extern	vmCvar_t	g_siegeTeam2;
+
+extern	vmCvar_t	g_austrian;
+
+//[Grapple]
+extern	vmCvar_t	mod_grapple;
+
+extern	vmCvar_t	g_powerDuelStartHealth;
+extern	vmCvar_t	g_powerDuelEndHealth;
+
+//[AotCAI]
+extern	vmCvar_t	bot_thinklevel;
+//[/AotCAI]
+
+extern vmCvar_t		g_showDuelHealths;
+//[CoOp]
+extern vmCvar_t		ojp_skipcutscenes;
+extern vmCvar_t		ojp_spmodel;
+extern vmCvar_t		ojp_spmodelrgb;
+//[/CoOp]
+
+//[AotCAI]
+extern vmCvar_t		bot_cpu_usage;
+//[/AotCAI]
+
+//[NOBODYQUE]
+extern vmCvar_t		g_corpseRemovalTime;
+//[/NOBODYQUE]
+
+//[ExpandedMOTD]
+extern vmCvar_t		ojp_clientMOTD;
+extern vmCvar_t		ojp_MOTD;
+//[/ExpandedMOTD]
+
+//[DodgeSys]
+extern vmCvar_t		ojp_allowBodyDodge;
+//[/DodgeSys]
+
+//[FFARespawnTimer]
+extern vmCvar_t		ojp_ffaRespawnTimer;
+//[/FFARespawnTimer]
+
+extern vmCvar_t		ojp_truebalance;//[TrueBalance]
+
+extern vmCvar_t ojp_modelscaleEnabled;//[Modelscale]
+
+//[OpenRP]
+extern vmCvar_t		openrp_maxWarnings; 
+
+//OpenRP website
+extern vmCvar_t		openrp_website;
+
+//Shop stuff
+extern vmCvar_t		openrp_e11BuyCost;
+extern vmCvar_t		openrp_e11SellCost;
+extern vmCvar_t		openrp_e11Level;
+extern vmCvar_t		openrp_e11Description;
+
+extern vmCvar_t		openrp_pistolBuyCost;
+extern vmCvar_t		openrp_pistolSellCost;
+extern vmCvar_t		openrp_pistolLevel;
+extern vmCvar_t		openrp_pistolDescription;
+
+extern vmCvar_t		openrp_disruptorBuyCost;
+extern vmCvar_t		openrp_disruptorSellCost;
+extern vmCvar_t		openrp_disruptorLevel;
+extern vmCvar_t		openrp_disruptorDescription;
+
+extern vmCvar_t		openrp_bowcasterBuyCost;
+extern vmCvar_t		openrp_bowcasterSellCost;
+extern vmCvar_t		openrp_bowcasterLevel;
+extern vmCvar_t		openrp_bowcasterDescription;
+
+extern vmCvar_t		openrp_repeaterBuyCost;
+extern vmCvar_t		openrp_repeaterSellCost;
+extern vmCvar_t		openrp_repeaterLevel;
+extern vmCvar_t		openrp_repeaterDescription;
+
+extern vmCvar_t		openrp_demp2BuyCost;
+extern vmCvar_t		openrp_demp2SellCost;
+extern vmCvar_t		openrp_demp2Level;
+extern vmCvar_t		openrp_demp2Description;
+
+extern vmCvar_t		openrp_flechetteBuyCost;
+extern vmCvar_t		openrp_flechetteSellCost;
+extern vmCvar_t		openrp_flechetteLevel;
+extern vmCvar_t		openrp_flechetteDescription;
+
+extern vmCvar_t		openrp_rocketBuyCost;
+extern vmCvar_t		openrp_rocketSellCost;
+extern vmCvar_t		openrp_rocketLevel;
+extern vmCvar_t		openrp_rocketDescription;
+
+extern vmCvar_t		openrp_concussionBuyCost;
+extern vmCvar_t		openrp_concussionSellCost;
+extern vmCvar_t		openrp_concussionLevel;
+extern vmCvar_t		openrp_concussionDescription;
+
+//Bitvalues for Admins
+extern vmCvar_t		openrp_admin1Bitvalues;
+extern vmCvar_t		openrp_admin2Bitvalues; 
+extern vmCvar_t		openrp_admin3Bitvalues;
+extern vmCvar_t		openrp_admin4Bitvalues;
+extern vmCvar_t		openrp_admin5Bitvalues;
+extern vmCvar_t		openrp_admin6Bitvalues;
+extern vmCvar_t		openrp_admin7Bitvalues;
+extern vmCvar_t		openrp_admin8Bitvalues;
+extern vmCvar_t		openrp_admin9Bitvalues;
+extern vmCvar_t		openrp_admin10Bitvalues;
+
+
+//Determines whether admins can perform admin commands on higher admin levels.
+//If it's on (set to 1), then lower level admins can't use cmds like sleep on higher level admins.
+extern vmCvar_t		openrp_adminControl;
+
+extern vmCvar_t		openrp_jetpackFuel;
+extern vmCvar_t		openrp_cloakFuel;
+
+extern vmCvar_t		openrp_allChat;
+
+extern vmCvar_t		openrp_showRenames;
+
+extern vmCvar_t		openrp_databasePath;
+//[/OpenRP]
 
 // movers are things like doors, plats, buttons, etc
 typedef enum {
@@ -165,14 +518,6 @@ enum {
 	BOTORDER_JEDIMASTER,	//jedimaster tactics.
 	BOTORDER_SABERDUELCHALLENGE,  //enter into a saber challenge with the objective entity
 	BOTORDER_RESUPPLY,		//Go grab/use the tactic entity (used for making the bots pick up ammo).
-	/* I don't think we actually need this.
-	BOTORDER_SIEGECLASS_INFANTRY,
-	BOTORDER_SIEGECLASS_VANGUARD,
-	BOTORDER_SIEGECLASS_SUPPORT,
-	BOTORDER_SIEGECLASS_JEDI,
-	BOTORDER_SIEGECLASS_DEMOLITIONIST,
-	BOTORDER_SIEGECLASS_HEAVY_WEAPONS,
-	*/
 	BOTORDER_MAX
 };
 
@@ -297,6 +642,13 @@ struct gentity_s {
 	qboolean	freeAfterEvent;
 	qboolean	unlinkAfterEvent;
 
+	//[SentryGun]
+	int			sentryDeadThink; //For dead sentrys
+	//[/SentryGun]
+	//[ForceField]
+	int			forceFieldThink;
+	//[/ForceField]
+
 	qboolean	physicsObject;		// if true, it can be pushed by movers and fall off edges
 									// all game items are physicsObjects, 
 	float		physicsBounce;		// 1.0 = continuous bounce, 0.0 = no bounce
@@ -378,6 +730,14 @@ struct gentity_s {
 	int			health;
 	qboolean	takedamage;
 	material_t	material;
+	int			damageDecreaseTime;
+
+	//[LastManStanding]
+	int			lives;
+	//[Coop]
+	int			liveExp;
+	//[/Coop]
+	//[/LastManStanding]
 
 	int			damage;
 	int			dflags;
@@ -399,6 +759,10 @@ struct gentity_s {
 	gentity_t	*teamchain;		// next entity in team
 	gentity_t	*teammaster;	// master of the team
 
+	//[NPCTweaks]
+	vec3_t		lastenemyorigin;
+	//[/NPCTweaks]
+
 	int			watertype;
 	int			waterlevel;
 
@@ -411,9 +775,9 @@ struct gentity_s {
 
 	//generic values used by various entities for different purposes.
 	int			genericValue1;
-	int			genericValue2;
-	int			genericValue3;
-	int			genericValue4;
+	int			genericValue2;			//racc - Sentry Guns: Owner's team, so can self-destruct if owner switches teams
+	int			genericValue3;			//racc - Sentry Guns: Owner's entity number
+	int			genericValue4;			//racc - Sentry Guns: Enemy entityNum
 	int			genericValue5;
 	int			genericValue6;
 	int			genericValue7;
@@ -435,6 +799,9 @@ struct gentity_s {
 
 	vec3_t		epVelocity;
 	float		epGravFactor;
+
+	vec3_t		origOrigin;
+	qboolean    spawnedBefore;
 
 	gitem_t		*item;			// for bonus items
 
@@ -458,6 +825,17 @@ struct gentity_s {
 	//[ROFF]
 	int			roff_ctr;		// current roff frame we are playing
 	//[/ROFF]
+
+	//[Reload]
+	qboolean	justReloaded;	//Used to stop user from holding down reload
+	int			bullets[WP_NUM_WEAPONS];//Number of bullets each gun has left
+	int			reloadTime;		//Every 0.2 seconds reload a bullet
+	int			bulletsToReload;//Bullets to reload
+	int			reloadCooldown;
+	//[/Reload]
+	int			cooldownTime;
+	//[Grapple]
+	gentity_t	*hook;
 };
 
 #define DAMAGEREDIRECT_HEAD		1
@@ -535,35 +913,45 @@ typedef struct {
 	//[Asteroids]
 	int			killCount;
 	int			TKCount;
-	char		IPstring[32];		// yeah, I know, could be 16, but, just in case...
 	//[Asteroids]
-
-	//[OpenRP - Client Session]
-	qboolean    loggedinAccount;
-	int			accountID;
-	qboolean    characterChosen;
-	int			characterID;
-	qboolean	isAdmin;
+	//[ExpSys]
+	int			skillPoints;		//number of skill points this player currently has.
+	//[/ExpSys]
+	qboolean    loggedinAccount;    // Logged into a player Account
+	int			accountID;     // Account ID
+	qboolean    characterChosen;    // Character chosen
+	int			characterID;	// Character ID
+	int			modelScale; // Model Scale
+	//OpenRP admin system stuff
+	qboolean	isAdmin;		// is an Admin
 	int adminLevel;
 	vec3_t placeOfDeath;
-	int warnings;
+	int warnings;					//The current amount of warnings the player has
+	char IP[32];					//The players IP Address is stored here
 	qboolean isSleeping;
 	qboolean isSilenced;
 	qboolean isProtected;
+	qboolean isInvisible;
 	qboolean allChat;
 	qboolean allChatComplete;
+	qboolean isAutoWalking;
+	qboolean chatCommandExecuted;
 	int chatMode;
+	float commFrequency;
 	int commMode;
 	qboolean commOn;
-	qboolean hasClient;
+
 	char *entListNames[128][128];
 	int entListIDs[128];
-	qboolean isInvisible;
-	int skillPoints;
-	int modelScale;
+
 	qboolean cheatAccess;
 
-	//[/OpenRP - Client Session]
+	//[ClientPlugInDetect]
+	//this flag shows weither or not this client is running the right version of OJP on the client side.  
+	//This is used to determine if the visual weapon events can be sent or not.
+	qboolean ojpClientPlugIn;
+	//[/ClientPlugInDetect]
+
 } clientSession_t;
 
 // playerstate mGameFlags
@@ -592,19 +980,30 @@ typedef struct {
 	int			teamVoteCount;		// to prevent people from constantly calling votes
 	qboolean	teamInfo;			// send team overlay updates?
 
-	//[ClientPlugInDetect]
-	//this flag shows weither or not this client is running the right version of OJP on the client side.  
-	//This is used to determine if the visual weapon events can be sent or not.
-	//sqboolean	ojpClientPlugIn;
-	//[/ClientPlugInDetect]
-
-	//[OpenRP - Admin System]
+	//OpenRP - teleport stuff (credit to ClanMod for this)
 	int	amtelemark1;
 	int	amtelemark2;
 	int	amtelemark3;
 	int	amtelemarkyaw;
 	qboolean	amtelemarkset;
-	//[/OpenRP - Admin System]
+
+	int			motdShowTime;		// MJN - Show MOTD to player.
+	qboolean	protect;			// MJN - Person is protected.
+	qboolean	sleeping;			// MJN - This player is asleep.
+	float		zShowTime;			// MJN - Is it time to show some Z's when sleeping?
+	qboolean    denyvote;			// MJN - Deny vote access
+	qboolean	silenced;			// MJN - This player is silence and can't talk.
+	qboolean	pmchat;				// MJN - This player can only use private messaging.
+	qboolean	empowered;			// MJN - This player is empowered.
+	qboolean	terminator;			// MJN - This player is terminator.
+	qboolean	restricted;			// MJN - For restricting admin login.
+	qboolean	hasCheatAccess;		// MJN - Allows to access cheats.
+	int			adminclientstatus;	// MJN - For tracking their flags through amstatus.
+	int			forcePowersKnownSaved;	// MJN - Used to save and restore your known forcepowers when unempowering is used.
+	int			duelStartTime;		// RMH - Level time of duel start.
+	int			duelEndTime;		// RMH - Level time of duel end.
+	int			forcePowerLevelSaved[NUM_FORCE_POWERS]; // MJN - Used to save your old level when empowering is used and restoring it later.
+
 } clientPersistant_t;
 
 typedef struct renderInfo_s
@@ -681,6 +1080,18 @@ typedef struct renderInfo_s
 	int			boltValidityTime;
 } renderInfo_t;
 
+
+//[SaberSys]
+typedef struct 
+{
+	int EntityNum;
+	int Debounce;
+	int SaberNum;
+	int BladeNum;
+}  sabimpact_t;
+//[SaberSys]
+
+
 // this structure is cleared on each ClientSpawn(),
 // except for 'client->pers' and 'client->sess'
 struct gclient_s {
@@ -709,6 +1120,10 @@ struct gclient_s {
 	int			torsoAnimExecute;
 	qboolean	legsLastFlip;
 	qboolean	torsoLastFlip;
+
+	qboolean	justFired;//[T-21]
+	int			cloneFired;//[CloneRifle]
+	int			shotsBlocked;
 
 	qboolean	readyToExit;		// wishes to leave the intermission
 
@@ -740,6 +1155,8 @@ struct gclient_s {
 	int			accuracy_shots;		// total number of shots
 	int			accuracy_hits;		// total number of hits
 
+	int			forceSpeedStartTime;
+
 	//
 	int			lastkilled_client;	// last client that this client killed
 	int			lasthurt_client;	// last client that damaged this client
@@ -757,7 +1174,8 @@ struct gclient_s {
 
 	qboolean	fireHeld;			// used for hook
 	gentity_t	*hook;				// grapple hook if out
-
+	//[Grapple]
+	qboolean	hookhasbeenfired;
 	int			switchTeamTime;		// time the player switched teams
 
 	int			switchDuelTeamTime;		// time the player switched duel teams
@@ -777,6 +1195,9 @@ struct gclient_s {
 	int			g2LastSurfaceModel; //the index of the model on the ghoul2 that was hit during the lastest hit.
 	//[BUGFIX12]
 
+	qboolean	underForceLift;
+	int			forceLifting;
+	int			forceLiftTime;
 
 	int			corrTime;
 
@@ -793,6 +1214,7 @@ struct gclient_s {
 	int			jetPackToggleTime;
 	int			jetPackDebRecharge;
 	int			jetPackDebReduce;
+	qboolean	jetPackTakeForce;
 
 	int			cloakToggleTime;
 	int			cloakDebRecharge;
@@ -829,7 +1251,6 @@ struct gclient_s {
 	int			throwingIndex;
 	int			beingThrown;
 	int			doingThrow;
-
 	float		hiddenDist;//How close ents have to be to pick you up as an enemy
 	vec3_t		hiddenDir;//Normalized direction in which NPCs can't see you (you are hidden)
 
@@ -896,6 +1317,34 @@ struct gclient_s {
 	int			lastGenCmd;
 	int			lastGenCmdTime;
 	
+	//[SaberSys]
+	vec3_t		prevviewangle;
+	int			prevviewtime;
+
+	//the SaberNum of the last enemy blade that you hit.
+	int			lastSaberCollided;
+	//the BladeNum of the last enemy blade that you hit.
+	int			lastBladeCollided;
+
+	sabimpact_t	sabimpact[MAX_SABERS][MAX_BLADES];
+
+	//racc - used to debounce saber projectile blocks.
+	int			SaberBlockTime;
+	//[/SaberSys]
+
+	//[DodgeSys]
+	int			DodgeDebounce;
+	//[/DodgeSys]
+
+	//[ManualDodge]
+	int			ManualDodgeDebounce;
+	//[/ManualDodge]
+
+	//[SaberSys]
+	//debounce timer on the regeneration of the mishap/balance bar. 
+	int			MishapDebounce;
+	//[/SaberSys]
+
 	//[Asteroids]
 	//can't put these in playerstate, crashes game (need to change exe?)
 	int			otherKillerMOD;
@@ -913,9 +1362,43 @@ struct gclient_s {
 	int			chatDebounceTime;  
 	//[/AdminSys][/ChatSpamProtection]
 
-	//[OpenRP - Emotes System]
-	qboolean	emote_freeze;
-	//[OpenRP - Emotes System]
+	//[SaberSys]
+	//used for debouncing saber viewlock
+	int			viewLockTime;
+	//[/SaberSys]
+
+	//[ExpSys]
+	qboolean	skillUpdated;			//indicates that we've updated our skill points and should let the player's client know.
+	//int			skillDebounce;			//debouncer for skill point updates to the player client
+	int			skillLevel[NUM_SKILLS];
+	int			featLevel[NUM_FEATS];
+	//[/ExpSys]
+
+	//[Flamethrower]
+	int			flameTime;
+	qboolean	flamed;//When a jedi gets flamethrowed
+	qboolean	flameThrowed;
+	//[/Flamethrower]
+
+	//[SeekerItemNpc]
+	gentity_t *remote;
+	//[/SeekerItemNpc]
+	int         blockTime;
+	int			forcePowerStart[NUM_FORCE_POWERS];//if <= level.time start force powa -- 1.3 
+
+	qboolean leftPistol;//[DualPistols]
+	qboolean attackNeedRelease;
+	int			forceAttacker;
+	int			frozenTime;
+	qboolean	weaponbuttonNeedRelease;
+
+	//[LegacyMods]
+	// MJN - Saves the players health/armour when duel starts to restore it on duel end:
+	//int			emote_num;  // MJN - Emote number
+	qboolean	emote_freeze; // MJN - Freeze emote
+	//int			specialAction; // MJN - For special animations like siting down and such.
+	int			specialActionLastAnim; // MJN - For keeping track of which anime we were doing. If it differs from actual anime we might have to switch states.
+	//[/LegacyMods]
 };
 
 //Interest points
@@ -1079,11 +1562,12 @@ typedef struct {
 
 	qboolean	locationLinked;			// target_locations get linked
 	gentity_t	*locationHead;			// head of the location list
+
 	//[NOBODYQUE]
 	//don't need this stuff anymore.
 	/*
-	int			bodyQueIndex;			// dead bodies
-	gentity_t	*bodyQue[BODY_QUEUE_SIZE];
+		int			bodyQueIndex;			// dead bodies
+		gentity_t	*bodyQue[BODY_QUEUE_SIZE];
 	*/
 	//[/NOBODYQUE]
 	int			portalSequence;
@@ -1110,7 +1594,7 @@ typedef struct {
 	char		*mTargetAdjust;
 
 	char		mTeamFilter[MAX_QPATH];
-	
+		
 	//[RawMapName]
 	char		rawmapname[MAX_QPATH];
 	//[/RawMapName]
@@ -1150,9 +1634,13 @@ gentity_t *G_GetDuelWinner(gclient_t *client);
 void ItemUse_Binoculars(gentity_t *ent);
 void ItemUse_Shield(gentity_t *ent);
 void ItemUse_Sentry(gentity_t *ent);
+void ItemUse_Sentry2(gentity_t *ent);
 
 void Jetpack_Off(gentity_t *ent);
 void Jetpack_On(gentity_t *ent);
+//[Flamethrower]
+void ItemUse_FlameThrower(gentity_t *ent);
+//[/Flamethrower]
 void ItemUse_Jetpack(gentity_t *ent);
 void ItemUse_UseCloak( gentity_t *ent );
 void ItemUse_UseDisp(gentity_t *ent, int type);
@@ -1361,6 +1849,10 @@ void TossClientCubes( gentity_t *self );
 void ExplodeDeath( gentity_t *self );
 void G_CheckForDismemberment(gentity_t *ent, gentity_t *enemy, vec3_t point, int damage, int deathAnim, qboolean postDeath);
 extern int gGAvoidDismember;
+//[ExpSys]
+void AddSkill(gentity_t *self, int amount);
+void G_DodgeDrain(gentity_t *victim, gentity_t *attacker, int amount);
+//[/ExpSys]
 
 
 // damage flags
@@ -1403,7 +1895,8 @@ void G_BounceProjectile( vec3_t start, vec3_t impact, vec3_t dir, vec3_t endout 
 void G_ExplodeMissile( gentity_t *ent );
 
 void WP_FireBlasterMissile( gentity_t *ent, vec3_t start, vec3_t dir, qboolean altFire );
-
+//[Grapple]
+gentity_t *fire_grapple (gentity_t *self, vec3_t start, vec3_t dir);
 
 //
 // g_mover.c
@@ -1465,7 +1958,27 @@ void CalcMuzzlePoint ( gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, 
 void SnapVectorTowards( vec3_t v, vec3_t to );
 qboolean CheckGauntletAttack( gentity_t *ent );
 
+//[SnapThrow]
+#define TD_VELOCITY			900		//max velocity for thermal dets
+//[/SnapThrow]
 
+//[DodgeSys]
+#define DISRUPTOR_MAX_CHARGE (g_gametype.integer == GT_SIEGE ? 200 : 60) //max charge on disruptor's alt fire.
+#define DISRUPTOR_MIN_CHARGE (g_gametype.integer == GT_SIEGE ? 0 : 45) //min charge on disruptor alt fire. --HOLMSTN 
+
+#define DODGE_BOLTBLOCK			4	//standard DP cost to block a missile bolt -- 1.3 was 2.5
+#define DODGE_BOWCASTERBLOCK	3
+
+//[BryarSecondary]
+#define BRYAR_PISTOL_ALT_DPDAMAGE			DODGE_BOLTBLOCK			//minimum DP damage of bryar secondary
+#define BRYAR_PISTOL_ALT_DPMAXDAMAGE		DODGE_BOLTBLOCK*1.5		//maximum DP damage of bryar secondary
+#define BRYAR_MAX_CHARGE					5
+//[/BryarSecondary]
+//[/DodgeSys]
+//[Grapple]
+void Weapon_HookThink (gentity_t *ent);
+void Weapon_HookFree (gentity_t *ent);
+void Weapon_GrapplingHook_Fire (gentity_t *ent);
 //
 // g_client.c
 //
@@ -1486,6 +1999,10 @@ void player_die (gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 void AddScore( gentity_t *ent, vec3_t origin, int score );
 void CalculateRanks( void );
 qboolean SpotWouldTelefrag( gentity_t *spot );
+//[LastManStanding]
+qboolean LMS_EnoughPlayers();
+//[/LastManStanding]
+qboolean AllForceDisabled(int force); // MJN - Added for declaration.
 
 extern gentity_t *gJMSaberEnt;
 
@@ -1558,6 +2075,7 @@ void G_CheckClientTimeouts	( gentity_t *ent );
 void ClientThink			( int clientNum, usercmd_t *ucmd );
 void ClientEndFrame			( gentity_t *ent );
 void G_RunClient			( gentity_t *ent );
+int SkillLevelForWeap(gentity_t *ent,int weap);
 
 //
 // g_team.c
@@ -1576,7 +2094,11 @@ void Svcmd_GameMem_f( void );
 // g_session.c
 //
 void G_ReadSessionData( gclient_t *client );
-void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot );
+//[ExpSys]
+//added firstTime input so we'll know if we need to reset our skill point totals or not.
+void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot, qboolean firstTime);
+//void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot );
+//[/ExpSys]
 
 void G_InitWorldSession( void );
 void G_WriteSessionData( void );
@@ -1622,6 +2144,11 @@ void Svcmd_BotList_f( void );
 void BotInterbreedEndMatch( void );
 qboolean G_DoesMapSupportGametype(const char *mapname, int gametype);
 const char *G_RefreshNextMap(int gametype, qboolean forced);
+// MJN - Added because I need to call them.
+extern int G_CountHumanPlayers( int team );
+int G_CountBotPlayers( int team );
+int G_RemoveRandomBot( int team );
+void G_AddRandomBot( int team );
 
 // w_force.c / w_saber.c
 gentity_t *G_PreDefSound(vec3_t org, int pdSound);
@@ -1641,11 +2168,16 @@ void ForceGrip( gentity_t *self );
 void ForceProtect( gentity_t *self );
 void ForceAbsorb( gentity_t *self );
 void ForceTeamHeal( gentity_t *self );
-void ForceTeamForceReplenish( gentity_t *self );
+//[ManualDodge]
+void ManualButtonDodge(gentity_t *ent);
+//[/ManualDodge]
 void ForceSeeing( gentity_t *self );
 void ForceThrow( gentity_t *self, qboolean pull );
 void ForceTelepathy(gentity_t *self);
 qboolean Jedi_DodgeEvasion( gentity_t *self, gentity_t *shooter, trace_t *tr, int hitLoc );
+//[SaberSys]
+void AnimateStun( gentity_t *self, gentity_t * inflictor, vec3_t impact );
+//[/SaberSys]
 
 // g_log.c
 void QDECL G_LogPrintf( const char *fmt, ... );
@@ -1746,256 +2278,6 @@ extern	level_locals_t	level;
 extern	gentity_t		g_entities[MAX_GENTITIES];
 
 #define	FOFS(x) ((int)&(((gentity_t *)0)->x))
-
-extern	vmCvar_t	g_gametype;
-extern	vmCvar_t	g_dedicated;
-extern	vmCvar_t	g_developer;
-extern	vmCvar_t	g_cheats;
-extern	vmCvar_t	g_maxclients;			// allow this many total, including spectators
-extern	vmCvar_t	g_maxGameClients;		// allow this many active
-extern	vmCvar_t	g_restarted;
-
-extern	vmCvar_t	g_trueJedi;
-
-extern	vmCvar_t	g_autoMapCycle;
-extern	vmCvar_t	g_dmflags;
-extern	vmCvar_t	g_maxForceRank;
-extern	vmCvar_t	g_forceBasedTeams;
-extern	vmCvar_t	g_privateDuel;
-
-extern	vmCvar_t	g_allowNPC;
-
-//[ROQFILES]
-extern  vmCvar_t	g_allowROQ;
-//[/ROQFILES]
-
-extern	vmCvar_t	g_armBreakage;
-
-extern	vmCvar_t	g_saberLocking;
-extern	vmCvar_t	g_saberLockFactor;
-extern	vmCvar_t	g_saberTraceSaberFirst;
-
-extern	vmCvar_t	d_saberKickTweak;
-
-extern	vmCvar_t	d_powerDuelPrint;
-
-extern	vmCvar_t	d_saberGhoul2Collision;
-extern	vmCvar_t	g_saberBladeFaces;
-extern	vmCvar_t	d_saberAlwaysBoxTrace;
-extern	vmCvar_t	d_saberBoxTraceSize;
-
-extern	vmCvar_t	d_siegeSeekerNPC;
-
-extern	vmCvar_t	g_debugMelee;
-extern	vmCvar_t	g_stepSlideFix;
-
-extern	vmCvar_t	g_noSpecMove;
-
-#ifdef _DEBUG
-extern	vmCvar_t	g_disableServerG2;
-#endif
-
-extern	vmCvar_t	d_perPlayerGhoul2;
-
-extern	vmCvar_t	d_projectileGhoul2Collision;
-
-extern	vmCvar_t	g_g2TraceLod;
-
-extern	vmCvar_t	g_optvehtrace;
-
-extern	vmCvar_t	g_locationBasedDamage;
-
-extern	vmCvar_t	g_allowHighPingDuelist;
-
-extern	vmCvar_t	g_logClientInfo;
-
-extern	vmCvar_t	g_slowmoDuelEnd;
-
-extern	vmCvar_t	g_saberDamageScale;
-
-extern	vmCvar_t	g_useWhileThrowing;
-
-extern	vmCvar_t	g_RMG;
-
-extern	vmCvar_t	g_svfps;
-
-//[PrivatePasswordFix]
-extern	vmCvar_t	sv_privatepassword;
-//[/PrivatePasswordFix]
-
-extern	vmCvar_t	g_forceRegenTime;
-extern	vmCvar_t	g_spawnInvulnerability;
-extern	vmCvar_t	g_forcePowerDisable;
-extern	vmCvar_t	g_weaponDisable;
-
-extern	vmCvar_t	g_allowDuelSuicide;
-extern	vmCvar_t	g_fraglimitVoteCorrection;
-
-extern	vmCvar_t	g_duelWeaponDisable;
-extern	vmCvar_t	g_fraglimit;
-extern	vmCvar_t	g_duel_fraglimit;
-extern	vmCvar_t	g_timelimit;
-extern	vmCvar_t	g_capturelimit;
-extern	vmCvar_t	d_saberInterpolate;
-extern	vmCvar_t	g_friendlyFire;
-extern	vmCvar_t	g_friendlySaber;
-extern	vmCvar_t	g_password;
-extern	vmCvar_t	g_needpass;
-extern	vmCvar_t	g_gravity;
-//[CoOp]
-extern	vmCvar_t	storyhead;
-extern	vmCvar_t	tier_storyinfo;
-extern  vmCvar_t	tiers_complete;
-//[/CoOp]
-extern	vmCvar_t	g_speed;
-extern	vmCvar_t	g_knockback;
-extern	vmCvar_t	g_quadfactor;
-extern	vmCvar_t	g_forcerespawn;
-extern	vmCvar_t	g_siegeRespawn;
-extern	vmCvar_t	g_inactivity;
-extern	vmCvar_t	g_debugMove;
-extern	vmCvar_t	g_debugAlloc;
-#ifndef FINAL_BUILD
-extern	vmCvar_t	g_debugDamage;
-#endif
-extern	vmCvar_t	g_debugServerSkel;
-extern	vmCvar_t	g_weaponRespawn;
-extern	vmCvar_t	g_weaponTeamRespawn;
-extern	vmCvar_t	g_adaptRespawn;
-extern	vmCvar_t	g_synchronousClients;
-extern	vmCvar_t	g_motd;
-extern	vmCvar_t	g_warmup;
-extern	vmCvar_t	g_doWarmup;
-extern	vmCvar_t	g_blood;
-extern	vmCvar_t	g_allowVote;
-//[AdminSys]
-extern	vmCvar_t	g_allowTeamVote;
-extern	vmCvar_t	g_allowGametypeVote;
-extern	vmCvar_t	g_AllowMapVote;
-extern	vmCvar_t	g_AllowKickVote;
-
-//[ChatSpamProtection]
-extern	vmCvar_t	ojp_chatProtectTime;
-//[/ChatSpamProtection]
-//[/AdminSys]
-extern	vmCvar_t	g_teamAutoJoin;
-extern	vmCvar_t	g_teamForceBalance;
-extern	vmCvar_t	g_banIPs;
-extern	vmCvar_t	g_filterBan;
-extern	vmCvar_t	g_debugForward;
-extern	vmCvar_t	g_debugRight;
-extern	vmCvar_t	g_debugUp;
-//extern	vmCvar_t	g_redteam;
-//extern	vmCvar_t	g_blueteam;
-extern	vmCvar_t	g_smoothClients;
-
-#include "../namespace_begin.h"
-extern	vmCvar_t	pmove_fixed;
-extern	vmCvar_t	pmove_msec;
-#include "../namespace_end.h"
-
-extern	vmCvar_t	g_enableBreath;
-extern	vmCvar_t	g_singlePlayer;
-extern	vmCvar_t	g_dismember;
-extern	vmCvar_t	g_forceDodge;
-extern	vmCvar_t	g_timeouttospec;
-
-extern	vmCvar_t	g_saberDmgVelocityScale;
-extern	vmCvar_t	g_saberDmgDelay_Idle;
-extern	vmCvar_t	g_saberDmgDelay_Wound;
-
-#ifndef FINAL_BUILD
-extern	vmCvar_t	g_saberDebugPrint;
-#endif
-
-extern	vmCvar_t	g_siegeTeamSwitch;
-
-extern	vmCvar_t	bg_fighterAltControl;
-
-#ifdef DEBUG_SABER_BOX
-extern	vmCvar_t	g_saberDebugBox;
-#endif
-
-//NPC nav debug
-extern vmCvar_t		d_altRoutes;
-extern vmCvar_t		d_patched;
-extern	vmCvar_t	d_noIntermissionWait;
-
-extern	vmCvar_t	g_siegeTeam1;
-extern	vmCvar_t	g_siegeTeam2;
-
-extern	vmCvar_t	g_austrian;
-
-extern	vmCvar_t	g_powerDuelStartHealth;
-extern	vmCvar_t	g_powerDuelEndHealth;
-
-//[AotCAI]
-extern	vmCvar_t	bot_thinklevel;
-//[/AotCAI]
-
-extern vmCvar_t		g_showDuelHealths;
-//[CoOp]
-extern vmCvar_t		ojp_skipcutscenes;
-extern vmCvar_t		ojp_spmodel;
-extern vmCvar_t		ojp_spmodelrgb;
-//[/CoOp]
-
-//[AotCAI]
-extern vmCvar_t		bot_cpu_usage;
-//[/AotCAI]
-
-//[NOBODYQUE]
-extern vmCvar_t		g_corpseRemovalTime;
-//[/NOBODYQUE]
-
-//[ExpandedMOTD]
-extern vmCvar_t		ojp_clientMOTD;
-//extern vmCvar_t		ojp_MOTD;
-//[/ExpandedMOTD]
-
-//[OpenRP - Cvars]
-extern vmCvar_t		openrp_maxWarnings; 
-
-//OpenRP website
-extern vmCvar_t		openrp_website;
-
-//Shop stuff
-extern vmCvar_t		openrp_e11BuyCost;
-extern vmCvar_t		openrp_e11SellCost;
-extern vmCvar_t		openrp_e11Level;
-extern vmCvar_t		openrp_e11Description;
-extern vmCvar_t		openrp_pistolBuyCost;
-extern vmCvar_t		openrp_pistolSellCost;
-extern vmCvar_t		openrp_pistolLevel;
-extern vmCvar_t		openrp_pistolDescription;
-
-//Bitvalues for Admins
-extern vmCvar_t		openrp_admin1Bitvalues;
-extern vmCvar_t		openrp_admin2Bitvalues;
-extern vmCvar_t		openrp_admin3Bitvalues;
-extern vmCvar_t		openrp_admin4Bitvalues;
-extern vmCvar_t		openrp_admin5Bitvalues;
-extern vmCvar_t		openrp_admin6Bitvalues;
-extern vmCvar_t		openrp_admin7Bitvalues;
-extern vmCvar_t		openrp_admin8Bitvalues;
-extern vmCvar_t		openrp_admin9Bitvalues;
-extern vmCvar_t		openrp_admin10Bitvalues;
-
-
-//Determines whether admins can perform admin commands on higher admin levels.
-//If it's on (set to 1), then lower level admins can't use cmds like sleep on higher level admins.
-extern vmCvar_t		openrp_adminControl;
-
-//[LF - BlackNames]
-extern vmCvar_t g_allowBlackNames;
-//[/LF - BlackNames]		
-
-extern vmCvar_t		openrp_allChat;
-
-extern vmCvar_t		openrp_showRenames;
-
-extern vmCvar_t		openrp_databasePath;
-//[/OpenRP - Cvars]
 
 #include "../namespace_begin.h"
 

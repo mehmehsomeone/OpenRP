@@ -204,19 +204,9 @@ PROTOCOL
 
 #define	PROTOCOL_VERSION	26
 
-#ifndef _XBOX	// No gethostbyname(), and can't really use this stuff
 #define	UPDATE_SERVER_NAME		"updatejk3.ravensoft.com"
 #define MASTER_SERVER_NAME		"masterjk3.ravensoft.com"
 
-#ifdef USE_CD_KEY
-#define	AUTHORIZE_SERVER_NAME	"authorizejk3.ravensoft.com"
-#endif
-#endif	// _XBOX
-
-#ifdef _XBOX	// Use port number 1000 for less bandwidth!
-#define	PORT_SERVER			1000
-#define NUM_SERVER_PORTS	1
-#else
 #define	PORT_MASTER			29060
 #define	PORT_UPDATE			29061
 //#define	PORT_AUTHORIZE		29062
@@ -224,7 +214,6 @@ PROTOCOL
 #define	NUM_SERVER_PORTS	4		// broadcast scan this many ports after
 									// PORT_SERVER so a single machine can
 									// run multiple servers
-#endif
 
 // the svc_strings[] array in cl_parse.c should mirror this
 //
@@ -241,11 +230,6 @@ enum svc_ops_e {
 	svc_snapshot,
 	svc_setgame,
 	svc_mapchange,
-#ifdef _XBOX
-	svc_newpeer,				//jsw//inform current clients about new player
-	svc_removepeer,				//jsw//inform current clients about dying player
-	svc_xbInfo,					//jsw//update client with current server xbOnlineInfo
-#endif
 	svc_EOF
 };
 
@@ -504,11 +488,7 @@ issues.
 // number of id paks that will never be autodownloaded from base
 #define NUM_ID_PAKS		9
 
-#ifdef _XBOX
-#define MAX_FILE_HANDLES	16
-#else
 #define	MAX_FILE_HANDLES	64
-#endif
 
 qboolean FS_Initialized();
 
@@ -721,65 +701,13 @@ extern	int		com_frameMsec;
 
 extern	qboolean	com_errorEntered;
 
-
-#ifndef _XBOX
 extern	fileHandle_t	logfile;
 extern	fileHandle_t	com_journalFile;
 extern	fileHandle_t	com_journalDataFile;
-#endif
-
-/*
-typedef enum {
-	TAG_FREE,
-	TAG_GENERAL,
-	TAG_BOTLIB,
-	TAG_RENDERER,
-	TAG_SMALL,
-	TAG_STATIC
-} memtag_t;
-*/
-
-/*
-
---- low memory ----
-server vm
-server clipmap
----mark---
-renderer initialization (shaders, etc)
-UI vm
-cgame vm
-renderer map
-renderer models
-
----free---
-
-temp file loading
---- high memory ---
-
-*/
 
 #if defined(_DEBUG) && !defined(BSPC)
 	#define DEBUG_ZONE_ALLOCS
 #endif
-
-/*
-#ifdef DEBUG_ZONE_ALLOCS
-	#define Z_TagMalloc(size, tag)			Z_TagMallocDebug(size, tag, #size, __FILE__, __LINE__)
-	#define Z_Malloc(size)					Z_MallocDebug(size, #size, __FILE__, __LINE__)
-	#define S_Malloc(size)					S_MallocDebug(size, #size, __FILE__, __LINE__)
-	void *Z_TagMallocDebug( int size, int tag, char *label, char *file, int line );	// NOT 0 filled memory
-	void *Z_MallocDebug( int size, char *label, char *file, int line );			// returns 0 filled memory
-	void *S_MallocDebug( int size, char *label, char *file, int line );			// returns 0 filled memory
-#else
-	void *Z_TagMalloc( int size, int tag );	// NOT 0 filled memory
-	void *Z_Malloc( int size );			// returns 0 filled memory
-	void *S_Malloc( int size );			// NOT 0 filled memory only for small allocations
-#endif
-void Z_Free( void *ptr );
-void Z_FreeTags( int tag );
-int Z_AvailableMemory( void );
-void Z_LogHeap( void );
-*/
 
 // later on I'll re-implement __FILE__, __LINE__ etc, but for now...
 //
@@ -968,10 +896,6 @@ void	Sys_Quit (void);
 char	*Sys_GetClipboardData( void );	// note that this isn't journaled...
 
 void	Sys_Print( const char *msg );
-#ifdef _XBOX
-void	Sys_Log( const char *file, const char *msg );
-void	Sys_Log( const char *file, const void *buffer, int size, bool flush );
-#endif
 
 // Sys_Milliseconds should only be used for profiling purposes,
 // any game related timing information should come from event timestamps
@@ -1000,9 +924,6 @@ void	Sys_ShowConsole( int level, qboolean quitOnClose );
 void	Sys_SetErrorText( const char *text );
 
 void	Sys_SendPacket( int length, const void *data, netadr_t to );
-#ifdef _XBOX
-void	Sys_SendVoicePacket( int length, const void *data, netadr_t to );
-#endif
 
 qboolean	Sys_StringToAdr( const char *s, netadr_t *a );
 //Does NOT parse port numbers, only base addresses.
@@ -1095,40 +1016,5 @@ inline int Round(float value)
 {
 	return((int)floorf(value + 0.5f));
 }
-
-#ifdef _XBOX
-//////////////////////////////
-//
-// Map Lump Loader
-//
-struct Lump
-{
-	void* data;
-	int len;
-	
-	Lump() : data(NULL), len(0) {}
-	~Lump() { clear(); }
-
-	void load(const char* map, const char* lump)
-	{
-		clear();
-
-		char path[MAX_QPATH];
-		Com_sprintf(path, MAX_QPATH, "%s/%s.mle", map, lump);
-
-		len = FS_ReadFile(path, &data);
-		if (len < 0) len = 0;
-	}
-
-	void clear(void)
-	{
-		if (data)
-		{
-			FS_FreeFile(data);
-			data = NULL;
-		}
-	}
-};
-#endif _XBOX
 
 #endif // _QCOMMON_H_

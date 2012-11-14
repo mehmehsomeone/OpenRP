@@ -1,0 +1,50 @@
+Emitter
+{
+	flags				useModel useBBox usePhysics impactFx deathFx emitFx
+
+	life				4000 6000
+
+	bounce				0.2 0.3
+
+	min					-10 -10 -10
+
+	max					10 10 10
+
+	angleDelta			-20 -40 -20 20 40 20
+
+	velocity			300 0 -80 400 0 80
+
+	gravity				-800
+
+	density				8
+
+	models
+	[
+		models/players/droids/probe_droid_head.md3
+	]
+
+	impactfx
+	[
+		chunks/r5d2headland
+	]
+
+	deathfx
+	[
+		chunks/r5headsmall_chunks
+	]
+
+	emitfx
+	[
+		emitter/smoke_trail
+	]
+}
+
+Sound
+{
+	name				Boom
+
+	sounds
+	[
+		sound/chars/r5d2/misc/r5explode.mp3
+	]
+}

@@ -1,0 +1,203 @@
+repeatDelay				250
+
+Particle
+{
+	name				Fire
+
+	flags				usePhysics
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				7 9
+
+	life				500
+
+	delay				0 300
+
+	radius				9 8
+
+	height				9
+
+	acceleration		100 100 100 -100 -100 -100
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0 0 1 0.7294 0.5255 0.9765
+		end				0 0 1 1 0.9843 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			15
+		end				15
+		parm			50 105
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/whiteGlow
+	]
+}
+
+Particle
+{
+	name				smoke
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				11 10
+
+	life				600
+
+	delay				0 300
+
+	radius				9 8
+
+	height				9
+
+	acceleration		65 65 65 -65 -65 -65
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412 0.7294 0.5255 0.9765
+		end				0.8 0.6549 0.9961 0.651 0.7922 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			15
+		end				15
+		parm			50 105
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}
+
+Particle
+{
+	name				longsmoke
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				11 10
+
+	life				800 600
+
+	delay				0 300
+
+	radius				13 11
+
+	height				14 12
+
+	acceleration		65 65 65 -65 -65 -65
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0.651 0.7922 0.9412 0.7294 0.5255 0.9765
+		end				0.8 0.6549 0.9961 0.651 0.7922 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			15
+		end				15
+		parm			50 105
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}
+
+Particle
+{
+	name				blacksmoke
+
+	flags				usePhysics useAlpha
+
+	spawnFlags			cheapOrgCalc absoluteVel orgOnSphere evenDistribution
+
+	count				11 10
+
+	life				600
+
+	delay				0 300
+
+	radius				9 8
+
+	acceleration		65 65 65 -65 -65 -65
+
+	gravity				125 -10
+
+	rgb
+	{
+		start			0 0 0
+		end				0.5137 0.5137 0.5137 0.651 0.7922 0.9412
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.2 0.3
+		end				0
+		parm			1
+		flags			linear
+	}
+
+	size
+	{
+		start			15
+		end				15
+		parm			50 105
+		flags			linear wave
+	}
+
+	shaders
+	[
+		gfx/effects/alpha_smoke
+	]
+}

@@ -12,9 +12,9 @@
 		visible				0				// Visible on open
 		focusColor			1 1 1 1				// Focus color for text and items
 		appearanceIncrement		75				// In miliseconds
-		descX				320
-		descY				424
-		descScale			1
+		descX				374
+		descY				452
+		descScale			0.7
 		descColor			1 .682 0 .8
 		descAlignment			ITEM_ALIGN_CENTER		
 
@@ -36,7 +36,7 @@
 			hide			advanced 
 			//[/UITweaks]
 
-			setitemcolor	setup_submenu	 forecolor	1 .682 0 1
+			setitemcolor	setup_submenu	 forecolor	1 1 1 1
 			setitemcolor	video1menubutton forecolor	1 1 1 1
 		}
 			
@@ -57,83 +57,10 @@
 //----------------------------------------------------------------------------------------------
 		itemDef 
 		{
-			name				really_background
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				156 154 320 240
-			background			"gfx/menus/main_centerblue"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				background_text
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				0 0 160 480
-			background			"gfx/menus/menu_side_text"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				background_text_b
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				480 0 160 480
-			background			"gfx/menus/menu_side_text_right"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}	
-	
-		itemDef 
-		{
 			name				background
-			group				none
 			style				WINDOW_STYLE_SHADER
 			rect				0 0 640 480
-			background			"gfx/menus/main_background"
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				starwars
-			group				none
-			style				WINDOW_STYLE_SHADER
-			rect				107 8 428 112
-			background			"gfx/menus/jediacademy"	
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				left_frame
-			group				lf_fr
-			style				WINDOW_STYLE_SHADER
-			rect				0 50 320 160
-			background			"gfx/menus/menu_boxes_left"	
-			forecolor			1 1 1 1
-			visible				1
-			decoration
-		}
-
-		itemDef 
-		{
-			name				right_frame
-			group				rt_fr
-			style				WINDOW_STYLE_SHADER
-			rect				320 50 320 160
-			background			"gfx/menus/menu_boxes_right"	
+			background			"gfx/menus/settingsmenu"
 			forecolor			1 1 1 1
 			visible				1
 			decoration
@@ -148,49 +75,34 @@
 		// Big button "NEW"
 		itemDef 
 		{
-			name				newgamebutton_glow
-			group				topbut
-			style				WINDOW_STYLE_SHADER
-			rect				7 126 130 24
-			background			"gfx/menus/menu_buttonback"	// Frame around button
-			forecolor			1 1 1 1
-			visible				0
-			decoration
-		}
-
-		itemDef 
-		{
-			name				newgamebutton
-			group				toprow
+			name				playbutton
+			group				none
 			style				WINDOW_STYLE_EMPTY
 			type				ITEM_TYPE_BUTTON
-			rect				7 126 130 24
-			text				@MENUS_PLAY
-			descText			@MENUS_START_PLAYING_NOW
-			font				3
-			textscale			1.1
+			rect				50 155 100 25 
+			text				"MAIN MENU"					
+			font				4
+			textscale			1
 			textaligny			0
+			textalignx			50
 			textalign			ITEM_ALIGN_CENTER
 			textstyle			0
-			textalignx			65
-			forecolor			1 .682 0 1
+			forecolor			0.7 0.7 0.7 1
 			visible				1
+
 			mouseEnter 
 			{ 
-				show			newgamebutton_glow 
+				show			button_glow 
+				setitemrect		button_glow	50 150 100 25
 			}
 			mouseExit 
 			{ 
-				hide			newgamebutton_glow 
+				hide			button_glow 
 			}	  	  
 			action 
-			{ 
-				play			"sound/interface/button1.wav"
-
-				defer			VideoSetup	videowarningMenu
-
+			{ 			
+				play			"sound/interface/legacy.mp3" ; 
 				close			all ; 
-				open			multiplayermenu 
 			}
 		}
 
@@ -206,132 +118,76 @@
 			decoration
 		}
 
-		itemDef 
-		{
-			name				profilebutton
-			group				toprow
-			text				@MENUS_PROFILE
-			descText			@MENUS_PROFILE_DESC
-			style				WINDOW_STYLE_EMPTY
-			type				ITEM_TYPE_BUTTON
-			rect				170 126 130 24
-			textaligny			0
-			font				3
-			textscale			1.1
-			textalign			ITEM_ALIGN_CENTER
-			textstyle			0
-			textalignx			65
-			forecolor			1 .682 0 1
-			visible				1
-			mouseEnter 
-			{ 
-				show			profilebutton_glow 
-			}
-			mouseExit 
-			{ 
-				hide			profilebutton_glow 
-			}	  	  
-			action 
-			{ 
-				play			"sound/interface/button1"
-
-				defer			VideoSetup	videowarningMenu
-
-				close			all
-				open			playerMenu
-			}
-		}
 
 		// Big button "CONTROLS"
 		itemDef 
 		{
-			name				controlsbutton_glow
-			group				topbut
-			style				WINDOW_STYLE_SHADER
-			rect				340 126 130 24
-			background			"gfx/menus/menu_buttonback"	// Frame around button
-			forecolor			1 1 1 1
-			visible				0
-			decoration
-		}
-
-		itemDef {
 			name				controlsbutton
-			group				toprow
-			text				@MENUS_CONTROLS2
-			descText			@MENUS_CONFIGURE_GAME_CONTROLS
+			group				none
+			text				@MENUS_CONTROLS
+			descText			"Configure your game controls"
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				340 126 130 24
-			font				3
-			textscale			1.1
+			rect				50 215 100 25  
+			font				4
+			textscale			1
 			textaligny			0
+			textalignx			50
 			textalign			ITEM_ALIGN_CENTER
 			textstyle			0
-			textalignx			65
-			backcolor			0 0 0 0
-			forecolor			1 .682 0 1
-			visible				1			 
+			forecolor			0.7 0.7 0.7 1
+			visible				1
+			 
 			mouseEnter 
 			{ 
-				show			controlsbutton_glow 
+				show			button_glow 
+				setitemrect		button_glow	50 210 100 25
 			}
 			mouseExit 
 			{ 
-				hide			controlsbutton_glow 
+				hide			button_glow 
 			}	  	  
 			action 
 			{
-				play			"sound/interface/button1"
-
-				defer			VideoSetup	videowarningMenu
-
-				close			all
-				open			controlsMenu
+				play			"sound/interface/legacy.mp3" ; 
+				close			all ; 
+				open			controlsMenu ;
 			}
 		}
 
 		// Big button "SETUP"
 		itemDef 
 		{
-			name				setupbutton_glow
-			group				topbut
-			style				WINDOW_STYLE_SHADER
-			rect				502 126 130 24
-			background			"gfx/menus/menu_buttonback"	// Frame around button
-			forecolor			1 1 1 1
-			visible				0
-			decoration
-		}
-
-		itemDef {
 			name				setupbutton
-			group				toprow
+			group				none
 			text				@MENUS_SETUP
-			descText			@MENUS_CONFIGURE_GAME_SETTINGS
+			descText			"Configure your game settings"
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				502 126 130 24
-			font				3
-			textscale			1.1
+			rect				50 275 100 25  
+			font				4
+			textscale			1
 			textaligny			0
+			textalignx			50
 			textalign			ITEM_ALIGN_CENTER
 			textstyle			0
-			textalignx			65
-			backcolor			0 0 0 0
-			forecolor			1 1 1 1
-			visible				1			 
+			forecolor			0.7 0.7 0.7 1
+			visible				1
+			 
 			mouseEnter 
 			{ 
-				show			setupbutton_glow 
+				show			button_glow 
+				setitemrect		button_glow	50 270 100 25
 			}
 			mouseExit 
 			{ 
-				hide			setupbutton_glow 
+				hide			button_glow 
 			}	  	  
 			action 
-			{ 
-				play			"sound/interface/button1.wav" ; 
+			{
+				play			"ssound/interface/legacy.mp3" ; 
+				close			all ; 
+				open			setup_menu
 			}
 		}
 
@@ -376,48 +232,35 @@
 		// EXIT button in lower left corner
 		itemDef 
 		{
-			name				exitgamebutton_glow
-			group				mods
-			style				WINDOW_STYLE_SHADER
-			rect				255 444 130 24
-			background			"gfx/menus/menu_buttonback"	// Frame around button
-			forecolor			1 1 1 1
-			visible				0
-			decoration
-		}
-
-		itemDef 
-		{
 			name				exitgamebutton
-			group				othermain
+			group				none
 			text				@MENUS_EXIT
-			descText			@MENUS_LEAVE_JEDI_KNIGHT_II
+			descText			"Exit Legacy Mod"
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				255 444 130 24
-			font				3
-			textscale			1.1
+			rect				50 335 100 25  
+			font				4
+			textscale			1
+			textaligny			0
+			textalignx			50
 			textalign			ITEM_ALIGN_CENTER
 			textstyle			0
-			textalignx			65
-			textaligny			-1
-			forecolor			1 .682 0 1
+			forecolor			0.7 0.7 0.7 1
 			visible				1
+
 			mouseEnter 
 			{ 
-				show			exitgamebutton_glow 
+				show			button_glow 
+				setitemrect		button_glow	50 330 100 25
 			}
 			mouseExit 
 			{ 
-				hide			exitgamebutton_glow 
+				hide			button_glow 
 			}	  	  
 			action 
 			{ 
-				play			"sound/weapons/saber/saberoff"
-
-				defer			VideoSetup	videowarningMenu
-
-				close			all
+				play			"sound/weapons/saber/saberoff.mp3"; 
+				close			all ; 
 				open			quitMenu 
 			}
 		}
@@ -434,7 +277,7 @@
 			style				WINDOW_STYLE_SHADER
 			background			"gfx/menus/menu_blendbox"
 			text				@MENUS_SETUP_OPTIONS
-      			rect				100 164 440 16
+      			rect				195 100 440 16
 			font				3
 			textscale			0.7
 			textalign			ITEM_ALIGN_CENTER		
@@ -451,7 +294,7 @@
 			name				video1button_glow
 			group				highlights
 			style				WINDOW_STYLE_SHADER
-			rect				80 185 180 24
+			rect				230 120 90 20
 			background			"gfx/menus/menu_blendbox2"	// Frame around button
 			forecolor			1 1 1 1
 			visible				0
@@ -465,14 +308,14 @@
 			text				@MENUS_VIDEO
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				80 185 170 24
+			rect				230 120 90 20
 			font				3
 			textscale			0.9
-			textalignx			160
+			textalignx			70
 			textaligny			2
 			textstyle			0
 			textalign			ITEM_ALIGN_RIGHT
-			forecolor			1 .682 0 1
+			forecolor			1 1 1 1
 			visible				1
 			descText			@MENUS_CONFIGURE_VIDEO_SETTINGS
 			mouseEnter 
@@ -501,7 +344,7 @@
 				hide			advanced ;
 				//[/UITweaks]
 
-				setitemcolor	setup_submenu	forecolor	1 .682 0 1;
+				setitemcolor	setup_submenu	forecolor	0.5 0.5 0.5 1;
 				setitemcolor	video1menubutton	forecolor	1 1 1 1 ;
 			}
 		}
@@ -511,7 +354,7 @@
 			name				video2button_glow
 			group				highlights
 			style				WINDOW_STYLE_SHADER
-			rect				80 209 180 24
+			rect				260 150 120 20
 			background			"gfx/menus/menu_blendbox2"	// Frame around button
 			forecolor			1 1 1 1
 			visible				0
@@ -524,14 +367,14 @@
 			text				@MENUS_MORE_VIDEO
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				80 209 170 24
+			rect				260 150 120 20
 			font				3
 			textscale			0.9
-			textalignx			160
+			textalignx			110
 			textaligny			2
 			textalign			ITEM_ALIGN_RIGHT
 			textstyle			0
-			forecolor			1 .682 0 1
+			forecolor			1 1 1 1
 			visible				1
 			descText			@MENUS_CONFIGUE_MORE_VIDEO_SETTINGS
 			mouseEnter 
@@ -558,7 +401,7 @@
 				//[UITweaks]
 				hide			advanced ;
 				//[/UITweaks]
-				setitemcolor	setup_submenu	forecolor	1 .682 0 1 ;
+				setitemcolor	setup_submenu	forecolor	0.5 0.5 0.5 1 ;
 				setitemcolor	video2menubutton	forecolor	1 1 1 1 ;
 			}
 		}
@@ -568,7 +411,7 @@
 			name				soundbutton_glow
 			group				highlights
 			style				WINDOW_STYLE_SHADER
-			rect				80 233 180 24
+			rect				395 150 80 20
 			background			"gfx/menus/menu_blendbox2"	// Frame around button
 			forecolor			1 1 1 1
 			visible				0
@@ -581,14 +424,14 @@
 			text				@MENUS_SOUND
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				80 233 170 24
+			rect				395 150 80 20
 			font				3
 			textscale			0.9
-			textalignx			160
+			textalignx			75
 			textaligny			2
 			textalign			ITEM_ALIGN_RIGHT
 			textstyle			0
-			forecolor			1 .682 0 1
+			forecolor			1 1 1 1
 			visible				1
 			descText			@MENUS_CONFIGURE_SOUND_SETTINGS
 
@@ -619,7 +462,7 @@
 				hide			advanced ;
 				//[/UITweaks]
 
-				setitemcolor	setup_submenu		forecolor	1 .682 0 1 ;
+				setitemcolor	setup_submenu		forecolor	0.5 0.5 0.5 1 ;
 				setitemcolor	soundmenubutton		forecolor	1 1 1 1 ;
 			}
 		}
@@ -629,7 +472,7 @@
 			name				gameoptionsbutton_glow
 			group				highlights
 			style				WINDOW_STYLE_SHADER
-			rect				80 257 180 24
+			rect				320 120 150 20
 			background			"gfx/menus/menu_blendbox2"	// Frame around button
 			forecolor			1 1 1 1
 			visible				0
@@ -642,14 +485,14 @@
 			text				@MENUS_OPTIONS
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				80 257 170 24
+			rect				320 120 150 20
 			font				3
 			textscale			0.9
-			textalignx			160
+			textalignx			150
 			textaligny			2
 			textalign			ITEM_ALIGN_RIGHT
 			textstyle			0
-			forecolor			1 .682 0 1
+			forecolor			1 1 1 1
 			visible				1
 			descText			@MENUS_CONFIGURE_GAME_OPTIONS
 			mouseEnter 
@@ -677,66 +520,8 @@
 				//[UITweaks]
 				hide			advanced 
 				//[/UITweaks]
-				setitemcolor	setup_submenu		forecolor	1 .682 0 1 ;
+				setitemcolor	setup_submenu		forecolor	0.5 0.5 0.5 1 ;
 				setitemcolor	gameoptionmenubutton	forecolor	1 1 1 1 ;
-			}
-		}
-		// mods  button
-		itemDef 
-		{
-			name				modsbutton_glow
-			group				highlights
-			style				WINDOW_STYLE_SHADER
-			rect				80 281 180 24
-			background			"gfx/menus/menu_blendbox2"	// Frame around button
-			forecolor			1 1 1 1
-			visible				0
-			decoration
-		}
-		itemDef 
-		{
-			name				modsmenubutton
-			group				setup_submenu
-			text				@MENUS_MODS
-			type				ITEM_TYPE_BUTTON
-			style				WINDOW_STYLE_EMPTY
-			rect				80 281 170 24
-			font				3
-			textscale			0.9
-			textalignx			160
-			textaligny			2
-			textalign			ITEM_ALIGN_RIGHT
-			textstyle			0
-			forecolor			1 .682 0 1
-			visible				1
-			descText			@MENUS_CONFIGURE_GAME_OPTIONS
-			mouseEnter 
-			{ 
-				show			modsbutton_glow
-			}
-			mouseExit 
-			{ 
-				hide			modsbutton_glow
-			}	  	  
-			action 
-			{ 
-				play			"sound/interface/button1.wav" ;  // This sound may be cut out by the loadmods, so we play it later too.
-				defer			VideoSetup	videowarningMenu ;
-				uiScript		loadMods ;
-				show			setup_background ;
-				hide 			video ;
-				hide			applyChanges ;
-				hide			video2 ;
-				hide			vidrestart	;
-				hide			sound	;
-				hide			options ;
-				show			mods	;
-				hide			defaults ;
-				//[UITweaks]
-				hide			advanced ;
-				//[/UITweaks]
-				setitemcolor	setup_submenu		forecolor	1 .682 0 1 ;
-				setitemcolor	modsmenubutton		forecolor	1 1 1 1 ;
 			}
 		}
 		//[UITweaks]
@@ -746,7 +531,7 @@
 			name				advancedbutton_glow
 			group				highlights
 			style				WINDOW_STYLE_SHADER
-			rect				80 305 180 24
+			rect				500 150 100 20
 			background			"gfx/menus/menu_blendbox2"	// Frame around button
 			forecolor			1 1 1 1
 			visible				0
@@ -759,14 +544,14 @@
 			text				@OJP_MENUS_ADVANCED
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
-			rect				80 305 170 24
+			rect				500 150 80 20
 			font				3
 			textscale			0.9
-			textalignx			160
+			textalignx			100
 			textaligny			2
 			textalign			ITEM_ALIGN_RIGHT
 			textstyle			0
-			forecolor			1 .682 0 1
+			forecolor			1 1 1 1
 			visible				1
 			descText			@OJP_MENUS_ADVANCED_DESC
 
@@ -792,7 +577,7 @@
 				hide			mods	;
 				hide			defaults ;
 				show			advanced ;
-				setitemcolor	setup_submenu		forecolor	1 .682 0 1 ;
+				setitemcolor	setup_submenu		forecolor	0.5 0.5 0.5 1 ;
 				setitemcolor	advancedmenubutton	forecolor	1 1 1 1 ;
 			}
 		}
@@ -805,8 +590,8 @@
 			group				highlights
 			style				WINDOW_STYLE_SHADER
 			//[UITweaks]
-			rect				80 329 180 24
-			//rect				80 305 180 24
+			rect				480 120 130 20
+			//rect				480 120 130 20
 			//[UITweaks]
 			background			"gfx/menus/menu_blendbox2"	// Frame around button
 			forecolor			1 1 1 1
@@ -822,16 +607,16 @@
 			type				ITEM_TYPE_BUTTON
 			style				WINDOW_STYLE_EMPTY
 			//[UITweaks]
-			rect				80 329 170 24
-			//rect				80 305 170 24
+			rect				480 120 120 20
+			//rect				480 120 120 20
 			//[/UITweaks]
 			font				3
 			textscale			0.9
-			textalignx			160
+			textalignx			110
 			textaligny			2
 			textalign			ITEM_ALIGN_RIGHT
 			textstyle			0
-			forecolor			1 .682 0 1
+			forecolor			1 1 1 1
 			visible				1
 			descText			@MENUS_RESTORE_DEFAULT_SETTINGS
 
@@ -859,7 +644,7 @@
 				//[UITweaks]
 				hide			advanced ;
 				//[/UITweaks]
-				setitemcolor	setup_submenu		forecolor	1 .682 0 1 ;
+				setitemcolor	setup_submenu		forecolor	0.5 0.5 0.5 1 ;
 				setitemcolor	gamedefaultsmenubutton	forecolor	1 1 1 1 ;
 			}
 		}
@@ -870,10 +655,10 @@
 			group				none
 			style				WINDOW_STYLE_FILLED
 			rect				260 185 340 225	
-			backcolor			0 0 .6 .5
+			backcolor			0 0 .6 0
 			forecolor			1 1 1 1
 			border				1
-			bordercolor			0 0 .6 1
+			bordercolor			0 0 .6 0
 			visible				0
 			decoration
 		}
@@ -2838,79 +2623,6 @@
 
 //----------------------------------------------------------------------------------------------
 //
-//   MOD GAME MENU specific stuff
-//
-//----------------------------------------------------------------------------------------------
-		itemDef 
-		{
-			name				serverinfo
-			group				mods
-			rect				270 196 320 176
-			type				ITEM_TYPE_LISTBOX
-			style				WINDOW_STYLE_FILLED
-			elementwidth		120
-			elementheight		16
-			font				2
-			textscale			1
-			textaligny			-2
-			border			1
-			bordersize			1
-			bordercolor			.5 .5 .5 .5
-			forecolor			1 .682 0 1
-			backcolor			0 0 .5 .25
-			outlinecolor		.5 .5 .5 .5
-			elementtype			LISTBOX_TEXT
-			feeder			9
-			notselectable
-			visible			0
-			columns			1 2 40 280
-		}
-
-		itemDef 
-		{
-			name				loadmod_button
-			style				WINDOW_STYLE_SHADER
-			rect				260 384 340 24 
-			background			"gfx/menus/menu_buttonback"			// Frame around button
-			forecolor			1 1 1 1
-			visible				0
-			decoration
-		}
-
-		itemDef 
-		{
-			name				loadmod
-			group				mods
-			text				@MENUS_LOAD_MOD
-			descText			@MENUS_LOAD_CHOSEN_MOD
-			type				ITEM_TYPE_BUTTON
-			style				WINDOW_STYLE_EMPTY
-			rect				260 384 340 14 
-			textalign			ITEM_ALIGN_CENTER
-			textalignx			170
-			textaligny			-2
-			font				2
-			textscale			1
-			forecolor			1 .682 0 1
-			visible				0
-			action 
-			{ 
-				play			"sound/interface/button1.wav" ; 
-				uiScript		RunMod ;
-			}
-
-			mouseEnter 
-			{ 
-				show			loadmod_button
-			}
-			mouseExit 
-			{ 
-				hide			loadmod_button
-			}	  	  
-		}
-
-//----------------------------------------------------------------------------------------------
-//
 //	RESET DEFAULTS
 //
 //----------------------------------------------------------------------------------------------
@@ -3159,61 +2871,27 @@
 				hide			button_glow
 			}
 		}
-
-		//[VisualWeapons]
+                
+            //[Movie Sabers]
+		//GR - Had to tweak this to allow for saber type selection from the menu    
 		itemDef 
 		{	
-			name				holsteredweapons
+			name				moviesabers
 			group				advanced
       			type				ITEM_TYPE_MULTI
-			text				@OJP_MENUS_HOLSTEREDWEAPONS
-			descText			@OJP_MENUS_HOLSTEREDWEAPONS_DESC
-			cvar				"ojp_holsteredweapons"
+			text				@OJP_MENUS_MOVIESABERS
+			descText			@OJP_MENUS_MOVIESABERS_DESC
+			cvar				"cg_MovieSaberType"
 			cvarFloatList		
 			{ 
-				@MENUS_OFF		0
-				@OJP_MENUS_HOLSTEREDWEAPONSPLAYER	 	1
-				@OJP_MENUS_HOLSTEREDWEAPONSALL	 	2
+				@OJP_MENUS_DEFAULT	0
+				@OJP_MENUS_EP1	 	1
+				@OJP_MENUS_EP2	 	2
+				@OJP_MENUS_EP3	 	3
+				@OJP_MENUS_SFX	 	4
+				@OJP_MENUS_OT	 	5
 			}
-			rect				260 230 340 14
-	   		textalign			ITEM_ALIGN_RIGHT
-			textalignx			174
-			textaligny			0
-			font 				4
-			textscale 			1
-			forecolor			.615 .615 .956 1
-			visible				0
-			action 
-			{
-				play			"sound/interface/button1.wav"
-			}
-			mouseenter 
-			{ 
-				show			button_glow
-				setitemrect		button_glow	260 228 340 20
-			}
-			mouseexit 
-			{ 
-				hide			button_glow
-			}
-		}
-		//[/VisualWeapons]
-
-		//[RGBSabers]
-		itemDef 
-		{	
-			name				teamrgbsabers
-			group				advanced
-      			type				ITEM_TYPE_MULTI
-			text				@OJP_MENUS_TEAMRGBSABERS
-			descText			@OJP_MENUS_TEAMRGBSABERS_DESC
-			cvar				"ojp_teamrgbsabers"
-			cvarFloatList		
-			{ 
-				@MENUS_OFF		0
-				@OJP_MENUS_TEAMRGBSABERSPLAYER	 	1
-				@OJP_MENUS_TEAMRGBSABERSALL	 		2
-			}
+		//[/Movie Sabers]
 			rect				260 216 340 14
 	   		textalign			ITEM_ALIGN_RIGHT
 			textalignx			174
@@ -3235,23 +2913,61 @@
 			{ 
 				hide			button_glow
 			}
-		}
-		//[/RGBSabers]
-		
-		//[TrueView]
+		}		
+
+		//[RGBSabers]
 		itemDef 
 		{	
-			name				trueinvertsaber
+			name				teamrgbsabers
 			group				advanced
-      		type				ITEM_TYPE_MULTI
-			text				@OJP_MENUS_TRUEINVERTSABER
-			descText			@OJP_MENUS_TRUEINVERTSABER_DESC
-			cvar				"cg_trueinvertsaber"
+      			type				ITEM_TYPE_MULTI
+			text				@OJP_MENUS_TEAMRGBSABERS
+			descText			@OJP_MENUS_TEAMRGBSABERS_DESC
+			cvar				"ojp_teamrgbsabers"
 			cvarFloatList		
 			{ 
-				@OJP_MENUS_TRUEINVERTSABERSAME					0
-				@OJP_MENUS_TRUEINVERTSABERINVERT 				1
-				@OJP_MENUS_TRUEINVERTSABERALWAYSTHIRDPERSON		2
+				@MENUS_OFF		0
+				@OJP_MENUS_TEAMRGBSABERSPLAYER	 	1
+				@OJP_MENUS_TEAMRGBSABERSALL	 		2
+			}
+			rect				260 230 340 14
+	   		textalign			ITEM_ALIGN_RIGHT
+			textalignx			174
+			textaligny			0
+			font 				4
+			textscale 			1
+			forecolor			.615 .615 .956 1
+			visible				0
+			action 
+			{
+				play			"sound/interface/button1.wav"
+			}
+			mouseenter 
+			{ 
+				show			button_glow
+				setitemrect		button_glow	260 230 340 20
+			}
+			mouseexit 
+			{ 
+				hide			button_glow
+			}
+		}
+		//[/RGBSabers]
+
+		//[VisualWeapons]
+		itemDef 
+		{	
+			name				holsteredweapons
+			group				advanced
+      			type				ITEM_TYPE_MULTI
+			text				@OJP_MENUS_HOLSTEREDWEAPONS
+			descText			@OJP_MENUS_HOLSTEREDWEAPONS_DESC
+			cvar				"ojp_holsteredweapons"
+			cvarFloatList		
+			{ 
+				@MENUS_OFF		0
+				@OJP_MENUS_HOLSTEREDWEAPONSPLAYER	 	1
+				@OJP_MENUS_HOLSTEREDWEAPONSALL	 	2
 			}
 			rect				260 244 340 14
 	   		textalign			ITEM_ALIGN_RIGHT
@@ -3268,7 +2984,46 @@
 			mouseenter 
 			{ 
 				show			button_glow
-				setitemrect		button_glow	260 242 340 20
+				setitemrect		button_glow	260 244 340 20
+			}
+			mouseexit 
+			{ 
+				hide			button_glow
+			}
+		}
+		//[/VisualWeapons]
+		
+		//[TrueView]
+		itemDef 
+		{	
+			name				trueinvertsaber
+			group				advanced
+      		type				ITEM_TYPE_MULTI
+			text				@OJP_MENUS_TRUEINVERTSABER
+			descText			@OJP_MENUS_TRUEINVERTSABER_DESC
+			cvar				"cg_trueinvertsaber"
+			cvarFloatList		
+			{ 
+				@OJP_MENUS_TRUEINVERTSABERSAME					0
+				@OJP_MENUS_TRUEINVERTSABERINVERT 				1
+				@OJP_MENUS_TRUEINVERTSABERALWAYSTHIRDPERSON		2
+			}
+			rect				260 258 340 14
+	   		textalign			ITEM_ALIGN_RIGHT
+			textalignx			174
+			textaligny			0
+			font 				4
+			textscale 			1
+			forecolor			.615 .615 .956 1
+			visible				0
+			action 
+			{
+				play			"sound/interface/button1.wav"
+			}
+			mouseenter 
+			{ 
+				show			button_glow
+				setitemrect		button_glow	260 258 340 20
 			}
 			mouseexit 
 			{ 

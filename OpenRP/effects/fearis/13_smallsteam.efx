@@ -1,0 +1,48 @@
+repeatDelay				300
+
+Particle
+{
+	spawnFlags			evenDistribution
+
+	count				3 4
+
+	life				700 900
+
+	delay				0 300
+
+	origin				0 -5 -5 0 5 5
+
+	rotation			0 360
+
+	velocity			90 -8 -8 110 8 8
+
+	acceleration		-40 0 0
+
+	rgb
+	{
+		start			0.8471 0.8471 0.8471 0.7529 0.7529 0.7529
+		end				0.502 0.502 0.502 0.7529 0.7529 0.7529
+		parm			20 30
+		flags			linear clamp
+	}
+
+	alpha
+	{
+		start			0.5 0.55
+		end			0.3 0.2
+		flags			linear clamp
+	}
+
+	size
+	{
+		start			1 2
+		end				10 12
+		parm			10 20
+		flags			linear clamp
+	}
+
+	shaders
+	[
+		gfx/misc/steam
+	]
+}

@@ -1,12 +1,6 @@
 #include "g_OpenRP.h"
-
-extern "C"
-{
 #include "g_local.h"
 #include "g_account.h"
-}
-
-#define DATABASE_PATH openrp_databasePath.string
 
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern int M_G_ClientNumberFromName ( const char* name );
