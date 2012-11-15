@@ -3,12 +3,14 @@
 #include "g_local.h"
 #include "bg_saga.h"
 
-#include "g_admin.h"
-#include "g_adminshared.h"
-#include "g_emote.h"
+
 #include "g_cvars.h"
+
 #include "g_account.h"
 #include "g_character.h"
+#include "g_admin.h"
+#include "g_emote.h"
+
 //[SVN]
 //rearraigned repository to make it easier to initially compile.
 #include "../../OpenRP/ui/jamp/menudef.h"
@@ -43,9 +45,9 @@ extern vmCvar_t bot_wp_edit;
 char	*ConcatArgs( int start );
 int M_G_ClientNumberFromName ( const char* name );
 
-extern void TheEmote(int animation, gentity_t *ent, qboolean freeze);
-
-void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0, qboolean chatCommand );
+//[OpenRP - Commands]
+void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 );
+//[/OpenRP - Commands]
 
 /*
 ==================
@@ -4397,7 +4399,7 @@ void ClientCommand( int clientNum ) {
 	char	cmd[MAX_TOKEN_CHARS];
 //	char	cmd2[MAX_TOKEN_CHARS];
 	//char	cmd3[MAX_TOKEN_CHARS];
-//	float		bounty;
+//	float		bounty; 
 
 	ent = g_entities + clientNum;
 	if ( !ent->client ) {
@@ -4406,6 +4408,366 @@ void ClientCommand( int clientNum ) {
 
 
 	trap_Argv( 0, cmd, sizeof( cmd ) );
+
+	if (Q_stricmp(cmd, "emmyhead") == 0)
+	{
+		TheEmote(BOTH_SONICPAIN_HOLD, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emcower") == 0)
+	{
+		TheEmote(BOTH_COWER1, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emsmack") == 0)
+	{
+		TheEmote (BOTH_TOSS1, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emenraged") == 0)
+	{
+		TheEmote (BOTH_FORCE_RAGE, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emvictory") == 0)
+	{
+		TheEmote (BOTH_TAVION_SWORDPOWER, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emvictory2") == 0)
+	{
+		TheEmote (BOTH_TAVION_SCEPTERGROUND, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emvictory3") == 0)
+	{
+		TheEmote (BOTH_ALORA_TAUNT, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emswirl") == 0)
+	{
+		TheEmote (BOTH_CWCIRCLELOCK, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emdance2") == 0)
+	{
+		TheEmote (BOTH_BUTTERFLY_LEFT, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emdance2") == 0)
+	{
+		TheEmote (BOTH_BUTTERFLY_RIGHT, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emdance3") == 0) 
+	{
+		TheEmote (BOTH_FJSS_TR_BL, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "empoint") == 0)
+	{
+		TheEmote (BOTH_SCEPTER_HOLD, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emkneel2") == 0)
+	{
+		TheEmote (BOTH_ROSH_PAIN, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emkneel") == 0)
+	{
+		TheEmote (BOTH_CROUCH3, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emsleep") == 0)
+	{
+		TheEmote (BOTH_SLEEP1, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "embreakdance") == 0)
+	{
+		TheEmote (BOTH_BACK_FLIP_UP, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emcheer") == 0)
+	{
+		TheEmote (BOTH_TUSKENTAUNT1, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emcomeon") == 0) {
+		TheEmote (BOTH_COME_ON1, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emheadshake") == 0)
+	{
+		TheEmote (BOTH_HEADSHAKE, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emheadnod") == 0)
+	{
+		TheEmote (BOTH_HEADNOD, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emsurrender") == 0)
+	{
+		TheEmote (TORSO_SURRENDER_START, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "ematease") == 0)
+	{
+		TheEmote (BOTH_STAND4, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "empunch") == 0 ){
+		TheEmote (BOTH_LOSE_SABER, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emintimidate") == 0){
+		TheEmote (BOTH_ROSH_HEAL, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emslash") == 0){
+		TheEmote (BOTH_ALORA_SPIN_SLASH, ent, qfalse);
+	}
+	if (Q_stricmp(cmd, "emsit") == 0) {
+		TheEmote (BOTH_SIT1, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emsit2") == 0) {
+		TheEmote (BOTH_SIT2, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emsit3") == 0) {
+		TheEmote (BOTH_SIT3, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emsit4") == 0) {
+		TheEmote (BOTH_SIT4, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emsit5") == 0) {
+		TheEmote (BOTH_SIT5, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emsit6") == 0) {
+		TheEmote (BOTH_SIT6, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emsit7") == 0) {
+		TheEmote (BOTH_SIT7, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emtyping") == 0) {
+		TheEmote (BOTH_CONSOLE1, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emaim") == 0) {
+		TheEmote (TORSO_WEAPONIDLE4, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emlean") == 0) {
+		TheEmote (BOTH_STAND10, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emstand") == 0) {
+		TheEmote (BOTH_STAND8, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "empoint") == 0) {
+		TheEmote (BOTH_SCEPTER_HOLD, ent, qtrue);
+	}
+	if (Q_stricmp(cmd, "emhips") == 0) {
+		TheEmote (BOTH_STAND8, ent, qtrue);
+	}
+	if (Q_stricmp (cmd, "login") == 0) {
+		Cmd_AccountLogin_F (ent);	
+	}
+	if (Q_stricmp (cmd, "logout") == 0) {
+		Cmd_AccountLogout_F (ent);
+	}
+	if (Q_stricmp (cmd, "register") == 0) {
+		Cmd_AccountCreate_F (ent);
+	}
+	if (Q_stricmp (cmd, "character") == 0) {
+		Cmd_SelectCharacter_F (ent);
+	}
+	if (Q_stricmp (cmd, "mycharacters") == 0) {
+		Cmd_ListCharacters_F (ent);
+	}
+	if (Q_stricmp (cmd, "createcharacter") == 0) {
+		Cmd_CreateCharacter_F (ent);
+	}
+	if (!Q_stricmp (cmd, "accountinfo")) {
+		Cmd_AccountInfo_F (ent);
+	}
+	if (!Q_stricmp (cmd, "characterinfo")) {
+		Cmd_CharacterInfo_F (ent);
+	}
+	if (Q_stricmp (cmd, "grantadmin") == 0) {
+		Cmd_GrantAdmin_F (ent);		
+	}
+	if (Q_stricmp (cmd, "removeadmin") == 0) {
+		Cmd_RemoveAdmin_F (ent);		
+	}
+	if (Q_stricmp (cmd, "giveskillpoints") == 0) {
+		Cmd_GiveSkillPoints_F (ent);		
+	}
+	if (Q_stricmp (cmd, "givecredits") == 0) {
+		Cmd_GiveCredits_F (ent);	
+	}
+	if (Q_stricmp (cmd, "gencredits") == 0) {
+		Cmd_GenerateCredits_F (ent);		
+	}
+	if (Q_stricmp (cmd, "editaccount") == 0) {
+		Cmd_EditAccount_F (ent);		
+	}
+	if (Q_stricmp(cmd, "accountname") == 0) {
+		Cmd_AccountName_F (ent);		
+	}
+	if (Q_stricmp (cmd, "editcharacter") == 0) {
+		Cmd_EditCharacter_F (ent);	
+	}
+	if (Q_stricmp (cmd, "createfaction") == 0) {
+		Cmd_CreateFaction_F (ent);	
+	}
+	if (Q_stricmp (cmd, "setfaction") == 0) {
+		Cmd_SetFaction_F (ent);	
+	}
+	if (Q_stricmp (cmd, "setfactionrank") == 0) {
+		Cmd_SetFactionRank_F (ent);
+	}
+	if (Q_stricmp (cmd, "factioninfo") == 0) {
+		Cmd_FactionInfo_F (ent);
+	}
+	if (Q_stricmp (cmd, "factionwithdraw") == 0) {
+		Cmd_FactionWithdraw_F (ent);
+	}
+	if (Q_stricmp (cmd, "factiondeposit") == 0) {
+		Cmd_FactionDeposit_F (ent);	
+	}
+	if (Q_stricmp (cmd, "factiongencredits") == 0) {
+		Cmd_FactionGenerateCredits_F (ent);
+	}
+	if (Q_stricmp (cmd, "listfactions") == 0) {
+		Cmd_ListFactions_F (ent);
+	}
+	if (Q_stricmp (cmd, "bounty") == 0) {
+		 Cmd_Bounty_F(ent);	
+	}
+	/*
+	if (Q_stricmp (cmd, "shop") == 0) {
+		Cmd_Shop_F (ent);
+	}
+	*/
+	/*
+	if (Q_stricmp (cmd, "checkinventory") == 0 ) {
+		Cmd_CheckInventory_F (ent);
+	}
+	*/
+	/*
+	if (Q_stricmp (cmd, "inventory") == 0) {
+		Cmd_Inventory_F (ent);	
+	}
+	*/
+	if (Q_stricmp(cmd, "amlistadmins") == 0) {
+		Cmd_amListAdmins_F (ent);	
+	}
+	if (Q_stricmp(cmd, "charactername") == 0) {
+		Cmd_CharName_F (ent);
+	}
+	if (Q_stricmp(cmd, "ooc") == 0) {
+		Cmd_Say_f( ent, SAY_TEAM, qfalse );
+	}
+	if (Q_stricmp(cmd, "yell") == 0) {
+		Cmd_Say_f( ent, SAY_YELL, qfalse );	
+	}
+	if (Q_stricmp(cmd, "whisper") == 0) {
+		Cmd_Say_f( ent, SAY_WHISPER, qfalse );
+	}
+	if (Q_stricmp(cmd, "me") == 0) {
+		Cmd_Say_f( ent, SAY_ME, qfalse );
+	}
+	if (Q_stricmp(cmd, "it") == 0) {
+		Cmd_Say_f( ent, SAY_IT, qfalse );
+	}
+	if (Q_stricmp(cmd, "looc") == 0) {
+		Cmd_Say_f( ent, SAY_LOOC, qfalse );
+	}
+	if (Q_stricmp(cmd, "report") == 0) {
+		Cmd_Say_f( ent, SAY_REPORT, qfalse );		
+	}
+	if (Q_stricmp(cmd, "comm") == 0) {
+		Cmd_Comm_F (ent);		
+	}
+	if (Q_stricmp(cmd, "force") == 0) {
+		Cmd_ForceMessage_F (ent);	
+	}
+	if (Q_stricmp(cmd, "faction") == 0) {
+		Cmd_Faction_F (ent);		
+	}
+	if (Q_stricmp(cmd, "togglechat") == 0) {
+		Cmd_ToggleChat_F (ent);	
+	}
+	if (Q_stricmp(cmd, "amkick") == 0) {
+		Cmd_amKick_F (ent);		
+	}
+	if (Q_stricmp(cmd, "amban") == 0) {
+		Cmd_amBan_F (ent);		
+	}
+	if(Q_stricmp(cmd, "amwarn") == 0) {
+		Cmd_amWarn_F (ent);	
+	} 
+	if (Q_stricmp(cmd, "amtele") == 0) {
+		Cmd_amTeleport_F (ent);
+	}
+	if(Q_stricmp(cmd, "amsilence") == 0) {
+		Cmd_amSilence_F (ent);
+	}
+	if(Q_stricmp(cmd, "amunsilence") == 0) {
+		Cmd_amUnSilence_F (ent);	
+	}
+	if(Q_stricmp(cmd, "amsleep") == 0) {
+		Cmd_amSleep_F (ent);	
+	}
+	if(Q_stricmp(cmd, "amunsleep") == 0) {
+		Cmd_amUnsleep_F (ent);	
+	}
+	/*
+	if(Q_stricmp(cmd, "amprotect") == 0) {
+		Cmd_amProtect_F (ent);	
+	}
+	*/
+	if(Q_stricmp(cmd, "amannounce") == 0) {
+		Cmd_amAnnounce_F (ent);	
+	}
+	if(Q_stricmp(cmd, "ameffect") == 0) {
+		Cmd_amEffect_F (ent);	
+	}
+	if(Q_stricmp(cmd, "amforceteam") == 0) {
+		Cmd_amForceTeam_F (ent);		
+	}
+	if(Q_stricmp(cmd, "amstatus") == 0) {
+		Cmd_amStatus_F (ent);		
+	}
+	if(Q_stricmp(cmd, "amweather") == 0) {
+		Cmd_amWeather_F (ent);		
+	}
+	if(Q_stricmp(cmd, "amweatherplus") == 0) {
+		Cmd_amWeatherPlus_F (ent);		
+	}
+	if(Q_stricmp(cmd, "amtelemark") == 0) {
+		Cmd_amTelemark_F (ent);	
+	}
+	if(Q_stricmp(cmd, "amorigin") == 0) {
+		Cmd_amOrigin_F (ent);	
+	}
+	if(Q_stricmp(cmd, "info") == 0) {
+		Cmd_info_F (ent);
+	}
+	if(Q_stricmp(cmd, "eminfo") == 0) {
+		Cmd_eminfo_F (ent);
+	}
+	if(Q_stricmp(cmd, "aminfo") == 0) {
+		Cmd_aminfo_F (ent);
+	}
+	if(Q_stricmp(cmd, "ammap") == 0) {
+		Cmd_amMap_F (ent);
+	}
+	if(Q_stricmp(cmd, "amrename") == 0) {
+		Cmd_amRename_F (ent);
+	}
+	if(Q_stricmp(cmd, "admin") == 0) {
+		Cmd_AdminChat_F (ent);
+	}
+	if (Q_stricmp(cmd, "amshakescreen") == 0) {
+		Cmd_ShakeScreen_F (ent);
+	}
+	if (Q_stricmp(cmd, "amaudio") == 0) {
+		Cmd_Audio_F (ent);
+	}
+	if (Q_stricmp(cmd, "amallchat") == 0) {
+		Cmd_AllChat_F (ent);
+	}
+	if (Q_stricmp(cmd, "amlistwarnings") == 0) {
+		Cmd_amWarningList_F (ent);
+	}
+	if (Q_stricmp(cmd, "spawnent") == 0) {
+		Cmd_SpawnEnt_F(ent);
+	}
+	if (Q_stricmp(cmd, "removeent") == 0) {
+		Cmd_RemoveEntity_F (ent);
+	}
+	if (Q_stricmp(cmd, "amlistents") == 0) {
+		Cmd_ListEnts_F (ent);
+	}
+	if (Q_stricmp(cmd, "aminvisible") == 0) {
+		Cmd_Invisible_F (ent);
+	}
 
 	//rww - redirect bot commands
 	if (strstr(cmd, "bot_") && AcceptBotCommand(cmd, ent))
@@ -4430,7 +4792,7 @@ void ClientCommand( int clientNum ) {
 			return;
 		}
 
-		Cmd_Say_f (ent, SAY_ALL, qfalse, qfalse);
+		Cmd_Say_f (ent, SAY_ALL, qfalse);
 		return;
 	}
 	if ( (Q_stricmp (cmd, "say_team") == 0) ){
@@ -4449,7 +4811,7 @@ void ClientCommand( int clientNum ) {
 			return;
 		}
 
-			Cmd_Say_f (ent, SAY_TEAM, qfalse, qfalse);
+			Cmd_Say_f (ent, SAY_TEAM, qfalse);
 		//}
 		//[/OpenRP - OOC]
 		return;
@@ -4595,7 +4957,7 @@ void ClientCommand( int clientNum ) {
 		}
 		else
 		{
-			Cmd_Say_f (ent, qfalse, qtrue, qfalse);
+			Cmd_Say_f (ent, qfalse, qtrue);
 		}
 		return;
 	}
@@ -5396,362 +5758,6 @@ void ClientCommand( int clientNum ) {
 		G_SetVehDamageFlags( &g_entities[ent->s.m_iVehicleNum], shipSurf, damageLevel );
 	}
 #endif
-	//[OpenRP - Commands]
-	else if (Q_stricmp(cmd, "emmyhead") == 0)
-	{
-		TheEmote(BOTH_SONICPAIN_HOLD, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emcower") == 0)
-	{
-		TheEmote(BOTH_COWER1, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emsmack") == 0)
-	{
-		TheEmote (BOTH_TOSS1, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emenraged") == 0)
-	{
-		TheEmote (BOTH_FORCE_RAGE, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emvictory") == 0)
-	{
-		TheEmote (BOTH_TAVION_SWORDPOWER, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emvictory2") == 0)
-	{
-		TheEmote (BOTH_TAVION_SCEPTERGROUND, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emvictory3") == 0)
-	{
-		TheEmote (BOTH_ALORA_TAUNT, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emswirl") == 0)
-	{
-		TheEmote (BOTH_CWCIRCLELOCK, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emdance2") == 0)
-	{
-		TheEmote (BOTH_BUTTERFLY_LEFT, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emdance2") == 0)
-	{
-		TheEmote (BOTH_BUTTERFLY_RIGHT, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emdance3") == 0) 
-	{
-		TheEmote (BOTH_FJSS_TR_BL, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "empoint") == 0)
-	{
-		TheEmote (BOTH_SCEPTER_HOLD, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emkneel2") == 0)
-	{
-		TheEmote (BOTH_ROSH_PAIN, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emkneel") == 0)
-	{
-		TheEmote (BOTH_CROUCH3, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emsleep") == 0)
-	{
-		TheEmote (BOTH_SLEEP1, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "embreakdance") == 0)
-	{
-		TheEmote (BOTH_BACK_FLIP_UP, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emcheer") == 0)
-	{
-		TheEmote (BOTH_TUSKENTAUNT1, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emcomeon") == 0) {
-		TheEmote (BOTH_COME_ON1, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emheadshake") == 0)
-	{
-		TheEmote (BOTH_HEADSHAKE, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emheadnod") == 0)
-	{
-		TheEmote (BOTH_HEADNOD, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emsurrender") == 0)
-	{
-		TheEmote (TORSO_SURRENDER_START, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "ematease") == 0)
-	{
-		TheEmote (BOTH_STAND4, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "empunch") == 0 ){
-		TheEmote (BOTH_LOSE_SABER, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emintimidate") == 0){
-		TheEmote (BOTH_ROSH_HEAL, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emslash") == 0){
-		TheEmote (BOTH_ALORA_SPIN_SLASH, ent, qfalse);
-	}
-	else if (Q_stricmp(cmd, "emsit") == 0) {
-		TheEmote (BOTH_SIT1, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emsit2") == 0) {
-		TheEmote (BOTH_SIT2, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emsit3") == 0) {
-		TheEmote (BOTH_SIT3, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emsit4") == 0) {
-		TheEmote (BOTH_SIT4, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emsit5") == 0) {
-		TheEmote (BOTH_SIT5, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emsit6") == 0) {
-		TheEmote (BOTH_SIT6, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emsit7") == 0) {
-		TheEmote (BOTH_SIT7, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emtyping") == 0) {
-		TheEmote (BOTH_CONSOLE1, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emaim") == 0) {
-		TheEmote (TORSO_WEAPONIDLE4, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emlean") == 0) {
-		TheEmote (BOTH_STAND10, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emstand") == 0) {
-		TheEmote (BOTH_STAND8, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "empoint") == 0) {
-		TheEmote (BOTH_SCEPTER_HOLD, ent, qtrue);
-	}
-	else if (Q_stricmp(cmd, "emhips") == 0) {
-		TheEmote (BOTH_STAND8, ent, qtrue);
-	}
-	else if (Q_stricmp (cmd, "login") == 0) {
-		Cmd_AccountLogin_F (ent);	
-	}
-	else if (Q_stricmp (cmd, "logout") == 0) {
-		Cmd_AccountLogout_F (ent);
-	}
-	else if (Q_stricmp (cmd, "register") == 0) {
-		Cmd_AccountCreate_F (ent);
-	}
-	else if (Q_stricmp (cmd, "character") == 0) {
-		Cmd_SelectCharacter_F (ent);
-	}
-	else if (Q_stricmp (cmd, "mycharacters") == 0) {
-		Cmd_ListCharacters_F (ent);
-	}
-	else if (Q_stricmp (cmd, "createcharacter") == 0) {
-		Cmd_CreateCharacter_F (ent);
-	}
-	else if (!Q_stricmp (cmd, "accountinfo")) {
-		Cmd_AccountInfo_F (ent);
-	}
-	else if (!Q_stricmp (cmd, "characterinfo")) {
-		Cmd_CharacterInfo_F (ent);
-	}
-	else if (Q_stricmp (cmd, "grantadmin") == 0) {
-		Cmd_GrantAdmin_F (ent);		
-	}
-	else if (Q_stricmp (cmd, "removeadmin") == 0) {
-		Cmd_RemoveAdmin_F (ent);		
-	}
-	else if (Q_stricmp (cmd, "giveskillpoints") == 0) {
-		Cmd_GiveSkillPoints_F (ent);		
-	}
-	else if (Q_stricmp (cmd, "givecredits") == 0) {
-		Cmd_GiveCredits_F (ent);	
-	}
-	else if (Q_stricmp (cmd, "gencredits") == 0) {
-		Cmd_GenerateCredits_F (ent);		
-	}
-	else if (Q_stricmp (cmd, "editaccount") == 0) {
-		Cmd_EditAccount_F (ent);		
-	}
-	else if (Q_stricmp(cmd, "accountname") == 0) {
-		Cmd_AccountName_F (ent);		
-	}
-	else if (Q_stricmp (cmd, "editcharacter") == 0) {
-		Cmd_EditCharacter_F (ent);	
-	}
-	else if (Q_stricmp (cmd, "createfaction") == 0) {
-		Cmd_CreateFaction_F (ent);	
-	}
-	else if (Q_stricmp (cmd, "setfaction") == 0) {
-		Cmd_SetFaction_F (ent);	
-	}
-	else if (Q_stricmp (cmd, "setfactionrank") == 0) {
-		Cmd_SetFactionRank_F (ent);
-	}
-	else if (Q_stricmp (cmd, "factioninfo") == 0) {
-		Cmd_FactionInfo_F (ent);
-	}
-	else if (Q_stricmp (cmd, "factionwithdraw") == 0) {
-		Cmd_FactionWithdraw_F (ent);
-	}
-	else if (Q_stricmp (cmd, "factiondeposit") == 0) {
-		Cmd_FactionDeposit_F (ent);	
-	}
-	else if (Q_stricmp (cmd, "factiongencredits") == 0) {
-		Cmd_FactionGenerateCredits_F (ent);
-	}
-	else if (Q_stricmp (cmd, "listfactions") == 0) {
-		Cmd_ListFactions_F (ent);
-	}
-	else if (Q_stricmp (cmd, "bounty") == 0) {
-		 Cmd_Bounty_F(ent);	
-	}
-	else if (Q_stricmp (cmd, "shop") == 0) {
-		Cmd_Shop_F (ent);
-	}
-	/*
-	else if (Q_stricmp (cmd, "checkinventory") == 0 ) {
-		Cmd_CheckInventory_F (ent);
-	}
-	*/
-	else if (Q_stricmp (cmd, "inventory") == 0) {
-		Cmd_Inventory_F (ent);	
-	}
-	else if (Q_stricmp(cmd, "amlistadmins") == 0) {
-		Cmd_amListAdmins_F (ent);	
-	}
-	else if (Q_stricmp(cmd, "charactername") == 0) {
-		Cmd_CharName_F (ent);
-	}
-	else if (Q_stricmp(cmd, "ooc") == 0) {
-		Cmd_Say_f( ent, SAY_TEAM, qfalse );
-	}
-	else if (Q_stricmp(cmd, "yell") == 0) {
-		Cmd_Say_f( ent, SAY_YELL, qfalse );	
-	}
-	else if (Q_stricmp(cmd, "whisper") == 0) {
-		Cmd_Say_f( ent, SAY_WHISPER, qfalse );
-	}
-	else if (Q_stricmp(cmd, "me") == 0) {
-		Cmd_Say_f( ent, SAY_ME, qfalse );
-	}
-	else if (Q_stricmp(cmd, "it") == 0) {
-		Cmd_Say_f( ent, SAY_IT, qfalse );
-	}
-	else if (Q_stricmp(cmd, "looc") == 0) {
-		Cmd_Say_f( ent, SAY_LOOC, qfalse );
-	}
-	else if (Q_stricmp(cmd, "report") == 0) {
-		Cmd_Say_f( ent, SAY_REPORT, qfalse );		
-	}
-	else if (Q_stricmp(cmd, "comm") == 0) {
-		Cmd_Comm_F (ent);		
-	}
-	else if (Q_stricmp(cmd, "force") == 0) {
-		Cmd_ForceMessage_F (ent);	
-	}
-	else if (Q_stricmp(cmd, "faction") == 0) {
-		Cmd_Faction_F (ent);		
-	}
-	else if (Q_stricmp(cmd, "togglechat") == 0) {
-		Cmd_ToggleChat_F (ent);	
-	}
-	else if (Q_stricmp(cmd, "amkick") == 0) {
-		Cmd_amKick_F (ent);		
-	}
-	else if (Q_stricmp(cmd, "amban") == 0) {
-		Cmd_amBan_F (ent);		
-	}
-	else if(Q_stricmp(cmd, "amwarn") == 0) {
-		Cmd_amWarn_F (ent);	
-	} 
-	else if (Q_stricmp(cmd, "amtele") == 0) {
-		Cmd_amTeleport_F (ent);
-	}
-	else if(Q_stricmp(cmd, "amsilence") == 0) {
-		Cmd_amSilence_F (ent);
-	}
-	else if(Q_stricmp(cmd, "amunsilence") == 0) {
-		Cmd_amUnSilence_F (ent);	
-	}
-	else if(Q_stricmp(cmd, "amsleep") == 0) {
-		Cmd_amSleep_F (ent);	
-	}
-	else if(Q_stricmp(cmd, "amunsleep") == 0) {
-		Cmd_amUnsleep_F (ent);	
-	}
-	/*
-	else if(Q_stricmp(cmd, "amprotect") == 0) {
-		Cmd_amProtect_F (ent);	
-	}
-	*/
-	else if(Q_stricmp(cmd, "amannounce") == 0) {
-		Cmd_amAnnounce_F (ent);	
-	}
-	else if(Q_stricmp(cmd, "ameffect") == 0) {
-		Cmd_amEffect_F (ent);	
-	}
-	else if(Q_stricmp(cmd, "amforceteam") == 0) {
-		Cmd_amForceTeam_F (ent);		
-	}
-	else if(Q_stricmp(cmd, "amstatus") == 0) {
-		Cmd_amStatus_F (ent);		
-	}
-	else if(Q_stricmp(cmd, "amweather") == 0) {
-		Cmd_amWeather_F (ent);		
-	}
-	else if(Q_stricmp(cmd, "amweatherplus") == 0) {
-		Cmd_amWeatherPlus_F (ent);		
-	}
-	else if(Q_stricmp(cmd, "amtelemark") == 0) {
-		Cmd_amTelemark_F (ent);	
-	}
-	else if(Q_stricmp(cmd, "amorigin") == 0) {
-		Cmd_amOrigin_F (ent);	
-	}
-	else if(Q_stricmp(cmd, "info") == 0) {
-		Cmd_info_F (ent);
-	}
-	else if(Q_stricmp(cmd, "eminfo") == 0) {
-		Cmd_eminfo_F (ent);
-	}
-	else if(Q_stricmp(cmd, "aminfo") == 0) {
-		Cmd_aminfo_F (ent);
-	}
-	else if(Q_stricmp(cmd, "ammap") == 0) {
-		Cmd_amMap_F (ent);
-	}
-	else if(Q_stricmp(cmd, "amrename") == 0) {
-		Cmd_amRename_F (ent);
-	}
-	else if(Q_stricmp(cmd, "admin") == 0) {
-		Cmd_AdminChat_F (ent);
-	}
-	else if (Q_stricmp(cmd, "amshakescreen") == 0) {
-		Cmd_ShakeScreen_F (ent);
-	}
-	else if (Q_stricmp(cmd, "amaudio") == 0) {
-		Cmd_Audio_F (ent);
-	}
-	else if (Q_stricmp(cmd, "amallchat") == 0) {
-		Cmd_AllChat_F (ent);
-	}
-	else if (Q_stricmp(cmd, "amlistwarnings") == 0) {
-		Cmd_amWarningList_F (ent);
-	}
-	else if (Q_stricmp(cmd, "spawnent") == 0) {
-		Cmd_SpawnEnt_F(ent);
-	}
-	else if (Q_stricmp(cmd, "removeent") == 0) {
-		Cmd_RemoveEntity_F (ent);
-	}
-	else if (Q_stricmp(cmd, "amlistents") == 0) {
-		Cmd_ListEnts_F (ent);
-	}
-	else if (Q_stricmp(cmd, "aminvisible") == 0) {
-		Cmd_Invisible_F (ent);
-	}
 	else
 	{
 		if (Q_stricmp(cmd, "addbot") == 0)

@@ -7094,4 +7094,3 @@ struct sqlite3_rtree_geometry {
 #endif
 
 #endif  /* ifndef _SQLITE3RTREE_H_ */
-

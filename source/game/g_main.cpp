@@ -703,9 +703,9 @@ vmCvar_t		openrp_disruptorLevel;
 vmCvar_t		openrp_disruptorDescription;
 
 vmCvar_t		openrp_bowcasterBuyCost;
-vmCvar_t		openrp_bowcasterBSellCost;
-vmCvar_t		openrp_bowcasterBLevel;
-vmCvar_t		openrp_bowcasterBDescription;
+vmCvar_t		openrp_bowcasterSellCost;
+vmCvar_t		openrp_bowcasterLevel;
+vmCvar_t		openrp_bowcasterDescription;
 
 vmCvar_t		openrp_repeaterBuyCost;
 vmCvar_t		openrp_repeaterSellCost;

@@ -1,5 +1,3 @@
-#include "g_admin.h"
-
 //--Database Functions--
 void CheckAdmin(gentity_t * ent);
 //--Misc Functions--

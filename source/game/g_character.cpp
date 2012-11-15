@@ -3,6 +3,7 @@
 #include "g_character.h"
 #include "g_account.h"
 #include "g_admin.h"
+
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern int M_G_ClientNumberFromName ( const char* name );
 
@@ -1132,6 +1133,7 @@ Displays the shop
 */
 void Cmd_Shop_F( gentity_t * ent )
 {
+	/*
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char parameter[MAX_STRING_CHARS], itemName[MAX_STRING_CHARS];
@@ -1455,6 +1457,7 @@ void Cmd_Shop_F( gentity_t * ent )
 		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /shop <buy/examine> <item> or just shop to see all of the shop items.\n\"" );
 		return;
 	}
+	*/
 }
 
 /*
@@ -1566,6 +1569,7 @@ Shows your inventory
 */
 void Cmd_Inventory_F( gentity_t * ent )
 {
+	/*
 	Database db(DATABASE_PATH);
 	Query q(db);
 	int currentCredits;
@@ -1767,7 +1771,6 @@ void Cmd_Inventory_F( gentity_t * ent )
 		}
 	}
 
-	/*
 	else if ( !Q_stricmp( parameter, "sell" ) )
 	{
 		if ( !Q_stricmp( itemName, "pistol" ) || !Q_stricmp( itemName, "Pistol" ) )
@@ -1856,13 +1859,13 @@ void Cmd_Inventory_F( gentity_t * ent )
 			return;
 		}
 	}
-	*/
 
 	else
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /inventory use <item> or just inventory to see your own inventory.\n\"" );
 		return;
 	}
+	*/
 }
 
 

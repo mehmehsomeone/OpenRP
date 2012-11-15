@@ -49,7 +49,10 @@ void RunForceLift(gentity_t*self)
 			self->client->forceLifting = -1;
 		}
 	}
-	else if(self->client->forceLifting != -1 && self->client->forceLiftTime <= level.time)
+	//[OpenRP - Endlessly floating up bug]
+	//else if(self->client->forceLifting != -1 && self->client->forceLiftTime <= level.time)
+	else if( self->client->forceLiftTime <= level.time )
+	//[/OpenRP - Endlessly floating up bug]
 	{
 		gentity_t*ent = &g_entities[self->client->forceLifting];
 		ent->client->ps.velocity[2]=0;
@@ -90,12 +93,12 @@ void ForceLift( gentity_t *self )
 		tr.entityNum != ENTITYNUM_NONE &&
 		g_entities[tr.entityNum].client &&
 		g_entities[tr.entityNum].health > 0 &&
-		!g_entities[tr.entityNum].client->underForceLift //&&
-		//ForcePowerUsableOn(self, &g_entities[tr.entityNum], FP_LIFT) &&
+		!g_entities[tr.entityNum].client->underForceLift &&
+		ForcePowerUsableOn(self, &g_entities[tr.entityNum], FP_LIFT) &&
 		//[ForceSys]
-		//!OJP_CounterForce(self, &g_entities[tr.entityNum], FP_LIFT) &&
-				//[/ForceSys]
-		//(g_friendlyFire.integer || !OnSameTeam(self, &g_entities[tr.entityNum])) )
+		!OJP_CounterForce(self, &g_entities[tr.entityNum], FP_LIFT) &&
+		//[/ForceSys]
+		(g_friendlyFire.integer || !OnSameTeam(self, &g_entities[tr.entityNum]))
 		)
 	{
 		gentity_t*ent = &g_entities[tr.entityNum];

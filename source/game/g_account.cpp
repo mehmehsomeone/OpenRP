@@ -1,6 +1,8 @@
 #include "g_OpenRP.h"
 #include "g_local.h"
 #include "g_account.h"
+#include "g_admin.h"
+
 
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern int M_G_ClientNumberFromName ( const char* name );

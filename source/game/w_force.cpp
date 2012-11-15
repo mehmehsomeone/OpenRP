@@ -798,8 +798,12 @@ int ForcePowerUsableOn(gentity_t *attacker, gentity_t *other, forcePowers_t forc
 		return 0;
 	}
 	
+	//[OpenRP - If someone had a gun and force, they were destroyed by others force-wise.]
+	/*
 	if(IsMerc(other) && other->client->ps.fd.forcePowerLevel[FP_SEE] >= FORCE_LEVEL_1)
 		return 1;
+	*/
+	//[/OpenRP - If someone had a gun and force, they were destroyed by others force-wise.]
 
 	//Dueling fighters cannot use force powers on others, with the exception of force push when locked with each other
 	if (attacker && attacker->client && attacker->client->ps.duelInProgress)
@@ -1288,6 +1292,7 @@ qboolean IsHybrid(gentity_t *ent)
 {
 	qboolean jedi = qfalse;
 
+	//OpenRPTODO - check all powers, not just sense
 	jedi = ((ent->client->ps.fd.forcePowersKnown & (1 << FP_SEE))?qtrue:qfalse);
 
 	if(jedi && IsMerc(ent))
@@ -1302,10 +1307,13 @@ qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPo
 
 	if(BG_IsUsingHeavyWeap(&defender->client->ps))
 		return qfalse;
-
-
+	
+	//[OpenRP - If someone had a gun and force, they were destroyed by others force-wise.]
+	/*
 	if(IsMerc(defender) && defender->client->ps.fd.forcePowerLevel[FP_SEE] >= FORCE_LEVEL_1)
 		return qfalse;
+	*/
+	//[/OpenRP - If someone had a gun and force, they were destroyed by others force-wise.]
 
 	if( !(defender->client->ps.fd.forcePowersKnown & (1 << attackPower)) 
 		&& !(defender->client->ps.fd.forcePowersKnown & (1 << FP_ABSORB)) )
@@ -1363,11 +1371,15 @@ qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPo
 		if (defender->client->ps.forceHandExtend != HANDEXTEND_NONE)
 			return qtrue;
 
+		//[OpenRP - If someone had a gun and force, they were destroyed by others force-wise.]
+		/*
 		if(IsHybrid(defender))
 		{
 			defender->client->ps.userInt3 |= (1<<FLAG_BLOCKING);
 			defender->client->blockTime = level.time + 1000;
 		}
+		*/
+		//[/OpenRP - If someone had a gun and force, they were destroyed by others force-wise.]
 	
 	//return qtrue;
 	}

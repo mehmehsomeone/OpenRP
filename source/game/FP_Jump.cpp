@@ -52,7 +52,9 @@ int WP_GetVelocityForForceJump( gentity_t *self, vec3_t jumpVel, usercmd_t *ucmd
 
 	if (self->client->ps.fd.forceJumpCharge < JUMP_VELOCITY+40)
 	{ //give him at least a tiny boost from just a tap
-		self->client->ps.fd.forceJumpCharge = JUMP_VELOCITY+400;
+		//[OpenRP - Jump key tap height reduction]
+		self->client->ps.fd.forceJumpCharge = JUMP_VELOCITY;
+		//[/OpenRP - Jump tap height reduction]
 	}
 
 	if (self->client->ps.velocity[2] < -30)

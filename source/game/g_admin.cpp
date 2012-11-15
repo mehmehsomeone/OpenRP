@@ -3,50 +3,55 @@
 #include "g_admin.h"
 #include "g_character.h"
 
-void AddSkill(gentity_t *self, int amount)
-{//add skill points to self
-	//[OpenRP - Skillpoint System]
-	
-	if(amount == 0)
-	{
-		return;
-	}
+extern qboolean M_PartialMatch( const char * s1, const char * s2 );
+extern qboolean M_IsInteger( const char * name );
+extern int M_G_ClientNumberFromName ( const char* name );
 
-	
-	if( (self->client->sess.skillPoints + amount) < 1)
-	{
-		G_Printf("Error: Failed to give %i skill points to %s because they would have < 1 skill point if they were given.", amount, self->client->pers.netname );
-		return;
-	}
+extern void AddSkill(gentity_t *self, int amount);
+extern void Admin_Teleport( gentity_t *ent );
 
-	self->client->sess.skillPoints += amount;
-	trap_SendServerCommand(self->s.number, va("nfr %i %i %i", self->client->sess.skillPoints, 0, self->client->sess.sessionTeam)); //mark that we've updated our skill points so we can update the player's client.
-	//[/OpenRP - Skillpoint System]
+/*
+==================
 
+M_HolsterThoseSabers - MJN
+Something like Cmd_ToggleSaber,
+but stripped down and for holster only.
+==================
+*/
+void M_HolsterThoseSabers( gentity_t *ent ){
+
+        // MJN - Check to see if that is the weapon of choice...
+        if (ent->client->ps.weapon != WP_SABER)
+        {
+                return;
+        }
+        // MJN - Cannot holster it in flight or we're screwed!
+        if (ent->client->ps.saberInFlight)
+        {
+                return;
+        }
+        // MJN - Cannot holster in saber lock.
+        if (ent->client->ps.saberLockTime >= level.time)
+        {
+                return;
+        }
+        // MJN - Holster Sabers
+        if ( ent->client->ps.saberHolstered < 2 )
+		{
+            if (ent->client->saber[0].soundOff)
+			{
+				G_Sound(ent, CHAN_AUTO, ent->client->saber[0].soundOff);
+			}
+
+			if (ent->client->saber[1].soundOff && ent->client->saber[1].model[0])
+			{
+					G_Sound(ent, CHAN_AUTO, ent->client->saber[1].soundOff);
+			}
+			ent->client->ps.saberHolstered = 2;
+			ent->client->ps.weaponTime = 400;
+        }
 }
 
-qboolean M_PartialMatch( const char * s1, const char * s2 )
-{
-	int s1len, s2len, maxlen;
-	char s1lwr[MAX_STRING_CHARS];
-	char s2lwr[MAX_STRING_CHARS];
-	s1len = strlen( s1 );
-	s2len = strlen( s2 );
-	maxlen = s1 > s2 ? s1len : s2len;
-
-	// Strings to lowercase (So we have case independend comparison):
-	strcpy(s1lwr, s1);
-	strcpy(s2lwr, s2);
-	Q_strlwr(s1lwr);
-	Q_strlwr(s2lwr);
-
-	if( strstr( s2lwr, s1lwr ) ){
-		return qtrue;
-	}
-	else{
-		return qfalse;
-	}
-}
 /*
 ==================
 M_SanitizeString
@@ -114,139 +119,6 @@ static void M_SanitizeString2( char *in, char *out ) {
 	}
 	*out = 0;
 }
-/*
-==================
-M_IsInteger
-
-==================
-*/
-qboolean M_IsInteger( const char * name )
-{
-	int len;
-	int i;
-
-	len = strlen( name );
-
-	for( i = 0; i < len; i++ ){
-		switch (name[i])
-		{
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-			break;
-
-			default:
-				return qfalse;
-		};
-	}
-	return qtrue;
-}
-
-int M_G_ClientNumberFromName ( const char* name )
-{
-	char		s2[MAX_STRING_CHARS];
-	char		n2[MAX_STRING_CHARS];
-	int			i;
-	gclient_t*	cl;
-
-	// Try to read the name as a clientid number:
-	if( M_IsInteger( name ) )
-	{
-		i = atoi( name );
-		if( i < 0 || i > level.maxclients ){
-			// Might be that client has a number for a name so check that later on.
-		}
-		else
-		{
-			return i;
-		}
-	}
-
-	// Try method 1:
-	// check for a name match
-	M_SanitizeString( (char*)name, s2 );
-	for ( i=0, cl=level.clients ; i < level.maxclients ; i++, cl++ )
-	{
-		if(cl){
-			M_SanitizeString( cl->pers.netname, n2 );
-			if ( !strcmp( n2, s2 ) )
-			{
-				return i;
-			}
-		}
-	}
-
-	// check for partial match.
-	M_SanitizeString( (char*)name, s2 );
-	for ( i=0, cl=level.clients ; i < level.maxclients ; i++, cl++ )
-	{
-		if(cl){
-			M_SanitizeString( cl->pers.netname, n2 );
-			if ( M_PartialMatch( s2, n2 ) )
-			{
-				return i;
-			}
-		}
-	}
-
-	// Try method 2:
-	// check for a name match
-	M_SanitizeString2( (char*)name, s2 );
-	for ( i=0, cl=level.clients ; i < level.maxclients ; i++, cl++ )
-	{
-		if(cl){
-			M_SanitizeString2( cl->pers.netname, n2 );
-			if ( !strcmp( n2, s2 ) )
-			{
-				return i;
-			}
-		}
-	}
-
-	// check for partial match.
-	M_SanitizeString2( (char*)name, s2 );
-	for ( i=0, cl=level.clients ; i < level.maxclients ; i++, cl++ )
-	{
-		if(cl){
-			M_SanitizeString2( cl->pers.netname, n2 );
-			if ( M_PartialMatch( s2, n2 ) )
-			{
-				return i;
-			}
-		}
-	}
-
-	return -1;
-}
-
-void Admin_Teleport( gentity_t *ent )
-{
-	vec3_t		origin;
-	char		buffer[MAX_TOKEN_CHARS];
-	int			i;
-
-	if ( trap_Argc() != 4 )
-	{
-		trap_SendServerCommand( ent-g_entities, va("print \"^2Command Usage: /amTele <X> <Y> <Z>\ntype in /amOrigin or /amOrigin <name> to find out <X> <Y> <Z>\n\""));
-		return;
-	}
-
-	for ( i = 0 ; i < 3 ; i++ )
-	{
-		trap_Argv( i + 1, buffer, sizeof( buffer ) );
-		origin[i] = atof( buffer );
-	}
-
-	TeleportPlayer( ent, origin, ent->client->ps.viewangles );
-}
-
 
 qboolean G_CheckAdmin(gentity_t *ent, int command)
 {

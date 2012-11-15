@@ -646,7 +646,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="JK2_game.def">
+    <None Include="game.def">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

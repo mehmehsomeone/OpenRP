@@ -6,18 +6,20 @@
 // Use this code at your own risk.
 
 #include "g_local.h"
+#include "g_OpenRP.h"
 #include "g_emote.h"
-#include "g_adminshared.h"
+#include "g_admin.h"
 
 /*
 ==================
 
-M_Cmd_Emote - MJN
+TheEmote
+
+MJN/ClanMod
 
 ==================
 */
-//extern int M_HolsterThoseSabers(gentity_t * ent);
-void M_Cmd_Emote( gentity_t * ent, int anim, qboolean freeze )
+void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 {
 	int i = 0;
 

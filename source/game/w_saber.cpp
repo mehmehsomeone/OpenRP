@@ -10305,9 +10305,9 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 
 					//[SaberSys]
 					//made the knockdown behavior of kicks be based on the player's mishap level or low DP and not hold alt attack.
-					if ((hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY
-						|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
-						&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
+					//if ((hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY
+						//|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
+						//&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
 					{//knockdown
 						if(hitEnt->client->ps.fd.saberAnimLevel == SS_STAFF)
 						{
@@ -10325,6 +10325,8 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 							}
 						}
 					}
+					//[OpenRP - always be able to kick someone]
+					/*
 					else if (ent->client->ps.fd.saberAnimLevel == SS_DESANN
 						&& (hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT
 						|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
@@ -10338,11 +10340,14 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 							{
 								G_Knockdown( hitEnt, ent, kickDir, kickPush, qtrue );
 							}
-						}
+					}
+					
 					else
 					{//stumble
 						AnimateStun(hitEnt, ent, trace.endpos);   
 					}
+					*/
+					//[/OpenRP - always be able to kick someone]
 
 					BG_ReduceMishapLevel(&hitEnt->client->ps);
 					//[/SaberSys]

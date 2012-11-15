@@ -493,7 +493,7 @@
     <ClInclude Include="sqlite3\sqlite3ext.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="JK2_game.def" />
+    <None Include="game.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

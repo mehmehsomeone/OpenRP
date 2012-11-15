@@ -38,6 +38,8 @@ qboolean G_CallSpawn( gentity_t *ent );
 void CheckAdmin(gentity_t * ent);
 void AddSkill(gentity_t *self, int amount);
 
+void M_HolsterThoseSabers( gentity_t *ent );
+
 void Cmd_amBan_F(gentity_t *ent);
 void Cmd_amKick_F(gentity_t *ent);
 void Cmd_amWarn_F(gentity_t *ent);

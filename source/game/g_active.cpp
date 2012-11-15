@@ -4,7 +4,6 @@
 #include "g_local.h"
 #include "bg_saga.h"
 #include "g_admin.h"
-#include "g_adminshared.h"
 #include "g_emote.h"
 #include "g_cvars.h"
 
@@ -2172,7 +2171,9 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 				}
 			}
 			if ( taunt != TAUNT_MEDITATE 
-				&& taunt != TAUNT_BOW && ( taunt < 5 || taunt > MAX_EMOTES ) )
+				//OPENRPTODO - Look at MAX_EMOTES
+				&& taunt != TAUNT_BOW && ( taunt < 5 ) )
+				//&& taunt != TAUNT_BOW && ( taunt < 5 || taunt > MAX_EMOTES ) )
 			{//no sound for meditate or bow
 				G_AddEvent( ent, EV_TAUNT, taunt );
 			}

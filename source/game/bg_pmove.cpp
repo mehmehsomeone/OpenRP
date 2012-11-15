@@ -5453,7 +5453,7 @@ static void PM_GroundTrace( void ) {
 		PM_CrashLand();
 
 #ifdef QAGAME
-		//OpenRP - disabling bounce off head
+		//[OpenRP - disabling bounce off head]
 		/*
 		//1.3 [PlayerOnHead]
 		if(trace.entityNum != ENTITYNUM_WORLD && Q_stricmp(g_entities[pm->ps->clientNum].NPC_type,"seeker") 
@@ -5476,6 +5476,7 @@ static void PM_GroundTrace( void ) {
 		}
 		*/
 		//1.3 [/PlayerOnHead]
+		//[/OpenRP - disabling bounce off head]
 		if (pm->ps->clientNum < MAX_CLIENTS &&
 			!pm->ps->m_iVehicleNum &&
 			trace.entityNum < ENTITYNUM_WORLD &&
