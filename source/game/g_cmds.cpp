@@ -2245,7 +2245,7 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	{
 		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			if ( g_entities[i].client->sess.isAdmin && g_entities[i].client->sess.allChat )
+			if ( g_entities[i].client->sess.isAdmin && ( ( g_entities[i].client->sess.allChat && i != clientid ) || ( g_entities[i].client->sess.allChatComplete ) ) )
 			{
 				trap_SendServerCommand( i, va( "chat \"^6<Tell> ^7%s ^6to ^7%s: ^6%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, p ) );
 			}
