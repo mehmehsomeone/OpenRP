@@ -988,16 +988,7 @@ typedef struct {
 	qboolean	amtelemarkset;
 
 	int			motdShowTime;		// MJN - Show MOTD to player.
-	qboolean	protect;			// MJN - Person is protected.
-	qboolean	sleeping;			// MJN - This player is asleep.
-	float		zShowTime;			// MJN - Is it time to show some Z's when sleeping?
-	qboolean    denyvote;			// MJN - Deny vote access
-	qboolean	silenced;			// MJN - This player is silence and can't talk.
-	qboolean	pmchat;				// MJN - This player can only use private messaging.
-	qboolean	empowered;			// MJN - This player is empowered.
-	qboolean	terminator;			// MJN - This player is terminator.
-	qboolean	restricted;			// MJN - For restricting admin login.
-	qboolean	hasCheatAccess;		// MJN - Allows to access cheats.
+	qboolean    denyvote;			// MJN - Deny vote access.
 	int			adminclientstatus;	// MJN - For tracking their flags through amstatus.
 	int			forcePowersKnownSaved;	// MJN - Used to save and restore your known forcepowers when unempowering is used.
 	int			duelStartTime;		// RMH - Level time of duel start.

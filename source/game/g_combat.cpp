@@ -5070,7 +5070,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	{//Don't really like putting this here, move it later
 		G_DodgeDrain(targ,attacker,Q_irand(2,5));
 		//[OpenRP - Reduced throw distance of repeater blob alt fire]
-		G_Throw(targ,dir,0.1f);
+		G_Throw(targ,dir,1);
 		//[/OpenRP - Reduced throw distance of repeater blob alt fire]
 		//targ->client->ps.velocity[2] += 5;
 		return;

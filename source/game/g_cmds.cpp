@@ -49,6 +49,10 @@ int M_G_ClientNumberFromName ( const char* name );
 void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 );
 //[/OpenRP - Commands]
 
+//[JKH Bugfix]
+#define ARRAY_LEN(x) (sizeof(x) / sizeof(*(x)))
+//[/JKH Bugfix]
+
 /*
 ==================
 DeathmatchScoreboardMessage
@@ -155,7 +159,7 @@ CheatsOk
 ==================
 */
 qboolean	CheatsOk( gentity_t *ent ) {
-	if ( ent->client->pers.hasCheatAccess )
+	if ( ent->client->sess.cheatAccess )
 	{
 		return qtrue;
 	}
@@ -1121,10 +1125,6 @@ void StopFollowing( gentity_t *ent ) {
 	//Emote
 	// MJN - added to clean it up a bit.
 	ent->client->ps.duelInProgress = qfalse;
-	ent->client->pers.empowered = qfalse;
-	ent->client->pers.terminator = qfalse;
-	ent->client->pers.sleeping = qfalse;
-	ent->client->pers.protect = qfalse;
 	ent->client->emote_freeze = qfalse;
 	ent->client->savedHP = 0;
 	ent->client->savedArmor = 0;
@@ -2319,8 +2319,8 @@ static void Cmd_VoiceCommand_f(gentity_t *ent)
 	te->r.svFlags |= SVF_BROADCAST;
 }
 
-
-static char	*gc_orders[] = {
+//[JKH Bugfix]
+static const char *gc_orders[] = {
 	"hold your position",
 	"hold this position",
 	"come here",
@@ -2330,27 +2330,52 @@ static char	*gc_orders[] = {
 	"report"
 };
 
-void Cmd_GameCommand_f( gentity_t *ent ) {
-	int		player;
-	int		order;
-	char	str[MAX_TOKEN_CHARS];
+static const int numgc_orders = ARRAY_LEN( gc_orders );
+
+void Cmd_GameCommand_f( gentity_t *ent )
+{
+	int player;
+	gentity_t *plEnt;
+	int order;
+	char str[4];
+
+	if ( trap_Argc() < 3 )
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"usage: gc <player id> <0-6>\n\""));
+		return;
+	}
 
 	trap_Argv( 1, str, sizeof( str ) );
 	player = atoi( str );
+	if ( player < 0 || player >= level.maxclients )
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client slot: %i\n\"", player));
+		return;
+	}
+
+	plEnt = &g_entities[player];
+	if ( !plEnt || !plEnt->inuse || !plEnt->client )
+	{
+		return;
+	}
+
+	if ( plEnt->client->pers.connected != CON_CONNECTED )
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"Client %i is not active\n\"", player));
+		return;
+	}
+
 	trap_Argv( 2, str, sizeof( str ) );
 	order = atoi( str );
 
-	//[JKH Bugfix]
-	if ( player < 0 || player >= level.maxclients ) {
-	//[/JKH Bugfix]
-		return;
-	}
-	if ( order < 0 || order > sizeof(gc_orders)/sizeof(char *) ) {
+	if ( order < 0 || order >= numgc_orders )
+	{
 		return;
 	}
 	G_Say( ent, &g_entities[player], SAY_TELL, gc_orders[order] );
 	G_Say( ent, ent, SAY_TELL, gc_orders[order] );
 }
+//[/JKH Bugfix]
 
 /*
 ==================

@@ -75,7 +75,6 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 			ent->client->saberKnockedTime = level.time + 9999999; // Disable Saber 
 			ent->client->ps.weaponTime = 99999999; // Disable Weapons
 			ent->client->ps.saberCanThrow = qfalse;
-			ent->client->emote_freeze = qtrue;
 		}
 	} 
 	else

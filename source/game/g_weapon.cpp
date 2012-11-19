@@ -1374,17 +1374,35 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 			CalcMuzzlePoint2 ( ent, forward, vright, up, muzzle2 );
 		//[/DualPistols]
 		
+		//[OpenRP - Weapon Accuracy]
+
 		//[WeapAccuracy]
 		//bump accuracy based on MP level.
 		if(ent && ent->client)
 		{
 			vec3_t angs; //used for adding in mishap inaccuracy.
-			float slopFactor = MISHAP_MAXINACCURACY * ent->client->ps.saberAttackChainCount/MISHAPLEVEL_MAX;
-			
+			//float slopFactor = MISHAP_MAXINACCURACY * ent->client->ps.saberAttackChainCount/MISHAPLEVEL_MAX;
+			float slopFactor;
+
+			if ( ent->client->ps.weapon == WP_BRYAR_PISTOL )
+			{
+			}
+
+			if ( ent->client->ps.pm_flags & PMF_DUCKED )
+			{
+				slopFactor = 0.300000;
+			}
+			else
+			{
+				slopFactor = 0.355555;
+			}
+
 			vectoangles( forward, angs );
-			angs[PITCH] += flrand(-slopFactor, slopFactor);
-			angs[YAW] += flrand(-slopFactor, slopFactor);
+			angs[PITCH] += flrand( -slopFactor, slopFactor );
+			angs[YAW] += flrand( -slopFactor, slopFactor );
 			AngleVectors( angs, forward, NULL, NULL );
+
+			//[/OpenRP - Weapon Accuracy]
 
 			//increase mishap level
 			if(!Q_irand(0, SkillLevelforWeapon(ent, ent->s.weapon)-1) && ent->s.weapon != WP_EMPLACED_GUN )//Sorry but the mishap meter needs to go up more that before.
