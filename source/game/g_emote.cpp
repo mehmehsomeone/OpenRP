@@ -61,20 +61,22 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 			ent->client->ps.saberMove = LS_NONE;
 			ent->client->saberKnockedTime = level.time; // Enable Saber
 			ent->client->ps.weaponTime = 0; // Enable Weapons
+			StandardSetBodyAnim(ent, anim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
 		}
 		else
 		{
 			M_HolsterThoseSabers(ent);
 			ent->client->emote_freeze = qtrue; // MJN 1
-			ent->client->ps.forceHandExtend = HANDEXTEND_TAUNT;
-			ent->client->ps.forceDodgeAnim = anim;
-			ent->client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
 			ent->client->ps.saberMove = LS_NONE;
 			ent->client->ps.saberBlocked = 0;
 			ent->client->ps.saberBlocking = 0;
 			ent->client->saberKnockedTime = level.time + 9999999; // Disable Saber 
 			ent->client->ps.weaponTime = 99999999; // Disable Weapons
 			ent->client->ps.saberCanThrow = qfalse;
+			ent->client->ps.forceHandExtend = HANDEXTEND_TAUNT;
+			ent->client->ps.forceDodgeAnim = anim;
+			ent->client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
+			StandardSetBodyAnim(ent, anim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
 		}
 	} 
 	else
