@@ -517,7 +517,6 @@ void WP_InitForcePowers( gentity_t *ent )
 				//[/BotTweaks]
 				{//[Account System]
 					//!g_teamAutoJoin.integer && 
-					/*
 					if(ent->client->sess.ojpClientPlugIn == qfalse && ent->client->pers.connected == CON_CONNECTED)
 					{
 						ent->client->sess.sessionTeam = TEAM_SPECTATOR;
@@ -527,7 +526,6 @@ void WP_InitForcePowers( gentity_t *ent )
 						ent->client->pers.teamState.state = TEAM_BEGIN;
 
 					}
-					*/
 					if ( !isLoggedIn( ent ) || !ent->client->sess.characterChosen )
 					{
 						//Make them a spectator so they can set their powerups up without being bothered.

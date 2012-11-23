@@ -21,13 +21,16 @@ USER INTERFACE MAIN
 #include "ui_shared.h"
 
 #if !WINDOWSXP_COMPILE
+//[JKH Bugfix]
 //[FAKE CHALLENGE RESPONSE HIJACK - Thanks to Didz]
 #define WIN32_LEAN_AND_MEAN
 #define NOGDI
 
 #include <Windows.h>
+//[/JKH Bugfix]
 
 
+//[JKH Bugfix]
 //[/FAKE CHALLENGE RESPONSE HIJACK]
 
 //q3queryboom Thanks to Razor
@@ -45,6 +48,27 @@ USER INTERFACE MAIN
 #elif defined(MACOS_X)
         #error q3queryboom hook not yet available on Mac OSX
 #endif
+//[/JKH Bugfix]
+
+//[JKH Bugfix]
+//--------------------------------
+// Name: Cvar security patch
+// Desc: Add security checks on cvars flagged with CVAR_SYSTEMINFO, so malicious servers can't overwrite unnecessary cvars
+// Hook: CL_SystemInfoChanged
+// Retn: Info_ValueForKey
+//--------------------------------
+#ifdef _WIN32
+	static unsigned char *cs_hookAddress = (unsigned char *) 0x421C5F;
+	static unsigned char *cs_returnSucess = (unsigned char *) 0x4449C0;
+	static unsigned char cs_originalBytes[] = { 0xE8, 0x5C, 0x2D, 0x02, 0x00 };
+
+#define ARRAY_LEN(x) (sizeof(x) / sizeof(*(x)))
+
+#elif defined(MACOS_X)
+	#error HOOK_CVARSEC not available on Mac OSX
+#endif
+//[/JKH Bugfix]
+
 #endif
 
 //[Mac]
@@ -441,7 +465,7 @@ static void __declspec(naked) Hook_VerifyChallengeResponse(void)
         }
 }
 
-void UI_PatchFakeChallengeResponse( qboolean patch )
+void Patch_FakeChallengeResponse( qboolean patch )
 {
         int dummy;
 
@@ -535,7 +559,7 @@ static void __declspec( naked ) Hook_QueryBoom( void )
         }
 }
 
-void PatchEngine( qboolean patch )
+void Patch_QueryBoom( qboolean patch )
 {
         int dummy;
 
@@ -554,15 +578,123 @@ void PatchEngine( qboolean patch )
 		}
 }
 
-void altEnterPatch( void )
+void Patch_AltEnter( qboolean patch )
 {
 	byte *_altEnterAddress = (byte *)0x454B5A;
 	int dummy;
 
-	VirtualProtect((LPVOID)_altEnterAddress, 2, PAGE_EXECUTE_READWRITE, (PDWORD)&dummy);
-	*(unsigned char *)0x454B5A = (unsigned char)0x90; //NOP opcode, skip over the instruction
-	*(unsigned char *)0x454B5B = (unsigned char)0x90; //NOP opcode, skip over the instruction
-	VirtualProtect((LPVOID)_altEnterAddress, 2, PAGE_EXECUTE_READ, NULL);
+	if ( patch )
+	{
+		VirtualProtect((LPVOID)_altEnterAddress, 2, PAGE_EXECUTE_READWRITE, (PDWORD)&dummy);
+		*(unsigned char *)0x454B5A = (unsigned char)0x90; //NOP opcode, skip over the instruction
+		*(unsigned char *)0x454B5B = (unsigned char)0x90; //NOP opcode, skip over the instruction
+		VirtualProtect((LPVOID)_altEnterAddress, 2, PAGE_EXECUTE_READ, NULL);
+	}
+	else
+	{
+	}
+}
+
+//--------------------------------
+// Name: Cvar security patch
+// Desc: Add security checks on cvars flagged with CVAR_SYSTEMINFO, so malicious servers can't overwrite unnecessary cvars
+// Hook: CL_SystemInfoChanged
+// Retn: Info_ValueForKey
+//--------------------------------
+static const char *csec_whitelist[] = { // alphabetical because fuck you
+	"fs_game",
+	"g_synchronousClients",
+	"pmove_msec",
+	"pmove_fixed",
+	"RMG_course",
+	"RMG_instances",
+	"RMG_map",
+	"RMG_mission",
+	"RMG_textseed",
+	"sv_cheats",
+	"sv_pure",
+	"sv_referencedPakNames",
+	"sv_referencedPaks",
+	"sv_serverid",
+	"sv_voip", //from ioq3 :3
+	"timescale",
+	"vm_ui",
+	"vm_game",
+	"vm_cgame",
+};
+static const int csec_whitelistSize = ARRAY_LEN( csec_whitelist );
+static char *csec_info = NULL;
+
+static void CSec_CheckWhitelist( void )
+{
+	char key[BIG_INFO_KEY] = {0}, value[BIG_INFO_VALUE] = {0};
+	const char *s = csec_info;
+	int i = 0;
+	extern void Info_RemoveKey_Big( char *s, const char *key );
+
+	while ( s )
+	{
+		Info_NextPair( &s, key, value );
+
+		if ( !key[0] )
+			break;
+
+		for ( i=0; i<csec_whitelistSize; i++ )
+		{
+			if ( !Q_stricmp( csec_whitelist[i], key ) )
+				break;
+		}
+
+		if ( !Q_stricmp( key, "fs_game" ) )
+		{
+			if ( strstr( value, "../" ) || strstr( value, "..\\" ) )
+			{
+				Com_Printf( S_COLOR_RED "SECURITY WARNING: server attempted directory traversal on %s=%s\n", key, value );
+				Info_RemoveKey_Big( csec_info, key );
+				s = csec_info;
+			}
+		}
+
+		if ( i == csec_whitelistSize )
+		{
+			Com_Printf( S_COLOR_RED "SECURITY WARNING: server is not allowed to set non-systeminfo cvar %s=%s\n", key, value );
+			Info_RemoveKey_Big( csec_info, key );
+			s = csec_info;
+		}
+	}
+}
+
+static void __declspec( naked ) Hook_CvarSecurity( void )
+{//Cvar Security
+	__asm
+	{
+		mov csec_info, ecx
+		pushad
+		call CSec_CheckWhitelist
+		popad
+
+		push cs_returnSucess
+		ret
+	}
+}
+
+void Patch_CvarSecurity( qboolean patch )
+{
+	int dummy;
+
+	if ( patch )
+	{
+		VirtualProtect( (LPVOID)cs_hookAddress, sizeof( cs_originalBytes ), PAGE_EXECUTE_READWRITE, (PDWORD)&dummy );
+		*cs_hookAddress = 0xE8; // replace with CALL opcode
+		*(unsigned int *)(cs_hookAddress + 1) = (unsigned int)Hook_CvarSecurity - (unsigned int)(cs_hookAddress + 5);
+		VirtualProtect( (LPVOID)cs_hookAddress, sizeof( cs_originalBytes ), PAGE_EXECUTE_READ, (PDWORD)&dummy );
+	}
+	else
+	{
+		VirtualProtect( (LPVOID)cs_hookAddress, sizeof( cs_originalBytes ), PAGE_EXECUTE_READWRITE, (PDWORD)&dummy);
+		memcpy( cs_hookAddress, &cs_originalBytes, sizeof(cs_originalBytes) );
+		VirtualProtect( (LPVOID)cs_hookAddress, sizeof(cs_originalBytes), PAGE_EXECUTE_READ, NULL);
+	}
 }
 #endif
 
@@ -1342,8 +1474,10 @@ void _UI_Shutdown( void ) {
 	UI_CleanupGhoul2();
 
 #if !WINDOWSXP_COMPILE
-	PatchEngine( qfalse );
-	UI_PatchFakeChallengeResponse( qfalse );
+	Patch_FakeChallengeResponse( qfalse );
+	Patch_QueryBoom( qfalse );
+	Patch_AltEnter( qfalse );
+	Patch_CvarSecurity( qfalse );
 #endif
 
 	//[DynamicMemory_Sabers]
@@ -10882,9 +11016,10 @@ void _UI_Init( qboolean inGameLoad ) {
 	//[/OpenRP - Clientplugin]
 
 #if !WINDOWSXP_COMPILE
-	UI_PatchFakeChallengeResponse( qtrue );
-	PatchEngine( qtrue );
-	altEnterPatch();
+	Patch_FakeChallengeResponse( qtrue );
+	Patch_QueryBoom( qtrue );
+	Patch_AltEnter( qtrue );
+	Patch_CvarSecurity( qtrue );
 #endif
 }
 
