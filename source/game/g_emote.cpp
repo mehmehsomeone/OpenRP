@@ -40,6 +40,13 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 		return;
 	}
 
+	//[OpenRP - Endlessly floating up bug]
+	if ( ent->client->forceLifting > -1 )
+	{
+		return;
+	}
+	//[/OpenRP - Endlessly floating up bug]
+
 	// MJN - Stop any running forcepowers.
 	while (i < NUM_FORCE_POWERS)
 	{

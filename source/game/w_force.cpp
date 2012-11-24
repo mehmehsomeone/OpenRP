@@ -2889,7 +2889,9 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 
 	i = 0;
 
-	if (!(self->client->ps.fd.forcePowersActive & (1 << FP_MINDTRICK)))
+	//[JKH - Invisible]
+	if ( !self->client->sess.isInvisible && !(self->client->ps.fd.forcePowersActive & (1 << FP_MINDTRICK)))
+	//[/JKH - Invisible]
 	{ //clear the mindtrick index values
 		self->client->ps.fd.forceMindtrickTargetIndex = 0;
 		self->client->ps.fd.forceMindtrickTargetIndex2 = 0;

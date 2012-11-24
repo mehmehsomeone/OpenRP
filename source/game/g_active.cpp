@@ -1279,6 +1279,12 @@ static void G_UpdateForceSightBroadcasts ( gentity_t *self )
 			continue;
 		}
 
+//[JKH - Invisible]
+		//Invisible people are handled later
+        if ( ent->client->sess.isInvisible )
+                 continue;
+//[/JKH - Invisible]
+
 		VectorSubtract( self->client->ps.origin, ent->client->ps.origin, angles );
 		dist = VectorLengthSquared ( angles );
 		vectoangles ( angles, angles );
@@ -1363,6 +1369,18 @@ void G_UpdateClientBroadcasts ( gentity_t *self )
 
 	// Anyone with force sight on should see this client
 	G_UpdateForceSightBroadcasts ( self );
+
+//[JKH - Invisible]
+	//FIXME: implement broadcastClients functionality instead of SVF_SINGLECLIENT
+    if ( self->client->sess.isInvisible )
+    {
+            self->r.svFlags |= SVF_SINGLECLIENT;
+            self->r.singleClient = self->s.number;
+    }
+    else
+            self->r.svFlags &= ~SVF_SINGLECLIENT;
+//[/JKH - Invisible]
+
 }
 
 void G_AddPushVecToUcmd( gentity_t *self, usercmd_t *ucmd )
@@ -3433,6 +3451,10 @@ void ClientThink_real( gentity_t *ent ) {
 	//[/BotTweaks]
 	else {
 		pm.tracemask = MASK_PLAYERSOLID;
+//[JKH - Invisible]
+		if ( ent->client->sess.isInvisible )
+                    pm.tracemask = 267009/*MASK_DEADSOLID*/;
+//[/JKH - Invisible]
 	}
 	pm.trace = trap_Trace;
 	pm.pointcontents = trap_PointContents;
@@ -3603,8 +3625,20 @@ void ClientThink_real( gentity_t *ent ) {
 #endif
 	}
 
-	Pmove (&pm);
+//[JKH - Invisible]
+    {
+        int savedMask = pm.tracemask;
+        if ( ent->client->sess.isInvisible )
+        {
+                pm.tracemask = CONTENTS_SOLID;
+                ent->r.contents = 0;
+        }
 
+        Pmove (&pm);
+
+        pm.tracemask = savedMask;
+    }
+//[/JKH - Invisible]
 	if (ent->client->solidHack)
 	{
 		if (ent->client->solidHack > level.time)
@@ -3981,6 +4015,12 @@ void ClientThink_real( gentity_t *ent ) {
 
 	// link entity now, after any personal teleporters have been used
 	trap_LinkEntity (ent);
+//[JKH - Invisible]
+	 //Raz: Nor for ghosts
+    if ( !ent->client->noclip && !ent->client->sess.isInvisible ) {
+            G_TouchTriggers( ent );
+    }
+//[/JKH - Invisible]
 	if ( !ent->client->noclip ) {
 		G_TouchTriggers( ent );
 	}

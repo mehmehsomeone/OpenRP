@@ -15,7 +15,7 @@
 #define ADMIN_ALLCHAT				8192 // /amAllChat
 #define ADMIN_INVISIBLE			    16384 // /aminvisible
 #define ADMIN_CHEATS				32768 // Cheat commands related
-#define	ADMIN_ADMINWHOIS			65536 // /amlistadmins
+#define	ADMIN_ADMINWHOIS			65536 // /listadmins
 #define ADMIN_SCALE					131072 // modelscaling
 #define ADMIN_SHAKE					262144 // amshakescreen
 #define ADMIN_ADDEFFECT				524288 // /amaddeffect
@@ -50,7 +50,7 @@ void Cmd_amUnSilence_F(gentity_t *ent);
 void Cmd_amSleep_F(gentity_t *ent);
 void Cmd_amUnsleep_F(gentity_t *ent);
 void Cmd_amProtect_F(gentity_t *ent);
-void Cmd_amListAdmins_F(gentity_t *ent);
+void Cmd_ListAdmins_F(gentity_t *ent);
 void Cmd_amEffect_F(gentity_t *ent);
 void Cmd_amForceTeam_F(gentity_t *ent);
 void Cmd_amMap_F(gentity_t *ent);
@@ -87,3 +87,4 @@ void Cmd_SpawnEnt_F( gentity_t *ent );
 void Cmd_RemoveEntity_F( gentity_t *ent );
 void Cmd_ListEnts_F( gentity_t *ent );
 void Cmd_Invisible_F( gentity_t *ent );
+void Cmd_Disguise_F( gentity_t *ent );

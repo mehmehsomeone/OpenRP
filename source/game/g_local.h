@@ -936,6 +936,7 @@ typedef struct {
 	qboolean allChatComplete;
 	qboolean isAutoWalking;
 	qboolean chatCommandExecuted;
+	qboolean isDisguised;
 	int chatMode;
 	float commFrequency;
 	int commMode;

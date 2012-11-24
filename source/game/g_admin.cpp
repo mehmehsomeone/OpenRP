@@ -1140,21 +1140,28 @@ void Cmd_amProtect_F(gentity_t *ent)
 amlistadmins Function
 ============
 */
-void Cmd_amListAdmins_F(gentity_t *ent)
+void Cmd_ListAdmins_F(gentity_t *ent)
 {
-	if(!G_CheckAdmin(ent, ADMIN_ADMINWHOIS))
-	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
-		return;
-	}
-
 	int i;
 
-	for(i = 0; i < level.maxclients; i++)
+	if(!G_CheckAdmin(ent, ADMIN_ADMINWHOIS))
 	{
-		if( g_entities[i].client->sess.isAdmin && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+		for(i = 0; i < level.maxclients; i++)
 		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^2Name: %s ^2Admin level: ^7%i\n\"", g_entities[i].client->pers.netname, g_entities[i].client->sess.adminLevel ) );
+			if( g_entities[i].client->sess.isAdmin && !g_entities[i].client->sess.isDisguised && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+			{
+				trap_SendServerCommand(ent-g_entities, va("print \"^2Name: %s ^2Admin level: ^7%i\n\"", g_entities[i].client->pers.netname, g_entities[i].client->sess.adminLevel ) );
+			}
+		}
+	}
+	else
+	{
+		for(i = 0; i < level.maxclients; i++)
+		{
+			if( g_entities[i].client->sess.isAdmin && g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
+			{
+				trap_SendServerCommand(ent-g_entities, va("print \"^2Name: %s ^2Admin level: ^7%i\n\"", g_entities[i].client->pers.netname, g_entities[i].client->sess.adminLevel ) );
+			}
 		}
 	}
 	return;
@@ -2920,4 +2927,25 @@ void Cmd_Invisible_F( gentity_t *ent )
                 trap_SendServerCommand( ent-g_entities, "print \"^2You are now invisible.\n\"" );
         }
 	   return;
+}
+
+void Cmd_Disguise_F( gentity_t *ent )
+{
+	if ( !ent->client->sess.isAdmin )
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"^1You are not allowed to use this command.\n\"" ) );
+		return;
+	}
+
+	if ( !ent->client->sess.isDisguised )
+	{
+		ent->client->sess.isDisguised = qtrue;
+		trap_SendServerCommand( ent-g_entities, "print \"^2You are now ^7disguised\n\"" );
+	}
+	else
+	{
+		ent->client->sess.isDisguised = qfalse;
+		trap_SendServerCommand( ent-g_entities, "print \"^2You are now ^7no longer disguised\n\"" );
+	}
+	return;
 }

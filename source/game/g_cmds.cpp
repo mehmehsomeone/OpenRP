@@ -4769,9 +4769,9 @@ void ClientCommand( int clientNum ) {
 		return;	
 	}
 	*/
-	if (Q_stricmp(cmd, "amlistadmins") == 0)
+	if (Q_stricmp(cmd, "listadmins") == 0)
 	{
-		Cmd_amListAdmins_F (ent);
+		Cmd_ListAdmins_F (ent);
 		return;	
 	}
 	if (Q_stricmp(cmd, "charactername") == 0)
@@ -4987,6 +4987,11 @@ void ClientCommand( int clientNum ) {
 	if (Q_stricmp(cmd, "aminvisible") == 0)
 	{
 		Cmd_Invisible_F (ent);
+		return;
+	}
+	if (Q_stricmp(cmd, "amdisguise") == 0)
+	{
+		Cmd_Disguise_F (ent);
 		return;
 	}
 

@@ -464,7 +464,7 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand("factiongencredits");
 	trap_AddCommand("listfactions");
 	trap_AddCommand("bounty");
-	trap_AddCommand("amlistadmins");
+	trap_AddCommand("listadmins");
 	trap_AddCommand("charactername");
 	trap_AddCommand("comm");
 	trap_AddCommand("amkick");
@@ -496,4 +496,6 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand("ooc");
 	trap_AddCommand("force");
 	trap_AddCommand("charui");
+	trap_AddCommand("disguise");
+	trap_AddCommand("aminvisible");
 }

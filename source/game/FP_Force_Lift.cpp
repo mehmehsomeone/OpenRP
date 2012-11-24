@@ -2,8 +2,7 @@
 
 void RunForceLift(gentity_t*self)
 {
-//	if(self->client->forceLifting != -1 && self->client->ps.fd.forcePowerDebounce[FP_LIFT] <= level.time
-	if( self->client->ps.fd.forcePowerDebounce[FP_LIFT] <= level.time
+	if(self->client->forceLifting != -1 && self->client->ps.fd.forcePowerDebounce[FP_LIFT] <= level.time
 		&& self->client->forceLiftTime >= level.time )
 	{
 		gentity_t*ent = &g_entities[self->client->forceLifting];
@@ -50,10 +49,8 @@ void RunForceLift(gentity_t*self)
 			self->client->forceLifting = -1;
 		}
 	}
-	//[OpenRP - Endlessly floating up bug]
-	//else if(self->client->forceLifting != -1 && self->client->forceLiftTime <= level.time)
-	else if( self->client->forceLiftTime <= level.time )
-	//[/OpenRP - Endlessly floating up bug]
+	
+	else if(self->client->forceLifting != -1 && self->client->forceLiftTime <= level.time)
 	{
 		gentity_t*ent = &g_entities[self->client->forceLifting];
 		ent->client->ps.velocity[2]=0;
