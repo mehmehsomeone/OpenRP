@@ -1477,7 +1477,7 @@ void _UI_Shutdown( void ) {
 	Patch_FakeChallengeResponse( qfalse );
 	Patch_QueryBoom( qfalse );
 	Patch_AltEnter( qfalse );
-	Patch_CvarSecurity( qfalse );
+	//Patch_CvarSecurity( qfalse );
 #endif
 
 	//[DynamicMemory_Sabers]
@@ -11019,7 +11019,7 @@ void _UI_Init( qboolean inGameLoad ) {
 	Patch_FakeChallengeResponse( qtrue );
 	Patch_QueryBoom( qtrue );
 	Patch_AltEnter( qtrue );
-	Patch_CvarSecurity( qtrue );
+	//Patch_CvarSecurity( qtrue );
 #endif
 }
 
