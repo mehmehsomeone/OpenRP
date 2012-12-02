@@ -51,7 +51,7 @@ extern void ForceThrow( gentity_t *self, qboolean pull );
 extern void ForceLightning( gentity_t *self );
 extern void ForceHeal( gentity_t *self );
 extern void ForceRage( gentity_t *self );
-extern void ForceProtect( gentity_t *self );
+extern void ForceManipulate( gentity_t *self );
 extern void ForceAbsorb( gentity_t *self );
 extern int WP_MissileBlockForBlock( int saberBlock );
 extern qboolean G_GetHitLocFromSurfName( gentity_t *ent, const char *surfName, int *hitLoc, vec3_t point, vec3_t dir, vec3_t bladeDir, int mod );
@@ -2653,7 +2653,7 @@ static void Jedi_CombatDistance( int enemy_dist )
 				&& (NPC->client->ps.fd.forcePowersActive&(1<<FP_MANIPULATE)) == 0
 				&& Q_irand( 0, 1 ) )
 			{
-				ForceProtect( NPC );
+				ForceManipulate( NPC );
 				usedForce = qtrue;
 			}
 			//[ForceSys]
@@ -7690,7 +7690,7 @@ void NPC_Jedi_Pain(gentity_t *self, gentity_t *attacker, int damage)
 							}
 							else
 							{
-								ForceProtect( self );
+								ForceManipulate( self );
 							}
 						}
 					}

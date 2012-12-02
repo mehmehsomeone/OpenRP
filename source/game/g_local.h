@@ -438,8 +438,8 @@ extern vmCvar_t		openrp_admin10Bitvalues;
 //If it's on (set to 1), then lower level admins can't use cmds like sleep on higher level admins.
 extern vmCvar_t		openrp_adminControl;
 
-extern vmCvar_t		openrp_jetpackFuel;
-extern vmCvar_t		openrp_cloakFuel;
+//extern vmCvar_t		openrp_jetpackFuel;
+//extern vmCvar_t		openrp_cloakFuel;
 
 extern vmCvar_t		openrp_allChat;
 
@@ -2157,7 +2157,7 @@ void ForceHeal( gentity_t *self );
 void ForceSpeed( gentity_t *self, int forceDuration );
 void ForceRage( gentity_t *self );
 void ForceGrip( gentity_t *self );
-void ForceProtect( gentity_t *self );
+void ForceManipulate( gentity_t *self );
 void ForceAbsorb( gentity_t *self );
 void ForceTeamHeal( gentity_t *self );
 //[ManualDodge]

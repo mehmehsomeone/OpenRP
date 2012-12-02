@@ -1744,7 +1744,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 		break;
 	}
 
-		//[OpenRP - Chat System]
+	//[OpenRP - Chat System]
 	if ( !allChat )
 	{
 		if (locMsg && g_gametype.integer != GT_FFA )
@@ -2106,7 +2106,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		{
 			other = &g_entities[j];
 
-			if ( Distance( ent->client->ps.origin, other->client->ps.origin ) < distance )
+			if ( Distance( ent->client->ps.origin, other->client->ps.origin ) <= distance )
 			{
 				if ( mode == SAY_ME )
 				{
@@ -4489,11 +4489,6 @@ void ClientCommand( int clientNum ) {
 		TheEmote (BOTH_FJSS_TR_BL, ent, qfalse);
 		return;
 	}
-	if (Q_stricmp(cmd, "empoint") == 0)
-	{
-		TheEmote (BOTH_SCEPTER_HOLD, ent, qfalse);
-		return;
-	}
 	if (Q_stricmp(cmd, "emkneel2") == 0)
 	{
 		TheEmote (BOTH_ROSH_PAIN, ent, qtrue);
@@ -4535,12 +4530,12 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp(cmd, "emsurrender") == 0)
 	{
-		TheEmote (TORSO_SURRENDER_START, ent, qtrue);
+		TheEmote (TORSO_SURRENDER_START, ent, qfalse);
 		return;
 	}
 	if (Q_stricmp(cmd, "ematease") == 0)
 	{
-		TheEmote (BOTH_STAND4, ent, qtrue);
+		TheEmote (BOTH_STAND4, ent, qfalse);
 		return;
 	}
 	if (Q_stricmp(cmd, "empunch") == 0 )
@@ -4600,29 +4595,85 @@ void ClientCommand( int clientNum ) {
 	}
 	if (Q_stricmp(cmd, "emaim") == 0)
 	{
-		TheEmote (TORSO_WEAPONIDLE4, ent, qtrue);
+		TheEmote (TORSO_WEAPONIDLE4, ent, qfalse);
 		return;
 	}
-	if (Q_stricmp(cmd, "emlean") == 0)
+	if (Q_stricmp(cmd, "emwait") == 0)
 	{
-		TheEmote (BOTH_STAND10, ent, qtrue);
+		TheEmote (BOTH_STAND10, ent, qfalse);
 		return;
 	}
 	if (Q_stricmp(cmd, "emstand") == 0)
 	{
-		TheEmote (BOTH_STAND8, ent, qtrue);
+		TheEmote (BOTH_STAND8, ent, qfalse);
 		return;
 	}
 	if (Q_stricmp(cmd, "empoint") == 0)
 	{
-		TheEmote (BOTH_SCEPTER_HOLD, ent, qtrue);
+		TheEmote (BOTH_SCEPTER_HOLD, ent, qfalse);
 		return;
 	}
 	if (Q_stricmp(cmd, "emhips") == 0)
 	{
-		TheEmote (BOTH_STAND8, ent, qtrue);
+		TheEmote (BOTH_STAND8, ent, qfalse);
 		return;
 	}
+	if (Q_stricmp(cmd, "emdie") == 0)
+	{
+		TheEmote (BOTH_DEATH1, ent, qtrue);
+		return;
+	}
+	if (Q_stricmp(cmd, "emdie2") == 0)
+	{
+		TheEmote (BOTH_DEATH14, ent, qtrue);
+		return;
+	}
+	if (Q_stricmp(cmd, "emdie3") == 0)
+	{
+		TheEmote (BOTH_DEATH17, ent, qtrue);
+		return;
+	}
+	if (Q_stricmp(cmd, "emdie4") == 0)
+	{
+		TheEmote (BOTH_DEATH4, ent, qtrue);
+		return;
+	}
+	if (Q_stricmp(cmd, "emtwitch") == 0)
+	{
+		TheEmote (BOTH_DEATH14_UNGRIP, ent, qfalse);
+		return;
+	}
+	if (Q_stricmp(cmd, "emtwitch2") == 0)
+	{
+		TheEmote (TORSO_CHOKING1, ent, qfalse);
+		return;
+	}
+	if (Q_stricmp(cmd, "emchoke") == 0)
+	{
+		TheEmote (BOTH_CHOKE1, ent, qfalse);
+		return;
+	}
+	if (Q_stricmp(cmd, "empush") == 0)
+	{
+		TheEmote (BOTH_ATTACK11, ent, qfalse);
+		return;
+	}
+	if (Q_stricmp(cmd, "embutton") == 0)
+	{
+		TheEmote (BOTH_BUTTON_HOLD, ent, qfalse);
+		return;
+	}
+	if (Q_stricmp(cmd, "emthrow") == 0)
+	{
+		TheEmote (BOTH_SABERTHROW1START, ent, qfalse);
+		return;
+	}
+	if (Q_stricmp(cmd, "emsorrow") == 0)
+	{
+		TheEmote (BOTH_FORCEHEAL_START, ent, qfalse);
+		return;
+	}
+
 	if (Q_stricmp (cmd, "login") == 0)
 	{
 		Cmd_AccountLogin_F (ent);

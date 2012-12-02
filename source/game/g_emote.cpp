@@ -39,14 +39,19 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 	{
 		return;
 	}
-
 	//[OpenRP - Endlessly floating up bug]
-	/*
-	if ( ent->client->forceLifting > -1 )
+	if(ent->client->forceLifting != -1)
 	{
-		return;
+		
+		if(ent && ent->client)
+		{
+			g_entities[ent->client->forceLifting].client->ps.forceGripMoveInterval = 0;
+			g_entities[ent->client->forceLifting].client->ps.forceGripChangeMovetype = PM_NORMAL;
+			g_entities[ent->client->forceLifting].client->ps.pm_type = PM_NORMAL;
+			g_entities[ent->client->forceLifting].client->underForceLift=qfalse;
+			ent->client->forceLifting = -1;
+		}
 	}
-	*/
 	//[/OpenRP - Endlessly floating up bug]
 
 	// MJN - Stop any running forcepowers.
@@ -63,6 +68,7 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 	{
 		if (ent->client->ps.forceDodgeAnim == anim)
 		{
+			StandardSetBodyAnim(ent, anim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
 			ent->client->emote_freeze = qfalse;
 			ent->client->ps.saberCanThrow = qtrue;
 			ent->client->ps.forceDodgeAnim = 0;
@@ -70,7 +76,6 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 			ent->client->ps.saberMove = LS_NONE;
 			ent->client->saberKnockedTime = level.time; // Enable Saber
 			ent->client->ps.weaponTime = 0; // Enable Weapons
-			StandardSetBodyAnim(ent, anim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
 		}
 		else
 		{

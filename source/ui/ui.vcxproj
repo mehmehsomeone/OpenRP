@@ -283,6 +283,9 @@
     <ClCompile Include="..\game\bg_weapons.cpp" />
     <ClCompile Include="..\game\q_math.cpp" />
     <ClCompile Include="..\game\q_shared.cpp" />
+    <ClCompile Include="enginehelper.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug(Final)|Win32'">CompileAsC</CompileAs>
+    </ClCompile>
     <ClCompile Include="ui_atoms.cpp" />
     <ClCompile Include="ui_force.cpp" />
     <ClCompile Include="ui_gameinfo.cpp" />
@@ -302,6 +305,8 @@
     <ClInclude Include="..\game\bg_weapons.h" />
     <ClInclude Include="..\qcommon\disablewarnings.h" />
     <ClInclude Include="..\qcommon\game_version.h" />
+    <ClInclude Include="asmdefines.h" />
+    <ClInclude Include="engine.h" />
     <ClInclude Include="keycodes.h" />
     <ClInclude Include="..\..\kotold\ui\jamp\menudef.h" />
     <ClInclude Include="..\game\q_shared.h" />

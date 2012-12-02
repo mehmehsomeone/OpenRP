@@ -121,7 +121,7 @@ void DoGripAction(gentity_t *self, forcePowers_t forcePower)
 		gripEnt->client->otherKillerWeaponType = WP_NONE;
 		//[/Asteroids]
 
-			gripEnt->client->ps.forceGripChangeMovetype = PM_FLOAT;
+		gripEnt->client->ps.forceGripChangeMovetype = PM_FLOAT;
 
 		if(gripEnt->client)
 		{

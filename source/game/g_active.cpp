@@ -3753,7 +3753,7 @@ void ClientThink_real( gentity_t *ent ) {
 			ForceRage(ent);
 			break;
 		case GENCMD_FORCE_MANIPULATE:
-			ForceProtect(ent);
+			ForceManipulate(ent);
 			break;
 		//[ForceSys][Reload]
 		case GENCMD_FORCE_ABSORB:

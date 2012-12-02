@@ -17,11 +17,13 @@ void ForceAbsorb( gentity_t *self )
 		return;
 
 
+	/*
 	// Make sure to turn off Force Rage and Force Protection.
 	if (self->client->ps.fd.forcePowersActive & (1 << FP_RAGE) )
 		WP_ForcePowerStop( self, FP_RAGE );
 	if (self->client->ps.fd.forcePowersActive & (1 << FP_MANIPULATE) )
 		WP_ForcePowerStop( self, FP_MANIPULATE );
+	*/
 
 	self->client->ps.forceAllowDeactivateTime = level.time + 1500;
 

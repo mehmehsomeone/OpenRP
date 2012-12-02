@@ -41,7 +41,7 @@ void ForceLightning( gentity_t *self );
 void DoManipulateAction(gentity_t*self);
 void ForceShootLightning( gentity_t *self );
 void WP_UpdateMindtrickEnts(gentity_t *self);
-void ForceManipulate(gentity_t*self);
+void RunForceManipulate(gentity_t*self);
 qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPower);
 void ForceJumpCharge( gentity_t *self, usercmd_t *ucmd );
 

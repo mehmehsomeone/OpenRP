@@ -421,9 +421,6 @@
     <ClCompile Include="FP_Mindtrick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FP_Protect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FP_PushPull.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

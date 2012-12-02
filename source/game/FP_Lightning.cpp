@@ -13,35 +13,33 @@ qboolean OJP_BlockLightning(gentity_t *attacker, gentity_t *defender, vec3_t imp
 		return qfalse;
 
 
-	if(!OJP_CounterForce(attacker, defender, FP_LIGHTNING))		
-		return qfalse;
-
-
 	if(defender->client->ps.weapon != WP_SABER  //not using saber
 		|| defender->client->ps.saberHolstered == 2 //sabers off
-		|| defender->client->ps.saberInFlight)  //saber not here
+		|| defender->client->ps.saberInFlight  //saber not here
+		|| defender->client->ps.fd.forcePowerLevel[FP_SABER_DEFENSE] != 3) //doesn't have saber defense 3
 		saberLightBlock = qfalse;
-
-
-	if(!InFront(attacker->client->ps.origin, defender->client->ps.origin, defender->client->ps.viewangles, 0.0f)
-		&& (defender->client->ps.stats[STAT_DODGE] < DODGE_CRITICALLEVEL //too low on DP
-			|| !saberLightBlock) ) //can't block behind us while hand blocking.
-		return qfalse;
 
 
 	//determine the cost to block the lightning
 	dpBlockCost = damage;
 
 	//check to see if we have enough DP
-	if(defender->client->ps.stats[STAT_DODGE] < dpBlockCost)
-		return qfalse;
-
+	//if(defender->client->ps.stats[STAT_DODGE] < dpBlockCost)
+		//return qfalse;
 
 	if(saberLightBlock)
 		//ok, we can do it.  Hold up the saber to block it.
 		defender->client->ps.saberBlocked = BLOCKED_TOP;
 	else
 	{//use our hand to block the lightning
+		if (!OJP_CounterForce(attacker, defender, FP_LIGHTNING))		
+			return qfalse;
+
+		if(!InFront(attacker->client->ps.origin, defender->client->ps.origin, defender->client->ps.viewangles, 0.0f)
+		//&& (defender->client->ps.stats[STAT_DODGE] < DODGE_CRITICALLEVEL //too low on DP
+			&& !saberLightBlock ) //can't block behind us while hand blocking.
+			return qfalse;
+
 		defender->client->ps.forceHandExtend = HANDEXTEND_FORCE_HOLD;
 		defender->client->ps.forceHandExtendTime = level.time + 500;
 	}

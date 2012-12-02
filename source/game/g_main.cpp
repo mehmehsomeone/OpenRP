@@ -751,8 +751,8 @@ vmCvar_t		openrp_adminControl;
 vmCvar_t	g_allowBlackNames;		// Allow clients to use black names
 //[/BlackNames]
 
-vmCvar_t	openrp_jetpackFuel;
-vmCvar_t	openrp_cloakFuel;
+//vmCvar_t	openrp_jetpackFuel;
+//vmCvar_t	openrp_cloakFuel;
 
 vmCvar_t openrp_allChat;
 
@@ -1277,8 +1277,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_allowBlackNames, "g_allowBlackNames", "1", CVAR_ARCHIVE, 0, qtrue },
 	//[/BlackNames]
 
-	{ &openrp_jetpackFuel, "openrp_jetpackFuel", "1", CVAR_ARCHIVE, 0, qtrue },
-	{ &openrp_cloakFuel, "openrp_cloakFuel", "1", CVAR_ARCHIVE, 0, qtrue },
+	//{ &openrp_jetpackFuel, "openrp_jetpackFuel", "0", CVAR_ARCHIVE, 0, qtrue },
+	//{ &openrp_cloakFuel, "openrp_cloakFuel", "0", CVAR_ARCHIVE, 0, qtrue },
 	
 	{ &openrp_allChat, "openrp_allChat", "1", CVAR_ARCHIVE, 0, qtrue },
 
@@ -4525,10 +4525,12 @@ void G_RunFrame( int levelTime ) {
 					//[JetpackSys]
 					if (ent->client->pers.cmd.forwardmove || ent->client->pers.cmd.upmove || ent->client->pers.cmd.rightmove)
 					{ //only use fuel when actually boosting.
+						/*
 						if ( openrp_jetpackFuel.integer == 1 )
 						{
 							ent->client->ps.jetpackFuel -= 2; //issue 15 Original 4
 						}
+						*/
 					}
 					//[/JetpackSys]
 					
@@ -4560,10 +4562,12 @@ void G_RunFrame( int levelTime ) {
 			{ //using cloak, drain battery
 				if (ent->client->cloakDebReduce < level.time)
 				{
+					/*
 					if ( openrp_cloakFuel.integer == 1 )
 					{
 						ent->client->ps.cloakFuel--;
 					}
+					*/
 					
 					if (ent->client->ps.cloakFuel <= 0)
 					{ //turn it off
@@ -4573,7 +4577,7 @@ void G_RunFrame( int levelTime ) {
 					ent->client->cloakDebReduce = level.time + CLOAK_DEFUEL_RATE;
 				}
 			}
-			else if (ent->client->ps.cloakFuel < 100)
+			else if ( ent->client->ps.cloakFuel < CLOAK_MAXFUEL )
 			{ //recharge cloak
 				if (ent->client->cloakDebRecharge < level.time)
 				{

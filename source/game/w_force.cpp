@@ -1332,42 +1332,43 @@ qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPo
 		if(!WalkCheck(defender) || defender->client->ps.groundEntityNum == ENTITYNUM_NONE)
 		//can't block much stronger Force power while running or in mid-air
 			return qfalse;
-		if( defender->client->ps.saberAttackChainCount >=MISHAPLEVEL_LIGHT ) //Holmes, added
-			return qfalse;
+	//	if( defender->client->ps.saberAttackChainCount >=MISHAPLEVEL_LIGHT ) //Holmes, added
+	//		return qfalse;
 
-		if (defender->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL) //Holmes, added
-			return qfalse;
+	//	if (defender->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL) //Holmes, added
+		//	return qfalse;
 		// 1% chance of failing due to readiness
 		if(!Q_irand( 0, 100 ))
-			return qfalse;
+			return qtrue;
+		return qfalse;
 	}
 	else if(abilityDef == 1){ //Holmes- was >= 1, which conflicts with if abilityDef >=2.
 	//defender is slightly weaker than their attacker
 		if(defender->client->ps.groundEntityNum == ENTITYNUM_NONE)
 			return qfalse;
 	
-		if(defender->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL) //Holmes, added
-			return qfalse;
+	//	if(defender->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL) //Holmes, added
+		//	return qfalse;
 
 
- 		if(PM_SaberInBrokenParry(defender->client->ps.saberMove))
-			return qfalse;
+ 	//	if(PM_SaberInBrokenParry(defender->client->ps.saberMove))
+		//	return qfalse;
 
 
-		if(BG_InSlowBounce(&defender->client->ps) && defender->client->ps.userInt3 & (1 << FLAG_OLDSLOWBOUNCE))
+	//	if(BG_InSlowBounce(&defender->client->ps) && defender->client->ps.userInt3 & (1 << FLAG_OLDSLOWBOUNCE))
 		//can't block lightning while in the heavier slow bounces.
-			return qfalse;
+		//	return qfalse;
 
 
-		if( defender->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY )
-			return qfalse;
+	//	if( defender->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY )
+		//	return qfalse;
 	
-		if( defender->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT
-		&& attacker->client->ps.fd.saberAnimLevel == SS_DESANN)
-			return qfalse;
+	//	if( defender->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT
+	//	&& attacker->client->ps.fd.saberAnimLevel == SS_DESANN)
+	//		return qfalse;
 
-		if (defender->client->ps.forceHandExtend != HANDEXTEND_NONE)
-			return qtrue;
+	//	if (defender->client->ps.forceHandExtend != HANDEXTEND_NONE)
+	//		return qtrue;
 
 		//[OpenRP - If someone had a gun and force, they were destroyed by others force-wise.]
 		/*
@@ -1379,7 +1380,7 @@ qboolean OJP_CounterForce(gentity_t *attacker, gentity_t *defender, int attackPo
 		*/
 		//[/OpenRP - If someone had a gun and force, they were destroyed by others force-wise.]
 	
-	//return qtrue;
+	return qfalse;
 	}
 	
 	else if(abilityDef <= 0) //Holmes, added
@@ -2050,7 +2051,7 @@ int WP_DoSpecificPower( gentity_t *self, usercmd_t *ucmd, forcePowers_t forcepow
 
 			if (self->client->ps.fd.forceGripEntityNum == ENTITYNUM_NONE)
 			{
-				ForceManipulate(self);
+				RunForceManipulate(self);
 			}
 
 			if (self->client->ps.fd.forceGripEntityNum != ENTITYNUM_NONE)
@@ -2439,8 +2440,7 @@ void JediMasterUpdate(gentity_t *self)
 			self->client->ps.fd.forcePowersKnown |= (1 << i);
 			self->client->ps.fd.forcePowerLevel[i] = FORCE_LEVEL_3;
 
-			if (i == FP_TEAM_HEAL || i == FP_LIFT ||
-				i == FP_DRAIN)
+			if (i == FP_DRAIN)
 			{ //team powers are useless in JM, absorb is too because no one else has powers to absorb. Drain is just
 			  //relatively useless in comparison, because its main intent is not to heal, but rather to cripple others
 			  //by draining their force at the same time. And no one needs force in JM except the JM himself.
@@ -2839,9 +2839,9 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 				//[ExpSys]
 				if(i == FP_HEAL 
 					|| i == FP_RAGE 
-					|| i == FP_MANIPULATE 
-					|| i == FP_TEAM_HEAL
-					|| i == FP_LIFT
+				//	|| i == FP_MANIPULATE 
+				//	|| i == FP_TEAM_HEAL
+					//|| i == FP_PROTECT
 					|| i == FP_DRAIN)
 				{//don't boost the level of Enhanced's disabled force powers.
 					i++;

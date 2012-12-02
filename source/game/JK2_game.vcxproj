@@ -394,7 +394,6 @@
     <ClCompile Include="FP_Lightning.cpp" />
     <ClCompile Include="FP_Manipulate.cpp" />
     <ClCompile Include="FP_Mindtrick.cpp" />
-    <ClCompile Include="FP_Protect.cpp" />
     <ClCompile Include="FP_PushPull.cpp" />
     <ClCompile Include="FP_Rage.cpp" />
     <ClCompile Include="FP_Sense.cpp" />

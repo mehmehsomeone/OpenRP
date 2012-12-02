@@ -20,18 +20,11 @@ USER INTERFACE MAIN
 #include "../game/bg_saga.h"
 #include "ui_shared.h"
 
-#if !WINDOWSXP_COMPILE
-//[JKH Bugfix]
-//[FAKE CHALLENGE RESPONSE HIJACK - Thanks to Didz]
-#define WIN32_LEAN_AND_MEAN
-#define NOGDI
-
-#include <Windows.h>
-//[/JKH Bugfix]
+#include "asmdefines.h"
+#include "engine.h"
 
 
 //[JKH Bugfix]
-//[/FAKE CHALLENGE RESPONSE HIJACK]
 
 //q3queryboom Thanks to Razor
 //--------------------------------
@@ -49,27 +42,6 @@ USER INTERFACE MAIN
         #error q3queryboom hook not yet available on Mac OSX
 #endif
 //[/JKH Bugfix]
-
-//[JKH Bugfix]
-//--------------------------------
-// Name: Cvar security patch
-// Desc: Add security checks on cvars flagged with CVAR_SYSTEMINFO, so malicious servers can't overwrite unnecessary cvars
-// Hook: CL_SystemInfoChanged
-// Retn: Info_ValueForKey
-//--------------------------------
-#ifdef _WIN32
-	static unsigned char *cs_hookAddress = (unsigned char *) 0x421C5F;
-	static unsigned char *cs_returnSucess = (unsigned char *) 0x4449C0;
-	static unsigned char cs_originalBytes[] = { 0xE8, 0x5C, 0x2D, 0x02, 0x00 };
-
-#define ARRAY_LEN(x) (sizeof(x) / sizeof(*(x)))
-
-#elif defined(MACOS_X)
-	#error HOOK_CVARSEC not available on Mac OSX
-#endif
-//[/JKH Bugfix]
-
-#endif
 
 //[Mac]
 #if MAC_PORT
@@ -595,12 +567,8 @@ void Patch_AltEnter( qboolean patch )
 	}
 }
 
-//--------------------------------
-// Name: Cvar security patch
-// Desc: Add security checks on cvars flagged with CVAR_SYSTEMINFO, so malicious servers can't overwrite unnecessary cvars
-// Hook: CL_SystemInfoChanged
-// Retn: Info_ValueForKey
-//--------------------------------
+#ifdef HOOK_CVARSEC
+
 static const char *csec_whitelist[] = { // alphabetical because fuck you
 	"fs_game",
 	"g_synchronousClients",
@@ -627,8 +595,9 @@ static char *csec_info = NULL;
 
 static void CSec_CheckWhitelist( void )
 {
-	char key[BIG_INFO_KEY] = {0}, value[BIG_INFO_VALUE] = {0};
-	const char *s = csec_info;
+	char key[BIG_INFO_KEY] = {0},
+	value[BIG_INFO_VALUE] = {0},
+	*s = csec_info;
 	int i = 0;
 	extern void Info_RemoveKey_Big( char *s, const char *key );
 
@@ -642,7 +611,7 @@ static void CSec_CheckWhitelist( void )
 		for ( i=0; i<csec_whitelistSize; i++ )
 		{
 			if ( !Q_stricmp( csec_whitelist[i], key ) )
-				break;
+			break;
 		}
 
 		if ( !Q_stricmp( key, "fs_game" ) )
@@ -664,38 +633,22 @@ static void CSec_CheckWhitelist( void )
 	}
 }
 
-static void __declspec( naked ) Hook_CvarSecurity( void )
+HOOK( CvarSecurity )
 {//Cvar Security
-	__asm
+	__StartHook( CvarSecurity )
 	{
-		mov csec_info, ecx
-		pushad
-		call CSec_CheckWhitelist
-		popad
+		__asm2__( mov csec_info, ecx );
+		__asm1__( pushad );
+		__asm1__( call CSec_CheckWhitelist );
+		__asm1__( popad );
 
-		push cs_returnSucess
-		ret
+		__asm1__( push CSEC_RETPOS );
+		__asm1__( ret );
 	}
+	__EndHook( CvarSecurity )
 }
 
-void Patch_CvarSecurity( qboolean patch )
-{
-	int dummy;
-
-	if ( patch )
-	{
-		VirtualProtect( (LPVOID)cs_hookAddress, sizeof( cs_originalBytes ), PAGE_EXECUTE_READWRITE, (PDWORD)&dummy );
-		*cs_hookAddress = 0xE8; // replace with CALL opcode
-		*(unsigned int *)(cs_hookAddress + 1) = (unsigned int)Hook_CvarSecurity - (unsigned int)(cs_hookAddress + 5);
-		VirtualProtect( (LPVOID)cs_hookAddress, sizeof( cs_originalBytes ), PAGE_EXECUTE_READ, (PDWORD)&dummy );
-	}
-	else
-	{
-		VirtualProtect( (LPVOID)cs_hookAddress, sizeof( cs_originalBytes ), PAGE_EXECUTE_READWRITE, (PDWORD)&dummy);
-		memcpy( cs_hookAddress, &cs_originalBytes, sizeof(cs_originalBytes) );
-		VirtualProtect( (LPVOID)cs_hookAddress, sizeof(cs_originalBytes), PAGE_EXECUTE_READ, NULL);
-	}
-}
+#endif //HOOK_CVARSEC
 #endif
 
 /*

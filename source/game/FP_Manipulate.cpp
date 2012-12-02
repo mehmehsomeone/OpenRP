@@ -84,7 +84,12 @@ void DoManipulateAction(gentity_t*self)
 		gripEnt->client->otherKillerWeaponType = WP_NONE;
 		//[/Asteroids]
 
-		gripEnt->client->ps.forceGripChangeMovetype = PM_FLOAT;
+		//[OpenRP - Manipulate has Lift animation]
+		gripEnt->client->ps.legsAnim = BOTH_PULLED_INAIR_F;
+		gripEnt->client->ps.torsoAnim = BOTH_PULLED_INAIR_F;
+		gripEnt->client->ps.torsoTimer = 1000;
+		gripEnt->client->ps.legsTimer = 1000;
+		//[/OpenRP - Manipulate has Lift animation]
 	}
 	if(gripEnt->client)
 	{
@@ -219,7 +224,7 @@ void DoManipulateAction(gentity_t*self)
 	}
 }
 
-void ForceManipulate(gentity_t*self)
+void RunForceManipulate(gentity_t*self)
 {
 	trace_t tr;
 	vec3_t tfrom, tto, fwd;
@@ -309,4 +314,25 @@ void ForceManipulate(gentity_t*self)
 		self->client->ps.fd.forceGripEntityNum = ENTITYNUM_NONE;
 		return;
 	}
+}
+
+void ForceManipulate( gentity_t *self )
+{
+	if ( self->health <= 0 )
+		return;
+
+
+	if (self->client->ps.forceAllowDeactivateTime < level.time &&
+		(self->client->ps.fd.forcePowersActive & (1 << FP_MANIPULATE)) )
+	{
+		WP_ForcePowerStop( self, FP_MANIPULATE );
+		return;
+	}
+
+	if ( !WP_ForcePowerUsable( self, FP_MANIPULATE ) )
+		return;
+
+	self->client->ps.forceAllowDeactivateTime = level.time + 1500;
+
+	WP_ForcePowerStart( self, FP_MANIPULATE, 0 );
 }

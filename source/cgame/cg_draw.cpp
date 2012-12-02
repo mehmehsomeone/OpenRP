@@ -7312,7 +7312,7 @@ void CG_DrawEWebHealth(void)
 	{
 		x -= (JPFUELBAR_W+8.0f);
 	}
-	if (cg.snap->ps.cloakFuel < 100)
+	if (cg.snap->ps.cloakFuel < CLOAK_MAXFUEL )
 	{
 		x -= (JPFUELBAR_W+8.0f);
 	}
@@ -8280,11 +8280,11 @@ static void CG_Draw2D( void ) {
 
 	if (cg.snap->ps.jetpackFuel < JETPACK_MAXFUEL)
 	{ //draw it as long as it isn't full
-        CG_DrawJetpackFuel();        
+        //CG_DrawJetpackFuel();        
 	}
-	if (cg.snap->ps.cloakFuel < 100)
+	if ( cg.snap->ps.cloakFuel < CLOAK_MAXFUEL )
 	{ //draw it as long as it isn't full
-		CG_DrawCloakFuel();
+		//CG_DrawCloakFuel();
 	}
 	if (cg.predictedPlayerState.emplacedIndex > 0)
 	{
