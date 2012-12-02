@@ -1,12 +1,13 @@
 // engine.h
 
 #if defined(_WIN32)
-#include <Windows.h>
 #define WIN32_LEAN_AND_MEAN
 #define NOGDI
+#include <Windows.h>
 #endif
 
-#define ARRAY_LEN(x) (sizeof(x) / sizeof(*(x)))
+#define HOOKDEF( pos, origBytes, opcode, fwd, name ) { pos, origBytes, opcode, (unsigned int)fwd, name }
+#define HOOK( name ) void *Hook_##name( void )
 
 #define HOOK_CVARSEC
 
@@ -21,6 +22,7 @@
 #define CSEC_HOOKPOS 0x421C5F
 #define CSEC_RETPOS 0x4449C0
 #define CSEC_ORIGBYTES { 0xE8, 0x5C, 0x2D, 0x02, 0x00 }
+HOOK( CvarSecurity );
 #elif defined(MACOS_X)
 #error HOOK_CVARSEC not available on Mac OSX
 #endif
@@ -38,13 +40,14 @@ typedef struct hookEntry_s
 static hookEntry_t hooks[] =
 {
         #ifdef HOOK_CVARSEC
-                HOOKDEF( CSEC_HOOKPOS, CSEC_ORIGBYTES, 0xE8, Hook_CvarSecurity, "Cvar Security" ),
+                HOOKDEF( CSEC_HOOKPOS, CSEC_ORIGBYTES, 0xE8, Hook_CvarSecurity, "Cvar Security" )
         #endif
         // ...
 };
-static const int numHooks = ARRAY_LEN( hooks );
 
-#define HOOKDEF( pos, origBytes, opcode, fwd, name ) { pos, origBytes, opcode, (unsigned int)fwd, name }
-#define HOOK( name ) void *Hook_##name( void )
 void PlaceHook( hookEntry_t *hook );
 void RemoveHook( hookEntry_t *hook );
+
+#define ARRAY_LEN(x) (sizeof(x) / sizeof(*(x)))
+
+static const int numHooks = ARRAY_LEN( hooks );

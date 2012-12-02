@@ -595,9 +595,8 @@ static char *csec_info = NULL;
 
 static void CSec_CheckWhitelist( void )
 {
-	char key[BIG_INFO_KEY] = {0},
-	value[BIG_INFO_VALUE] = {0},
-	*s = csec_info;
+	char key[BIG_INFO_KEY] = {0}, value[BIG_INFO_VALUE] = {0};
+	const char *s = csec_info;
 	int i = 0;
 	extern void Info_RemoveKey_Big( char *s, const char *key );
 
@@ -5975,7 +5974,7 @@ static void UI_GetSaberCvars ( void )
 {
 //[RGBSabers]
 	char strgb1[64],strgb2[64];
-	char scr1[256],scr2[256];
+	char script1[256],script2[256];
 	vec3_t c1,c2;
 //[/RGBSabers]
 
@@ -6020,22 +6019,22 @@ static void UI_GetSaberCvars ( void )
 	trap_Cvar_Set("ui_sab2_b",set);
 	*/
 
-	strncpy(scr1, UI_Cvar_VariableString("rgb_script1"),sizeof(scr1));
-	strncpy(scr2, UI_Cvar_VariableString("rgb_script2"),sizeof(scr2));
+	strncpy(script1, UI_Cvar_VariableString("rgb_script1"),sizeof(script1));
+	strncpy(script2, UI_Cvar_VariableString("rgb_script2"),sizeof(script2));
 
-	if(scr1[0] != ':')
+	if(script1[0] != ':')
 	{
 		trap_Cvar_Set("rgb_script1",":255,0,255:500:0,0,255:500:");
-		strncpy(scr1,":255,0,255:500:0,0,255:500:\0",sizeof(scr1));
+		strncpy(script1,":255,0,255:500:0,0,255:500:\0",sizeof(script1));
 	}
-	if(scr2[0] != ':')
+	if(script2[0] != ':')
 	{
 		trap_Cvar_Set("rgb_script2",":0,255,255:500:0,0,255:500:");
-		strncpy(scr2,":0,255,255:500:0,0,255:500:\0",sizeof(scr2));
+		strncpy(script2,":0,255,255:500:0,0,255:500:\0",sizeof(script2));
 	}
 
-	UI_ParseScriptedSaber(scr1,0);
-	UI_ParseScriptedSaber(scr2,1);
+	UI_ParseScriptedSaber(script1,0);
+	UI_ParseScriptedSaber(script2,1);
 
 //	Com_Printf("ui_getsabercvar > %i,%i,%i %i,%i,%i\n",ui_sab1_r.integer,ui_sab1_g.integer,ui_sab1_b.integer,ui_sab2_r.integer,ui_sab2_g.integer,ui_sab2_b.integer);
 //[/RGBSabers]
