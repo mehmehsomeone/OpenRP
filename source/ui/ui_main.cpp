@@ -20,8 +20,12 @@ USER INTERFACE MAIN
 #include "../game/bg_saga.h"
 #include "ui_shared.h"
 
-#include "asmdefines.h"
-#include "engine.h"
+#if defined(_WIN32)
+#define WIN32_LEAN_AND_MEAN
+#define NOGDI
+#include <Windows.h>
+#endif
+
 
 
 //[JKH Bugfix]
@@ -566,88 +570,6 @@ void Patch_AltEnter( qboolean patch )
 	{
 	}
 }
-
-#ifdef HOOK_CVARSEC
-
-static const char *csec_whitelist[] = { // alphabetical because fuck you
-	"fs_game",
-	"g_synchronousClients",
-	"pmove_msec",
-	"pmove_fixed",
-	"RMG_course",
-	"RMG_instances",
-	"RMG_map",
-	"RMG_mission",
-	"RMG_textseed",
-	"sv_cheats",
-	"sv_pure",
-	"sv_referencedPakNames",
-	"sv_referencedPaks",
-	"sv_serverid",
-	"sv_voip", //from ioq3 :3
-	"timescale",
-	"vm_ui",
-	"vm_game",
-	"vm_cgame",
-};
-static const int csec_whitelistSize = ARRAY_LEN( csec_whitelist );
-static char *csec_info = NULL;
-
-static void CSec_CheckWhitelist( void )
-{
-	char key[BIG_INFO_KEY] = {0}, value[BIG_INFO_VALUE] = {0};
-	const char *s = csec_info;
-	int i = 0;
-	extern void Info_RemoveKey_Big( char *s, const char *key );
-
-	while ( s )
-	{
-		Info_NextPair( &s, key, value );
-
-		if ( !key[0] )
-			break;
-
-		for ( i=0; i<csec_whitelistSize; i++ )
-		{
-			if ( !Q_stricmp( csec_whitelist[i], key ) )
-			break;
-		}
-
-		if ( !Q_stricmp( key, "fs_game" ) )
-		{
-			if ( strstr( value, "../" ) || strstr( value, "..\\" ) )
-			{
-				Com_Printf( S_COLOR_RED "SECURITY WARNING: server attempted directory traversal on %s=%s\n", key, value );
-				Info_RemoveKey_Big( csec_info, key );
-				s = csec_info;
-			}
-		}
-
-		if ( i == csec_whitelistSize )
-		{
-			Com_Printf( S_COLOR_RED "SECURITY WARNING: server is not allowed to set non-systeminfo cvar %s=%s\n", key, value );
-			Info_RemoveKey_Big( csec_info, key );
-			s = csec_info;
-		}
-	}
-}
-
-HOOK( CvarSecurity )
-{//Cvar Security
-	__StartHook( CvarSecurity )
-	{
-		__asm2__( mov csec_info, ecx );
-		__asm1__( pushad );
-		__asm1__( call CSec_CheckWhitelist );
-		__asm1__( popad );
-
-		__asm1__( push CSEC_RETPOS );
-		__asm1__( ret );
-	}
-	__EndHook( CvarSecurity )
-}
-
-#endif //HOOK_CVARSEC
 #endif
 
 /*
@@ -10971,7 +10893,6 @@ void _UI_Init( qboolean inGameLoad ) {
 	Patch_FakeChallengeResponse( qtrue );
 	Patch_QueryBoom( qtrue );
 	Patch_AltEnter( qtrue );
-	//Patch_CvarSecurity( qtrue );
 #endif
 }
 
