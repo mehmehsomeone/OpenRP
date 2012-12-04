@@ -81,6 +81,10 @@ void ForceLightning( gentity_t *self )
 	//[/ForceSys]
 		return;
 
+	//[JAC Bugfix - Fixed rocket lock bug]
+	BG_ClearRocketLock(&self->client->ps);
+	//[/JAC Bugfix - Fixed rocket lock bug]
+
 	//Shoot lightning from hand
 	//using grip anim now, to extend the burst time
 	self->client->ps.torsoAnim=BOTH_FORCE_DRAIN_HOLD;

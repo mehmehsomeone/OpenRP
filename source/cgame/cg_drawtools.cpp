@@ -392,6 +392,13 @@ float *CG_FadeColor( int startMsec, int totalMsec ) {
 		return NULL;
 	}
 
+	//[JAC Bugfix - Modified CG_FadeColor function for cases when fading start time hasn't been yet reached]
+	// this color shouldn't be visible yet	
+	if (t < 0){
+		return NULL;
+	}
+	//[/JAC Bugfix - Modified CG_FadeColor function for cases when fading start time hasn't been yet reached]
+
 	// fade out
 	if ( totalMsec - t < FADE_TIME ) {
 		color[3] = ( totalMsec - t ) * 1.0/FADE_TIME;

@@ -6570,10 +6570,10 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 			continue;
 		}
 
-		//[OpenRP - Infinite loop fix - Thanks to Raz0r]
+		//[JAC Bugfix - Avoid infinite loop]
 		if(ent->health <= 0)
 			continue;
-		//[/OpenRP - Infinite loop fix - Thanks to Raz0r]
+		//[/JAC Bugfix - Avoid infinite loop]
 
 		points = damage * ( 1.0 - dist / radius );
 

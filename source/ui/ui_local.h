@@ -107,6 +107,10 @@ extern vmCvar_t	ui_sab2_b;
 
 #define MAX_FORCE_CONFIGS		128
 
+//[JAC Bugfix - Moved from ui_main.c and ui_saber.c, also increased drastically]
+#define MAX_SABER_HILTS      256 //64
+//[/JAC Bugfix - Moved from ui_main.c and ui_saber.c, also increased drastically]
+
 #define MTYPE_NULL				0
 #define MTYPE_SLIDER			1	
 #define MTYPE_ACTION			2
@@ -597,10 +601,20 @@ typedef struct {
 #define MAX_MOVIES 256
 //[UITweaks]
 //Doubled the model icon max
-#define MAX_Q3PLAYERMODELS 512
+//[JAC - Increased model icon max]
+#define MAX_Q3PLAYERMODELS 1024
+//[/JAC - Increased model icon max]
 //#define MAX_Q3PLAYERMODELS 256
 //[/UITweaks]
-#define MAX_PLAYERMODELS 32
+//[JAC - Increased playermodel max]
+#define MAX_PLAYERMODELS 512
+//[JAC - Increased playermodel max]
+
+//[JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
+#define DEMO_DIRECTORY "demos/"	
+#define DEMO_EXTENSION "dm_"	
+#define MAX_DEMOLIST (MAX_DEMOS * MAX_QPATH)
+//[/JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
 
 #define MAX_SCROLLTEXT_SIZE		4096
 #define MAX_SCROLLTEXT_LINES		64
@@ -787,9 +801,14 @@ typedef struct {
 	int modCount;
 	int modIndex;
 
-	const char *demoList[MAX_DEMOS];
+	//[JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
+	char demoList[MAX_DEMOS][MAX_QPATH];
+	//[/JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
 	int demoCount;
 	int demoIndex;
+	//[JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
+	int loadedDemos;
+	//[/JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
 
 	const char *movieList[MAX_MOVIES];
 	int movieCount;

@@ -3704,7 +3704,7 @@ static qboolean	PM_CheckWaterJump( void ) {
 	spot[2] += 16;
 	cont = pm->pointcontents (spot, pm->ps->clientNum );
 	//[WATERJUMPFIX]
-	if ( cont&(CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA|CONTENTS_BODY) ) {
+	if ( cont & (CONTENTS_SOLID|CONTENTS_PLAYERCLIP|CONTENTS_WATER|CONTENTS_SLIME|CONTENTS_LAVA|CONTENTS_BODY) ) {
 	//if ( cont ) {
 	//[/WATERJUMPFIX]
 		return qfalse;
@@ -8849,6 +8849,9 @@ static void PM_Weapon( void )
 	// check for item using
 	if ( pm->cmd.buttons & BUTTON_USE_HOLDABLE ) 
 	{
+		//[JAC Bugfix - Fixed rocket lock bug, one of many...]
+		BG_ClearRocketLock( pm->ps );
+		//[/JAC Bugfix - Fixed rocket lock bug, one of many...]
 		if ( ! ( pm->ps->pm_flags & PMF_USE_ITEM_HELD ) ) 
 		{
 			if (pm_entSelf->s.NPC_class!=CLASS_VEHICLE

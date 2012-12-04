@@ -718,12 +718,16 @@ vmCvar_t	cg_gun_x;
 vmCvar_t	cg_gun_y;
 vmCvar_t	cg_gun_z;
 vmCvar_t	cg_autoswitch;
-vmCvar_t	cg_ignore;
+//[JAC - Removed unused cvars]
+//vmCvar_t	cg_ignore;
+//[/JAC - Removed unused cvars]
 vmCvar_t	cg_simpleItems;
 vmCvar_t	cg_fov;
 vmCvar_t	cg_zoomFov;
 
-vmCvar_t	cg_swingAngles;
+//[JAC - Removed unused cvars]
+//vmCvar_t	cg_swingAngles;
+//[/JAC - Removed unused cvars]
 
 vmCvar_t	cg_oldPainSounds;
 
@@ -835,7 +839,9 @@ vmCvar_t	cg_cameraOrbitDelay;
 vmCvar_t	cg_timescaleFadeEnd;
 vmCvar_t	cg_timescaleFadeSpeed;
 vmCvar_t	cg_timescale;
-vmCvar_t	cg_noTaunt;
+//[JAC - Removed unused cvars]
+//vmCvar_t	cg_noTaunt;
+//[/JAC - Removed unused cvars]
 vmCvar_t	cg_noProjectileTrail;
 //vmCvar_t	cg_trueLightning;
 /*
@@ -848,10 +854,14 @@ Ghoul2 Insert End
 //vmCvar_t 	cg_redTeamName;
 //vmCvar_t 	cg_blueTeamName;
 vmCvar_t	cg_currentSelectedPlayer;
-vmCvar_t	cg_currentSelectedPlayerName;
+//[JAC - Removed unused cvars]
+//vmCvar_t	cg_currentSelectedPlayerName;
+//[/JAC - Removed unused cvars]
 //vmCvar_t	cg_singlePlayerActive;
-vmCvar_t	cg_recordSPDemo;
-vmCvar_t	cg_recordSPDemoName;
+//[JAC - Removed unused cvars]
+//vmCvar_t	cg_recordSPDemo;
+//vmCvar_t	cg_recordSPDemoName;
+//[/JAC - Removed unused cvars]
 vmCvar_t	cg_showVehBounds;
 
 vmCvar_t	ui_myteam;
@@ -905,7 +915,9 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_snaps, "snaps", "100", CVAR_ARCHIVE },
 	{ &cl_maxpackets, "cg_maxpackets", "100", CVAR_ARCHIVE },
 	{ &cg_rate, "rate", "25000", CVAR_ARCHIVE },
-	{ &cg_ignore, "cg_ignore", "0", 0 },	// used for debugging
+	//[JAC - Removed unused cvars]
+	//{ &cg_ignore, "cg_ignore", "0", 0 },	// used for debugging
+	//[/JAC - Removed unused cvars]
 	{ &cg_autoswitch, "cg_autoswitch", "1", CVAR_ARCHIVE },
 	{ &cg_drawGun, "cg_drawGun", "1", CVAR_ARCHIVE },
 	{ &cg_zoomFov, "cg_zoomfov", "40.0", CVAR_ARCHIVE },
@@ -965,7 +977,9 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_showmiss, "cg_showmiss", "0", 0 },
 	{ &cg_showVehMiss, "cg_showVehMiss", "0", 0 },
 	{ &cg_footsteps, "cg_footsteps", "3", CVAR_ARCHIVE },
-	{ &cg_swingAngles, "cg_swingAngles", "1", 0 },
+	//[JAC - Removed unused cvars]
+	//{ &cg_swingAngles, "cg_swingAngles", "1", 0 },
+	//[/JAC - Removed unused cvars]
 
 	{ &cg_oldPainSounds, "cg_oldPainSounds", "0", 0 },
 
@@ -1061,10 +1075,14 @@ static cvarTable_t cvarTable[] = { // bk001129
 //	{ &cg_redTeamName, "g_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO },
 //	{ &cg_blueTeamName, "g_blueteam", DEFAULT_BLUETEAM_NAME, CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO },
 	{ &cg_currentSelectedPlayer, "cg_currentSelectedPlayer", "0", CVAR_ARCHIVE},
-	{ &cg_currentSelectedPlayerName, "cg_currentSelectedPlayerName", "", CVAR_ARCHIVE},
+	//[JAC - Removed unused cvars]
+	//{ &cg_currentSelectedPlayerName, "cg_currentSelectedPlayerName", "", CVAR_ARCHIVE},
+	//[/JAC - Removed unused cvars]
 //	{ &cg_singlePlayerActive, "ui_singlePlayerActive", "0", CVAR_USERINFO},
-	{ &cg_recordSPDemo, "ui_recordSPDemo", "0", CVAR_ARCHIVE},
-	{ &cg_recordSPDemoName, "ui_recordSPDemoName", "", CVAR_ARCHIVE},
+	//[JAC - Removed unused cvars]
+	//{ &cg_recordSPDemo, "ui_recordSPDemo", "0", CVAR_ARCHIVE},
+	//{ &cg_recordSPDemoName, "ui_recordSPDemoName", "", CVAR_ARCHIVE},
+	//[JAC - Removed unused cvars]
 
 	{ &cg_cameraOrbit, "cg_cameraOrbit", "0", CVAR_CHEAT},
 	{ &cg_cameraOrbitDelay, "cg_cameraOrbitDelay", "50", CVAR_ARCHIVE},
@@ -1083,7 +1101,9 @@ static cvarTable_t cvarTable[] = { // bk001129
 
 	{ &pmove_fixed, "pmove_fixed", "0", 0},
 	{ &pmove_msec, "pmove_msec", "8", 0},
-	{ &cg_noTaunt, "cg_noTaunt", "0", CVAR_ARCHIVE},
+	//[JAC - Removed unused cvars]
+	//{ &cg_noTaunt, "cg_noTaunt", "0", CVAR_ARCHIVE},
+	//[/JAC - Removed unused cvars]
 	{ &cg_noProjectileTrail, "cg_noProjectileTrail", "0", CVAR_ARCHIVE},
 //	{ &cg_trueLightning, "cg_trueLightning", "0.0", CVAR_ARCHIVE},
 	{ &cg_showVehBounds, "cg_showVehBounds", "0", 0},
@@ -2806,7 +2826,9 @@ char *CG_GetMenuBuffer(const char *filename) {
 		return NULL;
 	}
 	if ( len >= MAX_MENUFILE ) {
-		trap_Print( va( S_COLOR_RED "menu file too large: %s is %i, max allowed is %i", filename, len, MAX_MENUFILE ) );
+		//[JAC Bugfix - Added newline to some console prints]
+		trap_Print( va( S_COLOR_RED "menu file too large: %s is %i, max allowed is %i\n", filename, len, MAX_MENUFILE ) );
+		//[/JAC Bugfix - Added newline to some console prints]
 		trap_FS_FCloseFile( f );
 		return NULL;
 	}
@@ -3333,7 +3355,9 @@ void CG_LoadMenus(const char *menuFile)
 
 	if ( len >= MAX_MENUDEFFILE ) 
 	{
-		trap_Print( va( S_COLOR_RED "menu file too large: %s is %i, max allowed is %i", menuFile, len, MAX_MENUDEFFILE ) );
+		//[JAC Bugfix - Added newline to some console prints]
+		trap_Print( va( S_COLOR_RED "menu file too large: %s is %i, max allowed is %i\n", menuFile, len, MAX_MENUDEFFILE ) );
+		//[/JAC Bugfix - Added newline to some console prints]
 		trap_FS_FCloseFile( f );
 		return;
 	}

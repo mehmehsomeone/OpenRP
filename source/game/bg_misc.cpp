@@ -354,6 +354,9 @@ int WeaponAttackAnim[WP_NUM_WEAPONS] =
 	BOTH_THERMAL_THROW,//WP_THERMAL,
 	BOTH_ATTACK3,//BOTH_ATTACK11,//WP_GRENADE,
 	BOTH_ATTACK3,//BOTH_ATTACK12,//WP_DET_PACK,
+	//[JAC Bugfix - Raven forgot the Concussion's firing animation]
+	BOTH_ATTACK3,//WP_CONCUSSION,
+	//[/JAC Bugfix - Raven forgot the Concussion's firing animation]
 	BOTH_ATTACK2,//WP_BRYAR_OLD,
 
 
@@ -2727,7 +2730,11 @@ void BG_EvaluateTrajectory( const trajectory_t *tr, int atTime, vec3_t result ) 
 		}
 		else
 		{//FIXME: maybe scale this somehow?  So that it starts out faster and stops faster?
-			deltaTime = tr->trDuration*0.001f*((float)cos( DEG2RAD(90.0f - (90.0f*((float)atTime-tr->trTime)/(float)tr->trDuration)) ));
+			//[JAC Bugfix - Fixed invalid type casting from int to float in trajectory evaluating.
+			//On long time running servers, this could cause elevators laggy moving, sometime even killing...]
+			 deltaTime = tr->trDuration*0.001f*((float)cos( DEG2RAD(90.0f - (90.0f*((float)(atTime-tr->trTime))/(float)tr->trDuration)) ));
+			 //[/JAC Bugfix - Fixed invalid type casting from int to float in trajectory evaluating.
+			//On long time running servers, this could cause elevators laggy moving, sometime even killing...]
 		}
 		VectorMA( tr->trBase, deltaTime, tr->trDelta, result );
 		break;
@@ -2784,7 +2791,9 @@ void BG_EvaluateTrajectoryDelta( const trajectory_t *tr, int atTime, vec3_t resu
 			VectorClear( result );
 			return;
 		}
-		deltaTime = tr->trDuration*0.001f*((float)cos( DEG2RAD(90.0f - (90.0f*((float)atTime-tr->trTime)/(float)tr->trDuration)) ));
+		//[JAC Bugfix - Fixed another casting float to int problem, causing problems with long time running servers]
+		deltaTime = tr->trDuration*0.001f*((float)cos( DEG2RAD(90.0f - (90.0f*((float)(atTime-tr->trTime))/(float)tr->trDuration)) ));
+		//[/JAC Bugfix - Fixed another casting float to int problem, causing problems with long time running servers]
 		VectorScale( tr->trDelta, deltaTime, result );
 		break;
 	case TR_GRAVITY:
@@ -3036,6 +3045,9 @@ void BG_TouchJumpPad( playerState_t *ps, entityState_t *jumppad ) {
 	ps->jumppad_frame = ps->pmove_framecount;
 	// give the player the velocity from the jumppad
 	VectorCopy( jumppad->origin2, ps->velocity );
+	//[JAC Bugfix - No more force draining after bouncing the jumppad]
+	ps->fd.forcePowersActive &= ~(1<<FP_LEVITATION);
+	//[/JAC Bugfix - No more force draining after bouncing the jumppad]
 }
 
 /*

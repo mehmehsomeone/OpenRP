@@ -763,11 +763,25 @@ void Team_DroppedFlagThink(gentity_t *ent) {
 Team_DroppedFlagThink
 ==============
 */
+//[JAC - Improved condition evaluations for capturing of the flag]
+// This is to account for situations when there are more players standing 
+// on flag stand and then flag gets returned. This leaded to bit random flag 
+// grabs/captures, improved version takes distance to the center of flag stand 
+// into consideration (closer player will get/capture the flag).
+static vec3_t	minFlagRange = { 50, 36, 36 };
+static vec3_t	maxFlagRange = { 44, 36, 36 };
+
+int Team_TouchEnemyFlag( gentity_t *ent, gentity_t *other, int team );
+
 int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
-	int			i;
+	int			i, num, j, enemyTeam;
 	gentity_t	*player;
 	gclient_t	*cl = other->client;
 	int			enemy_flag;
+	vec3_t		mins, maxs;
+	int			touch[MAX_GENTITIES];
+	gentity_t*	enemy;
+	float		enemyDist, dist;
 
 	if (cl->sess.sessionTeam == TEAM_RED) {
 		enemy_flag = PW_BLUEFLAG;
@@ -793,6 +807,58 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 	// flag, he's just won!
 	if (!cl->ps.powerups[enemy_flag])
 		return 0; // We don't have the flag
+
+	// fix: captures after timelimit hit could 
+	// cause game ending with tied score
+	if ( level.intermissionQueued ) {
+		return 0;
+	}
+
+	// check for enemy closer to grab the flag
+	VectorSubtract( ent->s.pos.trBase, minFlagRange, mins );
+	VectorAdd( ent->s.pos.trBase, maxFlagRange, maxs );
+
+	num = trap_EntitiesInBox( mins, maxs, touch, MAX_GENTITIES );
+
+	dist = Distance(ent->s.pos.trBase, other->client->ps.origin);
+
+	if (other->client->sess.sessionTeam == TEAM_RED){
+		enemyTeam = TEAM_BLUE;
+	} else {
+		enemyTeam = TEAM_RED;
+	}	
+
+	for ( j=0 ; j<num ; j++ ) {
+		enemy = (g_entities + touch[j]);
+
+		if (!enemy || !enemy->inuse || !enemy->client){
+			continue;
+		}
+
+		//check if its alive
+		if (enemy->health < 1)
+			continue;		// dead people can't pickup
+
+		//ignore specs
+		if (enemy->client->sess.sessionTeam == TEAM_SPECTATOR)
+			continue;
+
+		//check if this is enemy
+		if ((enemy->client->sess.sessionTeam != TEAM_RED && enemy->client->sess.sessionTeam != TEAM_BLUE) ||
+			enemy->client->sess.sessionTeam != enemyTeam){
+			continue;
+		}
+
+		//check if enemy is closer to our flag than us
+		enemyDist = Distance(ent->s.pos.trBase,enemy->client->ps.origin);
+		if (enemyDist < dist){
+			// possible recursion is hidden in this, but 
+			// infinite recursion wont happen, because we cant 
+			// have a < b and b < a at the same time
+			return Team_TouchEnemyFlag( ent, enemy, team );
+		}
+	}
+
 	//PrintMsg( NULL, "%s" S_COLOR_WHITE " captured the %s flag!\n", cl->pers.netname, TeamName(OtherTeam(team)));
 	PrintCTFMessage(other->s.number, team, CTFMESSAGE_PLAYER_CAPTURED_FLAG);
 
@@ -812,11 +878,6 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 
 	// other gets another 10 frag bonus
 	AddScore(other, ent->r.currentOrigin, CTF_CAPTURE_BONUS);
-
-	//[ExpSys]
-	//give player a exp boost for capturing the flag.
-	//AddSkill(other, 10);
-	//[/ExpSys]
 
 	Team_CaptureFlagSound( ent, team );
 
@@ -855,12 +916,58 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 
 	CalculateRanks();
 
-
 	return 0; // Do not respawn this automatically
 }
 
 int Team_TouchEnemyFlag( gentity_t *ent, gentity_t *other, int team ) {
 	gclient_t *cl = other->client;
+	vec3_t		mins, maxs;
+	int			num, j, ourFlag;
+	int			touch[MAX_GENTITIES];
+	gentity_t*	enemy;
+	float		enemyDist, dist;
+
+	VectorSubtract( ent->s.pos.trBase, minFlagRange, mins );
+	VectorAdd( ent->s.pos.trBase, maxFlagRange, maxs );
+
+	num = trap_EntitiesInBox( mins, maxs, touch, MAX_GENTITIES );
+
+	dist = Distance(ent->s.pos.trBase, other->client->ps.origin);
+
+	if (other->client->sess.sessionTeam == TEAM_RED){
+		ourFlag   = PW_REDFLAG;
+	} else {
+		ourFlag   = PW_BLUEFLAG;
+	}		
+
+	for(j = 0; j < num; ++j){
+		enemy = (g_entities + touch[j]);
+
+		if (!enemy || !enemy->inuse || !enemy->client){
+			continue;
+		}
+
+		//ignore specs
+		if (enemy->client->sess.sessionTeam == TEAM_SPECTATOR)
+			continue;
+
+		//check if its alive
+		if (enemy->health < 1)
+			continue;		// dead people can't pick up items
+
+		//lets check if he has our flag
+		if (!enemy->client->ps.powerups[ourFlag])
+			continue;
+
+		//check if enemy is closer to our flag than us
+		enemyDist = Distance(ent->s.pos.trBase,enemy->client->ps.origin);
+		if (enemyDist < dist){
+			// possible recursion is hidden in this, but 
+			// infinite recursion wont happen, because we cant 
+			// have a < b and b < a at the same time
+			return Team_TouchOurFlag( ent, enemy, team );
+		}
+	}
 
 	//PrintMsg (NULL, "%s" S_COLOR_WHITE " got the %s flag!\n",
 	//	other->client->pers.netname, TeamName(team));
@@ -879,6 +986,7 @@ int Team_TouchEnemyFlag( gentity_t *ent, gentity_t *other, int team ) {
 
 	return -1; // Do not respawn this automatically, but do delete it if it was FL_DROPPED
 }
+//[/JAC - Improved condition evaluations for capturing of the flag]
 
 int Pickup_Team( gentity_t *ent, gentity_t *other ) {
 	int team;

@@ -800,6 +800,14 @@ void SetTeam( gentity_t *ent, char *s )
 	int					specClient;
 	int					teamLeader;
 
+	//[JAC Bugfix - Fixed rare bug with invalid "player" created at some occasions]
+	// fix: this prevents rare creation of invalid players	
+	if (!ent->inuse)
+	{
+		return;
+	}
+	//[/JAC Bugfix - Fixed rare bug with invalid "player" created at some occasions]
+
 	//
 	// see what change is requested
 	//
@@ -1121,6 +1129,10 @@ void StopFollowing( gentity_t *ent ) {
 	ent->health = ent->client->ps.stats[STAT_HEALTH] = 100; // so that you don't keep dead angles if you were spectating a dead person
 	//[/BugFix38]
 
+	//[JAC Bugfix - Improved fix for dead angles when spectating dead player who disconnects]
+	ent->client->ps.bobCycle = 0; 
+	//[/JAC Bugfix - Improved fix for dead angles when spectating dead player who disconnects]
+
 
 	//Emote
 	// MJN - added to clean it up a bit.
@@ -1142,10 +1154,12 @@ void Cmd_Team_f( gentity_t *ent ) {
 
 	//[ExpSys]
 	//changed this so that we can link to this function thru the "forcechanged" behavior with its new design.
+	//[JAC Bugfix - Fixed bug with team change cooldown updating on each team change attmpt (should only update when change has really happend)]
+	oldTeam = ent->client->sess.sessionTeam;
 	if ( trap_Argc() < 2 ) {
 	//if ( trap_Argc() != 2 ) {
 	//[/ExpSys]
-		oldTeam = ent->client->sess.sessionTeam;
+	//[/JAC Bugfix - Fixed bug with team change cooldown updating on each team change attempt (should only update when change has really happend)]
 		//[CoOp]
 		if ( g_gametype.integer == GT_SINGLE_PLAYER ) {
 			switch ( oldTeam ) {
@@ -1176,10 +1190,14 @@ void Cmd_Team_f( gentity_t *ent ) {
 		return;
 	}
 
+	/*
+	//[OpenRP - Disabled team switch time]
 	if ( ent->client->switchTeamTime > level.time ) {
 		trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "NOSWITCH")) );
 		return;
 	}
+	//[/OpenRP - Disabled team switch time]
+	*/
 
 	if (gEscaping)
 		return;
@@ -1209,8 +1227,13 @@ void Cmd_Team_f( gentity_t *ent ) {
 
 	SetTeam( ent, s );
 
-	ent->client->switchTeamTime = level.time + 5000;
-
+	//[JAC Bugfix - Fixed bug with team change cooldown updating on each team change attempt (should only update when change has really happend)]
+	// fix: update team switch time only if team change really happened
+	//[OpenRP - Disabled team switch time]
+	//if (oldTeam != ent->client->sess.sessionTeam)
+		//ent->client->switchTeamTime = level.time + 5000;
+	//[/OpenRP - Disabled team switch time]
+	//[/JAC Bugfix - Fixed bug with team change cooldown updating on each team change attempt (should only update when change has really happend)]
 }
 
 /*
@@ -2801,16 +2824,19 @@ void Cmd_CallVote_f( gentity_t *ent ) {
       return;
    }
 
-	if ( !Q_stricmp( arg1, "map_restart" ) ) {
-	} else if ( !Q_stricmp( arg1, "nextmap" ) ) {
-	} else if ( !Q_stricmp( arg1, "map" ) ) {
-	} else if ( !Q_stricmp( arg1, "g_gametype" ) ) {
-	} else if ( !Q_stricmp( arg1, "kick" ) ) {
-	} else if ( !Q_stricmp( arg1, "clientkick" ) ) {
-	} else if ( !Q_stricmp( arg1, "g_doWarmup" ) ) {
-	} else if ( !Q_stricmp( arg1, "timelimit" ) ) {
-	} else if ( !Q_stricmp( arg1, "fraglimit" ) ) {
-	} else {
+	//[JAC Bugfix - Added capturelimit as a votable option]
+	if ( Q_stricmp( arg1, "map_restart" ) &&
+		 Q_stricmp( arg1, "nextmap" ) &&
+		 Q_stricmp( arg1, "map" ) &&
+		 Q_stricmp( arg1, "g_gametype" ) &&
+		 Q_stricmp( arg1, "kick" ) &&
+		 Q_stricmp( arg1, "clientkick" ) &&
+		 Q_stricmp( arg1, "g_doWarmup" ) &&
+		 Q_stricmp( arg1, "timelimit" ) &&
+		 Q_stricmp( arg1, "fraglimit" ) &&
+		 Q_stricmp( arg1, "capturelimit" ) )
+	{
+	//[/JAC Bugfix - Added capturelimit as a votable option]
 		trap_SendServerCommand( ent-g_entities, "print \"Invalid vote string.\n\"" );
 		trap_SendServerCommand( ent-g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, fraglimit <frags>.\n\"" );
 		return;
@@ -2967,12 +2993,39 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 		Com_sprintf( level.voteString, sizeof( level.voteString ), "vstr nextmap");
 		Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
 	}
-	//Thanks to Raz0r for this fix.
-	else if ( !Q_stricmp ( arg1, "timelimit" ) )
+	//[JAC Bugfix - Added argument count checks to callvote fraglimit/timelimit/capturelimit and bounds checking]
+	//Raz: bounds checking
+	else if ( !Q_stricmp( arg1, "timelimit" ) )
 	{
 		int n = Com_Clampi( 0, 35790, atoi( arg2 ) );
+		if ( trap_Argc() < 3 )
+		{
+			trap_SendServerCommand( ent-g_entities, "print \"Usage: /callvote timelimit <time>.\n\"" );
+			return;
+		}
 		Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %i", arg1, n );
 	}
+	else if ( !Q_stricmp( arg1, "fraglimit" ) )
+	{
+		int n = Com_Clampi( 0, 0x7FFFFFFF, atoi( arg2 ) );
+		if ( trap_Argc() < 3 )
+		{
+			trap_SendServerCommand( ent-g_entities, "print \"Usage: /callvote fraglimit <frags>.\n\"" );
+			return;
+		}
+		Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %i", arg1, n );
+	}
+	else if ( !Q_stricmp( arg1, "capturelimit" ) )
+	{
+		int n = Com_Clampi( 0, 0x7FFFFFFF, atoi( arg2 ) );
+		if ( trap_Argc() < 3 )
+		{
+			trap_SendServerCommand( ent-g_entities, "print \"Usage: /callvote capturelimit <captures>.\n\"" );
+			return;
+		}
+		Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %i", arg1, n );
+	}
+	//[/JAC Bugfix - Added argument count checks to callvote fraglimit/timelimit/capturelimit and bounds checking]
 	else
 	{
 		//[AdminSys]
@@ -3392,6 +3445,13 @@ int G_ItemUsable(playerState_t *ps, int forcedUse)
 	vec3_t mins, maxs;
 	vec3_t trtest;
 	trace_t tr;
+
+	//[JAC Bugfix - Fixed bug when dead players could use items]
+	// fix: dead players shouldn't use items	
+	if (ps->stats[STAT_HEALTH] <= 0){	
+		return 0;
+	}
+	//[/JAC Bugfix - Fixed bug when dead players could use items]
 
 	if (ps->m_iVehicleNum)
 	{

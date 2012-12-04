@@ -1893,6 +1893,9 @@ float BG_SI_LengthMax(saberInfo_t *saber);
 void BG_SI_ActivateTrail ( saberInfo_t *saber, float duration );
 void BG_SI_DeactivateTrail ( saberInfo_t *saber, float duration );
 extern void BG_AttachToRancor( void *ghoul2,float rancYaw,vec3_t rancOrigin,int time,qhandle_t *modelList,vec3_t modelScale,qboolean inMouth,vec3_t out_origin,vec3_t out_angles,vec3_t out_axis[3] );
+//[JAC Bugfix - Another rocket lock bug fixed]
+void BG_ClearRocketLock( playerState_t *ps );
+//[/JAC Bugfix - Another rocket lock bug fixed]
 //[NPCSandCreature]
 extern void BG_AttachToSandCreature( void *ghoul2, float rancYaw, vec3_t rancOrigin, int time, qhandle_t *modelList, vec3_t modelScale, vec3_t out_origin, vec3_t out_angles, vec3_t out_axis[3] );
 //[/NPCSandCreature]

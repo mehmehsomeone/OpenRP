@@ -47,7 +47,9 @@ void CG_RegisterItemVisuals( int itemNum ) {
 
 	item = &bg_itemlist[ itemNum ];
 
-	memset( itemInfo, 0, sizeof( &itemInfo ) );
+	//[JAC Bugfix - Fixed bad memset]
+	memset( itemInfo, 0, sizeof( *itemInfo ) );
+	//[/JAC Bugfix - Fixed bad memset]
 	itemInfo->registered = qtrue;
 
 	if (item->giType == IT_TEAM &&
