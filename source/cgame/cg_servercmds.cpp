@@ -15,9 +15,9 @@
 #endif
 //[Mac]
 #if MAC_PORT
-#include "../ghoul2/g2.h"
+#include "../shared/ghoul2/g2.h"
 #else
-#include "..\ghoul2\g2.h"
+#include "..\shared\ghoul2\g2.h"
 #endif
 //[/Mac]
 #include "../ui/ui_public.h"
@@ -273,6 +273,18 @@ static void CG_ParseWarmup( void ) {
 	cg.warmup = warmup;
 }
 
+//[JAC Bugfix - Improved detection of CS_FLAGSTATUS]
+//Raz: This is a reverse map of flag statuses as seen in g_team.c
+//static char ctfFlagStatusRemap[] = { '0', '1', '*', '*', '2' };
+static char ctfFlagStatusRemap[] = { 	
+	FLAG_ATBASE,
+	FLAG_TAKEN,			// CTF
+	// server doesn't use FLAG_TAKEN_RED or FLAG_TAKEN_BLUE
+	// which was originally for 1-flag CTF.
+	FLAG_DROPPED
+};
+//[/JAC Bugfix - Improved detection of CS_FLAGSTATUS]
+
 /*
 ================
 CG_SetConfigValues
@@ -289,9 +301,27 @@ void CG_SetConfigValues( void )
 	cgs.scores2 = atoi( CG_ConfigString( CS_SCORES2 ) );
 	cgs.levelStartTime = atoi( CG_ConfigString( CS_LEVEL_START_TIME ) );
 	if( cgs.gametype == GT_CTF || cgs.gametype == GT_CTY ) {
+		//[JAC Bugfix - Improved CS_FLAGSTATUS detection again]
+		int redflagId = 0, blueflagId = 0;
+		//[/JAC Bugfix - Improved CS_FLAGSTATUS detection again]
 		s = CG_ConfigString( CS_FLAGSTATUS );
-		cgs.redflag = s[0] - '0';
-		cgs.blueflag = s[1] - '0';
+
+		//[JAC Bugfix - Improved CS_FLAGSTATUS detection again]
+		redflagId = s[0] - '0';	
+		blueflagId = s[1] - '0';
+		//[/JAC Bugfix - Improved CS_FLAGSTATUS detection again]
+		
+		// fix: proper flag statuses mapping for dropped flag
+		//[JAC Bugfix - Improved detection of CS_FLAGSTATUS]
+		if ( redflagId >= 0 && redflagId < ARRAY_LEN( ctfFlagStatusRemap ) ) 
+		//[/JAC Bugfix - Improved detection of CS_FLAGSTATUS]
+			cgs.redflag = ctfFlagStatusRemap[redflagId];
+
+		//[JAC Bugfix - Improved detection of CS_FLAGSTATUS]
+		if ( blueflagId >= 0 && blueflagId < ARRAY_LEN( ctfFlagStatusRemap ) ) 
+		//[/JAC Bugfix - Improved detection of CS_FLAGSTATUS]
+			cgs.blueflag = ctfFlagStatusRemap[blueflagId];
+		//[/JAC Bugfix - Changed dropped flag fix to be more proper way]
 	}
 	cg.warmup = atoi( CG_ConfigString( CS_WARMUP ) );
 
@@ -918,8 +948,16 @@ static void CG_ConfigStringModified( void ) {
 	} else if ( num == CS_FLAGSTATUS ) {
 		if( cgs.gametype == GT_CTF || cgs.gametype == GT_CTY ) {
 			// format is rb where its red/blue, 0 is at base, 1 is taken, 2 is dropped
-			cgs.redflag = str[0] - '0';
-			cgs.blueflag = str[1] - '0';
+			//[JAC Bugfix - Improved detection of CS_FLAGSTATUS]
+			int redflagId = str[0] - '0', blueflagId = str[1] - '0';
+
+			//Raz: improved flag status remapping
+			if ( redflagId >= 0 && redflagId < ARRAY_LEN( ctfFlagStatusRemap ) ) 
+				cgs.redflag = ctfFlagStatusRemap[redflagId];
+
+			if ( blueflagId >= 0 && blueflagId < ARRAY_LEN( ctfFlagStatusRemap ) )  
+				cgs.blueflag = ctfFlagStatusRemap[blueflagId];
+			//[/JAC Bugfix - Improved detection of CS_FLAGSTATUS]
 		}
 	}
 	else if ( num == CS_SHADERSTATE ) {
@@ -1727,19 +1765,25 @@ static void CG_ServerCommand( void ) {
 				return;
 			}
 
-			strcpy(name, CG_Argv(1));
-			strcpy(loc, CG_Argv(2));
-			strcpy(color, CG_Argv(3));
-			strcpy(message, CG_Argv(4));
+			//[JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
+			Q_strncpyz( name, CG_Argv( 1 ), sizeof( name ) );
+			Q_strncpyz( loc, CG_Argv( 2 ), sizeof( loc ) );
+			Q_strncpyz( color, CG_Argv( 3 ), sizeof( color ) );
+			Q_strncpyz( message, CG_Argv( 4 ), sizeof( message ) );
+			//[/JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
 
 			if (loc[0] == '@')
 			{ //get localized text
-				trap_SP_GetStringTextString(loc+1, loc, MAX_STRING_CHARS);
+				//[JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
+				trap_SP_GetStringTextString(loc+1, loc, sizeof( loc ) );
+				//[/JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
 			}
 
 			trap_S_StartLocalSound( cgs.media.talkSound, CHAN_LOCAL_SOUND );
 			//Q_strncpyz( text, CG_Argv(1), MAX_SAY_TEXT );
-			Com_sprintf(text, MAX_SAY_TEXT, "%s<%s>^%s%s", name, loc, color, message);
+			//[JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
+			Com_sprintf(text, sizeof( text ), "%s^7<%s>^%s%s", name, loc, color, message);
+			//[/JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
 			CG_RemoveChatEscapeChar( text );
 			CG_ChatBox_AddString(text);
 			CG_Printf( "*%s\n", text );
@@ -1757,19 +1801,25 @@ static void CG_ServerCommand( void ) {
 			return;
 		}
 
-		strcpy(name, CG_Argv(1));
-		strcpy(loc, CG_Argv(2));
-		strcpy(color, CG_Argv(3));
-		strcpy(message, CG_Argv(4));
+		//[JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
+		Q_strncpyz( name, CG_Argv( 1 ), sizeof( name ) );
+		Q_strncpyz( loc, CG_Argv( 2 ), sizeof( loc ) );
+		Q_strncpyz( color, CG_Argv( 3 ), sizeof( color ) );
+		Q_strncpyz( message, CG_Argv( 4 ), sizeof( message ) );
+		//[/JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
 
 		if (loc[0] == '@')
 		{ //get localized text
-			trap_SP_GetStringTextString(loc+1, loc, MAX_STRING_CHARS);
+			//[JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
+			trap_SP_GetStringTextString(loc+1, loc, sizeof( loc ) );
+			//[/JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
 		}
 
 		trap_S_StartLocalSound( cgs.media.talkSound, CHAN_LOCAL_SOUND );
 		//Q_strncpyz( text, CG_Argv(1), MAX_SAY_TEXT );
-		Com_sprintf(text, MAX_SAY_TEXT, "%s<%s> ^%s%s", name, loc, color, message);
+		//[JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
+		Com_sprintf(text, sizeof( text ), "%s^7<%s> ^%s%s", name, loc, color, message);
+		//[/JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
 		CG_RemoveChatEscapeChar( text );
 		CG_ChatBox_AddString(text);
 		CG_Printf( "*%s\n", text );

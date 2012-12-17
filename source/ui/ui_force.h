@@ -1,4 +1,4 @@
-#include "../qcommon/qfiles.h"
+#include "../shared/qcommon/qfiles.h"
 
 #define NUM_FORCE_STAR_IMAGES  11
 #define FORCE_NONJEDI	0

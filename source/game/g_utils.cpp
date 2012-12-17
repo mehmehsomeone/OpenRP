@@ -139,7 +139,9 @@ int	G_IconIndex( const char* name )
 }
 
 int G_SoundIndex( const char *name ) {
-	assert(name && name[0]);
+	//[JKH Bugfix - Remove useless assert]
+	//assert(name && name[0]);
+	//[/JKH Bugfix - Remove useless assert]
 	return G_FindConfigstringIndex (name, CS_SOUNDS, MAX_SOUNDS, qtrue);
 }
 

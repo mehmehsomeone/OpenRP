@@ -195,7 +195,7 @@ int CG_Text_Height(const char *text, float scale, int iMenuFont)
 	return trap_R_Font_HeightPixels(iFontIndex, scale);
 }
 
-#include "../qcommon/qfiles.h"	// for STYLE_BLINK etc
+#include "../shared/qcommon/qfiles.h"	// for STYLE_BLINK etc
 void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style, int iMenuFont) 
 {
 	int iStyleOR = 0;
@@ -580,6 +580,8 @@ void CG_DrawFlagModel( float x, float y, float w, float h, int team, qboolean fo
 DrawAmmo
 ================
 */
+//[JAC Bugfix - Fixed colour bleeding when drawing active force powers]
+/*
 void DrawAmmo()
 {
 	int x, y;
@@ -588,8 +590,8 @@ void DrawAmmo()
 	y = SCREEN_HEIGHT-80;
 
 }
-
-
+*/
+//[/JAC Bugfix - Fixed colour bleeding when drawing active force powers]
 
 /*
 ================
@@ -683,7 +685,9 @@ void CG_DrawArmor( menuDef_t *menuHUD )
 {
 	vec4_t			calcColor;
 	playerState_t	*ps;
-	int				armor, maxArmor;
+	//[JAC Bugfix - Fixed colour bleeding when drawing active force powers]
+	int        maxArmor;
+	//[/JAC Bugfix - Fixed colour bleeding when drawing active force powers]
 	itemDef_t		*focusItem;
 	float			percent,quarterArmor;
 	int				i,currValue,inc;
@@ -715,15 +719,22 @@ void CG_DrawArmor( menuDef_t *menuHUD )
 	}
 	//[/NewHud]
 
-	armor = ps->stats[STAT_ARMOR];
+	//[JAC Bugfix - Fixed colour bleeding when drawing active force powers]
+	//armor = ps->stats[STAT_ARMOR];
+	//[/JAC Bugfix - Fixed colour bleeding when drawing active force powers]
 	maxArmor = ps->stats[STAT_MAX_HEALTH];
 
+	//[JAC Bugfix - Fixed colour bleeding when drawing active force powers]
+	/*
 	if (armor> maxArmor)
 	{
 		armor = maxArmor;
 	}
 
 	currValue = armor;
+	*/
+	currValue = ps->stats[STAT_ARMOR];
+	//[/JAC Bugfix - Fixed colour bleeding when drawing active force powers]
 	//[NewHud]
 	inc = (float) maxArmor / MAX_OJPHUD_TICS;
 	//inc = (float) maxArmor / MAX_HUD_TICS;
@@ -807,7 +818,9 @@ void CG_DrawArmor( menuDef_t *menuHUD )
 	}
 
 	// If armor is low, flash a graphic to warn the player
-	if (armor)	// Is there armor? Draw the HUD Armor TIC
+	//[JAC Bugfix - Fixed colour bleeding when drawing active force powers]
+	if (ps->stats[STAT_ARMOR])	// Is there armor? Draw the HUD Armor TIC
+	//[/JAC Bugfix - Fixed colour bleeding when drawing active force powers]
 	{
 		quarterArmor = (float) (ps->stats[STAT_MAX_HEALTH] / 4.0f);
 
@@ -1630,7 +1643,12 @@ qboolean ForcePower_Valid(int i)
 		i == FP_SABER_OFFENSE ||
 		i == FP_SABER_DEFENSE ||
 		i == FP_DRAIN ||
-		i == FP_ABSORB )
+		i == FP_ABSORB ||
+		//[OpenRP - Fix for crash involving rage icon (added team heal to this list as well)]
+		i == FP_RAGE ||
+		i == FP_TEAM_HEAL
+		//[/OpenRP - Fix for crash involving rage icon (added team heal to this list as well)]
+		)
 	//	i == FP_SABER_DEFENSE ||
 	//	i == FP_SABERTHROW)
 	//[/SaberSys]
@@ -3905,13 +3923,12 @@ static float CG_DrawTeamOverlay( float y, qboolean right, qboolean upper ) {
 		return y; // Not on any team
 	}
 
-	//[JAC Bugfix - Disabled team overlay when following someone from spec, because the information is invalid in that case]
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW){
-		return y; // following in spec, not valid info provided
-	}
-	//[/JAC Bugfix - Disabled team overlay when following someone from spec, because the information is invalid in that case]
-
 	plyrs = 0;
+
+	//[JAC - Spectators now recieve teaminfo for the person they're following]
+	//TODO: On basejka servers, we won't have valid teaminfo if we're spectating someone.	
+	//    Find a way to detect invalid info and return early?
+	//[/JAC - Spectators now recieve teaminfo for the person they're following]
 
 	// max player name width
 	pwidth = 0;
@@ -5819,6 +5836,10 @@ static void CG_DrawActivePowers(void)
 	{
 		return;
 	}
+
+	//[JAC Bugfix - Fixed colour bleeding when drawing active force powers]
+	trap_R_SetColor( NULL );
+	//[/JAC Bugfix - Fixed colour bleeding when drawing active force powers]
 
 	while (i < NUM_FORCE_POWERS)
 	{
@@ -7738,7 +7759,9 @@ static CGAME_INLINE void CG_ChatBox_DrawStrings(void)
 	int linesToDraw = 0;
 	int i = 0;
 	int x = 30;
-	int y = cg.scoreBoardShowing ? 475 : cg_chatBoxHeight.integer;
+	//[JAC Bugfix - Fix line-height precision in chatbox when multiple lines are being drawn]
+	float y = cg.scoreBoardShowing ? 475 : cg_chatBoxHeight.integer;
+	//[/JAC Bugfix - Fix line-height precision in chatbox when multiple lines are being drawn]
 	float fontScale = 0.65f;
 
 	if (!cg_chatBox.integer)

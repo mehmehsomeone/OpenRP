@@ -351,8 +351,10 @@ void CGCam_SetFade( vec4_t dest )
 {//Instant completion
 	client_camera.info_state &= ~CAMERA_FADING;
 	client_camera.fade_duration = 0;
-	Vector4Copy( dest, client_camera.fade_source );
-	Vector4Copy( dest, client_camera.fade_color );
+	//[JAC - Rewrote math helper library]
+	VectorCopy4M( dest, client_camera.fade_source );
+	VectorCopy4M( dest, client_camera.fade_color );
+	//[/JAC - Rewrote math helper library]
 }
 
 /*
@@ -369,8 +371,10 @@ void CGCam_Fade( vec4_t source, vec4_t dest, float duration )
 		return;
 	}
 
-	Vector4Copy( source, client_camera.fade_source );
-	Vector4Copy( dest, client_camera.fade_dest );
+	//[JAC - Rewrote math helper library]
+	VectorCopy4M( source, client_camera.fade_source );
+	VectorCopy4M( dest, client_camera.fade_dest );
+	//[/JAC - Rewrote math helper library]
 
 	client_camera.fade_duration = duration;
 	client_camera.fade_time = cg.time;
@@ -834,7 +838,9 @@ void CGCam_UpdateFade( void )
 	{
 		if ( client_camera.fade_time + client_camera.fade_duration < cg.time )
 		{
-			Vector4Copy( client_camera.fade_dest, client_camera.fade_color );
+			//[JAC - Rewrote math helper library]
+			VectorCopy4M( client_camera.fade_dest, client_camera.fade_color );
+			//[/JAC - Rewrote math helper library]
 			client_camera.info_state &= ~CAMERA_FADING;
 		}
 		else

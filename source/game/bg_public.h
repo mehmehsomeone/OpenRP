@@ -20,7 +20,7 @@
 #define	GAME_VERSION		"basejka-1"
 
 //[ClientPlugInDetect]
-#define OPENRP_CLIENTVERSION		"Pre-alpha 7"
+#define OPENRP_CLIENTVERSION		"Pre-alpha 8"
 #define OPENRP_SERVERVERSION		"Pre-alpha Built: " __DATE__" "__TIME__
 //[/ClientPlugInDetect]
 
@@ -528,11 +528,13 @@ struct bgEntity_s
 
 	//Data type(s) must directly correspond to the head of the gentity and centity structures
 //[Linux]//[Mac]
-#if MAC_PORT || __linux__ // LBO - bgEntity_t already defined to bgEntity_s in bg_vehicles.h
-};
+//[JAC - Better platform-specific defines and types]
+#if defined(__GCC__) || defined(MINGW32) || MAC_PORT
+	} _bgEntity_t;
 #else
-} bgEntity_t;
+	} bgEntity_t;
 #endif
+//[/JAC - Better platform-specific defines and types]
 //[Linux]//[Mac]
 
 typedef struct {
