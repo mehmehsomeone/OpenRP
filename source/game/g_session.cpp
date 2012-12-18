@@ -231,7 +231,9 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot, qbool
 	if ( g_gametype.integer >= GT_SINGLE_PLAYER) {
 	//if ( g_gametype.integer >= GT_TEAM ) {
 	//[/CoOp]
-		if ( g_teamAutoJoin.integer ) 
+		//[JAC Bugfix - Ignore g_teamAutoJoin for bots, they set their team several frames later]
+		if ( g_teamAutoJoin.integer && !(g_entities[client-level.clients].r.svFlags & SVF_BOT) )
+		//[/JAC Bugfix - Ignore g_teamAutoJoin for bots, they set their team several frames later]
 		{
 			//[AdminSys]
 			sess->sessionTeam = PickTeam( -1, isBot );

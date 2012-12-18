@@ -1801,6 +1801,9 @@ void	Q_strcat( char *dest, int size, const char *src );
 int Q_PrintStrlen( const char *string );
 // removes color sequences from string
 char *Q_CleanStr( char *string );
+//[JAC - Added Q_strstrip]
+void Q_strstrip( char *string, const char *strip, const char *repl );
+//[/JAC - Added Q_strstrip]
 
 char	*Q_stristr( const char *s, const char *find);
 char	*Q_StrReplace(char *haystack, char *needle, char *newp);
@@ -2121,10 +2124,10 @@ typedef struct {
 typedef enum {
 	TRACK_CHANNEL_NONE = 50,
 	TRACK_CHANNEL_1,
-	TRACK_CHANNEL_2,
-	TRACK_CHANNEL_3,
+	TRACK_CHANNEL_2, // JAC - force speed
+	TRACK_CHANNEL_3, // JAC - force rage
 	TRACK_CHANNEL_4,
-	TRACK_CHANNEL_5,
+	TRACK_CHANNEL_5, // JAC - force sight
 	NUM_TRACK_CHANNELS
 } trackchan_t;
 

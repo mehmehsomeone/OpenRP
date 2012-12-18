@@ -1539,6 +1539,9 @@ typedef struct {
 
 	// voting state
 	char		voteString[MAX_STRING_CHARS];
+	//[JAC - Improved vote end rules display]
+	char		voteStringClean[MAX_STRING_CHARS];
+	//[/JAC - Improved vote end rules display]
 	char		voteDisplayString[MAX_STRING_CHARS];
 	int			voteTime;				// level.time vote was called
 	int			voteExecuteTime;		// time the vote is executed
