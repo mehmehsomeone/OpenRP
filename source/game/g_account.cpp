@@ -3,7 +3,6 @@
 #include "g_account.h"
 #include "g_admin.h"
 
-
 extern qboolean G_CheckAdmin(gentity_t *ent, int command);
 extern int M_G_ClientNumberFromName ( const char* name );
 
@@ -47,17 +46,14 @@ void CheckAdmin(gentity_t * ent)
 				ent->client->sess.cheatAccess = qtrue;
 		}
 		else
-		{
 			ent->client->sess.adminLevel = 11;
-		}
 	}
 	
 	//If they're not an admin, make them an admin level 11, which isn't really an admin level, and it's below all other levels.
 	//This is for use with functions like G_AdminControl()
 	else
-	{
 		ent->client->sess.adminLevel = 11;
-	}
+
 	return;
 }
 
@@ -73,13 +69,9 @@ isLoggedIn
 qboolean isLoggedIn(gentity_t* ent)
 {
 	if(ent->client->sess.loggedinAccount)
-	{
 		return qtrue;
-	}
 	else
-	{
 		return qfalse;
-	}
 }
 
 /*
@@ -128,9 +120,7 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 
 	//Check if this username exists
 	for( i = 0; userName[i]; i++ )
-	{
 		userName[i] = tolower(userName[i]);
-	}
 
 	Q_strncpyz( DBname, q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'", userName ) ), sizeof( DBname ) );
 
@@ -157,6 +147,10 @@ void Cmd_AccountLogin_F( gentity_t * ent )
 	q.execute( va( "UPDATE Users set LoggedIn='1' WHERE AccountID='%i'", accountID ) );
 	ent->client->sess.accountID = accountID;
 	ent->client->sess.loggedinAccount = qtrue;
+
+	//[OpenRP - Account/character info in top right of screen]
+	Q_strncpyz( ent->client->ps.HUDUsername, userName, sizeof( ent->client->ps.HUDUsername ) );
+	//[/OpenRP - Account/character info in top right of screen]
 
 	CheckAdmin(ent);
 
@@ -185,6 +179,7 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 	Database db(DATABASE_PATH);
 	Query q(db);
 	int i;
+
 	//The database is not connected. Please do so.
 	if (!db.Connected())
 	{
@@ -214,6 +209,10 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		ent->client->sess.isAdmin = qfalse;
 		ent->client->sess.adminLevel = 11;
 
+		//[OpenRP - Account/character info in top right of screen]
+		Q_strncpyz( ent->client->ps.HUDUsername, "Logged out", sizeof( ent->client->ps.HUDUsername ) );
+		//[/OpenRP - Account/character info in top right of screen]
+
 		//Reset skill points
 		ent->client->sess.skillPoints = 1;
 		trap_SendServerCommand(ent->s.number, va("nfr %i %i %i", ent->client->sess.skillPoints, 0, ent->client->sess.sessionTeam));
@@ -242,7 +241,6 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		//Update the ui
 		trap_SendServerCommand( ent-g_entities, va( "lui_logout" ) );
 	}
-
 	else
 	{
 		//Logout of Account
@@ -250,6 +248,10 @@ void Cmd_AccountLogout_F(gentity_t * ent)
 		q.execute( va( "UPDATE Users set LoggedIn='0' WHERE AccountID='%i'", ent->client->sess.accountID ) );
 		ent->client->sess.loggedinAccount = qfalse;
 		ent->client->sess.accountID = NULL;
+
+		//[OpenRP - Account/character info in top right of screen]
+		Q_strncpyz( ent->client->ps.HUDUsername, "Logged out", sizeof( ent->client->ps.HUDUsername ) );
+		//[/OpenRP - Account/character info in top right of screen]
 
 		//Remove all force powers
 		ent->client->ps.fd.forcePowersKnown = 0;
@@ -287,6 +289,7 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 	Query q(db);
 	char userName[MAX_STRING_CHARS], userNameCleaned[MAX_STRING_CHARS], userPassword[MAX_STRING_CHARS], DBname[MAX_STRING_CHARS];
 	int accountID, i; 
+	extern void SanitizeString2( char *in, char *out );
 
 	//The database is not connected. Please do so.
 	if (!db.Connected())
@@ -309,9 +312,7 @@ void Cmd_AccountCreate_F(gentity_t * ent)
 
 	//Check if that user exists already
 	for( i = 0; userName[i]; i++ )
-	{
 		userName[i] = tolower(userName[i]);
-	}
 
 	Q_strncpyz( DBname, q.get_string( va( "SELECT Username FROM Users WHERE Username='%s'", userName ) ), sizeof( DBname ) );
 
@@ -542,22 +543,23 @@ void Cmd_AccountName_F( gentity_t * ent )
 	trap_Argv(1, cmdTarget, sizeof(cmdTarget));
 
 	clientid = M_G_ClientNumberFromName( cmdTarget );
+
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
 		return; 
 	} 
-	if (clientid == -2) 
+	else if (clientid == -2) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
 		return; 
 	}
-	if (clientid >= MAX_CLIENTS || clientid < 0) 
+	else if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s (greater than 31 or less than 0)\n\"", cmdTarget ) );
 		return;
 	}
-	if (!g_entities[clientid].inuse) 
+	else if (!g_entities[clientid].inuse) 
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
 		return; 

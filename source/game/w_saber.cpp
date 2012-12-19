@@ -900,6 +900,11 @@ static GAME_INLINE qboolean G_CheckLookTarget( gentity_t *ent, vec3_t	lookAngles
 					*lookingSpeed = LOOK_DEFAULT_SPEED;
 				}
 
+				//[OpenRP - Don't turn head when cloaked player is next to you]
+				if ( lookCent->client->ps.powerups[PW_CLOAKED] )
+					return qfalse;
+				//[/OpenRP - Don't turn head when cloaked player is next to you]
+
 				//FIXME: Ignore small deltas from current angles so we don't bob our head in synch with theirs?
 
 				/*
