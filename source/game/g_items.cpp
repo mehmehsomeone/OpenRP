@@ -3164,11 +3164,15 @@ gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity ) {
 		Team_CheckDroppedItem( dropped );
 
 		//rww - so bots know
-		if (strcmp(dropped->classname, "team_CTF_redflag") == 0)
+		//[JAC - Minor improvement]
+		if (dropped->item->giTag == PW_REDFLAG)
+		//[/JAC - Minor improvement]
 		{
 			droppedRedFlag = dropped;
 		}
-		else if (strcmp(dropped->classname, "team_CTF_blueflag") == 0)
+		//[JAC - Minor improvement]
+		else if (dropped->item->giTag == PW_BLUEFLAG)
+		//[/JAC - Minor improvement]
 		{
 			droppedBlueFlag = dropped;
 		}
@@ -3481,11 +3485,15 @@ void G_CheckTeamItems( void ) {
 		// check for the two flags
 		item = BG_FindItem( "team_CTF_redflag" );
 		if ( !item || !itemRegistered[ item - bg_itemlist ] ) {
-			G_Printf( S_COLOR_YELLOW "WARNING: No team_CTF_redflag in map" );
+			//[JAC Bugfix - Added newline to some console prints]
+			G_Printf( S_COLOR_YELLOW "WARNING: No team_CTF_redflag in map\n" );
+			//[/JAC Bugfix - Added newline to some console prints]
 		}
 		item = BG_FindItem( "team_CTF_blueflag" );
 		if ( !item || !itemRegistered[ item - bg_itemlist ] ) {
-			G_Printf( S_COLOR_YELLOW "WARNING: No team_CTF_blueflag in map" );
+			//[JAC Bugfix - Added newline to some console prints]
+			G_Printf( S_COLOR_YELLOW "WARNING: No team_CTF_blueflag in map\n" );
+			//[/JAC Bugfix - Added newline to some console prints]
 		}
 	}
 }

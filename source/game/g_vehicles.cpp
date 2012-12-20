@@ -1166,7 +1166,9 @@ getItOutOfMe:
 						pVeh->m_ppPassengers[k] = NULL;
 #ifdef QAGAME
 						//Server just needs to tell client which passenger he is
-						if ( ((gentity_t *)pVeh->m_ppPassengers[k-1])->client )
+						//[JAC Bugfix - Fixed rare vehicle crash]
+						if ( pVeh->m_ppPassengers[k-1] && ((gentity_t *)pVeh->m_ppPassengers[k-1])->client )
+						//[/JAC Bugfix - Fixed rare vehicle crash]
 						{
 							((gentity_t *)pVeh->m_ppPassengers[k-1])->client->ps.generic1 = k;
 						}

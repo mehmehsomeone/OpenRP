@@ -49,7 +49,9 @@ TIMER_Clear
 void TIMER_Clear2( gentity_t *ent )
 {
 	// rudimentary safety checks, might be other things to check?
-	if ( ent && ent->s.number > 0 && ent->s.number < MAX_GENTITIES )
+	//[JAC Bugfix - Fixed TIMER_Clear2 not affecting entity 0]
+	if ( ent && ent->s.number >= 0 && ent->s.number < MAX_GENTITIES )
+	//[/JAC Bugfix - Fixed TIMER_Clear2 not affecting entity 0]
 	{
 		gtimer_t *p = g_timers[ent->s.number];
 

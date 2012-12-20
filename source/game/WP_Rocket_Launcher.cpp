@@ -178,7 +178,9 @@ void WP_FireRocket( gentity_t *ent, qboolean altFire )
 		vel *= 0.5f;
 	}
 
-	missile = CreateMissile( muzzle, forward, vel, 10000, ent, altFire );
+	//[JAC Bugfix - Increased rocket life time as it is not uncommon to have it disappear too soon]
+	missile = CreateMissile( muzzle, forward, vel, 30000, ent, altFire );
+	//[/JAC Bugfix - Increased rocket life time as it is not uncommon to have it disappear too soon]
 
 	if (ent->client && ent->client->ps.rocketLockIndex != ENTITYNUM_NONE)
 	{
