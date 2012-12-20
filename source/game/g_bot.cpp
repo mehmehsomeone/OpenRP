@@ -1413,17 +1413,6 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	// create the bot's userinfo
 	userinfo[0] = '\0';
 
-	//[JAC Bugfix - Fixed G_AddBot]
-	// have the server allocate a client slot
-	clientNum = trap_BotAllocateClient();
-	if ( clientNum == -1 ) {
-//		G_Printf( S_COLOR_RED "Unable to add bot.  All player slots are in use.\n" );
-//		G_Printf( S_COLOR_RED "Start server with more 'open' slots.\n" );
-		trap_SendServerCommand( -1, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "UNABLE_TO_ADD_BOT")));
-		return;
-	}
-	//[/JAC Bugfix - Fixed G_AddBot]
-
 	botname = Info_ValueForKey( botinfo, "funname" );
 	if( !botname[0] ) {
 		botname = Info_ValueForKey( botinfo, "name" );
@@ -1435,9 +1424,6 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	Info_SetValueForKey( userinfo, "name", botname );
 	Info_SetValueForKey( userinfo, "rate", "25000" );
 	Info_SetValueForKey( userinfo, "snaps", "20" );
-	//[JAC Bugfix - Fixed G_AddBot]
-	Info_SetValueForKey( userinfo, "ip", "localhost" );
-	//[/JAC Bugfix - Fixed G_AddBot]
 	Info_SetValueForKey( userinfo, "skill", va("%1.2f", skill) );
 
 	if ( skill >= 1 && skill < 2 ) {
@@ -1573,6 +1559,15 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	Info_SetValueForKey( userinfo, "ojp_clientplugin", OPENRP_CLIENTVERSION );
 	//[/ClientPlugInDetect]
 
+	// have the server allocate a client slot
+	clientNum = trap_BotAllocateClient();
+	if ( clientNum == -1 ) {
+//		G_Printf( S_COLOR_RED "Unable to add bot.  All player slots are in use.\n" );
+//		G_Printf( S_COLOR_RED "Start server with more 'open' slots.\n" );
+		trap_SendServerCommand( -1, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "UNABLE_TO_ADD_BOT")));
+		return;
+	}
+
 	//[DuelGuns][EnhancedImpliment]
 	/*
 	if(bot_dualguns)
@@ -1607,10 +1602,8 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	//[/TABBot]
 
 	bot = &g_entities[ clientNum ];
-	//[JAC Bugfix - Fixed G_AddBot]
-	//bot->r.svFlags |= SVF_BOT;
-	//bot->inuse = qtrue;
-	//[/JAC Bugfix - Fixed G_AddBot]
+	bot->r.svFlags |= SVF_BOT;
+	bot->inuse = qtrue;
 
 	// register the userinfo
 	trap_SetUserinfo( clientNum, userinfo );

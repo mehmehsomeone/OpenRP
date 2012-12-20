@@ -904,12 +904,6 @@ vmCvar_t	cg_snaps;
 vmCvar_t	cl_maxpackets;
 vmCvar_t	cg_rate;
 
-//[JAC - Added cg_xcvar.h for easy cvar creation on the client]
-#define XCVAR_DECL	
-#include "cg_xcvar.h"	
-#undef XCVAR_DECL
-//[/JAC - Added cg_xcvar.h for easy cvar creation on the client]
-
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -1197,12 +1191,6 @@ Ghoul2 Insert End
 	//controls the angular offset for the current debug holsterType
 	{ &ojp_holsterdebug_angoffset, "ojp_holsterdebug_angoffset", "0.0 0.0 0.0", 0 },
 	//[/VisualWeapons]
-
-//[JAC - Added cg_xcvar.h for easy cvar creation on the client]
-#define XCVAR_LIST
-	#include "cg_xcvar.h"
-#undef XCVAR_LIST
-//[/JAC - Added cg_xcvar.h for easy cvar creation on the client]
 
 
 };
@@ -3526,27 +3514,9 @@ Ghoul2 Insert Start
 // initialise the cg_entities structure - take into account the ghoul2 stl stuff in the active snap shots
 void CG_Init_CG(void)
 {
-//[JAC - Replacing _XBOX with USE_WIDESCREEN]
-#ifdef USE_WIDESCREEN	
-   qboolean widescreen = cg.widescreen;	
-#endif
-//[/JAC - Replacing _XBOX with USE_WIDESCREEN]
 	memset( &cg, 0, sizeof(cg));
-//[JAC - Replacing _XBOX with USE_WIDESCREEN]
-#ifdef USE_WIDESCREEN
-   cg.widescreen = widescreen;
-#endif
-//[/JAC - Replacing _XBOX with USE_WIDESCREEN]
 }
 
-//[JAC - Replacing _XBOX with USE_WIDESCREEN]
-#ifdef USE_WIDESCREEN
-void CG_SetWidescreen(qboolean widescreen)
-{
-	cg.widescreen = widescreen;
-}
-#endif
-//[/JAC - Replacing _XBOX with USE_WIDESCREEN]
 
 // initialise the cg_entities structure - take into account the ghoul2 stl stuff
 void CG_Init_CGents(void)

@@ -1136,11 +1136,6 @@ qboolean CG_CalcFOVFromX( float fov_x )
 	cg.refdef.fov_x = fov_x;
 	cg.refdef.fov_y = fov_y;
 
-#ifdef USE_WIDECSREEN
-	if(cg.widescreen)
-		cg.refdef.fov_x *= 1.125f;	
-#endif
-
 	return (inwater);
 }
 
@@ -1306,12 +1301,6 @@ static int CG_CalcFov( void ) {
 		inwater = qfalse;
 	}
 
-//[JAC - Replacing _XBOX with USE_WIDESCREEN]
-#ifdef USE_WIDESCREEN
-	if(cg.widescreen)
-		fov_x = fov_y * 1.77777f;
-#endif
-//[/JAC - Replacing _XBOX with USE_WIDESCREEN]
 
 	// set it
 	cg.refdef.fov_x = fov_x;

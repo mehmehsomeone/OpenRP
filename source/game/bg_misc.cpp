@@ -3662,10 +3662,10 @@ void BG_TempFree( int size )
 
 char *BG_StringAlloc ( const char *source )
 {
-	//[JAC - Merge 2 lines into 1]
-	char *dest = (char*)BG_Alloc( strlen ( source ) + 1 );
-	//[/JAC - Merge 2 lines into 1]
-	strcpy( dest, source );
+	char *dest;
+
+	dest = (char*)BG_Alloc ( strlen ( source ) + 1 );
+	strcpy ( dest, source );
 	return dest;
 }
 

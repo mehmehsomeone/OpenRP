@@ -445,12 +445,6 @@
     <ClCompile Include="g_mail.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="g_engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="q_engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ai.h">
@@ -637,15 +631,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="g_OpenRP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="g_engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="g_xcvar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="q_engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

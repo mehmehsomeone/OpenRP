@@ -2,7 +2,7 @@
 #include "bg_local.h"
 #include "w_saber.h"
 #include "ai_main.h"
-#include "../shared/ghoul2/G2.h"
+#include "../ghoul2/G2.h"
 //[SaberSys]
 #include "g_saberbeh.h"
 //[/SaberSys]
@@ -241,26 +241,14 @@ int BasicDodgeCosts[MOD_MAX] =
 //[/DodgeSys]
 //[/DodgeDefines]
 
-//OJP's BugFix4 was previously here. JAC's fix is better though.
-//[JAC Bugfix - Fixed RandFloat]
-//Raz: Fixing this in several ways. Some communities like the 'broken' behaviour.
-//	g_randFix 0 == Same as basejka. Broken on Linux, fine on Windows
-//	g_randFix 1 == Use proper behaviour of RAND_MAX. Fine on Linux, fine on Windows
-//	g_randFix 2 == Intentionally break RAND_MAX. Broken on Linux, broken on Windows.
-float RandFloat( float min, float max ) {
-	//JAC: Fixed an issue where linux was producing undesired results due to not using RAND_MAX, which is platform-dependant
-	int randActual = rand();
-	float randMax = 32768.0f;
-#ifdef _WIN32
-	if ( g_randFix.integer == 2 )
-		randActual = (randActual<<16)|randActual;
-#elif defined(__GCC__)
-	if ( g_randFix.integer == 1 )
-		randMax = RAND_MAX;
-#endif
-	return ((randActual * (max - min)) / randMax) + min;
+
+float RandFloat(float min, float max) {
+//[BugFix4]
+//Fixes problem with linux compiles.
+	return ((rand() * (max - min)) / (float)RAND_MAX) + min;
+//	return ((rand() * (max - min)) / 32768.0F) + min; 
+//[/BugFix4]
 }
-//[/JAC Bugfix - Fixed RandFloat]
 
 #ifdef DEBUG_SABER_BOX
 void	G_DebugBoxLines(vec3_t mins, vec3_t maxs, int duration)

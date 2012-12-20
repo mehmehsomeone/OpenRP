@@ -96,9 +96,6 @@ char *COM_SkipPath (char *pathname)
 COM_StripExtension
 ============
 */
-
-#if 0 //jamp
-
 void COM_StripExtension( const char *in, char *out ) {
 	while ( *in && *in != '.' ) {
 		*out++ = *in++;
@@ -106,28 +103,12 @@ void COM_StripExtension( const char *in, char *out ) {
 	*out = 0;
 }
 
-#else //iojamp
-
-void COM_StripExtension( const char *in, char *out, int destsize )
-{
-	const char *dot = strrchr(in, '.'), *slash;
-	if (dot && (!(slash = strrchr(in, '/')) || slash < dot))
-		Q_strncpyz(out, in, (destsize < dot-in+1 ? destsize : dot-in+1));
-	else
-		Q_strncpyz(out, in, destsize);
-}
-
-#endif
-
 
 /*
 ==================
 COM_DefaultExtension
 ==================
 */
-
-#if 0 //jamp
-
 void COM_DefaultExtension (char *path, int maxSize, const char *extension ) {
 	char	oldPath[MAX_QPATH];
 	char    *src;
@@ -148,19 +129,6 @@ void COM_DefaultExtension (char *path, int maxSize, const char *extension ) {
 	Q_strncpyz( oldPath, path, sizeof( oldPath ) );
 	Com_sprintf( path, maxSize, "%s%s", oldPath, extension );
 }
-
-#else //iojamp
-
-void COM_DefaultExtension( char *path, int maxSize, const char *extension )
-{
-	const char *dot = strrchr(path, '.'), *slash;
-	if (dot && (!(slash = strrchr(path, '/')) || slash < dot))
-		return;
-	else
-		Q_strcat(path, maxSize, extension);
-}
-
-#endif
 
 /*
 ============================================================================
@@ -1144,10 +1112,9 @@ int Q_vsnprintf( char *dest, int size, const char *fmt, va_list argptr ) {
 #endif
 
 	dest[size-1] = '\0';
-	//[JAC - Fixing compiler warnings]
-	if ( ret < 0 || ret >= (signed)size )
+	if ( ret < 0 || ret >= size ) {
 		return -1;
-	//[/JAC - Fixing compiler warnings]
+	}
 	return ret;
 }
 
@@ -1589,14 +1556,3 @@ void Info_SetValueForKey_Big( char *s, const char *key, const char *value ) {
 }
 
 //====================================================================
-
-//[JAC - Added server-side engine modifications, basic client connection checks]
-#include "q_engine.h"
-
-void NET_AddrToString( char *out, size_t size, void *addr )
-{
-	netadr_t *a = (netadr_t *)addr;
-	unsigned char *IP = (unsigned char *)&a->ip;
-	Com_sprintf( out, size, "%i.%i.%i.%i:%i", IP[0], IP[1], IP[2], IP[3], BigShort( a->port ) );
-}
-//[/JAC - Added server-side engine modifications, basic client connection checks]

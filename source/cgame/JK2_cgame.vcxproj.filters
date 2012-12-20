@@ -243,9 +243,6 @@
     <ClInclude Include="..\game\ai_main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cg_xcvar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

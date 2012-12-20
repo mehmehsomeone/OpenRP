@@ -1504,7 +1504,7 @@ void NPC_Begin (gentity_t *ent)
 	// initialize animations and other things
 	memset( &ucmd, 0, sizeof( ucmd ) );
 	//_VectorCopy( client->pers.cmd_angles, ucmd.angles );
-	VectorCopyM(client->pers.cmd.angles, ucmd.angles);
+	VectorCopy(client->pers.cmd.angles, ucmd.angles);
 	
 	ent->client->ps.groundEntityNum = ENTITYNUM_NONE;
 
