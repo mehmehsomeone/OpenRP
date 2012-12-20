@@ -3232,11 +3232,15 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 				//[/FatigueSys]
 					(bgSiegeClasses[self->client->siegeClass].classflags & (1<<CFL_FASTFORCEREGEN)))
 				{ //if this is siege and our player class has the fast force regen ability, then recharge with 1/5th the usual delay
-					self->client->ps.fd.forcePowerRegenDebounceTime = level.time + (g_forceRegenTime.integer*0.2);
+					//[JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
+					self->client->ps.fd.forcePowerRegenDebounceTime = level.time + max(g_forceRegenTime.integer*0.2, 1);
+					//[/JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
 				}
 				else
 				{
-						self->client->ps.fd.forcePowerRegenDebounceTime = level.time + g_forceRegenTime.integer;
+					//[JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
+					self->client->ps.fd.forcePowerRegenDebounceTime = max(g_forceRegenTime.integer, 1);
+					//[/JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
 				}
 			}
 			else
@@ -3248,8 +3252,10 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 					if ( g_duel_fraglimit.integer )
 					{
 						//[FatigueSys]
-						FatigueTime = (g_forceRegenTime.integer*
-							(0.6 + (.3 * (float)self->client->sess.wins / (float)g_duel_fraglimit.integer)));
+						//[JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
+						FatigueTime = max(g_forceRegenTime.integer * 
+							(0.6 + (.3 * (float)self->client->sess.wins / (float)g_duel_fraglimit.integer)), 1);
+						//[/JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
 						//self->client->ps.fd.forcePowerRegenDebounceTime = level.time + (g_forceRegenTime.integer*
 						//	(0.6 + (.3 * (float)self->client->sess.wins / (float)g_duel_fraglimit.integer)));
 						//[/FatigueSys]
@@ -3257,7 +3263,9 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 					else
 					{
 						//[FatigueSys]
-						FatigueTime = (g_forceRegenTime.integer*0.7);
+						//[JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
+						FatigueTime = max(g_forceRegenTime.integer*0.7, 1);
+						//[/JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
 						//self->client->ps.fd.forcePowerRegenDebounceTime = level.time + (g_forceRegenTime.integer*0.7);
 						//[/FatigueSys]
 					}
@@ -3265,7 +3273,9 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 				else
 				{
 					//[FatigueSys]
-					FatigueTime = g_forceRegenTime.integer;
+					//[JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
+					FatigueTime = max(g_forceRegenTime.integer, 1);
+					//[/JAC Bugfix - Fixed an infinite loop when g_forceRegenTime was 0ms]
 					//self->client->ps.fd.forcePowerRegenDebounceTime = level.time + g_forceRegenTime.integer;
 					//[/FatigueSys]
 				}
