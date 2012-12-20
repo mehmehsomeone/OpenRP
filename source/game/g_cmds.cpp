@@ -2231,7 +2231,7 @@ Cmd_Tell_f
 ==================
 */
 static void Cmd_Tell_f( gentity_t *ent ) {
-	int			clientid = -1;
+	int			clientid;
 	char		*p;
 	char		arg[MAX_TOKEN_CHARS];
 	int i;
@@ -2241,28 +2241,26 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	}
 
 	trap_Argv( 1, arg, sizeof( arg ) );
-
 	clientid = M_G_ClientNumberFromName( arg );
-
 	if (clientid == -1) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", arg ) ); 
 		return; 
 	} 
-	else if (clientid == -2) 
+	if (clientid == -2) 
 	{ 
 		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", arg ) ); 
 		return; 
 	}
-	else if (clientid >= MAX_CLIENTS || clientid < 0) 
+	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s (greater than 31 or less than 0)\n\"", arg ) );
+		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", arg ) );
 		return;
 	}
-	else if (!g_entities[clientid].inuse) 
+	if (!g_entities[clientid].inuse) 
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", arg ) ); 
-		return; 
+		return;
 	}
 
 	p = ConcatArgs( 2 );
@@ -2578,7 +2576,7 @@ M_SanitizeString
 Remove case and control characters (Same as in g_cmds.c).
 ==================
 */
-void M_SanitizeString( char *in, char *out ){
+static void M_SanitizeString( char *in, char *out ){
 	int i = 0;
 	int r = 0;
 
@@ -2623,7 +2621,7 @@ M_SanitizeString2
 Remove case and control characters
 ==================
 */
-void M_SanitizeString2( char *in, char *out ) {
+static void M_SanitizeString2( char *in, char *out ) {
 	while ( *in ) {
 		if ( *in == 27 ) {
 			in += 2;		// skip color code
@@ -2747,49 +2745,6 @@ int M_G_ClientNumberFromName ( const char* name )
 	}
 
 	return -1;
-}
-
-/*
-==================
-
-M_HolsterThoseSabers - MJN
-Something like Cmd_ToggleSaber,
-but stripped down and for holster only.
-==================
-*/
-void M_HolsterThoseSabers( gentity_t *ent )
-{
-
-        // MJN - Check to see if that is the weapon of choice...
-        if (ent->client->ps.weapon != WP_SABER)
-        {
-                return;
-        }
-        // MJN - Cannot holster it in flight or we're screwed!
-        if (ent->client->ps.saberInFlight)
-        {
-                return;
-        }
-        // MJN - Cannot holster in saber lock.
-        if (ent->client->ps.saberLockTime >= level.time)
-        {
-                return;
-        }
-        // MJN - Holster Sabers
-        if ( ent->client->ps.saberHolstered < 2 )
-		{
-            if (ent->client->saber[0].soundOff)
-			{
-				G_Sound(ent, CHAN_AUTO, ent->client->saber[0].soundOff);
-			}
-
-			if (ent->client->saber[1].soundOff && ent->client->saber[1].model[0])
-			{
-					G_Sound(ent, CHAN_AUTO, ent->client->saber[1].soundOff);
-			}
-			ent->client->ps.saberHolstered = 2;
-			ent->client->ps.weaponTime = 400;
-        }
 }
 
 void Admin_Teleport( gentity_t *ent )

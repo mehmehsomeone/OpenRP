@@ -2506,10 +2506,6 @@ typedef struct playerState_s {
 	vec3_t		userVec1;
 	vec3_t		userVec2;
 
-	//[OpenRP - Account/character info in top right of screen]
-	char HUDUsername[MAX_STRING_CHARS];
-	//[/OpenRP - Account/character info in top right of screen]
-
 #ifdef _ONEBIT_COMBO
 	int			deltaOneBits;
 	int			deltaNumBits;
