@@ -21,12 +21,13 @@ Called on game shutdown
 ================
 */
 void G_WriteClientSessionData( gclient_t *client ) {
-	//[JAC Bugfix - adjusted buffer size to accommodate for IPv6 addresses]
-	const char *s = {0};
-	char siegeClass[64] = {0}, saberType[64] = {0}, saber2Type[64] = {0}, IP[NET_ADDRSTRMAXLEN] = {0};
-	const char  *var;
-	int      i = 0;
-	//[/JAC Bugfix - adjusted buffer size to accommodate for IPv6 addresses]
+	const char	*s;
+	const char	*var;
+	int			i = 0;
+	char		siegeClass[64];
+	char		saberType[64];
+	char		saber2Type[64];
+	char IP[64];
 
 	strcpy(siegeClass, client->sess.siegeClass);
 

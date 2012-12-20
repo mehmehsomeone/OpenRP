@@ -74,17 +74,11 @@ void charge_stick (gentity_t *self, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	//if we get here I guess we hit the world so we can stick to it
-	
-	//[JAC Bugfix - Fixed annoying det packs bug causing det packs to sometimes not detonate when owner player dies]
-	if (self->think == G_RunObject){
+	//if we get here I guess we hit hte world so we can stick to it
+
 	self->touch = 0;
 	self->think = DetPackBlow;
-	//[OpenRP - Detpacks last forever]
-	self->nextthink = level.time + Q3_INFINITE; //make them last forever
-	//[/OpenRP - Detpacks last forever]
-	}
-	//[/JAC Bugfix - Fixed annoying det packs bug causing det packs to sometimes not detonate when owner player dies]
+	self->nextthink = level.time + 1800000;//make them last 30 mins?:eek:
 
 	VectorClear(self->s.apos.trDelta);
 	self->s.apos.trType = TR_STATIONARY;

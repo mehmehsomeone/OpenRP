@@ -3905,12 +3905,6 @@ static float CG_DrawTeamOverlay( float y, qboolean right, qboolean upper ) {
 		return y; // Not on any team
 	}
 
-	//[JAC Bugfix - Disabled team overlay when following someone from spec, because the information is invalid in that case]
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW){
-		return y; // following in spec, not valid info provided
-	}
-	//[/JAC Bugfix - Disabled team overlay when following someone from spec, because the information is invalid in that case]
-
 	plyrs = 0;
 
 	// max player name width
@@ -5388,35 +5382,46 @@ static void CG_DrawCrosshair( vec3_t worldPoint, int chEntValid ) {
 	}
 }
 
-//[JAC Bugfix - Fixed CG_WorldCoordToScreenCoordFloat function to correctly calculate coordinates on screen.
-//With old version it is possible to see that coordinates were way off in some situations, for example with red rocket lock icon, or with dynamic crosshair]
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t worldCoord, float *x, float *y)
 {
-    vec3_t trans;
-    vec_t xc, yc;
-    vec_t px, py;
-    vec_t z;
+	float	xcenter, ycenter;
+	vec3_t	local, transformed;
+	vec3_t	vfwd;
+	vec3_t	vright;
+	vec3_t	vup;
+	float xzi;
+	float yzi;
 
-    px = tan(cg.refdef.fov_x * (M_PI / 360) );
-    py = tan(cg.refdef.fov_y * (M_PI / 360) );
+//	xcenter = cg.refdef.width / 2;//gives screen coords adjusted for resolution
+//	ycenter = cg.refdef.height / 2;//gives screen coords adjusted for resolution
+	
+	//NOTE: did it this way because most draw functions expect virtual 640x480 coords
+	//	and adjust them for current resolution
+	xcenter = SCREEN_WIDTH / 2.0f;//gives screen coords in virtual 640x480, to be adjusted when drawn
+	ycenter = SCREEN_HEIGHT / 2.0f;//gives screen coords in virtual 640x480, to be adjusted when drawn
 
-    VectorSubtract(worldCoord, cg.refdef.vieworg, trans);
-   
-    xc = 640 / 2.0;
-    yc = 480 / 2.0;
-    
-	// z = how far is the object in our forward direction
-    z = DotProduct(trans, cg.refdef.viewaxis[0]);
-    if (z <= 0.001)
-        return qfalse;
+	AngleVectors (cg.refdef.viewangles, vfwd, vright, vup);
 
-    *x = xc - DotProduct(trans, cg.refdef.viewaxis[1])*xc/(z*px);
-    *y = yc - DotProduct(trans, cg.refdef.viewaxis[2])*yc/(z*py);
+	VectorSubtract (worldCoord, cg.refdef.vieworg, local);
 
-    return qtrue;
+	transformed[0] = DotProduct(local,vright);
+	transformed[1] = DotProduct(local,vup);
+	transformed[2] = DotProduct(local,vfwd);		
+
+	// Make sure Z is not negative.
+	if(transformed[2] < 0.01f)
+	{
+		return qfalse;
+	}
+
+	xzi = xcenter / transformed[2] * (96.0f/cg.refdef.fov_x);
+	yzi = ycenter / transformed[2] * (102.0f/cg.refdef.fov_y);
+
+	*x = xcenter + xzi * transformed[0];
+	*y = ycenter - yzi * transformed[1];
+
+	return qtrue;
 }
-//[/JAC Bugfix - Fixed CG_WorldCoordToScreenCoordFloat function to correctly calculate coordinates on screen.
-//With old version it is possible to see that coordinates were way off in some situations, for example with red rocket lock icon, or with dynamic crosshair]
 
 qboolean CG_WorldCoordToScreenCoord( vec3_t worldCoord, int *x, int *y )
 {
@@ -6855,13 +6860,9 @@ static void CG_DrawTeamVote(void) {
 	char	*s;
 	int		sec, cs_offset;
 
-	//[JAC Bugfix - Fix CG_DrawTeamVote using cgs.clientinfo-> instead of cgs.clientinfo[cg.clientNum]]
-	if ( cgs.clientinfo[cg.clientNum].team == TEAM_RED )
-	//[/JAC Bugfix - Fix CG_DrawTeamVote using cgs.clientinfo-> instead of cgs.clientinfo[cg.clientNum]]
+	if ( cgs.clientinfo->team == TEAM_RED )
 		cs_offset = 0;
-	//[JAC Bugfix - Fix CG_DrawTeamVote using cgs.clientinfo-> instead of cgs.clientinfo[cg.clientNum]]
-	else if ( cgs.clientinfo[cg.clientNum].team == TEAM_BLUE )
-	//[/JAC Bugfix - Fix CG_DrawTeamVote using cgs.clientinfo-> instead of cgs.clientinfo[cg.clientNum]]
+	else if ( cgs.clientinfo->team == TEAM_BLUE )
 		cs_offset = 1;
 	else
 		return;

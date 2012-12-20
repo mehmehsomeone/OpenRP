@@ -2193,9 +2193,7 @@ void SeekerDroneUpdate(gentity_t *self)
 
 		G_PlayEffect(EFFECT_SPARK_EXPLOSION, org, a);
 
-		//[JAC Bugfix - Fixed unproper EF_SEEKERDRONE flag handling]
-		self->client->ps.eFlags &= ~EF_SEEKERDRONE;
-		//[/JAC Bugfix - Fixed unproper EF_SEEKERDRONE flag handling]
+		self->client->ps.eFlags -= EF_SEEKERDRONE;
 		self->client->ps.genericEnemyIndex = -1;
 
 		return;
@@ -2242,9 +2240,7 @@ void SeekerDroneUpdate(gentity_t *self)
 
 		G_PlayEffect(EFFECT_SPARK_EXPLOSION, org, a);
 
-		//[JAC Bugfix - Fixed unproper EF_SEEKERDRONE flag handling]
-		self->client->ps.eFlags &= ~EF_SEEKERDRONE;
-		//[/JAC Bugfix - Fixed unproper EF_SEEKERDRONE flag handling]
+		self->client->ps.eFlags -= EF_SEEKERDRONE;
 		self->client->ps.genericEnemyIndex = -1;
 
 		return;

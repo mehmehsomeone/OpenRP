@@ -1847,16 +1847,12 @@ extern	vmCvar_t		cg_gun_z;
 extern	vmCvar_t		cg_drawGun;
 extern	vmCvar_t		cg_viewsize;
 extern	vmCvar_t		cg_autoswitch;
-//[JAC - Removed unused cvars]
-//extern	vmCvar_t		cg_ignore;
-//[/JAC - Removed unused cvars]
+extern	vmCvar_t		cg_ignore;
 extern	vmCvar_t		cg_simpleItems;
 extern	vmCvar_t		cg_fov;
 extern	vmCvar_t		cg_zoomFov;
 
-//[JAC - Removed unused cvars]
-//extern	vmCvar_t		cg_swingAngles;
-//[/JAC - Removed unused cvars]
+extern	vmCvar_t		cg_swingAngles;
 
 extern	vmCvar_t		cg_oldPainSounds;
 
@@ -1966,23 +1962,17 @@ extern	vmCvar_t		cg_timescale;
 extern	vmCvar_t		cg_cameraMode;
 extern  vmCvar_t		cg_smallFont;
 extern  vmCvar_t		cg_bigFont;
-//[JAC - Removed unused cvars]
-//extern	vmCvar_t		cg_noTaunt;
-//[/JAC - Removed unused cvars]
+extern	vmCvar_t		cg_noTaunt;
 extern	vmCvar_t		cg_noProjectileTrail;
 //extern	vmCvar_t		cg_trueLightning;
 
 //extern	vmCvar_t		cg_redTeamName;
 //extern	vmCvar_t		cg_blueTeamName;
 extern	vmCvar_t		cg_currentSelectedPlayer;
-//[JAC - Removed unused cvars]
-//extern	vmCvar_t		cg_currentSelectedPlayerName;
-//[/JAC - Removed unused cvars]
+extern	vmCvar_t		cg_currentSelectedPlayerName;
 //extern	vmCvar_t		cg_singlePlayerActive;
-//[JAC - Removed unused cvars]
-//extern  vmCvar_t		cg_recordSPDemo;
-//extern  vmCvar_t		cg_recordSPDemoName;
-//[/JAC - Removed unused cvars]
+extern  vmCvar_t		cg_recordSPDemo;
+extern  vmCvar_t		cg_recordSPDemoName;
 
 extern	vmCvar_t		ui_myteam;
 //[CoOp]

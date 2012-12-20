@@ -116,10 +116,6 @@ void ForceThrow( gentity_t *self, qboolean pull )
 	if(self->client->ps.fd.forcePowersActive & (1 << FP_MANIPULATE))
 		WP_ForcePowerStop(self, FP_MANIPULATE);
 
-	//[JAC Bugfix - Fixed rocket lock bug]
-	BG_ClearRocketLock(&self->client->ps);
-	//[/JAC Bugfix - Fixed rocket lock bug]
-
 	if (!pull && self->client->ps.saberLockTime > level.time && self->client->ps.saberLockFrame)//RACC - used force push in a saber lock.
 		return;
 	
