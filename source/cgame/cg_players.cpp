@@ -4,9 +4,9 @@
 #include "cg_local.h"
 //[Mac]
 #if MAC_PORT
-#include "../ghoul2/g2.h"
+#include "../shared/ghoul2/g2.h"
 #else
-#include "..\ghoul2\g2.h"
+#include "..\shared\ghoul2\g2.h"
 #endif
 //[/Mac]
 #include "bg_saga.h"
@@ -1082,7 +1082,7 @@ sfxHandle_t	CG_CustomSound( int clientNum, const char *soundName ) {
 		return trap_S_RegisterSound( soundName );
 	}
 
-	COM_StripExtension(soundName, lSoundName);
+	COM_StripExtension( soundName, lSoundName, sizeof( lSoundName ) );
 
 	if ( clientNum < 0 )
 	{
@@ -1858,7 +1858,7 @@ void CG_LoadCISounds(clientInfo_t *ci, qboolean modelloaded)
 		}
 
 		Com_sprintf(soundName, sizeof(soundName), "%s", s+1);
-		COM_StripExtension(soundName, soundName);
+		COM_StripExtension( soundName, soundName, sizeof( soundName ) );
 		//strip the extension because we might want .mp3's
 
 		ci->sounds[i] = 0;
@@ -1899,7 +1899,7 @@ void CG_LoadCISounds(clientInfo_t *ci, qboolean modelloaded)
 			}
 
 			Com_sprintf(soundName, sizeof(soundName), "%s", s+1);
-			COM_StripExtension(soundName, soundName);
+			COM_StripExtension( soundName, soundName, sizeof( soundName ) );
 			//strip the extension because we might want .mp3's
 
 			ci->siegeSounds[i] = 0;
@@ -1948,7 +1948,7 @@ void CG_LoadCISounds(clientInfo_t *ci, qboolean modelloaded)
 			}
 
 			Com_sprintf(soundName, sizeof(soundName), "%s", s+1);
-			COM_StripExtension(soundName, soundName);
+			COM_StripExtension( soundName, soundName, sizeof( soundName ) );
 			//strip the extension because we might want .mp3's
 
 			ci->duelSounds[i] = 0;

@@ -1,7 +1,7 @@
 // Copyright (C) 1999-2000 Id Software, Inc.
 //
 #include "g_local.h"
-#include "../ghoul2/G2.h"
+#include "../shared/ghoul2/G2.h"
 #include "bg_saga.h"
 
 // g_client.c -- client functions that don't happen every frame
@@ -1473,93 +1473,76 @@ static void ForceClientSkin( gclient_t *client, char *model, const char *skin ) 
 }
 */
 
-//[BlackNames]
+//[LF - BlackNames]
 extern vmCvar_t g_allowBlackNames;
-//[/BlackNames]
+//[/LF - BlackNames]
 
 /*
 ===========
 ClientCheckName
 ============
 */
-static void ClientCleanName( const char *in, char *out, int outSize ) {
-	int		len, colorlessLen;
-	char	ch;
-	char	*p;
-	int		spaces;
+static void ClientCleanName( const char *in, char *out, int outSize )
+{
+	int outpos = 0, colorlessLen = 0, spaces = 0;
 
-	//save room for trailing null byte
-	outSize--;
+	// discard leading spaces
+	for ( ; *in == ' '; in++);
 
-	len = 0;
-	colorlessLen = 0;
-	p = out;
-	*p = 0;
-	spaces = 0;
+	// discard leading asterisk's (fail raven for using * as a skipnotify)
+	// apparently .* causes the issue too so... derp
+	//for(; *in == '*'; in++);
 
-	while( 1 ) {
-		ch = *in++;
-		if( !ch ) {
-			break;
-		}
+	for(; *in && outpos < outSize - 1; in++)
+	{
+		out[outpos] = *in;
 
-		// don't allow leading spaces
-		if( !*p && ch == ' ' ) {
-			continue;
-		}
-
-		// check colors
-		if( ch == Q_COLOR_ESCAPE ) {
-			// solo trailing carat is not a color prefix
-			if( !*in ) {
-				break;
-			}
-
-			//[BlackNames]
-			if( ColorIndex(*in) == 0 && !g_allowBlackNames.integer ) {
-			//[/BlackNames]
-				in++;
+		if ( *in == ' ' )
+		{// don't allow too many consecutive spaces
+			if ( spaces > 2 )
 				continue;
-			}
-			
 
-			// make sure room in dest for both chars
-			if( len > outSize - 2 ) {
-				break;
-			}
-
-			*out++ = ch;
-			*out++ = *in++;
-			len += 2;
-			continue;
-		}
-
-		// don't allow too many consecutive spaces
-		if( ch == ' ' ) {
 			spaces++;
-			if( spaces > 3 ) {
-				continue;
+		}
+		else if ( outpos > 0 && out[outpos-1] == Q_COLOR_ESCAPE )
+		{
+			if ( Q_IsColorString( &out[outpos-1] ) )
+			{
+				colorlessLen--;
+
+//#if 0
+//OPENRPTODO - Test if this works when black properly if black names are set to be disabled
+				//[LF - BlackNames]
+				if( ColorIndex( *in ) == 0 && !g_allowBlackNames.integer )
+				//[/LF - BlackNames]
+				{// Disallow color black in names to prevent players from getting advantage playing in front of black backgrounds
+					outpos--;
+					continue;
+				}
+//#endif
+			}
+			else
+			{
+				spaces = 0;
+				colorlessLen++;
 			}
 		}
-		else {
+		else
+		{
 			spaces = 0;
+			colorlessLen++;
 		}
 
-		if( len > outSize - 1 ) {
-			break;
-		}
-
-		*out++ = ch;
-		colorlessLen++;
-		len++;
+		outpos++;
 	}
-	*out = 0;
+
+	out[outpos] = '\0';
 
 	// don't allow empty names
-	if( *p == 0 || colorlessLen == 0 ) {
-		Q_strncpyz( p, "Padawan", outSize );
-	}
+	if ( *out == '\0' || colorlessLen == 0 )
+		Q_strncpyz( out, "Padawan", outSize );
 }
+
 
 #ifdef _DEBUG
 void G_DebugWrite(const char *path, const char *text)
@@ -2448,19 +2431,69 @@ to the server machine, but qfalse on map changes and tournement
 restarts.
 ============
 */
+
+#include "g_engine.h"
+
+//[JAC - Added server-side engine modifications, basic client connection checks]
+static int CompareIPs( int clientnum1, int clientnum2 )
+{
+	#ifdef PATCH_ENGINE
+		if ( *(unsigned int *)&svs->clients[clientnum1].netchan.remoteAddress.ip == *(unsigned int *)&svs->clients[clientnum2].netchan.remoteAddress.ip )
+			 return 1;
+
+		return 0;
+	#else
+		const char *ip1 = NULL, *ip2 = NULL;
+
+		if ( clientnum1 < 0 || clientnum1 >= MAX_CLIENTS )
+			return 0;
+		if ( clientnum2 < 0 || clientnum2 >= MAX_CLIENTS )
+			return 0;
+
+		ip1 = level.clients[clientnum1].sess.IP;
+		ip2 = level.clients[clientnum2].sess.IP;
+
+		while ( 1 )
+		{
+			if ( *ip1 != *ip2 )
+				return 0;
+			if ( !*ip1 || *ip1 == ':' )
+				break;
+			ip1++;
+			ip2++;
+		}
+
+		return 1;
+	#endif
+}
+//[/JAC - Added server-side engine modifications, basic client connection checks]
+
 char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
+	//[JAC - Added server-side engine modifications, basic client connection checks]
 	char		*value;
-//	char		*areabits;
+	gentity_t	*ent = NULL, *te = NULL;
 	gclient_t	*client;
-	char		userinfo[MAX_INFO_STRING];
-	char TmpIP[32] = {0};
-	gentity_t	*ent;
-	gentity_t	*te;
+	char		userinfo[MAX_INFO_STRING] = {0}, tmpIP[32] = {0};
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
 	//[OpenRP - Clientplugin]
-	char *s;
+	//char clientVersion[64];
 	//[/OpenRP - Clientplugin]
 
+//[JAC - Added server-side engine modifications, basic client connection checks]
+#ifdef PATCH_ENGINE
+	char		realIP[32] = {0};
+
+	NET_AddrToString( realIP, sizeof( realIP ), &svs->clients[clientNum].netchan.remoteAddress );
+#endif
+//[/JAC - Added server-side engine modifications, basic client connection checks]
+
 	ent = &g_entities[ clientNum ];
+
+	//[JAC - Added server-side engine modifications, basic client connection checks]
+	level.security.clientConnectionActive[clientNum] = qfalse;
+	ent->s.number = clientNum;
+	ent->classname = "connecting";
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
 
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	//[LastManStanding]
@@ -2478,11 +2511,12 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 
 	// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");
-	if (!isBot)
-		Q_strncpyz( TmpIP, value, sizeof(TmpIP) ); // Used later
+	//[JAC - Added server-side engine modifications, basic client connection checks]
+	Q_strncpyz( tmpIP, isBot ? "Bot" : value, sizeof( tmpIP ) );
 	if ( G_FilterPacket( value ) ) {
-		return "Banned";
+		return "Banned.";
 	}
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
 
 	//[BugFix11]
 	//thanks to ensiform.  SVF_BOT isn't set until later in this function.
@@ -2521,6 +2555,9 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	memset( client, 0, sizeof(*client) );
 
 	client->pers.connected = CON_CONNECTING;
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
+	client->pers.connectTime = level.time; //JAC: Added
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
 
 	// read or initialize the session data
 	if ( firstTime || level.newSession ) {
@@ -2532,37 +2569,30 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	}
 	G_ReadSessionData( client );
 
+	//[OpenRP - Chat System]
 	ent->client->sess.chatMode = 1;
-
-	if (firstTime && !isBot)
-	{
-		if(!TmpIP[0])
-		{// No IP sent when connecting, probably an unban hack attempt
-			client->pers.connected = CON_DISCONNECTED;
-			return "Invalid userinfo detected";
-		}
-		Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
-	}
+	//[/OpenRP - Chat System]
 
 	//[OpenRP - Clientplugin]
-	s = Info_ValueForKey( userinfo, "ojp_clientplugin" );
-	if(!Q_stricmp(s, OPENRP_CLIENTVERSION))
+	
+	if( !Q_stricmp( Info_ValueForKey( userinfo, "ojp_clientplugin" ), OPENRP_CLIENTVERSION ) )
 	{
-		client->sess.ojpClientPlugIn = qtrue;
+		Q_strncpyz( ent->client->sess.ojpClientVersion, Info_ValueForKey( userinfo, "ojp_clientplugin" ), sizeof( ent->client->sess.ojpClientVersion ) );
+		ent->client->sess.ojpClientPlugIn = qtrue;
 	}
 	else
 	{
-		client->sess.ojpClientPlugIn = qfalse;
+		Q_strncpyz( ent->client->sess.ojpClientVersion, "none", sizeof( ent->client->sess.ojpClientVersion ) );
+		ent->client->sess.ojpClientPlugIn = qfalse;
 	}
 	
-	if ( client->sess.ojpClientPlugIn )
-	{
-		G_LogPrintf( "ClientConnect: %i with latest client plugin.\n", clientNum );
-	}
-	else
-	{
-		G_LogPrintf( "ClientConnect: %i with old or no client plugin\n", clientNum );
-	}
+	//[JAC - Added server-side engine modifications, basic client connection checks]
+	#ifdef PATCH_ENGINE
+		G_LogPrintf( "ClientConnect: %i (%s) [IP: %s]\n", clientNum, client->pers.netname, realIP);
+	#else
+		G_LogPrintf( "ClientConnect: %i (%s) [IP: %s]\n", clientNum, client->pers.netname, tmpIP  );
+	#endif
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
 	//[/OpenRP - Clientplugin]
 
 	if (g_gametype.integer == GT_SIEGE &&
@@ -2594,6 +2624,8 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	*/
 	//[/BugFix22]
 
+	Q_strncpyz(client->sess.IP, tmpIP, sizeof(client->sess.IP));
+
 	if( isBot ) {
 		ent->r.svFlags |= SVF_BOT;
 		ent->inuse = qtrue;
@@ -2604,6 +2636,63 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 			return "BotConnectfailed";
 		}
 	}
+	//[JAC - Added server-side engine modifications, basic client connection checks]
+	else
+	{
+		if ( firstTime )
+		{
+			if ( !tmpIP[0] )
+			{//No IP sent when connecting, probably an unban hack attempt
+				client->pers.connected = CON_DISCONNECTED;
+				#ifdef PATCH_ENGINE
+					 G_SecurityLogPrintf( "Client %i (%s) sent no IP when connecting. Real IP is: %s", clientNum, client->pers.netname, realIP );
+				#else
+					G_SecurityLogPrintf( "Client %i (%s) sent no IP when connecting.", clientNum, client->pers.netname );
+				#endif
+				return "Invalid userinfo detected";
+			}
+
+			#ifdef PATCH_ENGINE
+				if ( Q_stricmp( tmpIP, realIP ) )
+					G_SecurityLogPrintf( "Client %i (%s) mismatching IP. %s / %s\n", clientNum, client->pers.netname, tmpIP, realIP );
+			#endif
+		}
+	}
+
+	//JAC: multiple connections per IP
+#ifdef PATCH_ENGINE
+	if ( level.security.isPatched && g_antiFakePlayer.integer && !isBot && svs->clients[clientNum].netchan.remoteAddress.type != NA_LOOPBACK && firstTime )
+#else
+	if ( g_antiFakePlayer.integer && !isBot && firstTime )
+#endif
+	{// patched, check for > g_maxConnPerIP connections from same IP
+		int count=0, i=0;
+		for ( i=0; i<g_maxclients.integer; i++ )
+		{
+			#if 0
+				if ( level.clients[i].pers.connected != CON_DISCONNECTED && i != clientNum )
+				{
+					if ( CompareIPs( clientNum, i ) )
+					{
+						if ( !level.security.clientConnectionActive[i] )
+						{//This IP has a dead connection pending, wait for it to time out
+							client->pers.connected = CON_DISCONNECTED;
+							return "Please wait, another connection from this IP is still pending...";
+						}
+					}
+				}
+			#else
+				if ( CompareIPs( clientNum, i ) )
+					count++;
+			#endif
+		}
+		if ( count > g_maxConnPerIP.integer )
+		{
+			client->pers.connected = CON_DISCONNECTED;
+			return "Too many connections from the same IP";
+		}
+	}
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
 
 	// get and distribute relevent paramters
 	ClientUserinfoChanged( clientNum );

@@ -698,11 +698,13 @@ struct Vehicle_s
 
 
 //[Linux]//[Mac]
-#if MAC_PORT || defined(__linux__)// LBO - Vehicle_t is already defined at the top of the file to Vehicle_s
-};
+//[JAC - Better platform-specific defines and types]
+#if defined(__GCC__) || defined(MINGW32) || MAC_PORT
+	} _Vehicle_t;
 #else
-} Vehicle_t;
+	} Vehicle_t;
 #endif
+//[/JAC - Better platform-specific defines and types]
 //[/Linux]//[/Mac]
 
 #include "../namespace_begin.h"

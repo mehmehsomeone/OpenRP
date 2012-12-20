@@ -11,10 +11,10 @@ USER INTERFACE MAIN
 // use this to get a demo build without an explicit demo build, i.e. to get the demo ui files to build
 //#define PRE_RELEASE_TADEMO
 
-#include "../ghoul2/G2.h"
+#include "../shared/ghoul2/G2.h"
 #include "ui_local.h"
-#include "../qcommon/qfiles.h"
-#include "../qcommon/game_version.h"
+#include "../shared/qcommon/qfiles.h"
+#include "../shared/qcommon/game_version.h"
 #include "ui_force.h"
 #include "../cgame/animtable.h" //we want this to be compiled into the module because we access it in the shared module.
 #include "../game/bg_saga.h"
@@ -385,7 +385,6 @@ char *siege_Str(void) {
 	return strings[cur++];
 }
 
-#if !WINDOWSXP_COMPILE
 //[FAKE CHALLENGE RESPONSE HIJACK - Thanks to Didz]
 // This code fixes a client-side exploit where an attacker that is flooding the client with
 // challengeResponse packets (from spoofed IP addresses) can hijack a pending server connection
@@ -570,7 +569,6 @@ void Patch_AltEnter( qboolean patch )
 	{
 	}
 }
-#endif
 
 /*
 ===============
@@ -1347,12 +1345,10 @@ void _UI_Shutdown( void ) {
 	trap_LAN_SaveCachedServers();
 	UI_CleanupGhoul2();
 
-#if !WINDOWSXP_COMPILE
 	Patch_FakeChallengeResponse( qfalse );
 	Patch_QueryBoom( qfalse );
 	Patch_AltEnter( qfalse );
 	//Patch_CvarSecurity( qfalse );
-#endif
 
 	//[DynamicMemory_Sabers]
 	UI_FreeSabers();
@@ -10352,7 +10348,7 @@ nextSearch:
 	for (j=0; j<numfiles && uiInfo.forceConfigCount < MAX_FORCE_CONFIGS;j++,fileptr+=filelen+1)
 	{
 		filelen = strlen(fileptr);
-		COM_StripExtension(fileptr, configname);
+		COM_StripExtension( fileptr, configname, sizeof( configname ) );
 
 		if (lightSearch)
 		{
@@ -10452,7 +10448,7 @@ static void UI_BuildQ3Model_List( void )
 
 			filelen = strlen(fileptr);
 
-			COM_StripExtension(fileptr,skinname);
+			COM_StripExtension( fileptr, skinname, sizeof( skinname ) );
 
 			skinLen = strlen(skinname);
 			k = 0;
@@ -10680,7 +10676,7 @@ static void UI_BuildPlayerModel_List( qboolean inGameLoad )
 				}
 
 				filelen = strlen(fileptr);
-				COM_StripExtension(fileptr,skinname);
+				COM_StripExtension( fileptr, skinname, sizeof( skinname ) );
 
 				if (bIsImageFile(dirptr, skinname))
 				{ //if it exists
@@ -10925,11 +10921,9 @@ void _UI_Init( qboolean inGameLoad ) {
 	trap_Cvar_Set( "ojp_clientplugin", OPENRP_CLIENTVERSION );
 	//[/OpenRP - Clientplugin]
 
-#if !WINDOWSXP_COMPILE
 	Patch_FakeChallengeResponse( qtrue );
 	Patch_QueryBoom( qtrue );
 	Patch_AltEnter( qtrue );
-#endif
 }
 
 /*

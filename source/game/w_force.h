@@ -4,7 +4,7 @@
 #include "b_local.h"
 #include "w_saber.h"
 #include "ai_main.h"
-#include "../ghoul2/G2.h"
+#include "../shared/ghoul2/G2.h"
 
 extern int speedLoopSound;
  

@@ -2843,7 +2843,7 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 				//[ExpSys]
 				if(i == FP_HEAL 
 					|| i == FP_RAGE 
-				//	|| i == FP_MANIPULATE 
+					|| i == FP_MANIPULATE 
 				//	|| i == FP_TEAM_HEAL
 					//|| i == FP_PROTECT
 					|| i == FP_DRAIN)

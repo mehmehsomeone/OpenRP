@@ -6,6 +6,11 @@
 #include "g_ICARUScb.h"
 #include "g_nav.h"
 #include "bg_saga.h"
+
+//[JAC - Added server-side engine modifications, basic client connection checks]
+#include "g_engine.h"
+//[/JAC - Added server-side engine modifications, basic client connection checks]
+
 //[dynamicMusic]
 //need DMS header to call the update function
 #include "g_dynmusic.h"
@@ -623,6 +628,12 @@ vmCvar_t	bot_thinklevel;
 // DUEL_HEALTH
 vmCvar_t		g_showDuelHealths;
 
+//[JAC - Added server-side engine modifications, basic client connection checks]
+#define XCVAR_DECL
+	#include "g_xcvar.h"
+#undef XCVAR_DECL
+//[/JAC - Added server-side engine modifications, basic client connection checks]
+
 //[CoOp]
 vmCvar_t		ojp_skipcutscenes;
 vmCvar_t		ojp_spmodel;
@@ -747,9 +758,9 @@ vmCvar_t		openrp_admin10Bitvalues;
 //Determines whether admins can perform admin commands on higher admin levels
 vmCvar_t		openrp_adminControl;
 
-//[BlackNames]
+//[LF - BlackNames]
 vmCvar_t	g_allowBlackNames;		// Allow clients to use black names
-//[/BlackNames]
+//[/LF - BlackNames]
 
 //vmCvar_t	openrp_jetpackFuel;
 //vmCvar_t	openrp_cloakFuel;
@@ -1126,6 +1137,12 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_powerDuelStartHealth, "g_powerDuelStartHealth", "150", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_powerDuelEndHealth, "g_powerDuelEndHealth", "90", CVAR_ARCHIVE, 0, qtrue  },
 
+	//[JAC - Added server-side engine modifications, basic client connection checks]
+	#define XCVAR_LIST
+		#include "g_xcvar.h"
+	#undef XCVAR_LIST
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
+
 	//[AotCAI] - sets the level of think code for AotC Bots
 	{ &bot_thinklevel, "bot_thinklevel", "3", CVAR_ARCHIVE, 0, qtrue  },
 	//[/AotCAI]
@@ -1272,10 +1289,10 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_concussionLevel, "openrp_concussionLevel", "1", 0 , 0, qtrue  },
 	{ &openrp_concussionDescription, "openrp_concussionDescription", "A bryar pistol.", 0 , 0, qtrue  },
 
-	//[BlackNames]
+	//[LF - BlackNames]
 	//Toggles allowance of black names
 	{ &g_allowBlackNames, "g_allowBlackNames", "1", CVAR_ARCHIVE, 0, qtrue },
-	//[/BlackNames]
+	//[/LF - BlackNames]
 
 	//{ &openrp_jetpackFuel, "openrp_jetpackFuel", "0", CVAR_ARCHIVE, 0, qtrue },
 	//{ &openrp_cloakFuel, "openrp_cloakFuel", "0", CVAR_ARCHIVE, 0, qtrue },
@@ -1398,6 +1415,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	//[RawMapName]
 	char		cs[MAX_INFO_STRING];
 	//[/RawMapName]
+	//[JAC - Added security logging]
+	char serverinfo[MAX_INFO_STRING] = {0};
+	//[/JAC - Added security logging]
 
 	//Init RMG to 0, it will be autoset to 1 if there is terrain on the level.
 	trap_Cvar_Set("RMG", "0");
@@ -1446,25 +1466,37 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	Q_strncpyz( level.rawmapname, Info_ValueForKey( cs, "mapname" ), sizeof(level.rawmapname) );
 	//[/RawMapName]
 
-	if ( g_log.string[0] ) {
-		if ( g_logSync.integer ) {
-			trap_FS_FOpenFile( g_log.string, &level.logFile, FS_APPEND_SYNC );
-		} else {
-			trap_FS_FOpenFile( g_log.string, &level.logFile, FS_APPEND );
-		}
-		if ( !level.logFile ) {
+	//[JAC - Added security logging]
+	if ( g_log.string[0] )
+	{
+		trap_FS_FOpenFile( g_log.string, &level.logFile, g_logSync.integer ? FS_APPEND_SYNC : FS_APPEND );
+		if ( level.logFile )
+			G_Printf( "Logging to %s\n", g_log.string );
+		else
 			G_Printf( "WARNING: Couldn't open logfile: %s\n", g_log.string );
-		} else {
-			char	serverinfo[MAX_INFO_STRING];
-
-			trap_GetServerinfo( serverinfo, sizeof( serverinfo ) );
-
-			G_LogPrintf("------------------------------------------------------------\n" );
-			G_LogPrintf("InitGame: %s\n", serverinfo );
-		}
-	} else {
-		G_Printf( "Not logging to disk.\n" );
 	}
+	else
+		G_Printf( "Not logging game events to disk.\n" );
+
+	trap_GetServerinfo( serverinfo, sizeof( serverinfo ) );
+	G_LogPrintf( "------------------------------------------------------------\n" );
+	G_LogPrintf( "InitGame: %s\n", serverinfo );
+
+	if ( g_securityLog.integer )
+	{
+		if ( g_securityLog.integer == 1 )
+			trap_FS_FOpenFile( SECURITY_LOG, &level.security.log, FS_APPEND );
+		else if ( g_securityLog.integer == 2 )
+			trap_FS_FOpenFile( SECURITY_LOG, &level.security.log, FS_APPEND_SYNC );
+
+		if ( level.security.log )
+			G_Printf( "Logging to "SECURITY_LOG"\n" );
+		else
+			G_Printf( "WARNING: Couldn't open logfile: "SECURITY_LOG"\n" );
+	}
+	else
+		G_Printf( "Not logging security events to disk.\n" );
+	//[/JAC - Added security logging]
 
 	G_LogWeaponInit();
 
@@ -1662,6 +1694,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 		}
 	}
 	//[/OLDGAMETYPES]
+	//[JAC - Added server-side engine modifications, basic client connection checks]
+	PatchEngine();
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
 }
 
 
@@ -1684,6 +1719,10 @@ void G_ShutdownGame( int restart ) {
 	gentity_t *ent;
 
 //	G_Printf ("==== ShutdownGame ====\n");
+
+	//[JAC - Added server-side engine modifications, basic client connection checks]
+	UnpatchEngine();
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
 
 	//[AdminCommands]
 	G_SaveBanIP();
@@ -1742,10 +1781,19 @@ void G_ShutdownGame( int restart ) {
 	G_LogWeaponOutput();
 
 	if ( level.logFile ) {
-		G_LogPrintf("ShutdownGame:\n" );
-		G_LogPrintf("------------------------------------------------------------\n" );
+		//[JAC - Added security logging]
+		G_LogPrintf( "ShutdownGame:\n------------------------------------------------------------\n" );
 		trap_FS_FCloseFile( level.logFile );
+		level.logFile = 0;
 	}
+
+	if ( level.security.log )
+	{
+		G_SecurityLogPrintf( "ShutdownGame\n\n" );
+		trap_FS_FCloseFile( level.security.log );
+		level.security.log = 0;
+	}
+	//[/JAC - Added security logging]
 
 	// write all the client session data so we can get it back
 	G_WriteSessionData();
@@ -2717,47 +2765,70 @@ G_LogPrintf
 Print to the logfile with a time stamp if it is open
 =================
 */
+//[JAC - Added security logging]
 void QDECL G_LogPrintf( const char *fmt, ... ) {
 	va_list		argptr;
-	char		string[1024];
-	int			min, tens, sec;
-	//[OverflowProtection]
-	int			l;
-	//[/OverflowProtection]
+	char		string[1024] = {0};
+	int			mins, seconds, msec, l;
 
-	sec = level.time / 1000;
+	//[JAC Bugfix - G_LogPrintf timestamp now resets on map_restart]
+	msec = level.time - level.startTime;
+	//[/JAC Bugfix - G_LogPrintf timestamp now resets on map_restart]
 
-	min = sec / 60;
-	sec -= min * 60;
-	tens = sec / 10;
-	sec -= tens * 10;
+	seconds = msec / 1000;
+	mins = seconds / 60;
+	seconds %= 60;
+	msec %= 1000;
 
-	Com_sprintf( string, sizeof(string), "%3i:%i%i ", min, tens, sec );
+	Com_sprintf( string, sizeof( string ), "%i:%02i ", mins, seconds );
 
-	//[OverflowProtection]
-	l = strlen(string);
-	//[/OverflowProtection]
+	l = strlen( string );
 
 	va_start( argptr, fmt );
-	//[OverflowProtection]
-	Q_vsnprintf(string + l, sizeof( string ) - l, fmt, argptr );
-	//vsprintf( string +7 , fmt,argptr );
-	//[/OverflowProtection]
+	Q_vsnprintf( string + l, sizeof( string ) - l, fmt, argptr );
 	va_end( argptr );
 
-	if ( g_dedicated.integer ) {
-		//[OverflowProtection]
+	if ( g_dedicated.integer )
 		G_Printf( "%s", string + l );
-		//G_Printf( "%s", string + 7 );
-		//[/OverflowProtection]
-	}
 
-	if ( !level.logFile ) {
+	if ( !level.logFile )
 		return;
-	}
-	
+
 	trap_FS_Write( string, strlen( string ), level.logFile );
 }
+
+/*
+=================
+G_SecurityLogPrintf
+
+Print to the security logfile with a time stamp if it is open
+=================
+*/
+void QDECL G_SecurityLogPrintf( const char *fmt, ... ) {
+	va_list		argptr;
+	char		string[1024] = {0};
+	time_t		rawtime;
+	struct tm	*timeinfo;
+	int			timeLen=0;
+
+	time( &rawtime );
+	timeinfo = localtime( &rawtime );
+	strftime( string, sizeof( string ), "[%Y-%m-%d] [%H:%M:%S] ", gmtime( &rawtime ) );
+	timeLen = strlen( string );
+
+	va_start( argptr, fmt );
+	Q_vsnprintf( string+timeLen, sizeof( string ) - timeLen, fmt, argptr );
+	va_end( argptr );
+
+	if ( g_dedicated.integer )
+		G_Printf( "%s", string + timeLen );
+
+	if ( !level.security.log )
+		return;
+
+	trap_FS_Write( string, strlen( string ), level.security.log );
+}
+//[/JAC - Added security logging]
 
 /*
 ================
@@ -3743,15 +3814,30 @@ void CheckVote( void ) {
 		return;
 	}
 	if ( level.time - level.voteTime >= VOTE_TIME ) {
-		trap_SendServerCommand( -1, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED")) );
+		//[JAC - Show vote string when a vote ends, rather than just "Vote passed"]
+		trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED"), level.voteString) );
+		//[/JAC - Show vote string when a vote ends, rather than just "Vote passed"]
 	} else {
 		if ( level.voteYes > level.numVotingClients/2 ) {
 			// execute the command, then remove the vote
-			trap_SendServerCommand( -1, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "VOTEPASSED")) );
+			//[JAC - Show vote string when a vote ends, rather than just "Vote passed"]
+			trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEPASSED"), level.voteString) );
+			//[/JAC - Show vote string when a vote ends, rather than just "Vote passed"]
 			level.voteExecuteTime = level.time + 3000;
-		} else if ( level.voteNo >= level.numVotingClients/2 ) {
-			// same behavior as a timeout
-			trap_SendServerCommand( -1, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED")) );
+		} // same behavior as a timeout
+		//Raz: Fix uneven vote bug
+		/*	"that reminds me another bug that enty discovered recently,
+			if you have odd amount of players, lets say 3 for example,
+			and vote is called, then only 1 vote of No will fail the vote,
+			i.e. if player A calls vote, player B votes No, then vote fails,
+			even if player C would vote Yes and it should have been 2:1 and passed */
+	//	else if ( level.voteNo >= level.numVotingClients/2 )
+		//[JAC Bugfix - Fixed uneven vote bug]
+		else if ( level.voteNo >= (level.numVotingClients+1)/2 ) {
+		//[/JAC Bugfix - Fixed uneven vote bug]
+			//[JAC - Show vote string when a vote ends, rather than just "Vote passed"]
+			trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED"), level.voteString) );
+			//[/JAC - Show vote string when a vote ends, rather than just "Vote passed"]
 		} else {
 			// still waiting for a majority
 			return;
@@ -4155,6 +4241,39 @@ void G_RunFrame( int levelTime ) {
 
 		g_siegeRespawnCheck = level.time + g_siegeRespawn.integer * 1000;
 	}
+
+	//[JAC - Added server-side engine modifications, basic client connection checks]
+	#ifdef PATCH_ENGINE
+		//Raz: fake client detected, client didn't validate themselves
+		if ( g_antiFakePlayer.integer && level.security.isPatched )
+		{//Patched, check for q3fill (Connection activity check)
+			gclient_t	*cl;
+			for (i=0; i<MAX_CLIENTS; i++)
+			{
+				cl = &level.clients[i];
+				if ( cl->pers.connected != CON_DISCONNECTED )
+				{
+					if ( !level.security.clientConnectionActive[i] && level.time > (cl->pers.connectTime + 5000) )
+					{
+						char buf[MAX_TOKEN_CHARS] = {0};
+
+						if ( svs->clients[i].netchan.remoteAddress.type == NA_LOOPBACK ||
+							 svs->clients[i].netchan.remoteAddress.type == NA_BOT )
+						{//localhost. don't kick. ever.
+							level.security.clientConnectionActive[i] = qtrue;
+							continue;
+						}
+
+						NET_AddrToString( buf, sizeof( buf ), &svs->clients[i].netchan.remoteAddress );
+						G_SecurityLogPrintf( "Client %i (%s) kicked for q3fill [IP: %s]\n", i, cl->pers.netname, buf );
+						trap_DropClient( i, "Fake client detected" );
+						cl->pers.connected = CON_DISCONNECTED;
+					}
+				}
+			}
+		}
+	#endif
+	//[/JAC - Added server-side engine modifications, basic client connection checks]
 
 	//[FFARespawnTimer]
 	if ((g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM

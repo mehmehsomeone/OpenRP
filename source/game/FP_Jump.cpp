@@ -64,7 +64,12 @@ int WP_GetVelocityForForceJump( gentity_t *self, vec3_t jumpVel, usercmd_t *ucmd
 
 	VectorMA( self->client->ps.velocity, pushFwd, forward, jumpVel );
 	VectorMA( self->client->ps.velocity, pushRt, right, jumpVel );
-	jumpVel[2] += self->client->ps.fd.forceJumpCharge;
+	//[OpenRP - Jump key tap height reduction]
+	if (self->client->ps.fd.forceJumpCharge < JUMP_VELOCITY+40)
+		jumpVel[2] += 10;
+	else
+		jumpVel[2] += self->client->ps.fd.forceJumpCharge;
+	//[/OpenRP - Jump key tap height reduction]
 	if ( pushFwd > 0 && self->client->ps.fd.forceJumpCharge > 200 )
 	{
 		return FJ_FORWARD;

@@ -6,7 +6,7 @@
 #include "g_weapons.h"
 #include "be_aas.h"
 #include "bg_saga.h"
-#include "../ghoul2/G2.h"
+#include "../shared/ghoul2/G2.h"
 #include "q_shared.h"
 
 vec3_t	forward, vright, up;
@@ -247,9 +247,13 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 
 	for ( i = 0 ; i < 3 ; i++ ) {
 		if ( to[i] <= v[i] ) {
-			v[i] = (int)v[i];
+			//[JAC Bugfix - Fixed floating point truncation]
+			v[i] = floorf( v[i] );
+			//[/JAC Bugfix - Fixed floating point truncation]
 		} else {
-			v[i] = (int)v[i] + 1;
+			//[JAC Bugfix - Fixed floating point truncation]
+			v[i] = ceilf( v[i] );
+			//[/JAC Bugfix - Fixed floating point truncation]
 		}
 	}
 }

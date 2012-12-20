@@ -192,7 +192,9 @@ void G_BounceMissile( gentity_t *ent, trace_t *trace ) {
 	}
 	else if ( ent->flags & FL_BOUNCE_HALF ) 
 	{
-		VectorScale( ent->s.pos.trDelta, 0.65, ent->s.pos.trDelta );
+		//[JAC Bugfix]
+		VectorScale( ent->s.pos.trDelta, 0.65f, ent->s.pos.trDelta );
+		//[JAC Bugfix]
 		// check for stop
 		if ( trace->plane.normal[2] > 0.2 && VectorLength( ent->s.pos.trDelta ) < 40 ) 
 		{

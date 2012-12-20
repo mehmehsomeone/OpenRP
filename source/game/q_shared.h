@@ -1,7 +1,12 @@
 // Copyright (C) 1999-2000 Id Software, Inc.
 //
-#ifndef __Q_SHARED_H
-#define __Q_SHARED_H
+//[JAC]
+#pragma once
+//[/JAC]
+//[JAC]
+//#ifndef __Q_SHARED_H
+//#define __Q_SHARED_H
+//[/JAC]
 
 // q_shared.h -- included first by ALL program modules.
 // A user mod should never modify this file
@@ -11,16 +16,45 @@
 
 #define MAX_TEAMNAME 32
 
+#ifdef QAGAME
+
+	// server-side conditional compiling
+//	#define IOJAMP // ensure iojamp compatibility (disables engine modifications, new vmMain/trap functionality, etc)
+	
+	#ifndef IOJAMP
+		#define PATCH_ENGINE
+	#endif
+
+#else
+
+	// client-side conditional compiling
+//	#define IOJAMP // ensure iojamp compatibility (disables engine modifications, new vmMain/trap functionality, etc)
+
+	#ifndef IOJAMP
+		#define PATCH_ENGINE
+	#endif
+
+#endif
+
+//[JAC]
+// server-side conditional compiling
+//  #define IOJAMP // ensure iojamp compatibility (disables engine modifications, new vmMain/trap functionality, etc)
+//  #define USE_SSE // use SSE optimised vector math functions
+//[/JAC]
+
 //[SaberLockSys]
 //moved here to support ShortestLineSegBewteen2LineSegs
 #define Q3_INFINITE			16777216 
 //[/SaberLockSys]
 
-//[OpenRP - Engine patch enabler/disabler]
-#define	WINDOWSXP_COMPILE 0
-//[/OpenRP - Engine patch enabler/disabler]
+//[JAC]
+// client-side conditional compiling
+//  #define IOJAMP // ensure iojamp compatibility (disables engine modifications, new vmMain/trap functionality, etc)
+//  #define USE_SSE // use SSE optimised vector math functions
+//  #define USE_WIDESCREEN // Adjust fov for widescreen aspect ratio
+//[/JAC]
 
-#include "../qcommon/disablewarnings.h"
+#include "../shared/qcommon/disablewarnings.h"
 
 #include "teams.h" //npc team stuff
 
@@ -37,6 +71,11 @@
 #define VALIDATEP( a )	if ( a == NULL ) {	assert(0);	return NULL;	}
 
 #define VALIDSTRING( a )	( ( a != 0 ) && ( a[0] != 0 ) )
+
+//[JAC - Added server-side engine modifications, basic client connection checks]
+#define ARRAY_LEN( x ) ( sizeof( x ) / sizeof( *(x) ) )
+#define STRING( a ) #a
+//[/JAC - Added server-side engine modifications, basic client connection checks]
 
 #ifndef FINAL_BUILD
 #define G2_PERFORMANCE_ANALYSIS
@@ -84,262 +123,264 @@ extern int g_G2AllocServer;
 #include <ctype.h>
 #include <limits.h>
 
-#endif
-
-#ifdef _WIN32
-
-//#pragma intrinsic( memset, memcpy )
-
-#endif
+#endif // Q3_VM
 
 // this is the define for determining if we have an asm version of a C function
 #if (defined _M_IX86 || defined __i386__) && !defined __sun__  && !defined __LCC__
-#define id386	1
+	#define id386	1
 #else
-#define id386	0
+	#define id386	0
 #endif
 
 #if (defined(powerc) || defined(powerpc) || defined(ppc) || defined(__ppc) || defined(__ppc__)) && !defined(C_ONLY)
-#define idppc	1
+	#define idppc	1
 #else
-#define idppc	0
+	#define idppc	0
 #endif
 
 // for windows fastcall option
 
 #define	QDECL
 
-short   ShortSwap (short l);
-int		LongSwap (int l);
-float	FloatSwap (const float *f);
+//[JAC - Better platform-specific defines and types]
+// the mac compiler can't handle >32k of locals, so we
+// just waste space and make big arrays static...
+#define MAC_STATIC //RAZFIXME
+//[/JAC - Better platform-specific defines and types]
 
-//======================= WIN32 DEFINES =================================
+short ShortSwap( short l );
+int LongSwap( int l );
+float FloatSwap( const float *f );
 
+// ================================================================
+//
+// WIN32 DEFINES
+//
+// ================================================================
+//[JAC - Better platform-specific defines and types]
 #ifdef WIN32
 
-#define	MAC_STATIC
+	//[JAC - Better platform-specific defines and types]
+	//Raz: added
+	#define WIN32_LEAN_AND_MEAN
+	#define NOSCROLL
+	#include <windows.h>
 
-#undef QDECL
-#define	QDECL	__cdecl
+	#undef QDECL
+	#define	QDECL __cdecl
 
-// buildstring will be incorporated into the version string
-#ifdef NDEBUG
-#ifdef _M_IX86
-#define	CPUSTRING	"win-x86"
-#elif defined _M_ALPHA
-#define	CPUSTRING	"win-AXP"
-#endif
-#else
-#ifdef _M_IX86
-#define	CPUSTRING	"win-x86-debug"
-#elif defined _M_ALPHA
-#define	CPUSTRING	"win-AXP-debug"
-#endif
-#endif
+	// buildstring will be incorporated into the version string
+	#ifdef NDEBUG
+		#ifdef _M_IX86
+			#define	CPUSTRING "win-x86"
+		#elif defined _M_ALPHA
+			#define	CPUSTRING "win-AXP"
+		#endif
+	#else
+		#ifdef _M_IX86
+			#define	CPUSTRING "win-x86-debug"
+		#elif defined _M_ALPHA
+			#define	CPUSTRING "win-AXP-debug"
+		#endif
+	#endif
 
-#define ID_INLINE __inline 
+	#define ID_INLINE __inline
 
-static ID_INLINE short BigShort( short l) { return ShortSwap(l); }
-#define LittleShort
-static ID_INLINE int BigLong(int l) { return LongSwap(l); }
-#define LittleLong
-static ID_INLINE float BigFloat(const float *l) { FloatSwap(l); }
-#define LittleFloat
 
-#define	PATH_SEP '\\'
+	static ID_INLINE short BigShort( short l) { return ShortSwap(l); }
+	#define LittleShort
+	static ID_INLINE int BigLong(int l) { return LongSwap(l); }
+	#define LittleLong
+	static ID_INLINE float BigFloat(const float *l) { return FloatSwap(l); } //JAC: Actually return something =]
+	#define LittleFloat
 
-#endif
+	#define  PATH_SEP '\\'
 
-//======================= MAC OS X DEFINES =====================
+#endif // WIN32
+//[/JAC - Better platform-specific defines and types]
 
-#if defined(MACOS_X)
+// ================================================================
+//
+// MAC OS X DEFINES
+//
+// ================================================================
 
-#define MAC_STATIC
-#define __cdecl
-#define __declspec(x)
-#define stricmp strcasecmp
-#define ID_INLINE inline 
+//[JAC - Better platform-specific defines and types]
+#ifdef MACOS_X
 
-#ifdef __ppc__
-#define CPUSTRING	"MacOSX-ppc"
-#elif defined __i386__
-#define CPUSTRING	"MacOSX-i386"
-#else
-#define CPUSTRING	"MacOSX-other"
-#endif
+	#define __cdecl
+	#define __declspec(x)
+	#define stricmp strcasecmp
+	#define ID_INLINE inline 
 
-#define	PATH_SEP	'/'
+	#ifdef __ppc__
+		#define CPUSTRING "MacOSX-ppc"
+	#elif defined __i386__
+		#define CPUSTRING "MacOSX-i386"
+	#else
+		#define CPUSTRING "MacOSX-other"
+	#endif
 
-#define __rlwimi(out, in, shift, maskBegin, maskEnd) asm("rlwimi %0,%1,%2,%3,%4" : "=r" (out) : "r" (in), "i" (shift), "i" (maskBegin), "i" (maskEnd))
-#define __dcbt(addr, offset) asm("dcbt %0,%1" : : "b" (addr), "r" (offset))
+	#define	PATH_SEP	'/'
 
-static inline unsigned int __lwbrx(register void *addr, register int offset) {
-    register unsigned int word;
-    
-    asm("lwbrx %0,%2,%1" : "=r" (word) : "r" (addr), "b" (offset));
-    return word;
-}
+	#define __rlwimi(out, in, shift, maskBegin, maskEnd) asm("rlwimi %0,%1,%2,%3,%4" : "=r" (out) : "r" (in), "i" (shift), "i" (maskBegin), "i" (maskEnd))
+	#define __dcbt(addr, offset) asm("dcbt %0,%1" : : "b" (addr), "r" (offset))
 
-static inline unsigned short __lhbrx(register void *addr, register int offset) {
-    register unsigned short halfword;
-    
-    asm("lhbrx %0,%2,%1" : "=r" (halfword) : "r" (addr), "b" (offset));
-    return halfword;
-}
+	static inline unsigned int __lwbrx(register void *addr, register int offset) {
+		register unsigned int word;
 
-static inline float __fctiw(register float f) {
-    register float fi;
-    
-    asm("fctiw %0,%1" : "=f" (fi) : "f" (f));
+		asm("lwbrx %0,%2,%1" : "=r" (word) : "r" (addr), "b" (offset));
+		return word;
+	}
 
-    return fi;
-}
+	static inline unsigned short __lhbrx(register void *addr, register int offset) {
+		register unsigned short halfword;
 
-#define BigShort
-static inline short LittleShort(short l) { return ShortSwap(l); }
-#define BigLong
-static inline int LittleLong (int l) { return LongSwap(l); }
-#define BigFloat
-static inline float LittleFloat (const float l) { return FloatSwap(&l); }
+		asm("lhbrx %0,%2,%1" : "=r" (halfword) : "r" (addr), "b" (offset));
+		return halfword;
+	}
 
-#endif
+	static inline float __fctiw(register float f) {
+		register float fi;
 
-//======================= MAC DEFINES =================================
+		asm("fctiw %0,%1" : "=f" (fi) : "f" (f));
+		return fi;
+	}
+
+	#define BigShort
+	static inline short LittleShort( short l ) { return ShortSwap( l ); }
+	#define BigLong
+	static inline int LittleLong( int l ) { return LongSwap( l ); }
+	#define BigFloat
+	static inline float LittleFloat( const float l ) { return FloatSwap( &l ); }
+
+#endif // MACOS_X
+//[/JAC - Better platform-specific defines and types]
+
+//[JAC - Better platform-specific defines and types]
+// ================================================================
+//
+// MAC DEFINES
+//
+// ================================================================
 
 #ifdef __MACOS__
 
-#include <MacTypes.h>
-#define	MAC_STATIC
-#define ID_INLINE inline 
+	#include <MacTypes.h>
+	#define ID_INLINE inline 
 
-#define	CPUSTRING	"MacOS-PPC"
+	#define	CPUSTRING "MacOS-PPC"
 
-#define	PATH_SEP ':'
+	#define	PATH_SEP ':'
 
-void Sys_PumpEvents( void );
+	void Sys_PumpEvents( void );
 
-#define BigShort
-static inline short LittleShort(short l) { return ShortSwap(l); }
-#define BigLong
-static inline int LittleLong (int l) { return LongSwap(l); }
-#define BigFloat
-static inline float LittleFloat (const float l) { return FloatSwap(&l); }
+	#define BigShort
+	static inline short LittleShort( short l ) { return ShortSwap( l ); }
+	#define BigLong
+	static inline int LittleLong( int l ) { return LongSwap( l ); }
+	#define BigFloat
+	static inline float LittleFloat( const float l ) { return FloatSwap( &l ); }
 
-#endif
+#endif // __MACOS__
+//[/JAC - Better platform-specific defines and types]
 
-//======================= LINUX DEFINES =================================
+//[JAC - Better platform-specific defines and types]
+// ================================================================
+//
+// LINUX DEFINES
+//
+// ================================================================
 
-// the mac compiler can't handle >32k of locals, so we
-// just waste space and make big arrays static...
 #ifdef __linux__
 
-// bk001205 - from Makefile
-#define stricmp strcasecmp
+	// bk001205 - from Makefile
+	#define stricmp strcasecmp
 
-#define	MAC_STATIC // bk: FIXME
+	#define ID_INLINE inline 
 
-#if defined(_WIN32) && !defined(__GNUC__)
-#define ID_INLINE inline 
-#elif !defined(_WIN32)
-#define ID_INLINE inline 
-#endif
+	#ifdef __i386__
+		#define	CPUSTRING "linux-i386"
+	#elif defined __axp__
+		#define	CPUSTRING "linux-alpha"
+	#else
+		#define	CPUSTRING "linux-other"
+	#endif
 
-#ifdef __i386__
-#define	CPUSTRING	"linux-i386"
-#elif defined __axp__
-#define	CPUSTRING	"linux-alpha"
-#else
-#define	CPUSTRING	"linux-other"
-#endif
+	#define	PATH_SEP '/'
+	#define RAND_MAX 2147483647
 
-#if defined(_WIN32) && !defined(__GNUC__)
-#define	PATH_SEP '/'
-#elif !defined(_WIN32)
-#define	PATH_SEP '/'
-#endif
+	// bk001205 - try
+	#ifdef Q3_STATIC
+		#define	GAME_HARD_LINKED
+		#define	CGAME_HARD_LINKED
+		#define	UI_HARD_LINKED
+		#define	BOTLIB_HARD_LINKED
+	#endif
 
-// bk001205 - try
-#ifdef Q3_STATIC
-#define	GAME_HARD_LINKED
-#define	CGAME_HARD_LINKED
-#define	UI_HARD_LINKED
-#define	BOTLIB_HARD_LINKED
-#endif
+	#if !idppc
+		inline static short BigShort( short l ) { return ShortSwap( l ); }
+		#define LittleShort
+		inline static int BigLong( int l ) { return LongSwap( l ); }
+		#define LittleLong
+		inline static float BigFloat( const float *l ) { return FloatSwap( l ); }
+		#define LittleFloat
+	#else // idppc
+		#define BigShort
+		inline static short LittleShort( short l ) { return ShortSwap( l ); }
+		#define BigLong
+		inline static int LittleLong( int l ) { return LongSwap( l ); }
+		#define BigFloat
+		inline static float LittleFloat( const float *l ) { return FloatSwap( l ); }
+	#endif // idppc
 
-#if defined(_WIN32) && !defined(__GNUC__)
+#endif // __linux__
+//[/JAC - Better platform-specific defines and types]
 
-#if !idppc 
-inline static short BigShort( short l) { return ShortSwap(l); }
-#define LittleShort
-inline static int BigLong(int l) { return LongSwap(l); }
-#define LittleLong
-inline static float BigFloat(const float *l) { return FloatSwap(l); }
-#define LittleFloat
-#elif
-#define BigShort
-inline static short LittleShort(short l) { return ShortSwap(l); }
-#define BigLong
-inline static int LittleLong (int l) { return LongSwap(l); }
-#define BigFloat
-inline static float LittleFloat (const float *l) { return FloatSwap(l); }
-#endif
-#elif !defined(_WIN32)
-#if !idppc 
-inline static short BigShort( short l) { return ShortSwap(l); }
-#define LittleShort
-inline static int BigLong(int l) { return LongSwap(l); }
-#define LittleLong
-inline static float BigFloat(const float *l) { return FloatSwap(l); }
-#define LittleFloat
-#else
-#define BigShort
-inline static short LittleShort(short l) { return ShortSwap(l); }
-#define BigLong
-inline static int LittleLong (int l) { return LongSwap(l); }
-#define BigFloat
-inline static float LittleFloat (const float *l) { return FloatSwap(l); }
-#endif
-#endif
+//[JAC - Better platform-specific defines and types]
+// ================================================================
+//
+// FREEBSD DEFINES
+//
+// ================================================================
 
-#endif
-
-//======================= FreeBSD DEFINES =====================
 #ifdef __FreeBSD__ // rb010123
 
-#define stricmp strcasecmp
+	#define stricmp strcasecmp
 
-#define MAC_STATIC
-#define ID_INLINE inline 
+	#define MAC_STATIC
+	#define ID_INLINE inline 
 
-#ifdef __i386__
-#define CPUSTRING       "freebsd-i386"
-#elif defined __axp__
-#define CPUSTRING       "freebsd-alpha"
-#else
-#define CPUSTRING       "freebsd-other"
-#endif
+	#ifdef __i386__
+		#define CPUSTRING "freebsd-i386"
+	#elif defined __axp__
+		#define CPUSTRING "freebsd-alpha"
+	#else
+		#define CPUSTRING "freebsd-other"
+	#endif
 
-#define	PATH_SEP '/'
+	#define	PATH_SEP '/'
 
-// bk010116 - omitted Q3STATIC (see Linux above), broken target
+	// bk010116 - omitted Q3STATIC (see Linux above), broken target
 
-#if !idppc
-static short BigShort( short l) { return ShortSwap(l); }
-#define LittleShort
-static int BigLong(int l) { LongSwap(l); }
-#define LittleLong
-static float BigFloat(const float *l) { FloatSwap(l); }
-#define LittleFloat
-#else
-#define BigShort
-static short LittleShort(short l) { return ShortSwap(l); }
-#define BigLong
-static int LittleLong (int l) { return LongSwap(l); }
-#define BigFloat
-static float LittleFloat (const float *l) { return FloatSwap(l); }
-#endif
+	#if !idppc
+		static short BigShort( short l ) { return ShortSwap( l ); }
+		#define LittleShort
+		static int BigLong( int l ) { LongSwap( l ); }
+		#define LittleLong
+		static float BigFloat( const float *l ) { FloatSwap( l ); }
+		#define LittleFloat
+	#else // idppc
+		#define BigShort
+		static short LittleShort( short l ) { return ShortSwap( l ); }
+		#define BigLong
+		static int LittleLong( int l ) { return LongSwap( l ); }
+		#define BigFloat
+		static float LittleFloat( const float *l ) { return FloatSwap( l ); }
+	#endif // idppc
 
-#endif
+#endif // __FreeBSD__
+//[/JAC - Better platform-specific defines and types]
 
 //=============================================================
 
@@ -361,6 +402,42 @@ typedef int		fxHandle_t;
 typedef int		sfxHandle_t;
 typedef int		fileHandle_t;
 typedef int		clipHandle_t;
+
+//[JAC - Better platform-specific defines and types]
+//Raz: can't think of a better place to put this atm,
+//		should probably be in the platform specific definitions
+#if defined (_MSC_VER) && (_MSC_VER >= 1600)
+
+	#include <stdint.h>
+
+	// vsnprintf is ISO/IEC 9899:1999
+	// abstracting this to make it portable
+	int Q_vsnprintf( char *dest, int size, const char *fmt, va_list argptr );
+
+#elif defined (_MSC_VER)
+
+	#include <io.h>
+
+	typedef signed __int64 int64_t;
+	typedef signed __int32 int32_t;
+	typedef signed __int16 int16_t;
+	typedef signed __int8  int8_t;
+	typedef unsigned __int64 uint64_t;
+	typedef unsigned __int32 uint32_t;
+	typedef unsigned __int16 uint16_t;
+	typedef unsigned __int8  uint8_t;
+
+	// vsnprintf is ISO/IEC 9899:1999
+	// abstracting this to make it portable
+	int Q_vsnprintf( char *dest, int size, const char *fmt, va_list argptr );
+#else // not using MSVC
+
+	#include <stdint.h>
+
+	#define Q_vsnprintf vsnprintf
+
+#endif
+//[/JAC - Better platform-specific defines and types]
 
 #ifndef NULL
 #define NULL ((void *)0)
@@ -1279,8 +1356,10 @@ extern vec4_t	g_color_table[8];
 #define	MAKERGB( v, r, g, b ) v[0]=r;v[1]=g;v[2]=b
 #define	MAKERGBA( v, r, g, b, a ) v[0]=r;v[1]=g;v[2]=b;v[3]=a
 
-#define DEG2RAD( a ) ( ( (a) * M_PI ) / 180.0F )
-#define RAD2DEG( a ) ( ( (a) * 180.0f ) / M_PI )
+//[JAC - Rewrote math helper library]
+//#define DEG2RAD( a ) ( ( (a) * M_PI ) / 180.0F )
+//#define RAD2DEG( a ) ( ( (a) * 180.0f ) / M_PI )
+//[/JAC - Rewrote math helper library]
 
 struct cplane_s;
 
@@ -1345,37 +1424,77 @@ float Q_powf ( float x, int y );
 int DirToByte( vec3_t dir );
 void ByteToDir( int b, vec3_t dir );
 
-#if	1
 //rwwRMG - added math defines
-#define minimum(x,y) ((x)<(y)?(x):(y))
-#define maximum(x,y) ((x)>(y)?(x):(y))
+//[JAC - Rewrote math helper library]
+#define minimum( x, y ) ((x) < (y) ? (x) : (y))
+#define maximum( x, y ) ((x) > (y) ? (x) : (y))
 
-#define DotProduct(x,y)					((x)[0]*(y)[0]+(x)[1]*(y)[1]+(x)[2]*(y)[2])
-#define VectorSubtract(a,b,c)			((c)[0]=(a)[0]-(b)[0],(c)[1]=(a)[1]-(b)[1],(c)[2]=(a)[2]-(b)[2])
-#define VectorAdd(a,b,c)				((c)[0]=(a)[0]+(b)[0],(c)[1]=(a)[1]+(b)[1],(c)[2]=(a)[2]+(b)[2])
-#define	VectorScale(v, s, o)			((o)[0]=(v)[0]*(s),(o)[1]=(v)[1]*(s),(o)[2]=(v)[2]*(s))
+//JAC: Moved to q_math.c
+#define DEG2RAD( deg ) ( ((deg)*M_PI) / 180.0f )
+#define RAD2DEG( rad ) ( ((rad)*180.0f) / M_PI )
 
-#define VectorCopy(a,b)					((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2])
-#define VectorCopy4(a,b)				((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2],(b)[3]=(a)[3])
-#define	VectorMA(v, s, b, o)			((o)[0]=(v)[0]+(b)[0]*(s),(o)[1]=(v)[1]+(b)[1]*(s),(o)[2]=(v)[2]+(b)[2]*(s))
-#define VectorInc(v)					((v)[0] += 1.0f,(v)[1] += 1.0f,(v)[2] +=1.0f)
-#define VectorDec(v)					((v)[0] -= 1.0f,(v)[1] -= 1.0f,(v)[2] -=1.0f)
+extern ID_INLINE void		VectorAdd( const vec3_t v1, const vec3_t v2, vec3_t out );
+extern ID_INLINE void		VectorSubtract( const vec3_t v1, const vec3_t v2, vec3_t out );
+extern ID_INLINE void		VectorScale( const vec3_t in, vec_t scale, vec3_t out );
+extern ID_INLINE void		VectorScale4( const vec4_t in, vec_t scale, vec4_t out );
+extern ID_INLINE void		VectorMA( const vec3_t v1, float scale, const vec3_t v2, vec3_t out );
+extern ID_INLINE vec_t		VectorLength( const vec3_t v );
+extern ID_INLINE vec_t		VectorLengthSquared( const vec3_t v );
+extern ID_INLINE vec_t		Distance( const vec3_t p1, const vec3_t p2 );
+extern ID_INLINE vec_t		DistanceSquared( const vec3_t p1, const vec3_t p2 );
+extern ID_INLINE void		VectorNormalizeFast( vec3_t v );
+extern ID_INLINE vec_t		VectorNormalize( vec3_t v );
+extern ID_INLINE vec_t		VectorNormalize2( const vec3_t v, vec3_t out );
+extern ID_INLINE void		VectorCopy( const vec3_t in, vec3_t out );
+extern ID_INLINE void		VectorCopy4( const vec4_t in, vec4_t out );
+extern ID_INLINE void		VectorSet( vec3_t v, vec_t x, vec_t y, vec_t z );
+extern ID_INLINE void		VectorSet4( vec4_t v, vec_t x, vec_t y, vec_t z, vec_t w );
+extern ID_INLINE void		VectorSet5( vec5_t v, vec_t x, vec_t y, vec_t z, vec_t w, vec_t u );
+extern ID_INLINE void		VectorClear( vec3_t v );
+extern ID_INLINE void		VectorClear4( vec4_t v );
+extern ID_INLINE void		VectorInc( vec3_t v );
+extern ID_INLINE void		VectorDec( vec3_t v );
+extern ID_INLINE void		VectorInverse( vec3_t v );
+extern ID_INLINE void		CrossProduct( const vec3_t v1, const vec3_t v2, vec3_t cross );
+extern ID_INLINE vec_t		DotProduct( const vec3_t v1, const vec3_t v2 );
+extern ID_INLINE qboolean	VectorCompare( const vec3_t v1, const vec3_t v2 );
+
+#define				VectorAddM( vec1, vec2, vecOut )		((vecOut)[0]=(vec1)[0]+(vec2)[0], (vecOut)[1]=(vec1)[1]+(vec2)[1], (vecOut)[2]=(vec1)[2]+(vec2)[2])
+#define				VectorSubtractM( vec1, vec2, vecOut )	((vecOut)[0]=(vec1)[0]-(vec2)[0], (vecOut)[1]=(vec1)[1]-(vec2)[1], (vecOut)[2]=(vec1)[2]-(vec2)[2])
+#define				VectorScaleM( vecIn, scale, vecOut )	((vecOut)[0]=(vecIn)[0]*(scale), (vecOut)[1]=(vecIn)[1]*(scale), (vecOut)[2]=(vecIn)[2]*(scale))
+#define				VectorScale4M( vecIn, scale, vecOut )	((vecOut)[0]=(vecIn)[0]*(scale), (vecOut)[1]=(vecIn)[1]*(scale), (vecOut)[2]=(vecIn)[2]*(scale), (vecOut)[3]=(vecIn)[3]*(scale))
+#define				VectorMAM( vec1, scale, vec2, vecOut )	((vecOut)[0]=(vec1)[0]+(vec2)[0]*(scale), (vecOut)[1]=(vec1)[1]+(vec2)[1]*(scale), (vecOut)[2]=(vec1)[2]+(vec2)[2]*(scale))
+#define				VectorLengthM( vec )					VectorLength( vec )
+#define				VectorLengthSquaredM( vec )				VectorLengthSquared( vec )
+#define				DistanceM( vec )						Distance( vec )
+#define				DistanceSquaredM( p1, p2 )				DistanceSquared( p1, p2 )
+#define				VectorNormalizeFastM( vec )				VectorNormalizeFast( vec )
+#define				VectorNormalizeM( vec )					VectorNormalize( vec )
+#define				VectorNormalize2M( vec, vecOut )		VectorNormalize2( vec, vecOut )
+#define				VectorCopyM( vecIn, vecOut )			((vecOut)[0]=(vecIn)[0], (vecOut)[1]=(vecIn)[1], (vecOut)[2]=(vecIn)[2])
+#define				VectorCopy4M( vecIn, vecOut )			((vecOut)[0]=(vecIn)[0], (vecOut)[1]=(vecIn)[1], (vecOut)[2]=(vecIn)[2], (vecOut)[3]=(vecIn)[3])
+#define				VectorSetM( vec, x, y, z )				((vec)[0]=(x), (vec)[1]=(y), (vec)[2]=(z))
+#define				VectorSet4M( vec, x, y, z, w )			((vec)[0]=(x), (vec)[1]=(y), (vec)[2]=(z), (vec)[3]=(w))
+#define				VectorSet5M( vec, x, y, z, w, u )		((vec)[0]=(x), (vec)[1]=(y), (vec)[2]=(z), (vec)[3]=(w), (vec)[4]=(u))
+#define				VectorClearM( vec )						((vec)[0]=(vec)[1]=(vec)[2]=0)
+#define				VectorClear4M( vec )					((vec)[0]=(vec)[1]=(vec)[2]=(vec)[3]=0)
+#define				VectorIncM( vec )						((vec)[0]+=1.0f, (vec)[1]+=1.0f, (vec)[2]+=1.0f)
+#define				VectorDecM( vec )						((vec)[0]-=1.0f, (vec)[1]-=1.0f, (vec)[2]-=1.0f)
+#define				VectorInverseM( vec )					((vec)[0]=-(vec)[0], (vec)[1]=-(vec)[1], (vec)[2]=-(vec)[2])
+#define				CrossProductM( vec1, vec2, vecOut )		((vecOut)[0]=((vec1)[1]*(vec2)[2])-((vec1)[2]*(v2)[1]), (vecOut)[1]=((vec1)[2]*(vec2)[0])-((vec1)[0]*(vec2)[2]), (vecOut)[2]=((vec1)[0]*(vec2)[1])-((vec1)[1]*(vec2)[0]))
+#define				DotProductM( x, y )						((x)[0]*(y)[0]+(x)[1]*(y)[1]+(x)[2]*(y)[2])
+#define				VectorCompareM( vec1, vec2 )			(!!((vec1)[0]==(vec2)[0] && (vec1)[1]==(vec2)[1] && (vec1)[2]==(vec2)[2]))
+
+// TODO
+#define VectorScaleVector(a,b,c)		(((c)[0]=(a)[0]*(b)[0]),((c)[1]=(a)[1]*(b)[1]),((c)[2]=(a)[2]*(b)[2]))
+//[/JAC - Rewrote math helper library]
 #define VectorInverseScaleVector(a,b,c)	((c)[0]=(a)[0]/(b)[0],(c)[1]=(a)[1]/(b)[1],(c)[2]=(a)[2]/(b)[2])
 #define VectorScaleVectorAdd(c,a,b,o)	((o)[0]=(c)[0]+((a)[0]*(b)[0]),(o)[1]=(c)[1]+((a)[1]*(b)[1]),(o)[2]=(c)[2]+((a)[2]*(b)[2]))
 #define VectorAdvance(a,s,b,c)			(((c)[0]=(a)[0] + s * ((b)[0] - (a)[0])),((c)[1]=(a)[1] + s * ((b)[1] - (a)[1])),((c)[2]=(a)[2] + s * ((b)[2] - (a)[2])))
 #define VectorAverage(a,b,c)			(((c)[0]=((a)[0]+(b)[0])*0.5f),((c)[1]=((a)[1]+(b)[1])*0.5f),((c)[2]=((a)[2]+(b)[2])*0.5f))
-#define VectorScaleVector(a,b,c)		(((c)[0]=(a)[0]*(b)[0]),((c)[1]=(a)[1]*(b)[1]),((c)[2]=(a)[2]*(b)[2]))
-
-#else
-
-#define DotProduct(x,y)			_DotProduct(x,y)
-#define VectorSubtract(a,b,c)	_VectorSubtract(a,b,c)
-#define VectorAdd(a,b,c)		_VectorAdd(a,b,c)
-#define VectorCopy(a,b)			_VectorCopy(a,b)
-#define	VectorScale(v, s, o)	_VectorScale(v,s,o)
-#define	VectorMA(v, s, b, o)	_VectorMA(v,s,b,o)
-
-#endif
+//[JAC - Rewrote math helper library]
+#define VectorNegate(a,b)        ((b)[0]=-(a)[0],(b)[1]=-(a)[1],(b)[2]=-(a)[2])
+//[/JAC - Rewrote math helper library]
 
 #ifdef __LCC__
 #ifdef VectorCopy
@@ -1389,52 +1508,61 @@ typedef struct {
 #endif
 #endif
 
+//[JAC - Rewrote math helper library]
+/*
 #define VectorClear(a)			((a)[0]=(a)[1]=(a)[2]=0)
 #define VectorNegate(a,b)		((b)[0]=-(a)[0],(b)[1]=-(a)[1],(b)[2]=-(a)[2])
 #define VectorSet(v, x, y, z)	((v)[0]=(x), (v)[1]=(y), (v)[2]=(z))
 #define VectorSet5(v,x,y,z,a,b)	((v)[0]=(x), (v)[1]=(y), (v)[2]=(z), (v)[3]=(a), (v)[4]=(b)) //rwwRMG - added
 #define Vector4Copy(a,b)		((b)[0]=(a)[0],(b)[1]=(a)[1],(b)[2]=(a)[2],(b)[3]=(a)[3])
+*/
+//[/JAC - Rewrote math helper library]
 
-//[Mac]
+//[JAC - Rewrote math helper library]
 #if MAC_PORT || defined(__linux__)
-//#ifdef __linux__
-//[/Mac]
-#define	SnapVector(v) {v[0]=((int)(v[0]));v[1]=((int)(v[1]));v[2]=((int)(v[2]));}
+	#define	SnapVector(v) {v[0]=((int)(v[0]));v[1]=((int)(v[1]));v[2]=((int)(v[2]));}
 #else 
-#ifndef __LCC__
-//pitiful attempt to reduce _ftol2 calls -rww
-static ID_INLINE void SnapVector( float *v )
-{
-	static int i;
-	static float f;
+	#if !defined(__LCC__) && !defined(MINGW32)
+		//pitiful attempt to reduce _ftol2 calls -rww
+		static ID_INLINE void SnapVector( float *v )
+		{
+			//RAZTODO: q_math.c plz
+			static int i;
+			static float f;
 
-	f = *v;
-	__asm	fld		f;
-	__asm	fistp	i;
-	*v = i;
-	v++;
-	f = *v;
-	__asm	fld		f;
-	__asm	fistp	i;
-	*v = i;
-	v++;
-	f = *v;
-	__asm	fld		f;
-	__asm	fistp	i;
-	*v = i;
-}
-#else
-#define	SnapVector(v) {v[0]=((int)(v[0]));v[1]=((int)(v[1]));v[2]=((int)(v[2]));}
-#endif // __LCC__
-#endif // __linux__
+			f = *v;
+			__asm fld f
+			__asm fistp	i
+			*v = i;
+			v++;
+			f = *v;
+			__asm fld f
+			__asm fistp i
+			*v = i;
+			v++;
+			f = *v;
+			__asm fld f
+			__asm fistp i
+			*v = i;
+		}
+	#else
+		#define	SnapVector(v) {v[0]=((int)(v[0]));v[1]=((int)(v[1]));v[2]=((int)(v[2]));}
+	#endif // __LCC__ || MINGW32
+#endif // MAC_PORT || __linux__
+
+//[/JAC - Rewrote math helper library]
 
 // just in case you do't want to use the macros
+//[JAC - Rewrote math helper library]
+/*
 vec_t _DotProduct( const vec3_t v1, const vec3_t v2 );
 void _VectorSubtract( const vec3_t veca, const vec3_t vecb, vec3_t out );
 void _VectorAdd( const vec3_t veca, const vec3_t vecb, vec3_t out );
 void _VectorCopy( const vec3_t in, vec3_t out );
 void _VectorScale( const vec3_t in, float scale, vec3_t out );
 void _VectorMA( const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc );
+*/
+//[/JAC - Rewrote math helper library]
 
 unsigned ColorBytes3 (float r, float g, float b);
 unsigned ColorBytes4 (float r, float g, float b, float a);
@@ -1447,6 +1575,8 @@ vec_t DistanceHorizontal( const vec3_t p1, const vec3_t p2 );
 vec_t DistanceHorizontalSquared( const vec3_t p1, const vec3_t p2 );
 void AddPointToBounds( const vec3_t v, vec3_t mins, vec3_t maxs );
 
+//[JAC - Rewrote math helper library]
+/*
 #ifndef __LCC__
 static ID_INLINE int VectorCompare( const vec3_t v1, const vec3_t v2 ) {
 	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2]) {
@@ -1524,6 +1654,8 @@ void CrossProduct( const vec3_t v1, const vec3_t v2, vec3_t cross );
 vec_t VectorNormalize (vec3_t v);		// returns vector length
 vec_t VectorNormalize2( const vec3_t v, vec3_t out );
 void Vector4Scale( const vec4_t in, vec_t scale, vec4_t out );
+*/
+//[/JAC - Rewrote math helper library]
 void VectorRotate( vec3_t in, vec3_t matrix[3], vec3_t out );
 int Q_log2(int val);
 
@@ -1576,7 +1708,12 @@ int Com_Clampi( int min, int max, int value ); //rwwRMG - added
 float Com_Clamp( float min, float max, float value );
 
 char	*COM_SkipPath( char *pathname );
-void	COM_StripExtension( const char *in, char *out );
+#if 0 //jamp
+	void COM_StripExtension( const char *in, char *out );
+#else //iojamp
+	void COM_StripExtension( const char *in, char *out, int destsize );
+#endif
+
 void	COM_DefaultExtension( char *path, int maxSize, const char *extension );
 
 void	COM_BeginParseSession( const char *name );
@@ -2954,9 +3091,7 @@ enum _flag_status {
 	FLAG_TAKEN,			// CTF
 	FLAG_TAKEN_RED,		// One Flag CTF
 	FLAG_TAKEN_BLUE,	// One Flag CTF
-	//[JAC Bugfix - Fixed FLAG_DROPPED to correct value (the one that server uses), in case that anyone would want to use that]
-	FLAG_DROPPED = 2
-	//[/JAC Bugfix - Fixed FLAG_DROPPED to correct value (the one that server uses), in case that anyone would want to use that]
+	FLAG_DROPPED
 };
 typedef int flagStatus_t;
 
@@ -3033,7 +3168,7 @@ typedef enum {
 enum {
 #endif
 //[/Linux]
-	#include "../qcommon/tags.h"
+	#include "../shared/qcommon/tags.h"
 };
 typedef char memtag_t;
 
@@ -3112,5 +3247,10 @@ enum {
 	FONT_SMALL2
 };
 
+//[JAC - Added server-side engine modifications, basic client connection checks]
+void NET_AddrToString( char *out, size_t size, void *addr );
+//[/JAC - Added server-side engine modifications, basic client connection checks]
 
-#endif	// __Q_SHARED_H
+//[JAC]
+//#endif	// __Q_SHARED_H
+//[/JAC]
