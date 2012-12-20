@@ -120,49 +120,6 @@ static void M_SanitizeString2( char *in, char *out ) {
 	*out = 0;
 }
 
-typedef struct adminCommand_s
-{
-	const char			*cmd;			//	Command name
-	const unsigned int	bitvalues;	//	Bitvalues for the command
-	void            (*func)(struct gentity_s *ent);	//	Function name of the command
-} adminCommand_t;
-
-static const adminCommand_t adminCommands[] =
-{
-	// these must be in alphabetical order for the binary search to work
-	{	"amban",		ADMIN_BAN,		Cmd_amBan_F				},	//	Ban specified client (Client + duration + reason)
-	{	"amforceteam",	ADMIN_FORCETEAM,	Cmd_amForceTeam_F		},	//	Force the specified client to a specific team
-	{	NULL,			0,				NULL				},
-};
-static const int numAdminCommands = ARRAY_LEN( adminCommands );
-
-static int cmdcmp( const void *a, const void *b ) {
-	return Q_stricmp( (const char *)a, ((adminCommand_t*)b)->cmd );
-}
-
-//	Handle admin related commands.
-//	Return qtrue if the command exists and/or everything was handled fine.
-//	Return qfalse if command didn't exist, so we can tell them.
-qboolean AM_HandleCommands( gentity_t *ent, const char *cmd )
-{
-	adminCommand_t *command = NULL;
-
-	command = (adminCommand_t *)bsearch( cmd, adminCommands, numAdminCommands, sizeof( adminCommands[0] ), cmdcmp );
-	if ( !command )
-		return qfalse;
-
-//	else if ( !ent || !(ent->bitvalues & command->bitvalues) )
-	{
-		trap_SendServerCommand( ent-g_entities, "print \"Insufficient privileges\n\"" );
-		return qtrue;
-	}
-
-	G_LogPrintf( "* Admin command (%s) executed by (%s)\n", cmd, ent->client->pers.netname );
-	command->func( ent );
-
-	return qtrue;
-}
-
 qboolean G_CheckAdmin(gentity_t *ent, int command)
 {
 	int Bitvalues = 0;
@@ -2952,12 +2909,6 @@ void Cmd_ListEnts_F( gentity_t *ent )
 
 void Cmd_Invisible_F( gentity_t *ent )
 {
-	if ( !G_CheckAdmin( ent, ADMIN_INVISIBLE ) )
-	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1You are not allowed to use this command.\n\"" ) );
-		return;
-	}
-
 	   if ( ent->client->sess.isInvisible )
         {
                 ent->client->sess.isInvisible = qfalse;
@@ -2999,9 +2950,4 @@ void Cmd_Disguise_F( gentity_t *ent )
 		trap_SendServerCommand( ent-g_entities, "print \"^2You are now ^7no longer disguised\n\"" );
 	}
 	return;
-}
-
-void Cmd_CheckForce_F( gentity_t *ent )
-{
-
 }

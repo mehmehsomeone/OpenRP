@@ -2313,9 +2313,7 @@ void ClientUserinfoChanged( int clientNum ) {
 	else
 	{
 		maxHealth = 100;
-		//[JAC - Reimplemented handicap]
-		health = atoi( Info_ValueForKey( userinfo, "handicap" ) );
-		//[/JAC - Reimplemented handicap]
+		health = 100; //atoi( Info_ValueForKey( userinfo, "handicap" ) );
 	}
 	client->pers.maxHealth = health;
 	if ( client->pers.maxHealth < 1 || client->pers.maxHealth > maxHealth ) {
@@ -2828,20 +2826,6 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	//assign the pointer for bg entity access
 	ent->playerState = &ent->client->ps;
 
-	//[JAC Bugfix - Fixed donedl exploit (fix for if engine patches are disabled)]
-	#ifndef PATCH_ENGINE
-		//fix for donedl command bug, that could cause powerup dissapearing
-		if ( ent->health && ent->client && ent->client->sess.sessionTeam != TEAM_SPECTATOR && clientNum == ent->client->ps.clientNum) {
-			// Kill him (makes sure he loses flags, etc)
-			ent->flags &= ~FL_GODMODE;
-			ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
-			g_dontPenalizeTeam = qtrue;
-			player_die( ent, ent, ent, 100000, MOD_TEAM_CHANGE );
-			g_dontPenalizeTeam = qfalse;
-		}
-	#endif
-	//[/JAC Bugfix - Fixed donedl exploit (fix for if engine patches are disabled)]
-
 	client->pers.connected = CON_CONNECTED;
 	client->pers.enterTime = level.time;
 	client->pers.teamState.state = TEAM_BEGIN;
@@ -3335,13 +3319,9 @@ void player_touch(gentity_t *self, gentity_t *other, trace_t *trace )
 			gentity_t *gripper = NULL;
 			int i=0;
 
-			//[OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
-			/*
 			G_Knockdown(self,other,other->client->ps.velocity,100,qfalse);
 			self->client->ps.velocity[1] = other->client->ps.velocity[1]*5.5f;
 			self->client->ps.velocity[0] = other->client->ps.velocity[0]*5.5f;
-			*/
-			//[/OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
 
 			for(i=0;i<1024;i++)
 			{
@@ -3356,16 +3336,10 @@ void player_touch(gentity_t *self, gentity_t *other, trace_t *trace )
 			if(gripper == NULL)
 				return;
 
-			//[OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
-			//G_Printf("Damage: %i\n",damage);
-			//[/OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
+			G_Printf("Damage: %i\n",damage);
 			//G_Damage(gripEnt, self, self, NULL, NULL, 2, DAMAGE_NO_ARMOR, MOD_FORCE_DARK);
-			//[OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
-			/*
 			G_Damage(other,gripper,gripper,NULL,NULL,damage,DAMAGE_NO_ARMOR,MOD_FORCE_DARK);
 			G_Damage(self,other,other,NULL,NULL,damage,DAMAGE_NO_ARMOR,0);
-			*/
-			//[/OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
 		}
 	}
 }
@@ -3996,9 +3970,7 @@ void ClientSpawn(gentity_t *ent) {
 	}
 	else
 	{
-		//[JAC - Reimplemented handicap]
-		maxHealth = atoi( Info_ValueForKey( userinfo, "handicap" ) );
-		//[/JAC - Reimplemented handicap]
+		maxHealth = 100;
 	}
 	client->pers.maxHealth = maxHealth;//atoi( Info_ValueForKey( userinfo, "handicap" ) );
 	if ( client->pers.maxHealth < 1 || client->pers.maxHealth > maxHealth ) {

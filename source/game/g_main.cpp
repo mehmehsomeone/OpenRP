@@ -3815,17 +3815,13 @@ void CheckVote( void ) {
 	}
 	if ( level.time - level.voteTime >= VOTE_TIME ) {
 		//[JAC - Show vote string when a vote ends, rather than just "Vote passed"]
-		//[JAC - Improved vote end rules display]
-		trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED"), level.voteStringClean) );
-		//[/JAC - Improved vote end rules display]
+		trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED"), level.voteString) );
 		//[/JAC - Show vote string when a vote ends, rather than just "Vote passed"]
 	} else {
 		if ( level.voteYes > level.numVotingClients/2 ) {
 			// execute the command, then remove the vote
 			//[JAC - Show vote string when a vote ends, rather than just "Vote passed"]
-			//[JAC - Improved vote end rules display]
-			trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEPASSED"), level.voteStringClean) );
-			//[/JAC - Improved vote end rules display]
+			trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEPASSED"), level.voteString) );
 			//[/JAC - Show vote string when a vote ends, rather than just "Vote passed"]
 			level.voteExecuteTime = level.time + 3000;
 		} // same behavior as a timeout
@@ -3840,9 +3836,7 @@ void CheckVote( void ) {
 		else if ( level.voteNo >= (level.numVotingClients+1)/2 ) {
 		//[/JAC Bugfix - Fixed uneven vote bug]
 			//[JAC - Show vote string when a vote ends, rather than just "Vote passed"]
-			//[JAC - Improved vote end rules display]
-			trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED"), level.voteStringClean) );
-			//[/JAC - Improved vote end rules display]
+			trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED"), level.voteString) );
 			//[/JAC - Show vote string when a vote ends, rather than just "Vote passed"]
 		} else {
 			// still waiting for a majority

@@ -1114,44 +1114,6 @@ char *Q_CleanStr( char *string ) {
 	return string;
 }
 
-//[JAC - Added Q_strstrip]
-/*
-Q_strstrip
-
-	Description:	Replace strip[x] in string with repl[x] or remove characters entirely
-	Mutates:		string
-	Return:			--
-
-	Examples:		Q_strstrip( "Bo\nb is h\rairy!!", "\n\r!", "123" );	// "Bo1b is h2airy33"
-					Q_strstrip( "Bo\nb is h\rairy!!", "\n\r!", "12" );	// "Bo1b is h2airy"
-					Q_strstrip( "Bo\nb is h\rairy!!", "\n\r!", NULL );	// "Bob is hairy"
-*/
-
-void Q_strstrip( char *string, const char *strip, const char *repl )
-{
-	char		*out=string, *p=string, c;
-	const char	*s=strip;
-	int			replaceLen = repl?strlen( repl ):0, offset=0;
-
-	while ( (c = *p++) != '\0' )
-	{
-		for ( s=strip; *s; s++ )
-		{
-			offset = s-strip;
-			if ( c == *s )
-			{
-				if ( !repl || offset >= replaceLen )
-					c = *p++;
-				else
-					c = repl[offset];
-				break;
-			}
-		}
-		*out++ = c;
-	}
-	*out = '\0';
-}
-//[/JAC - Added Q_strstrip]
 
 //[OverflowProtection]
 /*
@@ -1520,27 +1482,16 @@ Some characters are illegal in info strings because they
 can mess up the server's parsing
 ==================
 */
-//[JAC - Improved Info_Validate]
+//[OpenRP - BadChars Fix - Thanks to Raz0r]
+static const char badChars[] = { '\n', '\r', '\"', ';' };
 qboolean Info_Validate( const char *s ) {
-	const char *c = s;
-
-	while ( *c != '\0' )
-	{
-		if( !Q_isprint( *c ) )
+	int i = 0;
+	for (i=0; i<sizeof(badChars); i++)
+		if ( strchr( s, badChars[i] ) )
 			return qfalse;
-
-		if( *c == '\"' )
-			return qfalse;
-
-		if( *c == ';' )
-			return qfalse;
-
-		++c;
-	}
-
 	return qtrue;
 }
-//[/JAC - Improved Info_Validate]
+//[/OpenRP - BadChars Fix - Thanks to Raz0r]
 
 /*
 ==================
