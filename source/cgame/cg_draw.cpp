@@ -3098,8 +3098,8 @@ static float CG_DrawEnemyInfo ( float y )
 	}
 	else if ( cg.snap->ps.duelInProgress )
 	{
-		//title = CG_GetStringEdString("MP_INGAME", "DUELING");
-		//clientNum = cg.snap->ps.duelIndex;
+		title = CG_GetStringEdString("MP_INGAME", "DUELING");
+		clientNum = cg.snap->ps.duelIndex;
 	}
 	else if ( cgs.gametype == GT_DUEL && cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
 	{
@@ -3129,11 +3129,9 @@ static float CG_DrawEnemyInfo ( float y )
 			return y;
 		}
 
-		//title = va("%s: %i",CG_GetStringEdString("MP_INGAME", "LEADER"), cgs.scores1);
-		//clientNum = cgs.duelWinner;
-		//[OpenRP - Account/character info in top right of screen]
-		clientNum = cg.snap->ps.clientNum;
-		//[/OpenRP - Account/character info in top right of screen]
+
+		title = va("%s: %i",CG_GetStringEdString("MP_INGAME", "LEADER"), cgs.scores1);
+		clientNum = cgs.duelWinner;
 	}
 
 	if ( clientNum >= MAX_CLIENTS || !(&cgs.clientinfo[ clientNum ]) )
@@ -3154,13 +3152,13 @@ static float CG_DrawEnemyInfo ( float y )
 	y += size;
 
 //	CG_Text_Paint( 630 - CG_Text_Width ( ci->name, 0.7f, FONT_MEDIUM ) + xOffset, y, 0.7f, colorWhite, ci->name, 0, 0, 0, FONT_MEDIUM );
-	CG_Text_Paint( 630 - CG_Text_Width ( cg.snap->ps.HUDUsername, 1.0f, FONT_SMALL2 ) + xOffset, y, 1.0f, colorWhite, cg.snap->ps.HUDUsername, 0, 0, 0, FONT_SMALL2 );
+	CG_Text_Paint( 630 - CG_Text_Width ( ci->name, 1.0f, FONT_SMALL2 ) + xOffset, y, 1.0f, colorWhite, ci->name, 0, 0, 0, FONT_SMALL2 );
 
 	y += 15;
 //	CG_Text_Paint( 630 - CG_Text_Width ( title, 0.7f, FONT_MEDIUM ) + xOffset, y, 0.7f, colorWhite, title, 0, 0, 0, FONT_MEDIUM );
-	//CG_Text_Paint( 630 - CG_Text_Width ( title, 1.0f, FONT_SMALL2 ) + xOffset, y, 1.0f, colorWhite, title, 0, 0, 0, FONT_SMALL2 );
+	CG_Text_Paint( 630 - CG_Text_Width ( title, 1.0f, FONT_SMALL2 ) + xOffset, y, 1.0f, colorWhite, title, 0, 0, 0, FONT_SMALL2 );
 
-	if ( ( cgs.gametype == GT_DUEL || cgs.gametype == GT_POWERDUEL ) && cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR )
+	if ( (cgs.gametype == GT_DUEL || cgs.gametype == GT_POWERDUEL) && cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
 	{//also print their score
 		char text[1024];
 		y += 15;

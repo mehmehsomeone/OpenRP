@@ -22,7 +22,6 @@ MJN/ClanMod
 void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 {
 	int i = 0;
-	extern void M_HolsterThoseSabers( gentity_t *ent );
 
 	if ( ent->client->sess.spectatorState == SPECTATOR_FOLLOW || ent->client->sess.spectatorState == SPECTATOR_FREE )
 	{
