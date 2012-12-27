@@ -28,17 +28,9 @@
 #define ADMIN_ITEM					67108864 // Item related
 #define ADMIN_AUDIO					134217728 // /amaudio
 #define ADMIN_BOUNTY				268435456 // /bounty remove
+#define ADMIN_CHECKFORCE			536870912 // /amcheckforce
 
-void AddSpawnField(char *field, char *value);
-void SP_fx_runner( gentity_t *ent );
-void AddIP( char *str );
-void Admin_Teleport( gentity_t *ent );
-char *ConcatArgs( int start );
-qboolean G_CallSpawn( gentity_t *ent );
 void CheckAdmin(gentity_t * ent);
-void AddSkill(gentity_t *self, int amount);
-
-void M_HolsterThoseSabers( gentity_t *ent );
 
 void Cmd_amBan_F(gentity_t *ent);
 void Cmd_amKick_F(gentity_t *ent);
