@@ -914,12 +914,6 @@ typedef struct {
 	// view rendering
 	refdef_t	refdef;
 
-//[JAC - Replacing _XBOX with USE_WIDESCREEN]
-#ifdef USE_WIDESCREEN	
-   qboolean widescreen;	
-#endif
-//[/JAC - Replacing _XBOX with USE_WIDESCREEN]
-
 	// zoom key
 	qboolean	zoomed;
 	int			zoomTime;
@@ -2032,12 +2026,6 @@ extern vmCvar_t	ojp_holsterdebug_boneindex;
 extern vmCvar_t	ojp_holsterdebug_posoffset;
 extern vmCvar_t	ojp_holsterdebug_angoffset;
 //[/VisualWeapons]
-
-//[JAC - Added cg_xcvar.h for easy cvar creation on the client]
-#define XCVAR_PROTO
-	#include "cg_xcvar.h"
-#undef XCVAR_PROTO
-//[/JAC - Added cg_xcvar.h for easy cvar creation on the client]
 
 //
 // cg_main.c

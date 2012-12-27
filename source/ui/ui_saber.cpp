@@ -863,10 +863,8 @@ char * SaberColorToString(saber_colors_t color)
 	if ( color == SABER_RGB)
 		return "rgb";
 
-	//[OpenRP - Disabled Multicolor saber color]
-	//if ( color == SABER_PIMP)
-		//return "pimp";
-	//[/OpenRP - Disabled Multicolor saber color]
+	if ( color == SABER_PIMP)
+		return "pimp";
 
 	if ( color == SABER_SCRIPTED)
 		return "scripted";
@@ -906,14 +904,10 @@ saber_colors_t TranslateSaberColor( const char *name )
 	{
 		return SABER_RGB;
 	}
-	//[OpenRP - Disabled Multicolor saber color]
-	/*
 	if ( !Q_stricmp( name, "pimp" ) ) 
 	{
 		return SABER_PIMP;
 	}
-	*/
-	//[/OpenRP - Disabled Multicolor saber color]
 	if ( !Q_stricmp( name, "white" ) ) 
 	{
 		return SABER_WHITE;

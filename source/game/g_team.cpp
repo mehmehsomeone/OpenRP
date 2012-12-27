@@ -884,9 +884,7 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 	// Ok, let's do the player loop, hand out the bonuses
 	for (i = 0; i < g_maxclients.integer; i++) {
 		player = &g_entities[i];
-		//[JAC Bugfix - Fixed another CTF assist bug where the capper could get assist points]
-		if (!player->inuse || player == other)
-		//[/JAC Bugfix - Fixed another CTF assist bug where the capper could get assist points]
+		if (!player->inuse)
 			continue;
 
 		if (player->client->sess.sessionTeam !=
@@ -894,10 +892,8 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 			player->client->pers.teamState.lasthurtcarrier = -5;
 		} else if (player->client->sess.sessionTeam ==
 			cl->sess.sessionTeam) {
-			//[JAC Bugfix - Fixed another CTF assist bug where the capper could get assist points]
-			//if (player != other)
-			AddScore(player, ent->r.currentOrigin, CTF_TEAM_BONUS);
-			//[/JAC Bugfix - Fixed another CTF assist bug where the capper could get assist points]
+			if (player != other)
+				AddScore(player, ent->r.currentOrigin, CTF_TEAM_BONUS);
 			// award extra points for capture assists
 			if (player->client->pers.teamState.lastreturnedflag + 
 				CTF_RETURN_FLAG_ASSIST_TIMEOUT > level.time) {
@@ -906,12 +902,8 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 
 				player->client->ps.persistant[PERS_ASSIST_COUNT]++;
 				player->client->rewardTime = level.time + REWARD_SPRITE_TIME;
-			}
 
-			//[JAC Bugfix - Fixed incorrect CTF assist scoring]
-			//Raz: Was 'else if' meaning people were missing out on some assist scores
-			if (player->client->pers.teamState.lastfraggedcarrier + 
-			//[/JAC Bugfix - Fixed incorrect CTF assist scoring]
+			} else if (player->client->pers.teamState.lastfraggedcarrier + 
 				CTF_FRAG_CARRIER_ASSIST_TIMEOUT > level.time) {
 				AddScore(player, ent->r.currentOrigin, CTF_FRAG_CARRIER_ASSIST_BONUS);
 				other->client->pers.teamState.assists++;
@@ -1424,38 +1416,17 @@ void TeamplayInfoMessage( gentity_t *ent ) {
 	int			cnt;
 	int			h, a;
 	int			clients[TEAM_MAXOVERLAY];
-	//[JAC - Spectators now recieve teaminfo for the person they're following]
-	int      team;
-	//[/JAC - Spectators now recieve teaminfo for the person they're following]
 
-	if ( !ent->client->pers.teamInfo )
+	if ( ! ent->client->pers.teamInfo )
 		return;
-
-	//[JAC - Spectators now recieve teaminfo for the person they're following]
-	// send team info to spectator for team of followed client
-	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR) {
-		if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW
-			|| ent->client->sess.spectatorClient < 0 ) {
-				return;
-		}
-		team = g_entities[ ent->client->sess.spectatorClient ].client->sess.sessionTeam;
-	} else {
-		team = ent->client->sess.sessionTeam;
-	}
-
-	if (team != TEAM_RED && team != TEAM_BLUE) {
-		return;
-	}
-	//[/JAC - Spectators now recieve teaminfo for the person they're following]
 
 	// figure out what client should be on the display
 	// we are limited to 8, but we want to use the top eight players
 	// but in client order (so they don't keep changing position on the overlay)
 	for (i = 0, cnt = 0; i < g_maxclients.integer && cnt < TEAM_MAXOVERLAY; i++) {
 		player = g_entities + level.sortedClients[i];
-		//[JAC - Spectators now recieve teaminfo for the person they're following]
-		if (player->inuse && player->client->sess.sessionTeam == team ) {
-		//[/JAC - Spectators now recieve teaminfo for the person they're following]
+		if (player->inuse && player->client->sess.sessionTeam == 
+			ent->client->sess.sessionTeam ) {
 			clients[cnt++] = level.sortedClients[i];
 		}
 	}
@@ -1469,9 +1440,8 @@ void TeamplayInfoMessage( gentity_t *ent ) {
 
 	for (i = 0, cnt = 0; i < g_maxclients.integer && cnt < TEAM_MAXOVERLAY; i++) {
 		player = g_entities + i;
-		//[JAC - Spectators now recieve teaminfo for the person they're following]
-		if (player->inuse && player->client->sess.sessionTeam == team ) {
-		//[/JAC - Spectators now recieve teaminfo for the person they're following]
+		if (player->inuse && player->client->sess.sessionTeam == 
+			ent->client->sess.sessionTeam ) {
 
 			h = player->client->ps.stats[STAT_HEALTH];
 			a = player->client->ps.stats[STAT_ARMOR];
@@ -1501,13 +1471,11 @@ void TeamplayInfoMessage( gentity_t *ent ) {
 			
 			Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i %i %i", 
-				//level.sortedClients[i], player->client->pers.teamState.location, h, a, 
+//				level.sortedClients[i], player->client->pers.teamState.location, h, a, 
 				i, player->client->pers.teamState.location, h, a, 
 				player->client->ps.weapon, player->s.powerups);
 			j = strlen(entry);
-			//[JAC Bugfix - Fixed potential buffer overflow]
-			if (stringlength + j >= sizeof(string))
-			//[/JAC Bugfix - Fixed potential buffer overflow]
+			if (stringlength + j > sizeof(string))
 				break;
 			strcpy (string + stringlength, entry);
 			stringlength += j;
@@ -1565,9 +1533,7 @@ void CheckTeamStatus(void) {
 				continue;
 			}
 
-			//[JAC - Spectators now recieve teaminfo for the person they're following]
-			if (ent->inuse) {
-			//[/JAC - Spectators now recieve teaminfo for the person they're following]
+			if (ent->inuse && (ent->client->sess.sessionTeam == TEAM_RED ||	ent->client->sess.sessionTeam == TEAM_BLUE)) {
 				TeamplayInfoMessage( ent );
 			}
 		}

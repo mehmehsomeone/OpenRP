@@ -608,12 +608,9 @@ qboolean	ConsoleCommand( void ) {
 			trap_SendServerCommand( -1, va("print \"server: %s\n\"", ConcatArgs(1) ) );
 			return qtrue;
 		}
-		//[JAC Bugfix - Don't put unknown dedicated server console commands into chat!]
-		// everything else will NOT also be printed as a say command
-		//trap_SendServerCommand( -1, va("print \"server: %s\n\"", ConcatArgs(0) ) );
-		//return qtrue;
-		//[/JAC Bugfix - Don't put unknown dedicated server console commands into chat!]
-		//OPENRPTODO - Print that it's an unknown cmd
+		// everything else will also be printed as a say command
+		trap_SendServerCommand( -1, va("print \"server: %s\n\"", ConcatArgs(0) ) );
+		return qtrue;
 	}
 
 	return qfalse;

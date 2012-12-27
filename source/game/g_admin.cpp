@@ -1559,7 +1559,7 @@ amstatus Function
 */
 void Cmd_amStatus_F(gentity_t *ent)
 {
-	char hasClientText[64];
+	char hasClientText[MAX_STRING_CHARS];
 	int i;
 
   	if(!G_CheckAdmin(ent, ADMIN_STATUS))
@@ -1573,19 +1573,19 @@ void Cmd_amStatus_F(gentity_t *ent)
 	{ 
 		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
 		{
-			if ( g_entities[i].client->sess.ojpClientPlugIn )
+			Q_strncpyz( hasClientText, "Unknown", sizeof( hasClientText ) );
+			//TODO
+			/*
+			if ( g_entities[i].client->pers.ojpClientPlugIn )
 			{
 				Q_strncpyz( hasClientText, "Yes", sizeof( hasClientText ) );
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s ^2Version: ^7%s\n\"", 
-					i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientText, g_entities[i].client->sess.ojpClientVersion ) );
 			}
 			else
 			{
 				Q_strncpyz( hasClientText, "No", sizeof( hasClientText ) );
-				trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", 
-					i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientText ) );
 			}
-			
+			*/
+			trap_SendServerCommand( ent-g_entities, va( "print \"^2ID: ^7%i ^2Name: %s ^2IP: ^7%s ^2OpenRP Client: ^7%s\n\"", i, g_entities[i].client->pers.netname, g_entities[i].client->sess.IP, hasClientText ) );
 		}
 	}
 	return;
@@ -2669,7 +2669,6 @@ void Cmd_AllChat_F( gentity_t * ent )
 			if ( ent->client->sess.allChatComplete )
 			{
 				ent->client->sess.allChatComplete = qfalse;
-				trap_SendServerCommand( ent-g_entities, "print \"^2All chat COMPLETE turned OFF.\n\"" );
 			}
 			ent->client->sess.allChat =	qtrue;
 			trap_SendServerCommand( ent-g_entities, "print \"^2All chat turned ON.\n\"" );
@@ -2690,7 +2689,6 @@ void Cmd_AllChat_F( gentity_t * ent )
 		if ( ent->client->sess.allChat )
 		{
 			ent->client->sess.allChat = qfalse;
-			trap_SendServerCommand( ent-g_entities, "print \"^2All chat turned OFF.\n\"" );
 		}
 		
 		if ( !ent->client->sess.allChatComplete )

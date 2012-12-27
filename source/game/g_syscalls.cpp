@@ -120,18 +120,14 @@ void trap_DropClient( int clientNum, const char *reason ) {
 }
 
 void trap_SendServerCommand( int clientNum, const char *text ) { 
-	//[JAC Bugfix - 1022 character fix]
-	// rain - hack - commands over 1022 chars will crash the
-	// client upon receipt, so ignore them
-	if ( strlen( text ) > 1022 ) {
-		//[JAC - Added security logging]
-		G_SecurityLogPrintf( "trap_SendServerCommand( %d, ... ) length exceeds 1022.\n", clientNum );
-		G_SecurityLogPrintf( "text [%s]\n", text );
-		//[/JAC - Added security logging]
-		return;
-	}
-	//[/JAC Bugfix - 1022 character fix]
-	syscall( G_SEND_SERVER_COMMAND, clientNum, text );
+        // rain - hack - commands over 1022 chars will crash the 
+        // client upon receipt, so ignore them 
+        if( strlen( text ) > 1022 ) { 
+                G_LogPrintf( "trap_SendServerCommand( %d, ... ) length exceeds 1022.\n", clientNum );
+                G_LogPrintf( "text [%s]\n", text ); 
+                return; 
+        } 
+        syscall( G_SEND_SERVER_COMMAND, clientNum, text ); 
 }
 
 void trap_SetConfigstring( int num, const char *string ) {

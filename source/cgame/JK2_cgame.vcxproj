@@ -27,7 +27,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug(Final)|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -362,7 +362,6 @@
     <ClInclude Include="cg_local.h" />
     <ClInclude Include="cg_public.h" />
     <ClInclude Include="..\qcommon\disablewarnings.h" />
-    <ClInclude Include="cg_xcvar.h" />
     <ClInclude Include="fx_local.h" />
     <ClInclude Include="..\ghoul2\G2.h" />
     <ClInclude Include="holocronicons.h" />

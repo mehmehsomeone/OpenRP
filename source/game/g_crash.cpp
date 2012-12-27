@@ -195,7 +195,7 @@
 	}
 
 #elif defined WIN32
-	//#include <windows.h>
+	#include <windows.h>
 	#include <process.h>
 	#include <imagehlp.h>
 

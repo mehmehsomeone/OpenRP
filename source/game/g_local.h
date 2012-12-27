@@ -31,10 +31,6 @@ void CancelReload(gentity_t *ent);
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"OpenRP " OPENRP_SERVERVERSION
 
-//[JAC - Added security logging]
-#define SECURITY_LOG "security.log"
-//[/JAC - Added security logging]
-
 #define BODY_QUEUE_SIZE		8
 
 //[CrashLog]
@@ -99,10 +95,6 @@ void CancelReload(gentity_t *ent);
 #ifndef FINAL_BUILD
 #define DEBUG_SABER_BOX
 #endif
-
-//[JAC - Added server-side engine modifications, basic client connection checks]
-#define EC "\x19"
-//[/JAC - Added server-side engine modifications, basic client connection checks]
 
 #define	MAX_G_SHARED_BUFFER_SIZE		8192
 extern char gSharedBuffer[MAX_G_SHARED_BUFFER_SIZE];
@@ -346,13 +338,6 @@ extern	vmCvar_t	bot_thinklevel;
 //[/AotCAI]
 
 extern vmCvar_t		g_showDuelHealths;
-
-//[JAC - Added server-side engine modifications, basic client connection checks]
-#define XCVAR_PROTO
-	#include "g_xcvar.h"
-#undef XCVAR_PROTO
-//[/JAC - Added server-side engine modifications, basic client connection checks]
-
 //[CoOp]
 extern vmCvar_t		ojp_skipcutscenes;
 extern vmCvar_t		ojp_spmodel;
@@ -968,7 +953,6 @@ typedef struct {
 	//this flag shows weither or not this client is running the right version of OJP on the client side.  
 	//This is used to determine if the visual weapon events can be sent or not.
 	qboolean ojpClientPlugIn;
-	char ojpClientVersion[64];
 	//[/ClientPlugInDetect]
 
 } clientSession_t;
@@ -1013,10 +997,6 @@ typedef struct {
 	int			duelStartTime;		// RMH - Level time of duel start.
 	int			duelEndTime;		// RMH - Level time of duel end.
 	int			forcePowerLevelSaved[NUM_FORCE_POWERS]; // MJN - Used to save your old level when empowering is used and restoring it later.
-
-	//[JAC - Added server-side engine modifications, basic client connection checks]
-	int      connectTime;
-	//[/JAC - Added server-side engine modifications, basic client connection checks]
 
 } clientPersistant_t;
 
@@ -1615,16 +1595,6 @@ typedef struct {
 	char		rawmapname[MAX_QPATH];
 	//[/RawMapName]
 
-	//[JAC - Added server-side engine modifications, basic client connection checks]
-	struct {
-		qboolean isPatched;
-		qboolean clientConnectionActive[MAX_CLIENTS];
-		//[JAC - Added security logging]
-		fileHandle_t  log;
-		//[/JAC - Added security logging]
-	} security;
-	//[/JAC - Added server-side engine modifications, basic client connection checks]
-
 } level_locals_t;
 
 
@@ -1636,9 +1606,6 @@ qboolean	G_SpawnString( const char *key, const char *defaultString, char **out )
 qboolean	G_SpawnFloat( const char *key, const char *defaultString, float *out );
 qboolean	G_SpawnInt( const char *key, const char *defaultString, int *out );
 qboolean	G_SpawnVector( const char *key, const char *defaultString, float *out );
-//[JAC - Added G_SpawnBoolean]
-qboolean	G_SpawnBoolean( const char *key, const char *defaultString, qboolean *out );
-//[/JAC - Added G_SpawnBoolean]
 void		G_SpawnEntitiesFromString( qboolean inSubBSP );
 char *G_NewString( const char *string );
 
@@ -2078,9 +2045,6 @@ void SetLeader(int team, int client);
 void CheckTeamLeader( int team );
 void G_RunThink (gentity_t *ent);
 void QDECL G_LogPrintf( const char *fmt, ... );
-//[JAC - Added security logging]
-void QDECL G_SecurityLogPrintf( const char *fmt, ... );
-//[/JAC - Added security logging]
 void SendScoreboardMessageToAllClients( void );
 void QDECL G_Printf( const char *fmt, ... );
 void QDECL G_Error( const char *fmt, ... );
@@ -2212,9 +2176,7 @@ void AnimateStun( gentity_t *self, gentity_t * inflictor, vec3_t impact );
 //[/SaberSys]
 
 // g_log.c
-//[JAC - Added security logging]
-//void QDECL G_LogPrintf( const char *fmt, ... );
-//[/JAC - Added security logging]
+void QDECL G_LogPrintf( const char *fmt, ... );
 void QDECL G_LogWeaponPickup(int client, int weaponid);
 void QDECL G_LogWeaponFire(int client, int weaponid);
 void QDECL G_LogWeaponDamage(int client, int mod, int amount);

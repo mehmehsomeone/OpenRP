@@ -13,7 +13,7 @@
 #include "../../OpenRP/ui/jamp/menudef.h"
 //[/SVN]
 
-#include "../shared/ghoul2/G2.h"
+#include "../ghoul2/G2.h"
 //==========================================================================
 
 extern qboolean WP_SaberBladeUseSecondBladeStyle( saberInfo_t *saber, int bladeNum );
@@ -1119,9 +1119,7 @@ void CG_PrintCTFMessage(clientInfo_t *ci, const char *teamName, int ctfMessage)
 
 			if (ci)
 			{
-				//[JAC Bugfix - Fixed colour bleeding in CTF messages]
-				Com_sprintf(printMsg, sizeof(printMsg), "^7%s ", ci->name);
-				//[/JAC Bugfix - Fixed colour bleeding in CTF messages]
+				Com_sprintf(printMsg, sizeof(printMsg), "%s ", ci->name);
 				strLen = strlen(printMsg);
 			}
 
@@ -1153,9 +1151,7 @@ void CG_PrintCTFMessage(clientInfo_t *ci, const char *teamName, int ctfMessage)
 
 	if (ci)
 	{
-		//[JAC Bugfix - Fixed colour bleeding in CTF messages]
-		Com_sprintf(printMsg, sizeof(printMsg), "%s^7 %s", ci->name, psStringEDString);
-		//[/JAC Bugfix - Fixed colour bleeding in CTF messages]
+		Com_sprintf(printMsg, sizeof(printMsg), "%s %s", ci->name, psStringEDString);
 	}
 	else
 	{
@@ -3757,10 +3753,8 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 				if (ci->team == cg.predictedPlayerState.persistant[PERS_TEAM])
 				{ //add to the chat box
 					//hear it in the world spot.
-					//[JAC Bugfix - Fix colour bleeding in team-game voice commands]
-					char vchatstr[1024] = {0};
-					Q_strncpyz(vchatstr, va("<%s^7: %s>\n", ci->name, descr), sizeof( vchatstr ) );
-					//[/JAC Bugfix - Fix colour bleeding in team-game voice commands]
+					char vchatstr[1024];
+					strcpy(vchatstr, va("<%s: %s>\n", ci->name, descr));
 					CG_Printf(vchatstr);
 					CG_ChatBox_AddString(vchatstr);
 				}
