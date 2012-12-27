@@ -4303,9 +4303,7 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down) {
 			if (Menu_OverActiveItem(&Menus[i], DC->cursorx, DC->cursory)) {
 				Menu_RunCloseScript(menu);
 				menu->window.flags &= ~(WINDOW_HASFOCUS | WINDOW_VISIBLE);
-				//[JAC Bugfix - Weird behaviour in UI code causes onOpen {} events to be triggered on the parent item of the item you're closing (via out-of-bounds click)]
 				//Menus_Activate(&Menus[i]);
-				//[/JAC Bugfix - Weird behaviour in UI code causes onOpen {} events to be triggered on the parent item of the item you're closing (via out-of-bounds click)]
 				Menu_HandleMouseMove(&Menus[i], DC->cursorx, DC->cursory);
 				Menu_HandleKey(&Menus[i], key, down);
 			}

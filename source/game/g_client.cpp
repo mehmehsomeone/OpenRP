@@ -4888,9 +4888,7 @@ void ClientDisconnect( int clientNum ) {
 	G_RemoveQueuedBotBegin( clientNum );
 
 	ent = g_entities + clientNum;
-	//[JAC Bugfix - Add check for CON_DISCONNECTED]
-	if ( !ent->client || ent->client->pers.connected == CON_DISCONNECTED ) {
-	//[JAC Bugfix - Add check for CON_DISCONNECTED]
+	if ( !ent->client ) {
 		return;
 	}
 

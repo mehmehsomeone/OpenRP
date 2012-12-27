@@ -1372,9 +1372,7 @@ char *GetMenuBuffer(const char *filename) {
 		return defaultMenu;
 	}
 	if ( len >= MAX_MENUFILE ) {
-		//[JAC Bugfix - Added newline to some console prints]
-		trap_Print( va( S_COLOR_RED "menu file too large: %s is %i, max allowed is %i\n", filename, len, MAX_MENUFILE ) );
-		//[/JAC Bugfix - Added newline to some console prints]
+		trap_Print( va( S_COLOR_RED "menu file too large: %s is %i, max allowed is %i", filename, len, MAX_MENUFILE ) );
 		trap_FS_FCloseFile( f );
 		return defaultMenu;
 	}
@@ -4933,75 +4931,41 @@ static void UI_LoadMovies() {
 
 
 
-//[JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
 /*
 ===============
-UI_LoadDemosInDirectory
+UI_LoadDemos
 ===============
 */
-static void UI_LoadDemosInDirectory( const char *directory )
-{
-	char	demolist[MAX_DEMOLIST] = {0}, *demoname = NULL;
-	char	fileList[MAX_DEMOLIST] = {0}, *fileName = NULL;
-	char	demoExt[32] = {0};
-	int		i=0, j=0, len=0, numFiles=0;
-	int		protocol = trap_Cvar_VariableValue( "com_protocol" ), protocolLegacy = trap_Cvar_VariableValue( "com_legacyprotocol" );
+static void UI_LoadDemos() {
+	char	demolist[4096];
+	char demoExt[32];
+	char	*demoname;
+	int		i, len;
 
-	if ( !protocol )
-		protocol = trap_Cvar_VariableValue( "protocol" );
-	if ( protocolLegacy == protocol )
-		protocolLegacy = 0;
+	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)trap_Cvar_VariableValue("protocol"));
 
-	Com_sprintf( demoExt, sizeof( demoExt ), ".%s%d", DEMO_EXTENSION, protocol);
+	uiInfo.demoCount = trap_FS_GetFileList( "demos", demoExt, demolist, 4096 );
 
-	uiInfo.demoCount += trap_FS_GetFileList( directory, demoExt, demolist, sizeof( demolist ) );
+	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", (int)trap_Cvar_VariableValue("protocol"));
 
-	demoname = demolist;
-
-	for ( j=0; j<2; j++ )
-	{
-		if ( uiInfo.demoCount > MAX_DEMOS )
+	if (uiInfo.demoCount) {
+		if (uiInfo.demoCount > MAX_DEMOS) {
 			uiInfo.demoCount = MAX_DEMOS;
-
-		for( ; uiInfo.loadedDemos<uiInfo.demoCount; uiInfo.loadedDemos++)
-		{
+		}
+		demoname = demolist;
+		for ( i = 0; i < uiInfo.demoCount; i++ ) {
 			len = strlen( demoname );
-			Com_sprintf( uiInfo.demoList[uiInfo.loadedDemos], sizeof( uiInfo.demoList[0] ), "%s/%s", directory + strlen( DEMO_DIRECTORY )+1, demoname );
+			if (!Q_stricmp(demoname +  len - strlen(demoExt), demoExt)) {
+				demoname[len-strlen(demoExt)] = '\0';
+			}
+			Q_strupr(demoname);
+			uiInfo.demoList[i] = String_Alloc(demoname);
 			demoname += len + 1;
 		}
-
-		if ( !j )
-		{
-			if ( protocolLegacy > 0 && uiInfo.demoCount < MAX_DEMOS )
-			{
-				Com_sprintf( demoExt, sizeof( demoExt ), ".%s%d", DEMO_EXTENSION, protocolLegacy );
-				uiInfo.demoCount += trap_FS_GetFileList( directory, demoExt, demolist, sizeof( demolist ) );
-				demoname = demolist;
-			}
-			else
-				break;
-		}
-	}
-
-	numFiles = trap_FS_GetFileList( directory, "/", fileList, sizeof( fileList ) );
-
-	fileName = fileList;
-	for ( i=0; i<numFiles; i++ )
-	{
-		len = strlen( fileName );
-		fileName[len] = '\0';
-		if ( Q_stricmp( fileName, "." ) && Q_stricmp( fileName, ".." ) )
-			UI_LoadDemosInDirectory( va( "%s/%s", directory, fileName ) );
-		fileName += len+1;
 	}
 
 }
 
-static void UI_LoadDemos( void )	
-{
-	UI_LoadDemosInDirectory( DEMO_DIRECTORY );	 	
-}
-//[/JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
 
 static qboolean UI_SetNextMap(int actual, int index) {
 	int i;
@@ -11247,9 +11211,8 @@ static void UI_DisplayDownloadInfo( const char *downloadName, float centerPoint,
 	Text_PaintCenter(centerPoint, yStart + 248, scale, colorWhite, sTransferRate, 0, iMenuFont);
 
 	if (downloadSize > 0) {
-		//[JAC Bugfix - Download message percentage overflow]
-		s = va( "%s (%d%%)", downloadName, (int)( (float)downloadCount * 100.0f / downloadSize ) );
-		//[/JAC Bugfix - Download message percentage overflow]
+		s = va( "%s (%d%%)", downloadName,
+	 	                         (int)( (float)downloadCount * 100.0f / downloadSize ) );
 	} else {
 		s = downloadName;
 	}

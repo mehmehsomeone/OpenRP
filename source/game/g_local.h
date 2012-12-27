@@ -927,9 +927,7 @@ typedef struct {
 	int adminLevel;
 	vec3_t placeOfDeath;
 	int warnings;					//The current amount of warnings the player has
-	//[JAC Bugfix - adjusted buffer size to accommodate for IPv6 addresses]
-	char IP[NET_ADDRSTRMAXLEN];		//The player's IP Address is stored here
-	//[/JAC Bugfix - adjusted buffer size to accommodate for IPv6 addresses]
+	char IP[32];					//The players IP Address is stored here
 	qboolean isSleeping;
 	qboolean isSilenced;
 	qboolean isProtected;
@@ -1170,9 +1168,7 @@ struct gclient_s {
 	gentity_t	*hook;				// grapple hook if out
 	//[Grapple]
 	qboolean	hookhasbeenfired;
-	//[OpenRP - Disabled team switch time]
-	//int			switchTeamTime;		// time the player switched teams
-	//[/OpenRP - Disabled team switch time]
+	int			switchTeamTime;		// time the player switched teams
 
 	int			switchDuelTeamTime;		// time the player switched duel teams
 

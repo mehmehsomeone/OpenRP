@@ -397,12 +397,6 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 		//[/CoOp]
 		&& cgAnnouncerTime < cg.time) {
 		highScore = cgs.scores1;
-
-		//[JAC Bugfix - Fraglimit warning message is not played to blue team players in TFFA]
-		if ( cgs.gametype == GT_TEAM && cgs.scores2 > highScore )
-			highScore = cgs.scores2;
-		//[/JAC Bugfix - Fraglimit warning message is not played to blue team players in TFFA]
-
 		if ( !( cg.fraglimitWarnings & 4 ) && highScore == (cgs.fraglimit - 1) ) {
 			cg.fraglimitWarnings |= 1 | 2 | 4;
 			CG_AddBufferedSound(cgs.media.oneFragSound);

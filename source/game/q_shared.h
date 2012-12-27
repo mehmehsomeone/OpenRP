@@ -389,9 +389,6 @@ typedef int		clipHandle_t;
 #define	BIG_INFO_KEY		  8192
 #define	BIG_INFO_VALUE		8192
 
-//[JAC Bugfix - adjusted buffer size to accommodate for IPv6 addresses]
-#define NET_ADDRSTRMAXLEN 48 // maximum length of an IPv6 address string including trailing '\0'
-//[/JAC Bugfix - adjusted buffer size to accommodate for IPv6 addresses]
 
 #define	MAX_QPATH			64		// max length of a quake game pathname
 #ifdef PATH_MAX
@@ -2954,9 +2951,7 @@ enum _flag_status {
 	FLAG_TAKEN,			// CTF
 	FLAG_TAKEN_RED,		// One Flag CTF
 	FLAG_TAKEN_BLUE,	// One Flag CTF
-	//[JAC Bugfix - Fixed FLAG_DROPPED to correct value (the one that server uses), in case that anyone would want to use that]
-	FLAG_DROPPED = 2
-	//[/JAC Bugfix - Fixed FLAG_DROPPED to correct value (the one that server uses), in case that anyone would want to use that]
+	FLAG_DROPPED
 };
 typedef int flagStatus_t;
 

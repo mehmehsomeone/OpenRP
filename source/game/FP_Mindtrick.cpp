@@ -284,10 +284,6 @@ void ForceTelepathy(gentity_t *self)
 	if(self->client->ps.weapon == WP_SABER)
 			WP_DeactivateSaber(self,qfalse);
 
-	//[JAC Bugfix - Fixed rocket lock bug]
-	BG_ClearRocketLock(&self->client->ps);
-	//[/JAC Bugfix - Fixed rocket lock bug]
-
 	if ( ForceTelepathyCheckDirectNPCTarget( self, &tr, &tookPower ) )
 	{//hit an NPC directly
 		self->client->ps.forceAllowDeactivateTime = level.time + 1500;

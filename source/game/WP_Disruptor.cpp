@@ -311,11 +311,6 @@ void WP_DisruptorAltFire( gentity_t *ent )
 			//[/WeaponSys]
 		}
 
-	//[JAC Bugfix - Shooting ourselves shouldn't be allowed]
-    if (tr.entityNum == ent->s.number)
-		break;
-	//[/JAC Bugfix - Shooting ourselves shouldn't be allowed]
-
 		traceEnt = &g_entities[tr.entityNum];
 
 		if (d_projectileGhoul2Collision.integer && traceEnt->inuse && traceEnt->client)

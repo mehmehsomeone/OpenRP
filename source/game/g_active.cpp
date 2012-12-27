@@ -1914,10 +1914,6 @@ void G_SetTauntAnim( gentity_t *ent, int taunt )
 
 	//OpenRP TODO - IF IN EMOTE
 
-	//[JAC Bugfix - Another rocket lock bug fixed]
-	BG_ClearRocketLock(&ent->client->ps);
-	//[/JAC Bugfix - Another rocket lock bug fixed]
-
 	if ( ent->client->ps.torsoTimer < 1 
 		&& ent->client->ps.forceHandExtend == HANDEXTEND_NONE 
 		&& ent->client->ps.legsTimer < 1 
