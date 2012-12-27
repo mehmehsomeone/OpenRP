@@ -30,4 +30,4 @@ void Cmd_CharName_F( gentity_t * ent );
 void Cmd_Comm_F(gentity_t *ent);
 void Cmd_ForceMessage_F(gentity_t *ent);
 void Cmd_Faction_F( gentity_t * ent );
-void Cmd_SetFactionRank_F( gentity_t * ent );
+void Cmd_ToggleChat_F( gentity_t * ent );

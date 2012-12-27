@@ -563,7 +563,7 @@ qboolean	ConsoleCommand( void ) {
 		return qtrue;
 	}
 
-	if (Q_stricmp (cmd, "giveadmin") == 0) {
+	if (Q_stricmp (cmd, "grantadmin") == 0) {
 		Cmd_SVGrantAdmin_F();
 		return qtrue;
 	}

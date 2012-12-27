@@ -75,10 +75,7 @@ void CG_RegisterWeapon( int weaponNum) {
 	if (weaponNum == WP_DISRUPTOR ||
 		weaponNum == WP_FLECHETTE ||
 		weaponNum == WP_REPEATER ||
-		//[JAC Bugfix - Fixed missing concussion rifle barrel model, much smoother viewmodel animations]
-		weaponNum == WP_ROCKET_LAUNCHER ||
-		weaponNum == WP_CONCUSSION) //Raz: Concussion has a barrel model too, eezstreet pointed this out
-		//[/JAC Bugfix - Fixed missing concussion rifle barrel model, much smoother viewmodel animations]
+		weaponNum == WP_ROCKET_LAUNCHER)
 	{
 		strcpy( path, item->view_model );
 		COM_StripExtension( path, path, sizeof( path ) );

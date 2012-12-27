@@ -26,7 +26,7 @@ Called on game shutdown
 */
 void G_WriteClientSessionData( gclient_t *client ) {
 	//[JAC Bugfix - adjusted buffer size to accommodate for IPv6 addresses]
-	char *s = {0}, siegeClass[64] = {0}, IP[NET_ADDRSTRMAXLEN] = {0};
+	char *s = {0}, siegeClass[64] = {0}, saberType[64] = {0}, saber2Type[64] = {0}, IP[NET_ADDRSTRMAXLEN] = {0};
 	const char  *var;
 	int      i = 0;
 	//[/JAC Bugfix - adjusted buffer size to accommodate for IPv6 addresses]
@@ -36,6 +36,22 @@ void G_WriteClientSessionData( gclient_t *client ) {
 
 	if ( !siegeClass[0] )
 		Q_strncpyz( siegeClass, "none", sizeof( siegeClass ) );
+
+	Q_strncpyz( saberType, client->sess.saberType, sizeof( saberType ) );
+	for ( i=0; saberType[i]; i++ ) {
+		if (saberType[i] == ' ')
+			saberType[i] = 1;
+	}
+	if ( !saberType[0] )
+		Q_strncpyz( saberType, "none", sizeof( saberType ) );
+
+	Q_strncpyz( saber2Type, client->sess.saber2Type, sizeof( saber2Type ) );
+	for ( i=0; saber2Type[i]; i++ ) {
+		if (saber2Type[i] == ' ')
+			saber2Type[i] = 1;
+	}
+	if ( !saber2Type[0] )
+		Q_strncpyz( saber2Type, "none", sizeof( saber2Type ) );
 
 	Q_strncpyz( IP, client->sess.IP, sizeof( IP ) );
 	for ( i=0; IP[i]; i++ ) {
@@ -59,6 +75,8 @@ void G_WriteClientSessionData( gclient_t *client ) {
 	Q_strcat( s, sizeof( s ), va( "%i ", client->sess.duelTeam ) );
 	Q_strcat( s, sizeof( s ), va( "%i ", client->sess.siegeDesiredTeam ) );
 	Q_strcat( s, sizeof( s ), va( "%s ", siegeClass ) );
+	Q_strcat( s, sizeof( s ), va( "%s ", saberType ) );
+	Q_strcat( s, sizeof( s ), va( "%s ", saber2Type ) );
 	//[OpenRP - account and character, other systems & IP]
 	Q_strcat( s, sizeof( s ), va( "%s", IP ) );
 	//[ExpSys]
@@ -104,8 +122,10 @@ void G_ReadSessionData( gclient_t *client ) {
 
 	var = va( "session%i", client - level.clients );
 	trap_Cvar_VariableStringBuffer( var, s, sizeof(s) );
-
-	sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %s %i %i %i %i %i %i %i %s %i",
+	//[ExpSys]
+	sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s %i %i %i %i %s %i",
+	//sscanf( s, "%i %i %i %i %i %i %i %i %i %i %i %i %s %s %s",
+	//[ExpSys]
 		//[JAC - Added server-side engine modifications, basic client connection checks]
 		&client->sess.sessionTeam,
 		//[/JAC - Added server-side engine modifications, basic client connection checks]
@@ -125,8 +145,11 @@ void G_ReadSessionData( gclient_t *client ) {
 		&client->sess.duelTeam,
 		&client->sess.siegeDesiredTeam,
 		&client->sess.siegeClass,
+		&client->sess.saberType,
 		//[ExpSys]
+		&client->sess.saber2Type,
 		&client->sess.skillPoints,
+		//&client->sess.saber2Type
 		//[ExpSys]
 		//[OpenRP - account and character, other systems & IP]
 		&client->sess.accountID,
@@ -147,6 +170,18 @@ void G_ReadSessionData( gclient_t *client ) {
 	{
 		if (client->sess.siegeClass[i] == 1)
 			client->sess.siegeClass[i] = ' ';
+	}
+
+	for ( i=0; client->sess.saberType[i]; i++ )
+	{
+		if (client->sess.saberType[i] == 1)
+			client->sess.saberType[i] = ' ';
+	}
+
+	for ( i=0; client->sess.saber2Type[i]; i++ )
+	{
+		if (client->sess.saber2Type[i] == 1)
+			client->sess.saber2Type[i] = ' ';
 	}
 
 	for ( i=0; client->sess.IP[i]; i++ )
@@ -291,6 +326,8 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot, qbool
 	sess->spectatorTime = level.time;
 
 	sess->siegeClass[0] = 0;
+	sess->saberType[0] = 0;
+	sess->saber2Type[0] = 0;
 
 	//[ExpSys]
 	//[OpenRP - Skillpoint System]

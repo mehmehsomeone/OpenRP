@@ -1782,9 +1782,7 @@ static void CG_ServerCommand( void ) {
 			trap_S_StartLocalSound( cgs.media.talkSound, CHAN_LOCAL_SOUND );
 			//Q_strncpyz( text, CG_Argv(1), MAX_SAY_TEXT );
 			//[JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
-			//[JAC Bugfix - Fixed missing space in lchat]
-			Com_sprintf(text, sizeof( text ), "%s^7<%s> ^%s%s", name, loc, color, message);
-			//[/JAC Bugfix - Fixed missing space in lchat]
+			Com_sprintf(text, sizeof( text ), "%s^7<%s>^%s%s", name, loc, color, message);
 			//[/JAC Bugfix - Fixed buffer overflow and colour bleeding from server command "lchat" or "ltchat"]
 			CG_RemoveChatEscapeChar( text );
 			CG_ChatBox_AddString(text);

@@ -132,9 +132,7 @@ Check for lava / slime contents and drowning
 =============
 */
 void P_WorldEffects( gentity_t *ent ) {
-	#ifdef BASE_COMPAT
-		qboolean	envirosuit;
-	#endif // BASE_COMPAT
+	qboolean	envirosuit;
 	int			waterlevel;
 
 	if ( ent->client->noclip ) {
@@ -144,20 +142,16 @@ void P_WorldEffects( gentity_t *ent ) {
 
 	waterlevel = ent->waterlevel;
 
-	#ifdef BASE_COMPAT
-		envirosuit = (qboolean)(ent->client->ps.powerups[PW_BATTLESUIT] > level.time);
-	#endif // BASE_COMPAT
+	envirosuit = (qboolean)(ent->client->ps.powerups[PW_BATTLESUIT] > level.time);
 
 	//
 	// check for drowning
 	//
-	
 	if ( waterlevel == 3 ) {
-	#ifdef BASE_COMPAT
-			// envirosuit give air
-			if ( envirosuit )
-				ent->client->airOutTime = level.time + 10000;
-	#endif // BASE_COMPAT
+		// envirosuit give air
+		if ( envirosuit ) {
+			ent->client->airOutTime = level.time + 10000;
+		}
 
 		// if out of air, start drowning
 		if ( ent->client->airOutTime < level.time) {
@@ -193,20 +187,23 @@ void P_WorldEffects( gentity_t *ent ) {
 	//
 	// check for sizzle damage (move to pmove?)
 	//
-	if (waterlevel && ( ent->watertype& ( CONTENTS_LAVA|CONTENTS_SLIME ) ) ) {
-		if ( ent->health > 0 && ent->pain_debounce_time <= level.time ) {
+	if (waterlevel && 
+		(ent->watertype&(CONTENTS_LAVA|CONTENTS_SLIME)) ) {
+		if (ent->health > 0
+			&& ent->pain_debounce_time <= level.time	) {
 
-			#ifdef BASE_COMPAT
-			if ( envirosuit )
+			if ( envirosuit ) {
 				G_AddEvent( ent, EV_POWERUP_BATTLESUIT, 0 );
-			else 
-			#endif // BASE_COMPAT
-			{
-				if (ent->watertype & CONTENTS_LAVA)
-					G_Damage ( ent, NULL, NULL, NULL, NULL, 30*waterlevel, 0, MOD_LAVA );
+			} else {
+				if (ent->watertype & CONTENTS_LAVA) {
+					G_Damage (ent, NULL, NULL, NULL, NULL, 
+						30*waterlevel, 0, MOD_LAVA);
+				}
 
-				if (ent->watertype & CONTENTS_SLIME)
-					G_Damage ( ent, NULL, NULL, NULL, NULL, 10*waterlevel, 0, MOD_SLIME );
+				if (ent->watertype & CONTENTS_SLIME) {
+					G_Damage (ent, NULL, NULL, NULL, NULL, 
+						10*waterlevel, 0, MOD_SLIME);
+				}
 			}
 		}
 	}

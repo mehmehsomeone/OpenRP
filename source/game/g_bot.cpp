@@ -1385,12 +1385,16 @@ G_AddBot
 static void G_AddBot( const char *name, float skill, const char *team, int delay, char *altname, int bottype) {
 //static void G_AddBot( const char *name, float skill, const char *team, int delay, char *altname) {
 //[/TABBot]
-	//[JAC - Rewrote userinfo validation and setting]
-	gentity_t		*bot = NULL;
-	int				clientNum, preTeam = TEAM_FREE;
-	char			userinfo[MAX_INFO_STRING] = {0},
-					*botinfo = NULL, *key = NULL, *s = NULL, *botname = NULL, *model = NULL;
-	//[/JAC - Rewrote userinfo validation and setting]
+	int				clientNum;
+	char			*botinfo;
+	gentity_t		*bot;
+	char			*key;
+	char			*s;
+	char			*botname;
+	char			*model;
+//	char			*headmodel;
+	char			userinfo[MAX_INFO_STRING];
+	int				preTeam = 0;
 	//[DuelGuns][EnhancedImpliment]
 	/*
 	char			*firearm; //** change gun model	
@@ -1421,12 +1425,13 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	//[/JAC Bugfix - Fixed G_AddBot]
 
 	botname = Info_ValueForKey( botinfo, "funname" );
-	if( !botname[0] ) 
+	if( !botname[0] ) {
 		botname = Info_ValueForKey( botinfo, "name" );
+	}
 	// check for an alternative name
-	if (altname && altname[0])
+	if (altname && altname[0]) {
 		botname = altname;
-
+	}
 	Info_SetValueForKey( userinfo, "name", botname );
 	Info_SetValueForKey( userinfo, "rate", "25000" );
 	Info_SetValueForKey( userinfo, "snaps", "20" );
@@ -1444,8 +1449,9 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 
 	key = "model";
 	model = Info_ValueForKey( botinfo, key );
-	if ( !*model )
+	if ( !*model ) {
 		model = "kyle/default";
+	}
 	Info_SetValueForKey( userinfo, key, model );
 
 /*	key = "headmodel";
@@ -1457,74 +1463,50 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	key = "team_headmodel";
 	Info_SetValueForKey( userinfo, key, headmodel );
 */
-	//[JAC - Rewrote userinfo validation and setting]
-	key = "sex";
+	key = "gender";
 	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )	s = Info_ValueForKey( botinfo, "gender" );
-	if ( !*s )	s = "male";
-	Info_SetValueForKey( userinfo, key, s );
+	if ( !*s ) {
+		s = "male";
+	}
+	Info_SetValueForKey( userinfo, "sex", s );
 
 	key = "color1";
 	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )
+	if ( !*s ) {
 		s = "4";
+	}
 	Info_SetValueForKey( userinfo, key, s );
 
 	key = "color2";
 	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )
+	if ( !*s ) {
 		s = "4";
+	}
 	Info_SetValueForKey( userinfo, key, s );
 
 	key = "saber1";
 	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )
-		s = DEFAULT_SABER;
+	if ( !*s ) {
+		s = "single_1";
+	}
 	Info_SetValueForKey( userinfo, key, s );
 
 	key = "saber2";
 	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )
+	if ( !*s ) {
 		s = "none";
+	}
 	Info_SetValueForKey( userinfo, key, s );
 
-	//[JAC - Rewrote userinfo validation and setting]
-	//Raz: Added
-	key = "forcepowers";
-	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )	s = DEFAULT_FORCEPOWERS;
-	Info_SetValueForKey( userinfo, key, s );
-
-	key = "cg_predictItems";
-	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )	s = "1";
-	Info_SetValueForKey( userinfo, key, s );
-
-	key = "char_color_red";
-	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )	s = "255";
-	Info_SetValueForKey( userinfo, key, s );
-
-	key = "char_color_green";
-	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )	s = "255";
-	Info_SetValueForKey( userinfo, key, s );
-
-	key = "char_color_blue";
-	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )	s = "255";
-	Info_SetValueForKey( userinfo, key, s );
-
-	key = "teamtask";
-	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )	s = "0";
-	Info_SetValueForKey( userinfo, key, s );
-
-	key = "personality";
-	s = Info_ValueForKey( botinfo, key );
-	if ( !*s )	s = "botfiles/default.jkb";
-	Info_SetValueForKey( userinfo, key, s );
-	//[/JAC - Rewrote userinfo validation and setting]
+	s = Info_ValueForKey(botinfo, "personality");
+	if (!*s )
+	{
+		Info_SetValueForKey( userinfo, "personality", "botfiles/default.jkb" );
+	}
+	else
+	{
+		Info_SetValueForKey( userinfo, "personality", s );
+	}
 
 	//[DuelGuns][EnhancedImpliment]
 	/*
@@ -1598,20 +1580,21 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	//[/DuelGuns][EnhancedImpliment]
 
 	// initialize the bot settings
-	if( !team || !*team )
-	{
-		if( g_gametype.integer >= GT_TEAM )
-		{
+	if( !team || !*team ) {
+		if( g_gametype.integer >= GT_TEAM ) {
 			//[AdminSys]
-			if( PickTeam(clientNum, qtrue) == TEAM_RED)
+			if( PickTeam(clientNum, qtrue) == TEAM_RED) {
 			//if( PickTeam(clientNum) == TEAM_RED) {
 			//[/AdminSys]
 				team = "red";
-			else
+			}
+			else {
 				team = "blue";
+			}
 		}
-		else
+		else {
 			team = "red";
+		}
 	}
 //	Info_SetValueForKey( userinfo, "characterfile", Info_ValueForKey( botinfo, "aifile" ) );
 	Info_SetValueForKey( userinfo, "skill", va( "%5.2f", skill ) );
@@ -1631,21 +1614,27 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 
 	//[NewGameTypes][EnhancedImpliment]
 	//if (g_gametype.integer >= GT_TEAM && g_gametype.integer != GT_RPG)
-	if ( g_gametype.integer >= GT_TEAM )
+	if (g_gametype.integer >= GT_TEAM)
 	//[/NewGameTypes][EnhancedImpliment]
 	{
 		if (team && Q_stricmp(team, "red") == 0)
+		{
 			bot->client->sess.sessionTeam = TEAM_RED;
+		}
 		else if (team && Q_stricmp(team, "blue") == 0)
+		{
 			bot->client->sess.sessionTeam = TEAM_BLUE;
+		}
 		else
+		{
 			//[AdminSys]
 			bot->client->sess.sessionTeam = PickTeam( -1, qtrue );
 			//bot->client->sess.sessionTeam = PickTeam( -1 );
 			//[/AdminSys]
+		}
 	}
 
-	if ( g_gametype.integer == GT_SIEGE )
+	if (g_gametype.integer == GT_SIEGE)
 	{
 		bot->client->sess.siegeDesiredTeam = bot->client->sess.sessionTeam;
 		bot->client->sess.sessionTeam = TEAM_SPECTATOR;
@@ -1654,28 +1643,40 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	preTeam = bot->client->sess.sessionTeam;
 
 	// have it connect to the game as a normal client
-	if ( ClientConnect( clientNum, qtrue, qtrue ) )
+	if ( ClientConnect( clientNum, qtrue, qtrue ) ) {
 		return;
+	}
 
-	if ( bot->client->sess.sessionTeam != preTeam )
+	if (bot->client->sess.sessionTeam != preTeam)
 	{
-		//[JAC - Rewrote userinfo validation and setting]
-		trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
-		//[/JAC - Rewrote userinfo validation and setting]
+		trap_GetUserinfo(clientNum, userinfo, MAX_INFO_STRING);
 
 		if (bot->client->sess.sessionTeam == TEAM_SPECTATOR)
+		{
 			bot->client->sess.sessionTeam = preTeam;
+		}
 
 		if (bot->client->sess.sessionTeam == TEAM_RED)
+		{
 			team = "Red";
+		}
 		else
 		{
-			if ( g_gametype.integer == GT_SIEGE )
-				//[JAC - Rewrote userinfo validation and setting]
-				team = (bot->client->sess.sessionTeam == TEAM_BLUE) ? "Blue" : "s";
-				//[/JAC - Rewrote userinfo validation and setting]
+			if (g_gametype.integer == GT_SIEGE)
+			{
+				if (bot->client->sess.sessionTeam == TEAM_BLUE)
+				{
+					team = "Blue";
+				}
+				else
+				{
+					team = "s";
+				}
+			}
 			else
+			{
 				team = "Blue";
+			}
 		}
 
 		Info_SetValueForKey( userinfo, "team", team );
@@ -1685,10 +1686,7 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 		bot->client->ps.persistant[ PERS_TEAM ] = bot->client->sess.sessionTeam;
 
 		G_ReadSessionData( bot->client );
-		//[JAC - Rewrote userinfo validation and setting]
-		if ( !ClientUserinfoChanged( clientNum ) )	
-			return;
-		//[/JAC - Rewrote userinfo validation and setting]
+		ClientUserinfoChanged( clientNum );
 	}
 
 	if (g_gametype.integer == GT_DUEL ||

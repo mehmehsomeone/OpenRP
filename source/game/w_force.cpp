@@ -346,26 +346,19 @@ void WP_InitForcePowers( gentity_t *ent )
 	//racc - actually all the NPC should have dumped out of here earlier than this.
 	if (ent->s.eType == ET_NPC && ent->s.number >= MAX_CLIENTS)
 	{ //rwwFIXMEFIXME: Temp
-		Q_strncpyz(userinfo, DEFAULT_FORCEPOWERS, sizeof( userinfo ) );
+		strcpy(userinfo, DEFAULT_FORCEPOWERS);
 	}
 	else
 	{
 		trap_GetUserinfo( ent->s.number, userinfo, sizeof( userinfo ) );
 	}
 
-	//[JAC - Rewrote userinfo validation and setting]
-	Q_strncpyz( forcePowers, Info_ValueForKey( userinfo, "forcepowers" ), sizeof( forcePowers ) );
+	Q_strncpyz( forcePowers, Info_ValueForKey (userinfo, "forcepowers"), sizeof( forcePowers ) );
 
-	if ( strlen( forcePowers ) < strlen( DEFAULT_FORCEPOWERS ) )
-	{
-		Q_strncpyz( forcePowers, DEFAULT_FORCEPOWERS, sizeof( forcePowers ) );
-		trap_SendServerCommand( ent-g_entities, "print \"^1Invalid forcepowers string, setting default\n\"" );
-	}
-
-	//if it's a bot just copy the info directly from its personality
 	if ( (ent->r.svFlags & SVF_BOT) && botstates[ent->s.number] )
-		Q_strncpyz( forcePowers, botstates[ent->s.number]->forceinfo, sizeof( forcePowers ) );
-	//[/JAC - Rewrote userinfo validation and setting]
+	{ //if it's a bot just copy the info directly from its personality
+		Com_sprintf(forcePowers, sizeof(forcePowers), "%s", botstates[ent->s.number]->forceinfo);
+	}
 
 	//rww - parse through the string manually and eat out all the appropriate data
 	i = 0;
@@ -1595,10 +1588,15 @@ void WP_ForcePowerStop( gentity_t *self, forcePowers_t forcePower )
 	self->client->ps.fd.forcePowersActive &= ~( 1 << forcePower );
 }
 
-//[JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
-#define FORCE_DEBOUNCE_TIME 50 // sv_fps 20 = 50msec frametime, basejka balance/timing
-//[/JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
 
+
+
+//[BugFix27]
+//Debouncer information for the lightning
+static int LightningDebounceTime = 0;
+//sets the time between lightning hit shots on the server so that we can alter the sv_fps without issues.  
+const int LIGHTNINGDEBOUNCE = 200;//Was 50
+//[/BugFix27]
 static int SpeedDebounceTime = 0;
 //sets the time between force speed FP drains.  
 static int ProtectDebounceTime=0;
@@ -1837,28 +1835,27 @@ static void WP_ForcePowerRun( gentity_t *self, forcePowers_t forcePower, usercmd
 		//[ForceSys]
 		//replaced drain with force lightning for the moment because drain is WAY over powered when 
 		//used in the new saber system.
-		//[JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
-		else
+		//[BugFix27]
+		//added server debouncer to make the lightning damage consistant even with different sv_fps settings.
+		else if( LightningDebounceTime == level.time //someone already advanced the timer this frame
+			|| (level.time - LightningDebounceTime >= LIGHTNINGDEBOUNCE) )
+		//else
+		//[/BugFix27]
 		{
-			while ( self->client->force.drainDebounce < level.time )
-			{
-				/*
-				ForceShootDrain( self );
-				self->client->force.drainDebounce += FORCE_DEBOUNCE_TIME;
-				*/
-				ForceShootLightning( self );
-				//[ForceSys]
-				BG_ForcePowerDrain( &self->client->ps, forcePower, 1 );
-				//BG_ForcePowerDrain( &self->client->ps, forcePower, 0 );
-				//[/ForceSys]
+			ForceShootLightning( self );
+			//[ForceSys]
+			BG_ForcePowerDrain( &self->client->ps, forcePower, 1 );
+			//BG_ForcePowerDrain( &self->client->ps, forcePower, 0 );
+			//[/ForceSys]
 
-				//show the drain lightning effect
-				self->client->ps.activeForcePass = self->client->ps.fd.forcePowerLevel[FP_DRAIN] + FORCE_LEVEL_3;
+			//show the drain lightning effect
+			self->client->ps.activeForcePass = self->client->ps.fd.forcePowerLevel[FP_DRAIN] + FORCE_LEVEL_3;
 
-				self->client->force.drainDebounce += FORCE_DEBOUNCE_TIME;
-			}
+			//[BugFix27]
+			//update the lightning shot debouncer
+			LightningDebounceTime = level.time;
+			//[/BugFix27]
 		}
-		//[/JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
 		//[/ForceSys]
 		break;
 	case FP_LIGHTNING:
@@ -1894,21 +1891,24 @@ static void WP_ForcePowerRun( gentity_t *self, forcePowers_t forcePower, usercmd
 		{
 			WP_ForcePowerStop( self, forcePower );
 		}
-		//[JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
-		else
+		//[BugFix27]
+		//added server debouncer to make the lightning damage consistant even with different sv_fps settings.
+		else if( LightningDebounceTime == level.time //someone already advanced the timer this frame
+			|| (level.time - LightningDebounceTime >= LIGHTNINGDEBOUNCE) )
+		//else
+		//[/BugFix27]
 		{
-			while ( self->client->force.lightningDebounce < level.time )
-			{
-				ForceShootLightning( self );
-				//[ForceSys]
-				BG_ForcePowerDrain( &self->client->ps, forcePower, 1 ); //holding FP cost
-				//BG_ForcePowerDrain( &self->client->ps, forcePower, 0 );
-				//[/ForceSys]
+			ForceShootLightning( self );
+			//[ForceSys]
+			BG_ForcePowerDrain( &self->client->ps, forcePower, 1 ); //holding FP cost
+			//BG_ForcePowerDrain( &self->client->ps, forcePower, 0 );
+			//[/ForceSys]
 
-				self->client->force.lightningDebounce += FORCE_DEBOUNCE_TIME;
-			}
+			//[BugFix27]
+			//update the lightning shot debouncer
+			LightningDebounceTime = level.time;
+			//[/BugFix27]
 		}
-		//[/JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
 		break;
 	case FP_MINDTRICK:
 		if ( self->client->holdingObjectiveItem >= MAX_CLIENTS  
@@ -3009,11 +3009,12 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 			self->client->ps.forceHandExtend = HANDEXTEND_FORCE_HOLD;
 			self->client->ps.forceHandExtendTime = level.time + 100;
 
-			while ( self->client->force.lightningDebounce < level.time )	
+			if( LightningDebounceTime == level.time //someone already advanced the timer this frame
+				|| (level.time - LightningDebounceTime >= LIGHTNINGDEBOUNCE) )
 			{
 				G_Sound( self, CHAN_WEAPON, G_SoundIndex("sound/effects/fireburst") );
 				Flamethrower_Fire(self);
-				self->client->force.lightningDebounce += FORCE_DEBOUNCE_TIME;
+				LightningDebounceTime = level.time;
 				if(!Q_irand(0, 1))
 				{
 				   G_AddMercBalance(self, 1);
@@ -3138,14 +3139,6 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 			WP_ForcePowerRun( self, (forcePowers_t)i, ucmd );
 		}
 	}
-
-	//[JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
-	if ( !(self->client->ps.fd.forcePowersActive & (1<<FP_DRAIN)) )
-		self->client->force.drainDebounce = level.time;
-	if ( !(self->client->ps.fd.forcePowersActive & (1<<FP_LIGHTNING)) )
-		self->client->force.lightningDebounce = level.time;
-	//[/JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
-
 	if ( self->client->ps.saberInFlight && self->client->ps.saberEntityNum )
 	{//don't regen force power while throwing saber
 		if ( self->client->ps.saberEntityNum < ENTITYNUM_NONE && self->client->ps.saberEntityNum > 0 )//player is 0
@@ -3161,53 +3154,61 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 	{//when not using the force, regenerate at 1 point per half second
 		//[SaberThrowSys]
 		//Saber is going to be gone alot more, better be able to regen without it.
-		//[JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
-		//if (self->client->ps.fd.forcePowerRegenDebounceTime < level.time &&
-		//[/JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
+		if (self->client->ps.fd.forcePowerRegenDebounceTime < level.time &&
 		//if ( !self->client->ps.saberInFlight && self->client->ps.fd.forcePowerRegenDebounceTime < level.time &&
 		//[/SaberThrowSys]
 			//[FatigueSys]
 			//Don't regen force while attacking with the saber.
-			//[JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
-			if ( (self->client->ps.weapon != WP_SABER || !BG_SaberInSpecial(self->client->ps.saberMove)) &&
+			(self->client->ps.weapon != WP_SABER || !BG_SaberInSpecial(self->client->ps.saberMove)) &&
 			!BG_SaberAttacking(&self->client->ps) && !BG_SaberInTransitionAny(self->client->ps.saberMove)
 			//Don't regen while running
 			//[OpenRP - Force regen while running]
 			//&& WalkCheck(self)
 			//[/OpenRP - Force regen while running]
-			&& self->client->ps.groundEntityNum != ENTITYNUM_NONE )  //can't regen while in the air.
-			//[/JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
+			&& self->client->ps.groundEntityNum != ENTITYNUM_NONE)  //can't regen while in the air.
 			//(self->client->ps.weapon != WP_SABER || !BG_SaberInSpecial(self->client->ps.saberMove)) )
 			//[/FatigueSys]
 		{
-			//[JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
-			while ( self->client->ps.fd.forcePowerRegenDebounceTime < level.time )
-			//[/JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
+			if (g_gametype.integer != GT_HOLOCRON || g_MaxHolocronCarry.value)
 			{
-				//[JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
-				if (g_gametype.integer != GT_HOLOCRON || g_MaxHolocronCarry.value)
-				//[/JAC Bugfix - Fixed sv_fps leading to several inconsistencies with force lightning, force drain and force regeneration speed]
+				//if (!g_trueJedi.integer || self->client->ps.weapon == WP_SABER)
+				//let non-jedi force regen since we're doing a more strict jedi/non-jedi thing... this gives dark jedi something to drain
 				{
 					if (self->client->ps.powerups[PW_FORCE_BOON])
-						WP_ForcePowerRegenerate( self, 6 );
-					else if (self->client->ps.isJediMaster && g_gametype.integer == GT_JEDIMASTER)
-						WP_ForcePowerRegenerate( self, 4 ); //jedi master regenerates 4 times as fast
-					else
-						WP_ForcePowerRegenerate( self, 0 );
-				}
-				else
-				{ //regenerate based on the number of holocrons carried
-					holoregen = 0;
-					holo = 0;
-					while (holo < NUM_FORCE_POWERS)
 					{
-						if (self->client->ps.holocronsCarried[holo])
-							holoregen++;
-						holo++;
+						WP_ForcePowerRegenerate( self, 6 );
 					}
-
-					WP_ForcePowerRegenerate(self, holoregen);
+					else if (self->client->ps.isJediMaster && g_gametype.integer == GT_JEDIMASTER)
+					{
+						WP_ForcePowerRegenerate( self, 4 ); //jedi master regenerates 4 times as fast
+					}
+					else
+					{
+						WP_ForcePowerRegenerate( self, 0 );
+					}
 				}
+				/*
+				else if (g_trueJedi.integer && self->client->ps.weapon != WP_SABER)
+				{
+					self->client->ps.fd.forcePower = 0;
+				}
+				*/
+			}
+			else
+			{ //regenerate based on the number of holocrons carried
+				holoregen = 0;
+				holo = 0;
+				while (holo < NUM_FORCE_POWERS)
+				{
+					if (self->client->ps.holocronsCarried[holo])
+					{
+						holoregen++;
+					}
+					holo++;
+				}
+
+				WP_ForcePowerRegenerate(self, holoregen);
+			}
 
 			//[FatigueSys]
 			//we're disabled siege specific force regen code since it screws up FP balancing in Enhanced.
@@ -3320,7 +3321,6 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 				
 				//[/FatigueSys]
 			}
-		}
 
 			//[FatigueSys]
 			if( self->client->ps.fd.forcePower > (self->client->ps.fd.forcePowerMax * FATIGUEDTHRESHHOLD) )
@@ -3330,8 +3330,6 @@ void WP_ForcePowersUpdate( gentity_t *self, usercmd_t *ucmd )
 			//[/FatigueSys]
 		}
 	}
-	else
-		self->client->ps.fd.forcePowerRegenDebounceTime = level.time;
 
 	//[DodgeSys]
 	if(self->client->DodgeDebounce < level.time  

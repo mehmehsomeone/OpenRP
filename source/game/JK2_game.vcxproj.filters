@@ -61,7 +61,13 @@
     <ClCompile Include="FighterNPC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="g_account.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="g_active.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g_admin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="g_arenas.cpp">
@@ -95,6 +101,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="g_dynmusic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g_emote.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="g_exphysics.cpp">
@@ -427,7 +436,13 @@
     <ClCompile Include="FP_Team_Heal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="g_character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="g_saberbeh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="g_mail.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="g_engine.cpp">
@@ -435,24 +450,6 @@
     </ClCompile>
     <ClCompile Include="q_engine.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="g_mail.cpp">
-      <Filter>Source Files\OpenRP</Filter>
-    </ClCompile>
-    <ClCompile Include="g_emote.cpp">
-      <Filter>Source Files\OpenRP</Filter>
-    </ClCompile>
-    <ClCompile Include="g_character.cpp">
-      <Filter>Source Files\OpenRP</Filter>
-    </ClCompile>
-    <ClCompile Include="g_admin.cpp">
-      <Filter>Source Files\OpenRP</Filter>
-    </ClCompile>
-    <ClCompile Include="g_account.cpp">
-      <Filter>Source Files\OpenRP</Filter>
-    </ClCompile>
-    <ClCompile Include="g_OpenRP.cpp">
-      <Filter>Source Files\OpenRP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -537,10 +534,19 @@
     <ClInclude Include="..\ghoul2\G2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="g_account.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g_admin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="g_camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="g_cvars.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g_emote.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="g_ICARUScb.h">
@@ -621,7 +627,16 @@
     <ClInclude Include="g_dynmusic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="g_character.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="g_saberbeh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g_mail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="g_OpenRP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="g_engine.h">
@@ -633,27 +648,6 @@
     <ClInclude Include="q_engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="g_account.h">
-      <Filter>Header Files\OpenRP</Filter>
-    </ClInclude>
-    <ClInclude Include="g_admin.h">
-      <Filter>Header Files\OpenRP</Filter>
-    </ClInclude>
-    <ClInclude Include="g_character.h">
-      <Filter>Header Files\OpenRP</Filter>
-    </ClInclude>
-    <ClInclude Include="g_emote.h">
-      <Filter>Header Files\OpenRP</Filter>
-    </ClInclude>
-    <ClInclude Include="g_mail.h">
-      <Filter>Header Files\OpenRP</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenRP.h">
-      <Filter>Header Files\OpenRP</Filter>
-    </ClInclude>
-    <ClInclude Include="g_OpenRP.h">
-      <Filter>Header Files\OpenRP</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -661,12 +655,6 @@
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4ef0f647-bf2f-4443-bdf0-dc7b8d70bc33}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\OpenRP">
-      <UniqueIdentifier>{6f027216-020a-4d39-8d5d-570add974545}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\OpenRP">
-      <UniqueIdentifier>{6697fc19-8333-4a05-b3e2-9459f6f8da97}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

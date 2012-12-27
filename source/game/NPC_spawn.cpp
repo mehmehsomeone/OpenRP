@@ -10,9 +10,7 @@
 extern void G_DebugPrint( int level, const char *format, ... );
 
 extern qboolean G_CheckInSolid (gentity_t *self, qboolean fix);
-//[JAC - Rewrote userinfo validation and setting]
-extern qboolean ClientUserinfoChanged( int clientNum );
-//[/JAC - Rewrote userinfo validation and setting]
+extern void ClientUserinfoChanged( int clientNum );
 extern qboolean SpotWouldTelefrag2( gentity_t *mover, vec3_t dest );
 extern void Jedi_Cloak( gentity_t *self );
 

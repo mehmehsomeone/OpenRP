@@ -6,6 +6,7 @@
 // Use this code at your own risk.
 
 #include "g_local.h"
+#include "g_OpenRP.h"
 #include "g_emote.h"
 #include "g_admin.h"
 
@@ -23,13 +24,21 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 	int i = 0;
 
 	if ( ent->client->sess.spectatorState == SPECTATOR_FOLLOW || ent->client->sess.spectatorState == SPECTATOR_FREE )
+	{
 		return;
+	}
 	if (ent->client->ps.groundEntityNum == ENTITYNUM_NONE)
+	{
 		return;
+	}
 	if ( ent->client->ps.saberHolstered < 2 )
+	{
 		ent->client->ps.saberHolstered = 2;
+	}
 	if ( BG_SaberInAttack(ent->client->ps.saberMove) || BG_SaberInSpecialAttack(ent->client->ps.saberMove) || ent->client->ps.saberLockTime )
+	{
 		return;
+	}
 	//[OpenRP - Endlessly floating up bug]
 	if(ent->client->forceLifting != -1)
 	{
@@ -88,6 +97,91 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 	{
 		StandardSetBodyAnim(ent, anim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
 	}
+}
+/*
+==================
+
+M_Cmd_Six_RandAnim_f - MJN
+
+Displays 6 random animations out of the parameters supplied.
+
+==================
+*/
+int M_Cmd_Six_RandAnim_f( gentity_t * ent, int anim1, int anim2, int anim3, int anim4, int anim5, int anim6 )
+{
+	int randAnim = Q_irand(1, 30);
+	int anim = 0;
+
+	if( randAnim <= 5 ){
+		anim = anim1;
+	}
+	else if( randAnim > 5 && randAnim <= 10 ){
+		anim = anim2;
+	}
+	else if( randAnim > 10 && randAnim <= 15 ){
+		anim = anim3;
+	}
+	else if( randAnim > 15 && randAnim <= 20 ){
+		anim = anim4;
+	}
+	else if( randAnim > 20 && randAnim <= 25 ){
+		anim = anim5;
+	}
+	else if( randAnim > 25 && randAnim <= 30 ){
+		anim = anim6;
+	}
+	return anim;
+}
+/*
+==================
+
+M_Cmd_Four_RandAnim_f - MJN
+
+Displays 4 random animations out of the parameters supplied.
+
+==================
+*/
+int M_Cmd_Four_RandAnim_f( gentity_t * ent, int anim1, int anim2, int anim3, int anim4 )
+{
+	int randAnim = Q_irand(1, 20);
+	int anim = 0;
+
+	if( randAnim <= 5 ){
+		anim = anim1;
+	}
+	else if( randAnim > 5 && randAnim <= 10 ){
+		anim = anim2;
+	}
+	else if( randAnim > 10 && randAnim <= 15 ){
+		anim = anim3;
+	}
+	else if( randAnim > 15 && randAnim <= 20 ){
+		anim = anim4;
+	}
+	return anim;
+}
+/*
+==================
+
+M_Cmd_Two_RandAnim_f - MJN
+
+Displays 2 random animations out of the parameters supplied.
+
+==================
+*/
+int M_Cmd_Two_RandAnim_f( gentity_t * ent, int anim1, int anim2 )
+{
+	//float randAnim = random();
+	int randAnim = Q_irand(1, 10);
+	int anim = 0;
+
+	if( randAnim <= 5 ){
+		anim = anim1;
+	}
+	else if( randAnim > 5 && randAnim <= 10 ){
+		anim = anim2;
+	}
+	return anim;
 }
 /*
 ==================

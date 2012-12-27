@@ -72,41 +72,74 @@ static void CG_DrawClientScore( int y, score_t *score, float *color, float fade,
 {
 	//vec3_t	headAngles;
 	clientInfo_t	*ci;
+	int iconx, headx;
+	float		scale;
 
-	//[JAC Bugfix - Fixed flagstatus/powerduel/siegeclass icons on scoreboard having inconsistent sizes and not adjusting for interleaved scoreboard size]
-	int				iconx = SB_BOTICON_X + (SB_RATING_WIDTH / 2);
-	float			scale = largeFormat ? 1.0f : 0.75f,
-					iconSize = largeFormat ? SB_NORMAL_HEIGHT : SB_INTER_HEIGHT;
+	if ( largeFormat )
+	{
+		scale = 1.0f;
+	}
+	else
+	{
+		scale = 0.75f;
+	}
 
 	if ( score->client < 0 || score->client >= cgs.maxclients ) {
 		Com_Printf( "Bad score->client: %i\n", score->client );
 		return;
 	}
-
+	
 	ci = &cgs.clientinfo[score->client];
 
+	iconx = SB_BOTICON_X + (SB_RATING_WIDTH / 2);
+	headx = SB_HEAD_X + (SB_RATING_WIDTH / 2);
+
 	// draw the handicap or bot skill marker (unless player has flag)
-	if ( ci->powerups & (1<<PW_NEUTRALFLAG) )
+	if ( ci->powerups & ( 1 << PW_NEUTRALFLAG ) )
 	{
-		if ( largeFormat )
-			CG_DrawFlagModel( iconx, y - (32 - BIGCHAR_HEIGHT) / 2, iconSize, iconSize, TEAM_FREE, qfalse );
+		if( largeFormat )
+		{
+			CG_DrawFlagModel( iconx, y - ( 32 - BIGCHAR_HEIGHT ) / 2, 32, 32, TEAM_FREE, qfalse );
+		}
 		else
-			CG_DrawFlagModel( iconx, y, iconSize, iconSize, TEAM_FREE, qfalse );
+		{
+			CG_DrawFlagModel( iconx, y, 16, 16, TEAM_FREE, qfalse );
+		}
 	}
-
 	else if ( ci->powerups & ( 1 << PW_REDFLAG ) )
-		CG_DrawFlagModel( iconx, y, iconSize, iconSize, TEAM_RED, qfalse );
-
-	else if ( ci->powerups & ( 1 << PW_BLUEFLAG ) )
-		CG_DrawFlagModel( iconx, y, iconSize, iconSize, TEAM_BLUE, qfalse );
-
-	else if ( cgs.gametype == GT_POWERDUEL && (ci->duelTeam == DUELTEAM_LONE || ci->duelTeam == DUELTEAM_DOUBLE) )
 	{
-		CG_DrawPic( iconx, y, iconSize, iconSize, trap_R_RegisterShaderNoMip(
-			(ci->duelTeam == DUELTEAM_LONE) ? "gfx/mp/pduel_icon_lone" : "gfx/mp/pduel_icon_double" ) );
+		if( largeFormat )
+		{
+			CG_DrawFlagModel( iconx*cgs.screenXScale, y*cgs.screenYScale, 32*cgs.screenXScale, 32*cgs.screenYScale, TEAM_RED, qfalse );
+		}
+		else
+		{
+			CG_DrawFlagModel( iconx*cgs.screenXScale, y*cgs.screenYScale, 32*cgs.screenXScale, 32*cgs.screenYScale, TEAM_RED, qfalse );
+		}
 	}
-	//[/JAC Bugfix - Fixed flagstatus/powerduel/siegeclass icons on scoreboard having inconsistent sizes and not adjusting for interleaved scoreboard size]
-
+	else if ( ci->powerups & ( 1 << PW_BLUEFLAG ) )
+	{
+		if( largeFormat )
+		{
+			CG_DrawFlagModel( iconx*cgs.screenXScale, y*cgs.screenYScale, 32*cgs.screenXScale, 32*cgs.screenYScale, TEAM_BLUE, qfalse );
+		}
+		else
+		{
+			CG_DrawFlagModel( iconx*cgs.screenXScale, y*cgs.screenYScale, 32*cgs.screenXScale, 32*cgs.screenYScale, TEAM_BLUE, qfalse );
+		}
+	}
+	else if (cgs.gametype == GT_POWERDUEL &&
+		(ci->duelTeam == DUELTEAM_LONE || ci->duelTeam == DUELTEAM_DOUBLE))
+	{
+		if (ci->duelTeam == DUELTEAM_LONE)
+		{
+			CG_DrawPic ( iconx, y, 32, 32, trap_R_RegisterShaderNoMip ( "gfx/mp/pduel_icon_lone" ) );
+		}
+		else
+		{
+			CG_DrawPic ( iconx, y, 32, 32, trap_R_RegisterShaderNoMip ( "gfx/mp/pduel_icon_double" ) );
+		}
+	}
 	else if (cgs.gametype == GT_SIEGE)
 	{ //try to draw the shader for this class on the scoreboard
 		if (ci->siegeIndex != -1)
@@ -119,19 +152,17 @@ static void CG_DrawClientScore( int y, score_t *score, float *color, float fade,
 			}
 		}
 	}
-	//[JAC Bugfix - Fixed flagstatus/powerduel/siegeclass icons on scoreboard having inconsistent sizes and not adjusting for interleaved scoreboard size]
-	/*
 	else
 	{
 		// draw the wins / losses
+		/*
 		if ( cgs.gametype == GT_DUEL || cgs.gametype == GT_POWERDUEL ) 
 		{
 			CG_DrawSmallStringColor( iconx, y + SMALLCHAR_HEIGHT/2, va("%i/%i", ci->wins, ci->losses ), color );
 		}
+		*/
 		//rww - in duel, we now show wins/losses in place of "frags". This is because duel now defaults to 1 kill per round.
 	}
-	*/
-	//[/JAC Bugfix - Fixed flagstatus/powerduel/siegeclass icons on scoreboard having inconsistent sizes and not adjusting for interleaved scoreboard size]
 
 	// highlight your position
 	if ( score->client == cg.snap->ps.clientNum ) 

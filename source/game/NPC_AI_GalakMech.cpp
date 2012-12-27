@@ -1211,9 +1211,7 @@ void NPC_BSGM_Attack( void )
 			//if ( NPC->client->ps.powerups[PW_GALAK_SHIELD] > 0 )
 			if (0)
 			{
-				#ifdef BASE_COMPAT
-					NPC->client->ps.powerups[PW_BATTLESUIT] = level.time + ARMOR_EFFECT_TIME;
-				#endif // BASE_COMPAT
+				NPC->client->ps.powerups[PW_BATTLESUIT] = level.time + ARMOR_EFFECT_TIME;
 				G_Damage( NPC->enemy, NPC, NPC, NULL, NPC->r.currentOrigin, 100, DAMAGE_NO_KNOCKBACK, MOD_UNKNOWN ); 
 			}
 			else
@@ -1235,9 +1233,8 @@ void NPC_BSGM_Attack( void )
 			//FIXME: debounce this?
 			NPCInfo->touchedByPlayer = NULL;
 			//FIXME: some shield effect?
-			#ifdef BASE_COMPAT
-				NPC->client->ps.powerups[PW_BATTLESUIT] = level.time + ARMOR_EFFECT_TIME;
-			#endif // BASE_COMPAT
+			NPC->client->ps.powerups[PW_BATTLESUIT] = level.time + ARMOR_EFFECT_TIME;
+
 			VectorSubtract( NPC->enemy->r.currentOrigin, NPC->r.currentOrigin, smackDir );
 			smackDir[2] += 30;
 			VectorNormalize( smackDir );
