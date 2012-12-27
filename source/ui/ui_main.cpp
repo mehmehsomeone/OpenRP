@@ -4930,7 +4930,6 @@ static void UI_LoadMovies() {
 
 
 //[JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
-#if 1
 /*
 ===============
 UI_LoadDemosInDirectory
@@ -4996,44 +4995,8 @@ static void UI_LoadDemosInDirectory( const char *directory )
 
 static void UI_LoadDemos( void )	
 {
-	//[JAC Bugfix - Fixed demo browser not clearing old demo lists]
-	uiInfo.demoCount = 0;
-	uiInfo.loadedDemos = 0;
-	memset( uiInfo.demoList, 0, sizeof( uiInfo.demoList ) );
-	//[/JAC Bugfix - Fixed demo browser not clearing old demo lists]
 	UI_LoadDemosInDirectory( DEMO_DIRECTORY );	 	
 }
-
-#else
-
-static void UI_LoadDemos( void )
-{
-	char	demolist[4096] = {0};
-	char	demoExt[8] = {0};
-	char	*demoname = NULL;
-	int		i, len, extLen;
-
-	Com_sprintf( demoExt, sizeof( demoExt ), "dm_%d", (int)trap_Cvar_VariableValue( "protocol" ) );
-	uiInfo.demoCount = Com_Clampi( 0, MAX_DEMOS, trap_FS_GetFileList( "demos", demoExt, demolist, sizeof( demolist ) ) );
-	Com_sprintf( demoExt, sizeof( demoExt ), ".dm_%d", (int)trap_Cvar_VariableValue( "protocol" ) );
-	extLen = strlen( demoExt );
-
-	if ( uiInfo.demoCount )
-	{
-		demoname = demolist;
-		for ( i=0; i<uiInfo.demoCount; i++ )
-		{
-			len = strlen( demoname );
-			if ( !Q_stricmp( demoname + len - extLen, demoExt) )
-				demoname[len-extLen] = '\0';
-			Q_strupr( demoname );
-			uiInfo.demoList[i] = String_Alloc( demoname );
-			demoname += len + 1;
-		}
-	}
-}
-
-#endif
 //[/JAC - Added subdirectory support for demo feeder, supports other protocols and is case sensitive]
 
 static qboolean UI_SetNextMap(int actual, int index) {
