@@ -859,6 +859,7 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 		{
 			ci = &cgs.clientinfo[ cent->currentState.clientNum ];
 		}
+	
 		hand.frame = CG_MapTorsoToWeaponFrame( ci, cent->pe.torso.frame, cent->currentState.torsoAnim );
 		hand.oldframe = CG_MapTorsoToWeaponFrame( ci, cent->pe.torso.oldFrame, cent->currentState.torsoAnim );
 		hand.backlerp = cent->pe.torso.backlerp;

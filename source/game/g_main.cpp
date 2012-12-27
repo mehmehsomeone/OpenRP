@@ -482,7 +482,9 @@ vmCvar_t	tiers_complete;
 //[/CoOp]
 vmCvar_t	g_cheats;
 vmCvar_t	g_knockback;
-vmCvar_t	g_quadfactor;
+#ifdef BASE_COMPAT
+	vmCvar_t	g_quadfactor;
+#endif // BASE_COMPAT
 vmCvar_t	g_forcerespawn;
 vmCvar_t	g_siegeRespawn;
 vmCvar_t	g_inactivity;
@@ -982,7 +984,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &tiers_complete, "tiers_complete", "", CVAR_ARCHIVE, 0, qfalse  },
 	//[/CoOp]
 	{ &g_knockback, "g_knockback", "250", 0, 0, qtrue  },
-	{ &g_quadfactor, "g_quadfactor", "3", 0, 0, qtrue  },
+	#ifdef BASE_COMPAT
+		{ &g_quadfactor, "g_quadfactor", "3", 0, 0, qtrue  },
+	#endif // BASE_COMPAT
 	{ &g_weaponRespawn, "g_weaponrespawn", "5", 0, 0, qtrue  },
 	{ &g_weaponTeamRespawn, "g_weaponTeamRespawn", "5", 0, 0, qtrue },
 	{ &g_adaptRespawn, "g_adaptrespawn", "1", 0, 0, qtrue  },		// Make weapons respawn faster with a lot of players.

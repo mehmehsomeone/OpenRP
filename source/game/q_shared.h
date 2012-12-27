@@ -20,7 +20,10 @@
 
 	// server-side conditional compiling
 //	#define IOJAMP // ensure iojamp compatibility (disables engine modifications, new vmMain/trap functionality, etc)
-	
+	//#define BASE_COMPAT // some unused and leftover code has been stripped out, but this breaks compatibility
+						//	between base<->modbase clients and servers (mismatching events, powerups, etc)
+						// leave this defined to ensure compatibility
+
 	#ifndef IOJAMP
 		#define PATCH_ENGINE
 	#endif
@@ -29,6 +32,10 @@
 
 	// client-side conditional compiling
 //	#define IOJAMP // ensure iojamp compatibility (disables engine modifications, new vmMain/trap functionality, etc)
+	//#define BASE_COMPAT // some unused and leftover code has been stripped out, but this breaks compatibility
+						//	between base<->modbase clients and servers (mismatching events, powerups, etc)
+						// leave this defined to ensure compatibility
+//	#define USE_WIDESCREEN // Adjust fov for widescreen aspect ratio
 
 	#ifndef IOJAMP
 		#define PATCH_ENGINE
@@ -71,6 +78,9 @@
 #define VALIDATEP( a )	if ( a == NULL ) {	assert(0);	return NULL;	}
 
 #define VALIDSTRING( a )	( ( a != 0 ) && ( a[0] != 0 ) )
+//[JAC - Rewrote userinfo validation and setting]
+#define VALIDENT( e )    ( ( e != 0 ) && ( (e)->inuse ) )
+//[/JAC - Rewrote userinfo validation and setting]
 
 //[JAC - Added server-side engine modifications, basic client connection checks]
 #define ARRAY_LEN( x ) ( sizeof( x ) / sizeof( *(x) ) )
@@ -382,19 +392,24 @@ float FloatSwap( const float *f );
 #endif // __FreeBSD__
 //[/JAC - Better platform-specific defines and types]
 
-//=============================================================
-
-//=============================================================
+// ================================================================
+// TYPE DEFINITIONS
+// ================================================================
 
 typedef unsigned char 		byte;
 typedef unsigned short		word;
-//[Linux]
-#ifndef __linux__
 typedef unsigned long		ulong;
-#endif
-//[/Linux]
 
-typedef enum {qfalse, qtrue}	qboolean;
+typedef enum qboolean_e { qfalse=0, qtrue } qboolean;
+
+//[JAC Bugfix - Fixed missing min/max defines on linux/gcc]
+#ifndef min
+	#define min(x,y) ((x)<(y)?(x):(y))
+#endif
+#ifndef max
+	#define max(x,y) ((x)>(y)?(x):(y))
+#endif
+//[/JAC Bugfix - Fixed missing min/max defines on linux/gcc]
 
 typedef int		qhandle_t;
 typedef int		thandle_t; //rwwRMG - inserted
@@ -1804,6 +1819,9 @@ char *Q_CleanStr( char *string );
 //[JAC - Added Q_strstrip]
 void Q_strstrip( char *string, const char *strip, const char *repl );
 //[/JAC - Added Q_strstrip]
+//[JAC - Rewrote userinfo validation and setting]
+const char *Q_strchrs( const char *string, const char *search );
+//[/JAC - Rewrote userinfo validation and setting]
 
 char	*Q_stristr( const char *s, const char *find);
 char	*Q_StrReplace(char *haystack, char *needle, char *newp);

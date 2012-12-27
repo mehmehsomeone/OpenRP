@@ -9441,10 +9441,17 @@ static void PM_Weapon( void )
 		if((pm->ps->weapon != WP_BRYAR_PISTOL && pm->ps->weapon != WP_BLASTER && pm->ps->weapon != WP_GRENADE && pm->ps->weapon != WP_DET_PACK
 			&& pm->ps->weapon != WP_THERMAL)||!PM_RunningAnim(pm->ps->legsAnim))
 		{
-		if (pm->ps->eFlags & EF_DUAL_WEAPONS)
-			PM_StartTorsoAnim( WeaponAttackAnim2[pm->ps->weapon] );
-		else
-			PM_StartTorsoAnim( WeaponAttackAnim[pm->ps->weapon] );
+			if (pm->ps->eFlags & EF_DUAL_WEAPONS)
+				PM_StartTorsoAnim( WeaponAttackAnim2[pm->ps->weapon] );
+			else
+			{
+				PM_StartTorsoAnim( WeaponAttackAnim[pm->ps->weapon] );
+				//[JKH Bugfix - Fix repeater animation]
+				/*The repeater, since it fires so quickly, has a problem keeping up with the ghoul2 animation changes in its "stuck" position and almost always messes up its first person animation (except for alt fire) smoothing.
+				Solution is to add a 100ms torso timer to the attack animation, no side effect incurred.*/
+				pm->ps->torsoTimer += 100; // Fix repeater animation. I'm adding to the torso timer because some stuff does add to it already anyway. --eez
+				//[/JKH Bugfix - Fix repeater animation]
+			}
 		}
 		else if(pm->ps->torsoAnim != BOTH_ATTACK2)
 		{

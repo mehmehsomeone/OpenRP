@@ -19,12 +19,23 @@
 
 #define	GAME_VERSION		"basejka-1"
 
+//[JAC - Rewrote userinfo validation and setting]
+#define DEFAULT_SABER		"Kyle"
+#define DEFAULT_SABER_MODEL	"models/weapons2/saber/saber_w.glm"
+//[/JAC - Rewrote userinfo validation and setting]
+
 //[ClientPlugInDetect]
 #define OPENRP_CLIENTVERSION		"Pre-alpha 8"
 #define OPENRP_SERVERVERSION		"Pre-alpha Built: " __DATE__" "__TIME__
 //[/ClientPlugInDetect]
 
 #define	STEPSIZE		18
+
+//[ExpSys]
+//more skills makes this thingy longer
+//moved from ai_main.h since we need now need it in other areas as well.
+#define DEFAULT_FORCEPOWERS		"5-1-000000000000000000000000000000000000000000000000000000000000000000"
+//[/ExpSys]
 
 #define	DEFAULT_GRAVITY		800
 #define	GIB_HEALTH			-40
@@ -469,12 +480,6 @@ enum {
 extern char *forceMasteryLevels[NUM_FORCE_MASTERY_LEVELS];
 extern int forceMasteryPoints[NUM_FORCE_MASTERY_LEVELS];
 
-//[ExpSys]
-//more skills makes this thingy longer
-//moved from ai_main.h since we need now need it in other areas as well.
-#define DEFAULT_FORCEPOWERS		"5-1-000000000000000000000000000000000000000000000000000000000000000000"
-//[/ExpSys]
-
 //Made defines for saber offense/defense level 1 since UpdateForceUsed() manually changes this values based on if sabers are given for free or not.
 //[ExpSys]
 #define SABER_OFFENSE_L1	1  
@@ -795,8 +800,11 @@ enum {
 //[/Linux]
 	PW_NONE,
 
-	PW_QUAD,
-	PW_BATTLESUIT,
+	#ifdef BASE_COMPAT
+		PW_QUAD,
+		PW_BATTLESUIT,
+	#endif // BASE_COMPAT
+
 	PW_PULL,
 	//PW_INVIS, //rww - removed
 	//PW_REGEN, //rww - removed
@@ -1022,8 +1030,10 @@ typedef enum {
 	EV_DEATH3,
 	EV_OBITUARY,
 
-	EV_POWERUP_QUAD,
-	EV_POWERUP_BATTLESUIT,
+	#ifdef BASE_COMPAT
+		EV_POWERUP_QUAD,
+		EV_POWERUP_BATTLESUIT,
+	#endif // BASE_COMPAT
 	//EV_POWERUP_REGEN,
 
 	EV_FORCE_DRAINED,

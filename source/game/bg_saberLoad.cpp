@@ -640,9 +640,11 @@ void WP_SaberSetDefaults( saberInfo_t *saber )
 
 	saber->saberFlags |= SFL_NOT_ACTIVE_BLOCKING;
 
-	strcpy(saber->name, "default");
-	strcpy(saber->fullName, "lightsaber");
-	strcpy(saber->model, "models/weapons2/saber_reborn/saber_w.glm");
+	//[JAC - Rewrote userinfo validation and setting]
+	Q_strncpyz( saber->name, DEFAULT_SABER, sizeof( saber->name ) );
+	Q_strncpyz( saber->fullName, "lightsaber", sizeof( saber->fullName ) );
+	Q_strncpyz( saber->model, DEFAULT_SABER_MODEL, sizeof( saber->model ) );
+	//[/JAC - Rewrote userinfo validation and setting]
 	saber->skin = 0;
 	saber->soundOn = BG_SoundIndex( "sound/weapons/saber/enemy_saber_on.wav" );
 	saber->soundLoop = BG_SoundIndex( "sound/weapons/saber/saberhum3.wav" );
@@ -755,7 +757,9 @@ void WP_SaberSetDefaults( saberInfo_t *saber )
 //=========================================================================================================================================
 }
 
-#define DEFAULT_SABER "Kyle"
+//[JAC - Rewrote userinfo validation and setting]
+//#define DEFAULT_SABER "Kyle"
+//[/JAC - Rewrote userinfo validation and setting]
 
 qboolean WP_SaberParseParms( const char *SaberName, saberInfo_t *saber ) 
 {
@@ -2848,7 +2852,9 @@ void WP_SetSaber( int entNum, saberInfo_t *sabers, int saberNum, const char *sab
 	if ( entNum < MAX_CLIENTS &&
 		!WP_SaberValidForPlayerInMP( saberName ) )
 	{
-		WP_SaberParseParms( "Kyle", &sabers[saberNum] );//get saber info
+		//[JAC - Rewrote userinfo validation and setting]
+		WP_SaberParseParms( DEFAULT_SABER, &sabers[saberNum] );//get saber info
+		//[/JAC - Rewrote userinfo validation and setting]
 	}
 	else
 	{

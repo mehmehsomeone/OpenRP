@@ -10,3 +10,4 @@ void Cmd_AccountInfo_F(gentity_t * ent);
 void Cmd_EditAccount_F(gentity_t * ent);
 void Cmd_AccountName_F( gentity_t * ent );
 void SanitizeString2( char *in, char *out );
+

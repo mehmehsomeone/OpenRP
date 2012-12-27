@@ -1,4 +1,4 @@
-#include "g_OpenRP.h"
+#include "OpenRP.h"
 #include "g_local.h"
 #include "g_character.h"
 #include "g_account.h"
@@ -2546,112 +2546,145 @@ void Cmd_Faction_F( gentity_t * ent )
 	return;
 }
 
-void Cmd_ToggleChat_F( gentity_t * ent )
+/*
+=================
+
+Set Faction Rank
+
+=====
+*/
+void Cmd_SetFactionRank_F( gentity_t * ent )
 {
-	char chatModeName[MAX_STRING_CHARS];
+	Database db(DATABASE_PATH);
+	Query q(db);
+	char charName[MAX_STRING_CHARS], factionRank[MAX_STRING_CHARS], factionName[MAX_STRING_CHARS], charFactionRank[MAX_STRING_CHARS], cmdUserFactionRank[MAX_STRING_CHARS];
+	int accountID;
+	int clientID;
+	int loggedIn;
+	int charFactionID;
+	int cmdUserFactionID;
+	int charID;
 
-	if ( trap_Argc() < 2 )
+	if ( !db.Connected() )
 	{
-		if ( !ent->client->sess.chatMode || ent->client->sess.chatMode > 8 )
-		{
-			ent->client->sess.chatMode = 1;
-			ent->client->sess.chatMode++;
-		}
-		else if ( ent->client->sess.chatMode < 6 && !ent->client->sess.isAdmin )
-		{
-			ent->client->sess.chatMode++;
-		}
-		else if ( ent->client->sess.chatMode < 7 && ent->client->sess.isAdmin )
-		{
-			ent->client->sess.chatMode++;
-		}
-		else
-		{
-			ent->client->sess.chatMode = 1;
-		}
-
-		switch ( ent->client->sess.chatMode )
-		{
-		case 1:
-			Q_strncpyz( chatModeName, "OOC", sizeof( chatModeName ) );
-			break;
-		case 2:
-			Q_strncpyz( chatModeName, "LOOC", sizeof( chatModeName ) );
-			break;
-		case 3:
-			Q_strncpyz( chatModeName, "Yell", sizeof( chatModeName ) );
-			break;
-		case 4:
-			Q_strncpyz( chatModeName, "Whisper", sizeof( chatModeName ) );
-			break;
-		case 5:
-			Q_strncpyz( chatModeName, "Me (Action)", sizeof( chatModeName ) );
-			break;
-		case 6:
-			Q_strncpyz( chatModeName, "It (Environmental Action/Event)", sizeof( chatModeName ) );
-			break;
-		case 7:
-			Q_strncpyz( chatModeName, "Admin", sizeof( chatModeName ) );
-			break;
-		default:
-			ent->client->sess.chatMode = 1;
-			Q_strncpyz( chatModeName, "OOC", sizeof( chatModeName ) );
-			break;
-		}
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeName ) );
+		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
 		return;
 	}
 
-	trap_Argv( 1, chatModeName, MAX_STRING_CHARS );
+	if ( trap_Argc() != 3 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /setFactionRank <characterName> <rank>\n\"" );
+		return;
+	}
 
-	if ( !Q_stricmp( chatModeName, "OOC" ) )
+	trap_Argv( 1, charName, MAX_STRING_CHARS );
+
+	trap_Argv( 2, factionRank, MAX_STRING_CHARS );
+
+	if(G_CheckAdmin(ent, ADMIN_FACTION))
 	{
-		ent->client->sess.chatMode = 1;
-		Q_strncpyz( chatModeName, "OOC", sizeof( chatModeName ) );
-	}
-	else if ( !Q_stricmp( chatModeName, "LOOC" ) )
-	{
-		ent->client->sess.chatMode = 2;
-		Q_strncpyz( chatModeName, "LOOC", sizeof( chatModeName ) );
-	}
-	else if ( !Q_stricmp( chatModeName, "yell" ) || !Q_stricmp( chatModeName, "y" ) )
-	{
-		ent->client->sess.chatMode = 3;
-		Q_strncpyz( chatModeName, "Yell", sizeof( chatModeName ) );
-	}
-	else if ( !Q_stricmp( chatModeName, "whisper" ) || !Q_stricmp( chatModeName, "w" ) )
-	{
-		ent->client->sess.chatMode = 4;
-		Q_strncpyz( chatModeName, "Whisper", sizeof( chatModeName ) );
-	}
-	else if ( !Q_stricmp( chatModeName, "me" ) )
-	{
-		ent->client->sess.chatMode = 5;
-		Q_strncpyz( chatModeName, "Me (Action)", sizeof( chatModeName ) );
-	}
-	else if ( !Q_stricmp( chatModeName, "it" ) )
-	{
-		ent->client->sess.chatMode = 6;
-		Q_strncpyz( chatModeName, "It (Environmental Action/Event)", sizeof( chatModeName ) );
-	}
-	else if ( !Q_stricmp( chatModeName, "admin" ) || !Q_stricmp( chatModeName, "a" ) )
-	{
-		if ( !ent->client->sess.isAdmin )
+		//Check if the character exists
+		Q_strlwr( charName );
+
+		charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charName ) );
+
+		if( !charID )
 		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this chat mode.\n\""));
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", charName ) );
 			return;
 		}
-		else
+
+		//Get their accountID
+		accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
+		//Get their clientID so we can send them messages
+		clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+		loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
+
+		charFactionID = q.get_num( va ("SELECT FactionID FROM Characters WHERE CharID='%i'", charID ) );
+		if ( !charFactionID )
 		{
-			ent->client->sess.chatMode = 7;
-			Q_strncpyz( chatModeName, "Admin", sizeof( chatModeName ) );
+			trap_SendServerCommand( ent-g_entities, va( "print \"^7%s ^1isn't in a faction.\n\"", charName ) );
+			return;
 		}
-	}
-	else
-	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Invalid chat mode.\n\"" );
+		Q_strncpyz( factionName, q.get_string( va( "SELECT Name FROM Factions WHERE FactionID='%i'", charFactionID ) ), sizeof( factionName ) );
+
+		if ( !Q_stricmp( factionRank, "leader" ) )
+		{
+			//Make sure the L is capital as that's how other commands expect it to be.
+			Q_strncpyz( charFactionRank, "Leader", sizeof( charFactionRank ) );
+		}
+
+		q.execute( va( "UPDATE Characters set FactionRank='%s' WHERE CharID='%i'", charFactionRank, charID ) );
+
+		if ( loggedIn )
+		{
+			trap_SendServerCommand( clientID, va( "print \"^2You are now the %s rank in the %s faction!\n\"", charFactionRank, factionName ) );
+			trap_SendServerCommand( clientID, va( "cp \"^2You are now the %s rank in the %s faction!\n\"", charFactionRank, factionName ) );
+		}
+
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character %s is now the %s rank in the %s faction.\n\"", charName, charFactionRank, factionName ) );
 		return;
 	}
-	trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeName ) );
-	return;
+
+	else
+	{
+		if ( !ent->client->sess.characterChosen )
+		{
+			trap_SendServerCommand( ent-g_entities, "print \"^1You must have a character selected to use this command.\n\"" );
+			return;
+		}
+
+		cmdUserFactionID = q.get_num( va ("SELECT FactionID FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+
+		if( !cmdUserFactionID )
+		{
+			trap_SendServerCommand( ent-g_entities, "print \"^1You aren't in a faction.\n\"" );
+			return;
+		}
+
+		Q_strncpyz( cmdUserFactionRank, q.get_string( va ( "SELECT FactionRank FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) ), sizeof( cmdUserFactionRank ) );
+
+		//TODO STRCMP
+		if ( !Q_stricmp( cmdUserFactionRank, "Leader" ) )
+		{
+			trap_SendServerCommand( ent-g_entities, "print \"^1You are not the leader of your faction.\n\"" );
+			return;
+		}
+
+		//Check if the character exists
+		Q_strlwr( charName );
+
+		charID = q.get_num( va( "SELECT CharID FROM Characters WHERE Name='%s'", charName ) );
+
+		if( !charID )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^1Character %s does not exist.\n\"", charName ) );
+			return;
+		}
+
+		//Get their accountID
+		accountID = q.get_num( va( "SELECT AccountID FROM Characters WHERE CharID='%i'", charID ) );
+		//Get their clientID so we can send them messages
+		clientID = q.get_num( va( "SELECT ClientID FROM Users WHERE AccountID='%i'", accountID ) );
+		loggedIn = q.get_num( va( "SELECT LoggedIn FROM Users WHERE AccountID='%i'", accountID ) );
+
+		charFactionID = q.get_num( va( "SELECT FactionID FROM Characters WHERE CharID='%i'", charID ) );
+
+		if ( cmdUserFactionID != charFactionID )
+		{
+			trap_SendServerCommand( ent-g_entities, va ( "print \"^1You aren't in the same faction as %s. You can't change their rank.", charName ) );
+			return;
+		}
+
+		q.execute( va( "UPDATE Characters set FactionRank='%s' WHERE CharID='%i'", charFactionRank, charID ) );
+
+		if ( loggedIn )
+		{
+			trap_SendServerCommand( clientID, va( "print \"^2You are now the %s rank in the %s faction!\n\"", charFactionRank, factionName ) );
+			trap_SendServerCommand( clientID, va( "cp \"^2You are now the %s rank in the %s faction!\n\"", charFactionRank, factionName ) );
+		}
+
+		trap_SendServerCommand( ent-g_entities, va( "print \"^2Character %s is now the %s rank in the %s faction.\n\"", charName, charFactionRank, factionName ) );
+		return;
+	}
 }

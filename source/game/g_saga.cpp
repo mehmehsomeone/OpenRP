@@ -888,13 +888,14 @@ void SetTeamQuick(gentity_t *ent, int team, qboolean doBegin)
 	ent->client->sess.spectatorClient = 0;
 
 	ent->client->pers.teamState.state = TEAM_BEGIN;
-
-	ClientUserinfoChanged( ent->s.number );
+	
+	//[JAC - Rewrote userinfo validation and setting]
+	if ( !ClientUserinfoChanged( ent->s.number ) )
+		return;
+	//[/JAC - Rewrote userinfo validation and setting]
 
 	if (doBegin)
-	{
 		ClientBegin( ent->s.number, qfalse );
-	}
 }
 
 void SiegeRespawn(gentity_t *ent)

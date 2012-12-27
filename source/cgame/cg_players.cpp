@@ -3934,9 +3934,12 @@ void CG_TriggerAnimSounds( centity_t *cent )
 	{
 		CG_PlayerAnimEvents( cent->localAnimIndex, sFileIndex, qtrue, cent->pe.torso.frame, curFrame, cent->currentState.number );
 	}
-	cent->pe.torso.oldFrame = cent->pe.torso.frame;
-	cent->pe.torso.frame = curFrame;	
-	cent->pe.torso.backlerp = 1.0f - (currentFrame - (float)curFrame);	
+	//[JAC Bugfix - Alternate fix for smooth viewmodel animations by Sil]
+	cent->pe.torso.oldFrame = floor( currentFrame );
+	cent->pe.torso.frame = ceil( currentFrame );	
+	cent->pe.torso.backlerp = 1.0f - (currentFrame - (float)curFrame);
+	//[/JAC Bugfix - Alternate fix for smooth viewmodel animations by Sil]
+
 
 	//[AMBIENTEV]
 	//Check/play ambient player sounds
@@ -4298,12 +4301,15 @@ static void CG_RunLerpFrame( centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf,
 		lf->oldFrameTime = cg.time;
 	}
 	
-	// calculate current lerp value
-	if ( lf->frameTime == lf->oldFrameTime ) {
-		lf->backlerp = 0;
-	} else {
-		lf->backlerp = 1.0 - (float)( cg.time - lf->oldFrameTime ) / ( lf->frameTime - lf->oldFrameTime );
+	//[JAC Bugfix - Alternate fix for smooth viewmodel animations by Sil]
+	if ( lf->frameTime )
+	{// calculate current lerp value
+		if ( lf->frameTime == lf->oldFrameTime )
+			lf->backlerp = 0.0f;
+		else
+			lf->backlerp = 1.0f - (float)( cg.time - lf->oldFrameTime ) / ( lf->frameTime - lf->oldFrameTime );
 	}
+	//[/JAC Bugfix - Alternate fix for smooth viewmodel animations by Sil]
 }
 
 
@@ -5405,10 +5411,11 @@ static void CG_PlayerPowerups( centity_t *cent, refEntity_t *torso ) {
 		return;
 	}
 
+	#ifdef BASE_COMPAT
 	// quad gives a dlight
-	if ( powerups & ( 1 << PW_QUAD ) ) {
+	if ( powerups & ( 1 << PW_QUAD ) )
 		trap_R_AddLightToScene( cent->lerpOrigin, 200 + (rand()&31), 0.2f, 0.2f, 1 );
-	}
+	#endif // BASE_COMPAT
 
 	if (cent->currentState.eType == ET_NPC)
 	{

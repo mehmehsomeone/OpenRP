@@ -355,7 +355,9 @@ int WeaponAttackAnim[WP_NUM_WEAPONS] =
 	BOTH_ATTACK3,//BOTH_ATTACK11,//WP_GRENADE,
 	BOTH_ATTACK3,//BOTH_ATTACK12,//WP_DET_PACK,
 	//[JAC Bugfix - Raven forgot the Concussion's firing animation]
-	BOTH_ATTACK3,//WP_CONCUSSION,
+	#ifndef BASE_COMPAT
+		BOTH_ATTACK3,//WP_CONCUSSION,
+	#endif // BASE_COMPAT
 	//[/JAC Bugfix - Raven forgot the Concussion's firing animation]
 	BOTH_ATTACK2,//WP_BRYAR_OLD,
 
@@ -566,31 +568,39 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	memset(final_Powers, 0, sizeof(final_Powers));
 	//[/BugFix36]
 
-	if (powerLen >= 128)
+	if ( powerLen >= 128 )
 	{ //This should not happen. If it does, this is obviously a bogus string.
 		//They can have this string. Because I said so.
 		//[ExpSys]
-		strcpy(powerBuf, DEFAULT_FORCEPOWERS);
+		//[JAC - Rewrote userinfo validation and setting]
+		Q_strncpyz( powerBuf, DEFAULT_FORCEPOWERS, sizeof( powerBuf ) );
+		//[/JAC - Rewrote userinfo validation and setting]
 		//strcpy(powerBuf, "7-1-032330000000001333");
 		//[/ExpSys]
 		maintainsValidity = qfalse;
 	}
+	//[JAC - Rewrote userinfo validation and setting]
 	else
-	{
-		strcpy(powerBuf, powerOut); //copy it as the original
-	}
+		Q_strncpyz( powerBuf, powerOut, sizeof( powerBuf ) ); //copy it as the original
+	//[/JAC - Rewrote userinfo validation and setting]
 
 	//first of all, print the max rank into the string as the rank
-	strcpy(powerOut, va("%i-", maxRank));
+	//[JAC - Rewrote userinfo validation and setting]
+	Q_strncpyz( powerOut, va( "%i-", maxRank ), 128 );
+	//[/JAC - Rewrote userinfo validation and setting]
 
 	//racc - skip over the maxRank in the string and the following '-'
-	while (i < 128 && powerBuf[i] && powerBuf[i] != '-')
+	//[JAC - Rewrote userinfo validation and setting]
+	while (i < sizeof( powerBuf ) && powerBuf[i] && powerBuf[i] != '-')
+	//[/JAC - Rewrote userinfo validation and setting]
 	{
 		i++;
 	}
 	i++;
 	//racc - read the force side part of powerBuf into the readBuf.
-	while (i < 128 && powerBuf[i] && powerBuf[i] != '-')
+	//[JAC - Rewrote userinfo validation and setting]
+	while (i < sizeof( powerBuf ) && powerBuf[i] && powerBuf[i] != '-')
+	//[/JAC - Rewrote userinfo validation and setting]
 	{
 		readBuf[c] = powerBuf[i];
 		c++;
@@ -622,7 +632,9 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	//Read the force powers in, and cut them down based on the various rules supplied.
 	c = 0;
 	//[BugFix36]
-	while (i < 128 && powerBuf[i] && powerBuf[i] != '\n' && powerBuf[i] != '\r'  //standard sanity checks
+	//[JAC - Rewrote userinfo validation and setting]
+	while (i < sizeof( powerBuf ) && powerBuf[i] && powerBuf[i] != '\n' && powerBuf[i] != '\r'  //standard sanity checks
+	//[/JAC - Rewrote userinfo validation and setting]
 	//[ExpSys]
 		&& powerBuf[i] >= '0' && powerBuf[i] <= '3' && c < NUM_TOTAL_SKILLS)
 		//&& powerBuf[i] >= '0' && powerBuf[i] <= '3' && c < NUM_FORCE_POWERS)
@@ -898,13 +910,9 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	if (freeSaber)
 	{
 		if (final_Powers[FP_SABER_OFFENSE] < 1)
-		{
 			final_Powers[FP_SABER_OFFENSE] = 1;
-		}
 		if (final_Powers[FP_SABER_DEFENSE] < 1)
-		{
 			final_Powers[FP_SABER_DEFENSE] = 1;
-		}
 	}
 
 	i = 0;
@@ -914,9 +922,7 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	//[/ExpSys]
 	{
 		if (final_Powers[i] > FORCE_LEVEL_3)
-		{
 			final_Powers[i] = FORCE_LEVEL_3;
-		}
 		i++;
 	}
 
@@ -924,13 +930,9 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	{ //If we specifically have attack or def disabled, force them up to level 3. It's the way
 	  //things work for the case of all powers disabled.
 		if (fpDisabled & (1 << FP_SABER_OFFENSE))
-		{
 			final_Powers[FP_SABER_OFFENSE] = 3;
-		}
 		if (fpDisabled & (1 << FP_SABER_DEFENSE))
-		{
 			final_Powers[FP_SABER_DEFENSE] = 3;
-		}
 	}
 
 	//[ExpSys]
@@ -984,7 +986,9 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	//while (c < NUM_FORCE_POWERS)
 	//[/ExpSys]
 	{
-		strcpy(readBuf, va("%i", final_Powers[c]));
+		//[JAC - Rewrote userinfo validation and setting]
+		Q_strncpyz( readBuf, va( "%i", final_Powers[c] ), sizeof( readBuf ) );
+		//[/JAC - Rewrote userinfo validation and setting]
 		powerOut[i] = readBuf[0];
 		c++;
 		i++;
@@ -2935,8 +2939,10 @@ char *eventnames[] = {
 	"EV_DEATH3",
 	"EV_OBITUARY",
 
-	"EV_POWERUP_QUAD",
-	"EV_POWERUP_BATTLESUIT",
+	#ifdef BASE_COMPAT
+		"EV_POWERUP_QUAD",
+		"EV_POWERUP_BATTLESUIT",
+	#endif // BASE_COMPAT
 	//"EV_POWERUP_REGEN",
 
 	"EV_FORCE_DRAINED",
