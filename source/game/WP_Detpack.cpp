@@ -78,7 +78,9 @@ void charge_stick (gentity_t *self, gentity_t *other, trace_t *trace)
 
 	self->touch = 0;
 	self->think = DetPackBlow;
-	self->nextthink = level.time + 1800000;//make them last 30 mins?:eek:
+	//[OpenRP - Detpacks last forever]
+	self->nextthink = level.time + Q3_INFINITE; //make them last forever
+	//[/OpenRP - Detpacks last forever]
 
 	VectorClear(self->s.apos.trDelta);
 	self->s.apos.trType = TR_STATIONARY;

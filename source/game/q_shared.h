@@ -11,14 +11,30 @@
 
 #define MAX_TEAMNAME 32
 
+#ifdef QAGAME
+
+	// server-side conditional compiling
+//	#define IOJAMP // ensure iojamp compatibility (disables engine modifications, new vmMain/trap functionality, etc)
+	
+	#ifndef IOJAMP
+		#define PATCH_ENGINE
+	#endif
+
+#else
+
+	// client-side conditional compiling
+//	#define IOJAMP // ensure iojamp compatibility (disables engine modifications, new vmMain/trap functionality, etc)
+
+	#ifndef IOJAMP
+		#define PATCH_ENGINE
+	#endif
+
+#endif
+
 //[SaberLockSys]
 //moved here to support ShortestLineSegBewteen2LineSegs
 #define Q3_INFINITE			16777216 
 //[/SaberLockSys]
-
-//[OpenRP - Engine patch enabler/disabler]
-#define	WINDOWSXP_COMPILE 0
-//[/OpenRP - Engine patch enabler/disabler]
 
 #include "../qcommon/disablewarnings.h"
 
@@ -389,6 +405,7 @@ typedef int		clipHandle_t;
 #define	BIG_INFO_KEY		  8192
 #define	BIG_INFO_VALUE		8192
 
+#define NET_ADDRSTRMAXLEN 48 // maximum length of an IPv6 address string including trailing '\0'
 
 #define	MAX_QPATH			64		// max length of a quake game pathname
 #ifdef PATH_MAX
@@ -3107,5 +3124,6 @@ enum {
 	FONT_SMALL2
 };
 
+void NET_AddrToString( char *out, size_t size, void *addr );
 
 #endif	// __Q_SHARED_H

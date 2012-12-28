@@ -2017,6 +2017,10 @@ extern vmCvar_t	ojp_holsterdebug_posoffset;
 extern vmCvar_t	ojp_holsterdebug_angoffset;
 //[/VisualWeapons]
 
+#define XCVAR_PROTO	
+	#include "cg_xcvar.h"	
+#undef XCVAR_PROTO
+
 //
 // cg_main.c
 //

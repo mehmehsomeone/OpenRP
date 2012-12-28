@@ -800,6 +800,12 @@ void SetTeam( gentity_t *ent, char *s )
 	int					specClient;
 	int					teamLeader;
 
+	// fix: this prevents rare creation of invalid players
+	if (!ent->inuse)
+	{
+		return;
+	}
+
 	//
 	// see what change is requested
 	//
@@ -1176,10 +1182,14 @@ void Cmd_Team_f( gentity_t *ent ) {
 		return;
 	}
 
+	/*
+	//[OpenRP - Disabled team switch time]
 	if ( ent->client->switchTeamTime > level.time ) {
 		trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "NOSWITCH")) );
 		return;
 	}
+	//[/OpenRP - Disabled team switch time]
+	*/
 
 	if (gEscaping)
 		return;
@@ -1209,7 +1219,9 @@ void Cmd_Team_f( gentity_t *ent ) {
 
 	SetTeam( ent, s );
 
-	ent->client->switchTeamTime = level.time + 5000;
+	//[OpenRP - Disabled team switch time]
+	//ent->client->switchTeamTime = level.time + 5000;
+	//[/OpenRP - Disabled team switch time]
 
 }
 
@@ -1778,9 +1790,6 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 	}
 	//[/OpenRP - Chat System]
 }
-
-#define EC		"\x19"
-
 
 //[TABBot]
 extern void TAB_BotOrder( gentity_t *orderer, gentity_t *orderee, int order, gentity_t *objective);
@@ -3392,6 +3401,11 @@ int G_ItemUsable(playerState_t *ps, int forcedUse)
 	vec3_t mins, maxs;
 	vec3_t trtest;
 	trace_t tr;
+
+	// fix: dead players shouldn't use items
+	if (ps->stats[STAT_HEALTH] <= 0){
+		return 0;
+	}
 
 	if (ps->m_iVehicleNum)
 	{

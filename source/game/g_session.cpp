@@ -27,7 +27,7 @@ void G_WriteClientSessionData( gclient_t *client ) {
 	char		siegeClass[64];
 	char		saberType[64];
 	char		saber2Type[64];
-	char IP[64];
+	char IP[NET_ADDRSTRMAXLEN];
 
 	strcpy(siegeClass, client->sess.siegeClass);
 

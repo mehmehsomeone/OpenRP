@@ -6,6 +6,9 @@
 #include "g_ICARUScb.h"
 #include "g_nav.h"
 #include "bg_saga.h"
+
+#include "g_engine.h"
+
 //[dynamicMusic]
 //need DMS header to call the update function
 #include "g_dynmusic.h"
@@ -747,9 +750,9 @@ vmCvar_t		openrp_admin10Bitvalues;
 //Determines whether admins can perform admin commands on higher admin levels
 vmCvar_t		openrp_adminControl;
 
-//[BlackNames]
+//[LF - BlackNames]
 vmCvar_t	g_allowBlackNames;		// Allow clients to use black names
-//[/BlackNames]
+//[/LF - BlackNames]
 
 //vmCvar_t	openrp_jetpackFuel;
 //vmCvar_t	openrp_cloakFuel;
@@ -760,6 +763,10 @@ vmCvar_t	openrp_showRenames;
 
 vmCvar_t	openrp_databasePath;
 //[/OpenRP]
+
+#define XCVAR_DECL
+  #include "g_xcvar.h"	
+#undef XCVAR_DECL
 
 //CVARS
 
@@ -1287,6 +1294,10 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &openrp_databasePath, "openrp_databasePath", "OpenRP/data.db", CVAR_ARCHIVE, 0, qtrue },
 	//[/OpenRP]
 
+	#define XCVAR_LIST	
+		#include "g_xcvar.h"	
+	#undef XCVAR_LIST
+
 };
 
 // bk001129 - made static to avoid aliasing
@@ -1662,6 +1673,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 		}
 	}
 	//[/OLDGAMETYPES]
+
+	 PatchEngine();
 }
 
 
@@ -1684,6 +1697,9 @@ void G_ShutdownGame( int restart ) {
 	gentity_t *ent;
 
 //	G_Printf ("==== ShutdownGame ====\n");
+
+	//JAC: Added	
+	UnpatchEngine();
 
 	//[AdminCommands]
 	G_SaveBanIP();
@@ -4155,6 +4171,37 @@ void G_RunFrame( int levelTime ) {
 
 		g_siegeRespawnCheck = level.time + g_siegeRespawn.integer * 1000;
 	}
+
+	#ifdef PATCH_ENGINE
+		//Raz: fake client detected, client didn't validate themselves
+		if ( g_antiFakePlayer.integer && level.security.isPatched )
+		{//Patched, check for q3fill (Connection activity check)
+			gclient_t	*cl;
+			for (i=0; i<MAX_CLIENTS; i++)
+			{
+				cl = &level.clients[i];
+				if ( cl->pers.connected != CON_DISCONNECTED )
+				{
+					if ( !level.security.clientConnectionActive[i] && level.time > (cl->pers.connectTime + 5000) )
+					{
+						char buf[MAX_TOKEN_CHARS] = {0};
+
+						if ( svs->clients[i].netchan.remoteAddress.type == NA_LOOPBACK ||
+							 svs->clients[i].netchan.remoteAddress.type == NA_BOT )
+						{//localhost. don't kick. ever.
+							level.security.clientConnectionActive[i] = qtrue;
+							continue;
+						}
+
+						NET_AddrToString( buf, sizeof( buf ), &svs->clients[i].netchan.remoteAddress );
+						G_LogPrintf( "**SECURITY** Client %i (%s) kicked for q3fill [IP: %s]\n", i, cl->pers.netname, buf );
+						trap_DropClient( i, "Fake client detected" );
+						cl->pers.connected = CON_DISCONNECTED;
+					}
+				}
+			}
+		}
+	#endif
 
 	//[FFARespawnTimer]
 	if ((g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM

@@ -10121,6 +10121,7 @@ void PM_AdjustAttackStates( pmove_t *pm )
 	// set the firing flag for continuous beam weapons, saber will fire even if out of ammo
 	if ( !(pm->ps->pm_flags & PMF_RESPAWNED) && 
 			pm->ps->pm_type != PM_INTERMISSION && 
+			pm->ps->pm_type != PM_NOCLIP &&
 			( pm->cmd.buttons & (BUTTON_ATTACK|BUTTON_ALT_ATTACK)) && 
 			( amount >= 0 || pm->ps->weapon == WP_SABER ))
 	{

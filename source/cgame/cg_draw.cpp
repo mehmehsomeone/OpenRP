@@ -1630,7 +1630,11 @@ qboolean ForcePower_Valid(int i)
 		i == FP_SABER_OFFENSE ||
 		i == FP_SABER_DEFENSE ||
 		i == FP_DRAIN ||
-		i == FP_ABSORB )
+		i == FP_ABSORB ||
+		//[OpenRP - Fix for crash involving rage icon (added team heal to this list as well)]
+		i == FP_RAGE ||
+		i == FP_TEAM_HEAL )
+		//[/OpenRP - Fix for crash involving rage icon (added team heal to this list as well)])
 	//	i == FP_SABER_DEFENSE ||
 	//	i == FP_SABERTHROW)
 	//[/SaberSys]

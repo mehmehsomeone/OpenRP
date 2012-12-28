@@ -385,7 +385,6 @@ char *siege_Str(void) {
 	return strings[cur++];
 }
 
-#if !WINDOWSXP_COMPILE
 //[FAKE CHALLENGE RESPONSE HIJACK - Thanks to Didz]
 // This code fixes a client-side exploit where an attacker that is flooding the client with
 // challengeResponse packets (from spoofed IP addresses) can hijack a pending server connection
@@ -570,7 +569,6 @@ void Patch_AltEnter( qboolean patch )
 	{
 	}
 }
-#endif
 
 /*
 ===============
@@ -1347,12 +1345,10 @@ void _UI_Shutdown( void ) {
 	trap_LAN_SaveCachedServers();
 	UI_CleanupGhoul2();
 
-#if !WINDOWSXP_COMPILE
 	Patch_FakeChallengeResponse( qfalse );
 	Patch_QueryBoom( qfalse );
 	Patch_AltEnter( qfalse );
 	//Patch_CvarSecurity( qfalse );
-#endif
 
 	//[DynamicMemory_Sabers]
 	UI_FreeSabers();
@@ -1372,7 +1368,7 @@ char *GetMenuBuffer(const char *filename) {
 		return defaultMenu;
 	}
 	if ( len >= MAX_MENUFILE ) {
-		trap_Print( va( S_COLOR_RED "menu file too large: %s is %i, max allowed is %i", filename, len, MAX_MENUFILE ) );
+		trap_Print( va( S_COLOR_RED "menu file too large: %s is %i, max allowed is %i\n", filename, len, MAX_MENUFILE ) );
 		trap_FS_FCloseFile( f );
 		return defaultMenu;
 	}
@@ -6073,7 +6069,8 @@ static void UI_ResetCharacterListBoxes( void )
 #define MAX_SABER_HILTS	64
 
 char *saberSingleHiltInfo [MAX_SABER_HILTS];
-char *saberStaffHiltInfo [MAX_SABER_HILTS];
+char *saberStaffHiltInfo [
+];
 */
 
 void UI_SaberGetHiltInfo(void);
@@ -10889,11 +10886,9 @@ void _UI_Init( qboolean inGameLoad ) {
 	trap_Cvar_Set( "ojp_clientplugin", OPENRP_CLIENTVERSION );
 	//[/OpenRP - Clientplugin]
 
-#if !WINDOWSXP_COMPILE
 	Patch_FakeChallengeResponse( qtrue );
 	Patch_QueryBoom( qtrue );
 	Patch_AltEnter( qtrue );
-#endif
 }
 
 /*

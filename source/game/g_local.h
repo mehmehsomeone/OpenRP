@@ -96,6 +96,8 @@ void CancelReload(gentity_t *ent);
 #define DEBUG_SABER_BOX
 #endif
 
+#define EC "\x19"
+
 #define	MAX_G_SHARED_BUFFER_SIZE		8192
 extern char gSharedBuffer[MAX_G_SHARED_BUFFER_SIZE];
 
@@ -447,6 +449,10 @@ extern vmCvar_t		openrp_showRenames;
 
 extern vmCvar_t		openrp_databasePath;
 //[/OpenRP]
+
+#define XCVAR_PROTO	
+	#include "g_xcvar.h"
+#undef XCVAR_PROTO
 
 // movers are things like doors, plats, buttons, etc
 typedef enum {
@@ -927,7 +933,7 @@ typedef struct {
 	int adminLevel;
 	vec3_t placeOfDeath;
 	int warnings;					//The current amount of warnings the player has
-	char IP[32];					//The players IP Address is stored here
+	char IP[NET_ADDRSTRMAXLEN];					//The players IP Address is stored here
 	qboolean isSleeping;
 	qboolean isSilenced;
 	qboolean isProtected;
@@ -996,6 +1002,8 @@ typedef struct {
 	int			duelEndTime;		// RMH - Level time of duel end.
 	int			forcePowerLevelSaved[NUM_FORCE_POWERS]; // MJN - Used to save your old level when empowering is used and restoring it later.
 
+	//JAC: Added	
+	int      connectTime;
 } clientPersistant_t;
 
 typedef struct renderInfo_s
@@ -1168,7 +1176,9 @@ struct gclient_s {
 	gentity_t	*hook;				// grapple hook if out
 	//[Grapple]
 	qboolean	hookhasbeenfired;
-	int			switchTeamTime;		// time the player switched teams
+	//[OpenRP - Disabled team switch time]
+	//int			switchTeamTime;		// time the player switched teams
+	//[/OpenRP - Disabled team switch time]
 
 	int			switchDuelTeamTime;		// time the player switched duel teams
 
@@ -1590,6 +1600,12 @@ typedef struct {
 	//[RawMapName]
 	char		rawmapname[MAX_QPATH];
 	//[/RawMapName]
+
+	//JAC: added
+	struct {
+		qboolean isPatched;
+		qboolean clientConnectionActive[MAX_CLIENTS];
+	} security;
 
 } level_locals_t;
 

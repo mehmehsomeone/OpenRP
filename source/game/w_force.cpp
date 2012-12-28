@@ -2193,7 +2193,7 @@ void SeekerDroneUpdate(gentity_t *self)
 
 		G_PlayEffect(EFFECT_SPARK_EXPLOSION, org, a);
 
-		self->client->ps.eFlags -= EF_SEEKERDRONE;
+		self->client->ps.eFlags &= ~EF_SEEKERDRONE;
 		self->client->ps.genericEnemyIndex = -1;
 
 		return;
@@ -2240,7 +2240,7 @@ void SeekerDroneUpdate(gentity_t *self)
 
 		G_PlayEffect(EFFECT_SPARK_EXPLOSION, org, a);
 
-		self->client->ps.eFlags -= EF_SEEKERDRONE;
+		self->client->ps.eFlags &= ~EF_SEEKERDRONE;
 		self->client->ps.genericEnemyIndex = -1;
 
 		return;
