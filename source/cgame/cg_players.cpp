@@ -14668,6 +14668,7 @@ void CG_Player( centity_t *cent ) {
 					checkDroidShields = qtrue;
 				}
 			}
+			//JAC
 			// fix for screen blinking when spectating person on vehicle and then
 			// switching to someone else, often happens on siege
 			else if ( veh->currentState.owner != ENTITYNUM_NONE &&

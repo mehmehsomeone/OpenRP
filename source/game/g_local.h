@@ -31,6 +31,9 @@ void CancelReload(gentity_t *ent);
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"OpenRP " OPENRP_SERVERVERSION
 
+//JAC
+#define SECURITY_LOG "security.log"
+
 #define BODY_QUEUE_SIZE		8
 
 //[CrashLog]
@@ -1605,6 +1608,7 @@ typedef struct {
 	struct {
 		qboolean isPatched;
 		qboolean clientConnectionActive[MAX_CLIENTS];
+		fileHandle_t  log;
 	} security;
 
 } level_locals_t;
@@ -2057,6 +2061,8 @@ void SetLeader(int team, int client);
 void CheckTeamLeader( int team );
 void G_RunThink (gentity_t *ent);
 void QDECL G_LogPrintf( const char *fmt, ... );
+//JAC
+void QDECL G_SecurityLogPrintf( const char *fmt, ... );
 void SendScoreboardMessageToAllClients( void );
 void QDECL G_Printf( const char *fmt, ... );
 void QDECL G_Error( const char *fmt, ... );
@@ -2188,7 +2194,8 @@ void AnimateStun( gentity_t *self, gentity_t * inflictor, vec3_t impact );
 //[/SaberSys]
 
 // g_log.c
-void QDECL G_LogPrintf( const char *fmt, ... );
+//JAC
+//void QDECL G_LogPrintf( const char *fmt, ... );
 void QDECL G_LogWeaponPickup(int client, int weaponid);
 void QDECL G_LogWeaponFire(int client, int weaponid);
 void QDECL G_LogWeaponDamage(int client, int mod, int amount);

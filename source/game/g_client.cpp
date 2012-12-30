@@ -2547,7 +2547,7 @@ char		*value;
 	{
 		#ifdef PATCH_ENGINE
 			if ( Q_stricmp( tmpIP, realIP ) )
-				G_LogPrintf( "**SECURITY** Client %i mismatching IP. %s / %s\n", clientNum, tmpIP, realIP );
+				G_SecurityLogPrintf( "Client %i mismatching IP. %s / %s\n", clientNum, tmpIP, realIP );
 		#endif
 
 		#ifdef PATCH_ENGINE
@@ -2586,12 +2586,14 @@ char		*value;
 		}
 	}
 
-	if ( ent->inuse )
-	{// if a player reconnects quickly after a disconnect, the client disconnect may never be called, thus flag can get lost in the ether
-		G_LogPrintf( "Forcing disconnect on active client: %i\n", clientNum );
-		// so lets just fix up anything that should happen on a disconnect
-		ClientDisconnect( clientNum );
-	}
+	#if 0 // FIXME: this is broken, not sure why
+		if ( ent->inuse )
+		{// if a player reconnects quickly after a disconnect, the client disconnect may never be called, thus flag can get lost in the ether
+			G_LogPrintf( "Forcing disconnect on active client: %i\n", clientNum );
+			// so lets just fix up anything that should happen on a disconnect
+			ClientDisconnect( clientNum );
+		}
+	#endif
 
 	// they can connect
 	ent->client = level.clients + clientNum;
@@ -2685,9 +2687,9 @@ char		*value;
 		{//No IP sent when connecting, probably an unban hack attempt
 			client->pers.connected = CON_DISCONNECTED;
 			#ifdef PATCH_ENGINE
-				 G_LogPrintf( "**SECURITY** Client %i sent no IP when connecting. Real IP is: %s", clientNum, realIP );
+				 G_SecurityLogPrintf( "Client %i sent no IP when connecting. Real IP is: %s", clientNum, realIP );
 			#else
-				G_LogPrintf( "**SECURITY** Client %i sent no IP when connecting.", clientNum );
+				G_SecurityLogPrintf( "Client %i sent no IP when connecting.", clientNum );
 			#endif
 			return "Invalid userinfo detected";
 		}
@@ -4981,6 +4983,7 @@ void ClientDisconnect( int clientNum ) {
 	G_RemoveQueuedBotBegin( clientNum );
 
 	ent = g_entities + clientNum;
+	//JAC
 	if ( !ent->client || ent->client->pers.connected == CON_DISCONNECTED ) {
 		return;
 	}

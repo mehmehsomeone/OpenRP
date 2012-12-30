@@ -362,6 +362,7 @@
     <ClInclude Include="cg_local.h" />
     <ClInclude Include="cg_public.h" />
     <ClInclude Include="..\qcommon\disablewarnings.h" />
+    <ClInclude Include="cg_xcvar.h" />
     <ClInclude Include="fx_local.h" />
     <ClInclude Include="..\ghoul2\G2.h" />
     <ClInclude Include="holocronicons.h" />

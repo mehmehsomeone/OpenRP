@@ -1477,6 +1477,11 @@ void G_Sound( gentity_t *ent, int channel, int soundIndex ) {
 		ent->client->ps.fd.killSoundEntIndex[channel-50] = te->s.number;
 		te->s.trickedentindex = ent->s.number;
 		te->s.eFlags = EF_SOUNDTRACKER;
+
+		// JAC Bugfix: let other players know about this
+		// for case that they will meet this one
+		te->r.svFlags |= SVF_BROADCAST;
+
 		//te->freeAfterEvent = qfalse;
 	}
 }
@@ -1786,6 +1791,7 @@ void TryUse( gentity_t *ent )
 	//Trace ahead to find a valid target
 	trap_Trace( &trace, src, vec3_origin, vec3_origin, dest, ent->s.number, MASK_OPAQUE|CONTENTS_SOLID|CONTENTS_BODY|CONTENTS_ITEM|CONTENTS_CORPSE );
 	
+	//JAC Bugfix
 	if ( trace.fraction == 1.0f || trace.entityNum == ENTITYNUM_NONE )
 	{
 		goto tryJetPack;

@@ -894,6 +894,10 @@ vmCvar_t	cg_snaps;
 vmCvar_t	cl_maxpackets;
 vmCvar_t	cg_rate;
 
+#define XCVAR_DECL	
+  #include "cg_xcvar.h"	
+#undef XCVAR_DECL
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -1172,6 +1176,9 @@ Ghoul2 Insert End
 	{ &ojp_holsterdebug_angoffset, "ojp_holsterdebug_angoffset", "0.0 0.0 0.0", 0 },
 	//[/VisualWeapons]
 
+	#define XCVAR_LIST	
+		#include "cg_xcvar.h"	
+	#undef XCVAR_LIST
 
 };
 

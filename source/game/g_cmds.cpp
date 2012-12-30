@@ -800,7 +800,7 @@ void SetTeam( gentity_t *ent, char *s )
 	int					specClient;
 	int					teamLeader;
 
-	// fix: this prevents rare creation of invalid players
+	//JAC Bugfix: this prevents rare creation of invalid players
 	if (!ent->inuse)
 	{
 		return;
@@ -1135,6 +1135,9 @@ void StopFollowing( gentity_t *ent ) {
 	ent->client->savedHP = 0;
 	ent->client->savedArmor = 0;
 	ent->client->specialActionLastAnim = 0;
+
+	//JAC Bugfix
+	ent->client->ps.bobCycle = 0;
 }
 
 /*
@@ -3402,7 +3405,7 @@ int G_ItemUsable(playerState_t *ps, int forcedUse)
 	vec3_t trtest;
 	trace_t tr;
 
-	// fix: dead players shouldn't use items
+	// JAC Bugfix: dead players shouldn't use items
 	if (ps->stats[STAT_HEALTH] <= 0){
 		return 0;
 	}

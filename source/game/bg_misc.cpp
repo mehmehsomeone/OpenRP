@@ -3036,6 +3036,9 @@ void BG_TouchJumpPad( playerState_t *ps, entityState_t *jumppad ) {
 	ps->jumppad_frame = ps->pmove_framecount;
 	// give the player the velocity from the jumppad
 	VectorCopy( jumppad->origin2, ps->velocity );
+
+	// JAC Bugfix: no more force draining after bouncing the jumppad
+	ps->fd.forcePowersActive &= ~(1<<FP_LEVITATION);
 }
 
 /*

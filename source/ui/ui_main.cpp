@@ -4932,36 +4932,101 @@ static void UI_LoadMovies() {
 UI_LoadDemos
 ===============
 */
-static void UI_LoadDemos() {
-	char	demolist[4096];
-	char demoExt[32];
-	char	*demoname;
-	int		i, len;
+#if 1
 
-	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)trap_Cvar_VariableValue("protocol"));
+static void UI_LoadDemosInDirectory( const char *directory )
+{
+	char	demolist[MAX_DEMOLIST] = {0}, *demoname = NULL;
+	char	fileList[MAX_DEMOLIST] = {0}, *fileName = NULL;
+	char	demoExt[32] = {0};
+	int		i=0, j=0, len=0, numFiles=0;
+	int		protocol = trap_Cvar_VariableValue( "com_protocol" ), protocolLegacy = trap_Cvar_VariableValue( "com_legacyprotocol" );
 
-	uiInfo.demoCount = trap_FS_GetFileList( "demos", demoExt, demolist, 4096 );
+	if ( !protocol )
+		protocol = trap_Cvar_VariableValue( "protocol" );
+	if ( protocolLegacy == protocol )
+		protocolLegacy = 0;
 
-	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", (int)trap_Cvar_VariableValue("protocol"));
+	Com_sprintf( demoExt, sizeof( demoExt ), ".%s%d", DEMO_EXTENSION, protocol);
 
-	if (uiInfo.demoCount) {
-		if (uiInfo.demoCount > MAX_DEMOS) {
+	uiInfo.demoCount += trap_FS_GetFileList( directory, demoExt, demolist, sizeof( demolist ) );
+
+	demoname = demolist;
+
+	for ( j=0; j<2; j++ )
+	{
+		if ( uiInfo.demoCount > MAX_DEMOS )
 			uiInfo.demoCount = MAX_DEMOS;
-		}
-		demoname = demolist;
-		for ( i = 0; i < uiInfo.demoCount; i++ ) {
+
+		for( ; uiInfo.loadedDemos<uiInfo.demoCount; uiInfo.loadedDemos++)
+		{
 			len = strlen( demoname );
-			if (!Q_stricmp(demoname +  len - strlen(demoExt), demoExt)) {
-				demoname[len-strlen(demoExt)] = '\0';
-			}
-			Q_strupr(demoname);
-			uiInfo.demoList[i] = String_Alloc(demoname);
+			Com_sprintf( uiInfo.demoList[uiInfo.loadedDemos], sizeof( uiInfo.demoList[0] ), "%s/%s", directory + strlen( DEMO_DIRECTORY )+1, demoname );
 			demoname += len + 1;
 		}
+
+		if ( !j )
+		{
+			if ( protocolLegacy > 0 && uiInfo.demoCount < MAX_DEMOS )
+			{
+				Com_sprintf( demoExt, sizeof( demoExt ), ".%s%d", DEMO_EXTENSION, protocolLegacy );
+				uiInfo.demoCount += trap_FS_GetFileList( directory, demoExt, demolist, sizeof( demolist ) );
+				demoname = demolist;
+			}
+			else
+				break;
+		}
+	}
+
+	numFiles = trap_FS_GetFileList( directory, "/", fileList, sizeof( fileList ) );
+
+	fileName = fileList;
+	for ( i=0; i<numFiles; i++ )
+	{
+		len = strlen( fileName );
+		fileName[len] = '\0';
+		if ( Q_stricmp( fileName, "." ) && Q_stricmp( fileName, ".." ) )
+			UI_LoadDemosInDirectory( va( "%s/%s", directory, fileName ) );
+		fileName += len+1;
 	}
 
 }
 
+static void UI_LoadDemos( void )
+{
+	UI_LoadDemosInDirectory( DEMO_DIRECTORY );
+}
+
+#else
+
+static void UI_LoadDemos( void )
+{
+	char	demolist[4096] = {0};
+	char	demoExt[8] = {0};
+	char	*demoname = NULL;
+	int		i, len, extLen;
+
+	Com_sprintf( demoExt, sizeof( demoExt ), "dm_%d", (int)trap_Cvar_VariableValue( "protocol" ) );
+	uiInfo.demoCount = Com_Clampi( 0, MAX_DEMOS, trap_FS_GetFileList( "demos", demoExt, demolist, sizeof( demolist ) ) );
+	Com_sprintf( demoExt, sizeof( demoExt ), ".dm_%d", (int)trap_Cvar_VariableValue( "protocol" ) );
+	extLen = strlen( demoExt );
+
+	if ( uiInfo.demoCount )
+	{
+		demoname = demolist;
+		for ( i=0; i<uiInfo.demoCount; i++ )
+		{
+			len = strlen( demoname );
+			if ( !Q_stricmp( demoname + len - extLen, demoExt) )
+				demoname[len-extLen] = '\0';
+			Q_strupr( demoname );
+			uiInfo.demoList[i] = String_Alloc( demoname );
+			demoname += len + 1;
+		}
+	}
+}
+
+#endif
 
 static qboolean UI_SetNextMap(int actual, int index) {
 	int i;
