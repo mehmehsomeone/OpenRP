@@ -123,6 +123,37 @@ void Create_Autosave( vec3_t origin, int size, qboolean teleportPlayers )
 	}
 }
 
+//OpenRP - Put this stuff in this function for clientcommand rewrite
+void Add_Autosaves( gentity_t *ent )
+{		
+	int args = trap_Argc();
+	char arg1[MAX_STRING_CHARS];
+	char arg2[MAX_STRING_CHARS];
+
+
+	if( args < 1 )
+	{//no args, use defaults
+		Create_Autosave( ent->r.currentOrigin, 0, qfalse );
+	}
+	else
+	{
+		trap_Argv( 1, arg1, sizeof( arg1 ) );
+
+		if( arg1[0] == 't' )
+		{//use default size with teleport flag
+			Create_Autosave( ent->r.currentOrigin, 0, qtrue );
+		}
+		else if( args > 1 )
+		{//size and teleport flag
+			trap_Argv( 2, arg2, sizeof( arg2 ) );
+			Create_Autosave( ent->r.currentOrigin, atoi( arg1 ), arg2[0] == 't' ? qtrue:qfalse );
+		}
+		else
+		{//just size
+			Create_Autosave( ent->r.currentOrigin, atoi( arg1 ), qfalse );
+		}
+	}
+}
 
 void Load_Autosaves(void)
 {//load in our autosave from the .autosp
@@ -188,7 +219,7 @@ void Load_Autosaves(void)
 }
 
 
-void Save_Autosaves(void)
+void Save_Autosaves( gentity_t *ent )
 {//save the autosaves
 	fileHandle_t	f;
 	char			lineBuf[MAX_QPATH];

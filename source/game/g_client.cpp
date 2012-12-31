@@ -2832,6 +2832,19 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 	//assign the pointer for bg entity access
 	ent->playerState = &ent->client->ps;
 
+	//JAC Bugfix
+	#ifndef PATCH_ENGINE
+		//fix for donedl command bug, that could cause powerup dissapearing
+		if ( ent->health && ent->client && ent->client->sess.sessionTeam != TEAM_SPECTATOR && clientNum == ent->client->ps.clientNum) {
+			// Kill him (makes sure he loses flags, etc)
+			ent->flags &= ~FL_GODMODE;
+			ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
+			g_dontPenalizeTeam = qtrue;
+			player_die( ent, ent, ent, 100000, MOD_TEAM_CHANGE );
+			g_dontPenalizeTeam = qfalse;
+		}
+	#endif
+
 	client->pers.connected = CON_CONNECTED;
 	client->pers.enterTime = level.time;
 	client->pers.teamState.state = TEAM_BEGIN;
@@ -4893,14 +4906,14 @@ void ClientSpawn(gentity_t *ent) {
 	}
 
 	// run the presend to set anything else
-	ClientEndFrame( ent );
+	//JAC Bugfix
+	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW )
+		ClientEndFrame( ent );
 
 	// clear entity state values
 	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
 
-	//[OpenRP - Ghost bug fix] - Thanks to Sil
 	ent->s.number = index;
-	//[/OpenRP - Ghost bug fix]
 
 	//rww - make sure client has a valid icarus instance
 	trap_ICARUS_FreeEnt( ent );

@@ -247,9 +247,11 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 
 	for ( i = 0 ; i < 3 ; i++ ) {
 		if ( to[i] <= v[i] ) {
-			v[i] = (int)v[i];
+			//JAC
+			v[i] = floorf( v[i] );
 		} else {
-			v[i] = (int)v[i] + 1;
+			//JAC
+			v[i] = ceilf( v[i] );
 		}
 	}
 }

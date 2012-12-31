@@ -385,9 +385,6 @@ void CG_InitConsoleCommands( void ) {
 	// the game server will interpret these commands, which will be automatically
 	// forwarded to the server after they are not recognized locally
 	//
-	trap_AddCommand ("lui");
-	trap_AddCommand ("lui_login");
-	trap_AddCommand ("lui_logout");
 	trap_AddCommand ("forcechanged");
 	trap_AddCommand ("sv_invnext");
 	trap_AddCommand ("sv_invprev");
@@ -439,63 +436,8 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand ("togglesaber");
 	//[/MELEE]
 	trap_AddCommand("reload");//[Reload/]
-	trap_AddCommand("login");
-	trap_AddCommand("logout");
-	trap_AddCommand("register");
-	trap_AddCommand("character");
-	trap_AddCommand("mycharacters");
-	trap_AddCommand("createcharacter");
-	trap_AddCommand("accountinfo");
-	trap_AddCommand("characterinfo");
-	trap_AddCommand("grantadmin");
-	trap_AddCommand("removeadmin");
-	trap_AddCommand("giveskillpoints");
-	trap_AddCommand("givecredits");
-	trap_AddCommand("gencredits");
-	trap_AddCommand("editaccount");
-	trap_AddCommand("accountname");
-	trap_AddCommand("editcharacter");
-	trap_AddCommand("createfaction");
-	trap_AddCommand("setfaction");
-	trap_AddCommand("setfactionrank");
-	trap_AddCommand("faction");
-	trap_AddCommand("factionwithdraw");
-	trap_AddCommand("factiondeposit");
-	trap_AddCommand("factiongencredits");
-	trap_AddCommand("listfactions");
-	trap_AddCommand("bounty");
-	trap_AddCommand("listadmins");
-	trap_AddCommand("charactername");
-	trap_AddCommand("comm");
-	trap_AddCommand("amkick");
-	trap_AddCommand("amban");
-	trap_AddCommand("amwarn");
-	trap_AddCommand("amtele");
-	trap_AddCommand("amsilence");
-	trap_AddCommand("amunsilence");
-	trap_AddCommand("amsleep");
-	trap_AddCommand("amunsleep");
-	trap_AddCommand("amprotect");
-	trap_AddCommand("amannounce");
-	trap_AddCommand("ameffect");
-	trap_AddCommand("amforceteam");
-	trap_AddCommand("amstatus");
-	trap_AddCommand("amweather");
-	trap_AddCommand("amweatherplus");
-	trap_AddCommand("amtelemark");
-	trap_AddCommand("amorigin");
-	trap_AddCommand("info");
-	trap_AddCommand("eminfo");
-	trap_AddCommand("aminfo");
-	trap_AddCommand("ammap");
-	trap_AddCommand("amrename");
-	trap_AddCommand("admin");
-	trap_AddCommand("amcheataccess");
-	trap_AddCommand("amshakescreen");
-	trap_AddCommand("amaudio");
-	trap_AddCommand("ooc");
-	trap_AddCommand("force");
+	trap_AddCommand ("lui");
+	trap_AddCommand ("lui_login");
+	trap_AddCommand ("lui_logout");
 	trap_AddCommand("charui");
-	trap_AddCommand("disguise");
-	trap_AddCommand("aminvisible");
 }

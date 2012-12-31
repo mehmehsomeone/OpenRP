@@ -2758,9 +2758,11 @@ void QDECL G_LogPrintf( const char *fmt, ... ) {
 	va_list		argptr;
 	char		string[1024] = {0};
 	int			mins, seconds, msec, l;
+	
+	//JAC
+	msec = level.time - level.startTime;
 
-	msec = level.time;
-
+	//JAC
 	seconds = msec / 1000;
 	mins = seconds / 60;
 	seconds %= 60;
@@ -3799,15 +3801,18 @@ void CheckVote( void ) {
 		return;
 	}
 	if ( level.time - level.voteTime >= VOTE_TIME ) {
-		trap_SendServerCommand( -1, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED")) );
+		//JAC
+		trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED"), level.voteStringClean) );
 	} else {
 		if ( level.voteYes > level.numVotingClients/2 ) {
 			// execute the command, then remove the vote
-			trap_SendServerCommand( -1, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "VOTEPASSED")) );
+			//JAC
+			trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEPASSED"), level.voteStringClean) );
 			level.voteExecuteTime = level.time + 3000;
 		} else if ( level.voteNo >= level.numVotingClients/2 ) {
 			// same behavior as a timeout
-			trap_SendServerCommand( -1, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED")) );
+			//JAC
+			trap_SendServerCommand( -1, va("print \"%s (%s)\n\"", G_GetStringEdString("MP_SVGAME", "VOTEFAILED"), level.voteStringClean) );
 		} else {
 			// still waiting for a majority
 			return;

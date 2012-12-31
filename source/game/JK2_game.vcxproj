@@ -318,6 +318,7 @@
     <ClCompile Include="g_nav.cpp" />
     <ClCompile Include="g_navnew.cpp" />
     <ClCompile Include="g_object.cpp" />
+    <ClCompile Include="g_OpenRP.cpp" />
     <ClCompile Include="g_reload.cpp" />
     <ClCompile Include="g_roff.cpp" />
     <ClCompile Include="g_saberbeh.cpp" />
@@ -337,6 +338,7 @@
     <ClCompile Include="g_utils.cpp" />
     <ClCompile Include="g_vehicles.cpp" />
     <ClCompile Include="g_vehicleTurret.cpp" />
+    <ClCompile Include="OpenRP.cpp" />
     <ClCompile Include="q_engine.cpp" />
     <ClCompile Include="q_math.cpp" />
     <ClCompile Include="q_shared.cpp" />
@@ -480,6 +482,7 @@
     <ClInclude Include="match.h" />
     <ClInclude Include="..\..\jke\ui\jamp\menudef.h" />
     <ClInclude Include="npc_headers.h" />
+    <ClInclude Include="OpenRP.h" />
     <ClInclude Include="q_engine.h" />
     <ClInclude Include="q_shared.h" />
     <ClInclude Include="say.h" />

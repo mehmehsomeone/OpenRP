@@ -1528,6 +1528,8 @@ typedef struct {
 
 	// voting state
 	char		voteString[MAX_STRING_CHARS];
+	//JAC
+	char		voteStringClean[MAX_STRING_CHARS];
 	char		voteDisplayString[MAX_STRING_CHARS];
 	int			voteTime;				// level.time vote was called
 	int			voteExecuteTime;		// time the vote is executed
@@ -1622,6 +1624,8 @@ qboolean	G_SpawnString( const char *key, const char *defaultString, char **out )
 qboolean	G_SpawnFloat( const char *key, const char *defaultString, float *out );
 qboolean	G_SpawnInt( const char *key, const char *defaultString, int *out );
 qboolean	G_SpawnVector( const char *key, const char *defaultString, float *out );
+//JAC
+qboolean  G_SpawnBoolean( const char *key, const char *defaultString, qboolean *out );
 void		G_SpawnEntitiesFromString( qboolean inSubBSP );
 char *G_NewString( const char *string );
 

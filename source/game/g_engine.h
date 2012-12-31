@@ -11,6 +11,9 @@
 #define	MAX_RELIABLE_COMMANDS		(128)	// max string commands buffered for restransmit
 #define	MAX_MSGLEN					(49152)	// max length of a message, which may be fragmented into multiple packets
 
+//OpenRP - ARRAY_LEN was undefined, used a define from a JKH bugfix
+#define ARRAY_LEN(x) (sizeof(x) / sizeof(*(x)))
+
 typedef enum {
 	NA_BOT,
 	NA_BAD,					// an address lookup failed

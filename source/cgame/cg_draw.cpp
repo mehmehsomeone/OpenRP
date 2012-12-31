@@ -580,6 +580,8 @@ void CG_DrawFlagModel( float x, float y, float w, float h, int team, qboolean fo
 DrawAmmo
 ================
 */
+//JAC
+/*
 void DrawAmmo()
 {
 	int x, y;
@@ -588,7 +590,7 @@ void DrawAmmo()
 	y = SCREEN_HEIGHT-80;
 
 }
-
+*/
 
 
 /*
@@ -683,7 +685,8 @@ void CG_DrawArmor( menuDef_t *menuHUD )
 {
 	vec4_t			calcColor;
 	playerState_t	*ps;
-	int				armor, maxArmor;
+	//JAC Bugfix
+	int				maxArmor;
 	itemDef_t		*focusItem;
 	float			percent,quarterArmor;
 	int				i,currValue,inc;
@@ -715,15 +718,21 @@ void CG_DrawArmor( menuDef_t *menuHUD )
 	}
 	//[/NewHud]
 
-	armor = ps->stats[STAT_ARMOR];
+	//JAC Bugfix
+	//armor = ps->stats[STAT_ARMOR];
 	maxArmor = ps->stats[STAT_MAX_HEALTH];
 
+	//JAC Bugfix
+	/*
 	if (armor> maxArmor)
 	{
 		armor = maxArmor;
 	}
+	*/
 
-	currValue = armor;
+	//JAC Bugfix
+	currValue = ps->stats[STAT_ARMOR];
+
 	//[NewHud]
 	inc = (float) maxArmor / MAX_OJPHUD_TICS;
 	//inc = (float) maxArmor / MAX_HUD_TICS;
@@ -807,7 +816,8 @@ void CG_DrawArmor( menuDef_t *menuHUD )
 	}
 
 	// If armor is low, flash a graphic to warn the player
-	if (armor)	// Is there armor? Draw the HUD Armor TIC
+	//JAC Bugfix
+	if (ps->stats[STAT_ARMOR])	// Is there armor? Draw the HUD Armor TIC
 	{
 		quarterArmor = (float) (ps->stats[STAT_MAX_HEALTH] / 4.0f);
 
@@ -3911,6 +3921,10 @@ static float CG_DrawTeamOverlay( float y, qboolean right, qboolean upper ) {
 
 	plyrs = 0;
 
+	//JAC
+	//TODO: On basejka servers, we won't have valid teaminfo if we're spectating someone.
+	//		Find a way to detect invalid info and return early?
+
 	// max player name width
 	pwidth = 0;
 	count = (numSortedTeamPlayers > 8) ? 8 : numSortedTeamPlayers;
@@ -5815,6 +5829,9 @@ static void CG_DrawActivePowers(void)
 	{
 		return;
 	}
+
+	//JAC Bugfix
+	trap_R_SetColor( NULL );
 
 	while (i < NUM_FORCE_POWERS)
 	{
@@ -7730,7 +7747,8 @@ static CGAME_INLINE void CG_ChatBox_DrawStrings(void)
 	int linesToDraw = 0;
 	int i = 0;
 	int x = 30;
-	int y = cg.scoreBoardShowing ? 475 : cg_chatBoxHeight.integer;
+	//JAC Bugfix
+	float y = cg.scoreBoardShowing ? 475 : cg_chatBoxHeight.integer;
 	float fontScale = 0.65f;
 
 	if (!cg_chatBox.integer)
