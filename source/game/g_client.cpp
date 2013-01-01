@@ -2448,60 +2448,19 @@ to the server machine, but qfalse on map changes and tournement
 restarts.
 ============
 */
-
-#include "g_engine.h"
-
-static int CompareIPs( int clientnum1, int clientnum2 )
-{
-	#ifdef PATCH_ENGINE
-		if ( *(unsigned int *)&svs->clients[clientnum1].netchan.remoteAddress.ip == *(unsigned int *)&svs->clients[clientnum2].netchan.remoteAddress.ip )
-			 return 1;
-
-		return 0;
-	#else
-		const char *ip1 = NULL, *ip2 = NULL;
-
-		if ( clientnum1 < 0 || clientnum1 >= MAX_CLIENTS )
-			return 0;
-		if ( clientnum2 < 0 || clientnum2 >= MAX_CLIENTS )
-			return 0;
-
-		ip1 = level.clients[clientnum1].sess.IP;
-		ip2 = level.clients[clientnum2].sess.IP;
-
-		while ( 1 )
-		{
-			if ( *ip1 != *ip2 )
-				return 0;
-			if ( !*ip1 || *ip1 == ':' )
-				break;
-			ip1++;
-			ip2++;
-		}
-
-		return 1;
-	#endif
-}
-
-
 char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
-char		*value;
-	gentity_t	*ent = NULL, *te = NULL;
+	char		*value;
+//	char		*areabits;
 	gclient_t	*client;
-	char		userinfo[MAX_INFO_STRING] = {0},
-				tmpIP[NET_ADDRSTRMAXLEN] = {0};
-#ifdef PATCH_ENGINE
-	char		realIP[NET_ADDRSTRMAXLEN] = {0};
-
-	NET_AddrToString( realIP, sizeof( realIP ), &svs->clients[clientNum].netchan.remoteAddress );
-#endif
+	char		userinfo[MAX_INFO_STRING];
+	char TmpIP[32] = {0};
+	gentity_t	*ent;
+	gentity_t	*te;
 	//[OpenRP - Clientplugin]
 	char *s;
 	//[/OpenRP - Clientplugin]
 
 	ent = &g_entities[ clientNum ];
-
-	level.security.clientConnectionActive[clientNum] = qfalse;
 
 	trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	//[LastManStanding]
@@ -2517,11 +2476,12 @@ char		*value;
 	}
 	//[/LastManStanding]
 
-// check to see if they are on the banned IP list
+	// check to see if they are on the banned IP list
 	value = Info_ValueForKey (userinfo, "ip");
-	Q_strncpyz( tmpIP, isBot ? "Bot" : value, sizeof( tmpIP ) );
+	if (!isBot)
+		Q_strncpyz( TmpIP, value, sizeof(TmpIP) ); // Used later
 	if ( G_FilterPacket( value ) ) {
-		return "Banned.";
+		return "Banned";
 	}
 
 	//[BugFix11]
@@ -2543,58 +2503,6 @@ char		*value;
 		//[PrivatePasswordFix]
 	}
 
-	if ( !isBot && firstTime )
-	{
-		#ifdef PATCH_ENGINE
-			if ( Q_stricmp( tmpIP, realIP ) )
-				G_SecurityLogPrintf( "Client %i mismatching IP. %s / %s\n", clientNum, tmpIP, realIP );
-		#endif
-
-		#ifdef PATCH_ENGINE
-		if ( level.security.isPatched && g_antiFakePlayer.integer
-			&& svs->clients[clientNum].netchan.remoteAddress.type != NA_LOOPBACK
-			&& svs->clients[clientNum].netchan.remoteAddress.type != NA_BOT )
-		#else
-		if ( g_antiFakePlayer.integer )
-		#endif
-		{// patched, check for > g_maxConnPerIP connections from same IP
-			int count=0, i=0;
-			for ( i=0; i<g_maxclients.integer; i++ )
-			{
-				#if 0
-					if ( level.clients[i].pers.connected != CON_DISCONNECTED && i != clientNum )
-					{
-						if ( CompareIPs( clientNum, i ) )
-						{
-							if ( !level.security.clientConnectionActive[i] )
-							{//This IP has a dead connection pending, wait for it to time out
-							//	client->pers.connected = CON_DISCONNECTED;
-								return "Please wait, another connection from this IP is still pending...";
-							}
-						}
-					}
-				#else
-					if ( CompareIPs( clientNum, i ) )
-						count++;
-				#endif
-			}
-			if ( count > g_maxConnPerIP.integer )
-			{
-			//	client->pers.connected = CON_DISCONNECTED;
-				return "Too many connections from the same IP";
-			}
-		}
-	}
-
-	#if 0 // FIXME: this is broken, not sure why
-		if ( ent->inuse )
-		{// if a player reconnects quickly after a disconnect, the client disconnect may never be called, thus flag can get lost in the ether
-			G_LogPrintf( "Forcing disconnect on active client: %i\n", clientNum );
-			// so lets just fix up anything that should happen on a disconnect
-			ClientDisconnect( clientNum );
-		}
-	#endif
-
 	// they can connect
 	ent->client = level.clients + clientNum;
 	client = ent->client;
@@ -2613,7 +2521,6 @@ char		*value;
 	memset( client, 0, sizeof(*client) );
 
 	client->pers.connected = CON_CONNECTING;
-	client->pers.connectTime = level.time; //JAC: Added
 
 	// read or initialize the session data
 	if ( firstTime || level.newSession ) {
@@ -2627,6 +2534,16 @@ char		*value;
 
 	ent->client->sess.chatMode = 1;
 
+	if (firstTime && !isBot)
+	{
+		if(!TmpIP[0])
+		{// No IP sent when connecting, probably an unban hack attempt
+			client->pers.connected = CON_DISCONNECTED;
+			return "Invalid userinfo detected";
+		}
+		Q_strncpyz(client->sess.IP, TmpIP, sizeof(client->sess.IP));
+	}
+
 	//[OpenRP - Clientplugin]
 	s = Info_ValueForKey( userinfo, "ojp_clientplugin" );
 	if(!Q_stricmp(s, OPENRP_CLIENTVERSION))
@@ -2636,6 +2553,15 @@ char		*value;
 	else
 	{
 		client->sess.ojpClientPlugIn = qfalse;
+	}
+
+	if ( client->sess.ojpClientPlugIn )
+	{
+		G_LogPrintf( "ClientConnect: %i with latest client plugin.\n", clientNum );
+	}
+	else
+	{
+		G_LogPrintf( "ClientConnect: %i with old or no client plugin\n", clientNum );
 	}
 	//[/OpenRP - Clientplugin]
 
@@ -2679,29 +2605,8 @@ char		*value;
 		}
 	}
 
+	// get and distribute relevent paramters
 	ClientUserinfoChanged( clientNum );
-
-	if ( !isBot && firstTime )
-	{
-		if ( !tmpIP[0] )
-		{//No IP sent when connecting, probably an unban hack attempt
-			client->pers.connected = CON_DISCONNECTED;
-			#ifdef PATCH_ENGINE
-				 G_SecurityLogPrintf( "Client %i sent no IP when connecting. Real IP is: %s", clientNum, realIP );
-			#else
-				G_SecurityLogPrintf( "Client %i sent no IP when connecting.", clientNum );
-			#endif
-			return "Invalid userinfo detected";
-		}
-		Q_strncpyz( client->sess.IP, tmpIP, sizeof( client->sess.IP ) );
-	}
-
-	#ifdef PATCH_ENGINE
-		G_LogPrintf( "ClientConnect: %i (%s) [IP: %s]\n", clientNum, client->pers.netname, realIP);
-	#else
-		G_LogPrintf( "ClientConnect: %i (%s) [IP: %s]\n", clientNum, client->pers.netname, tmpIP  );
-	#endif
-
 	//[AdminSys]
 	if( !isBot ){// MJN - bots don't have IP's ;)
 		G_LogPrintf( "%s" S_COLOR_WHITE " connected with IP: %s\n", client->pers.netname, client->sess.IP );
@@ -2839,9 +2744,9 @@ void ClientBegin( int clientNum, qboolean allowTeamReset ) {
 			// Kill him (makes sure he loses flags, etc)
 			ent->flags &= ~FL_GODMODE;
 			ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
-			g_dontPenalizeTeam = qtrue;
+			//g_dontPenalizeTeam = qtrue;
 			player_die( ent, ent, ent, 100000, MOD_TEAM_CHANGE );
-			g_dontPenalizeTeam = qfalse;
+			//g_dontPenalizeTeam = qfalse;
 		}
 	#endif
 
@@ -4907,13 +4812,11 @@ void ClientSpawn(gentity_t *ent) {
 
 	// run the presend to set anything else
 	//JAC Bugfix
-	if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW )
-		ClientEndFrame( ent );
+	//if ( ent->client->sess.spectatorState != SPECTATOR_FOLLOW )
+	ClientEndFrame( ent );
 
 	// clear entity state values
 	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
-
-	ent->s.number = index;
 
 	//rww - make sure client has a valid icarus instance
 	trap_ICARUS_FreeEnt( ent );
@@ -5115,7 +5018,7 @@ void ClientDisconnect( int clientNum ) {
 	ent->client->sess.sessionTeam = TEAM_FREE;
 	ent->r.contents = 0;
 
-	level.security.clientConnectionActive[clientNum] = qfalse;
+	//level.security.clientConnectionActive[clientNum] = qfalse;
 	
 	//[BugFix39]
 	// we call this after all the clearing because the objectiveItem's

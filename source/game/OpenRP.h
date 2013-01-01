@@ -3,6 +3,7 @@
 
 #define DATABASE_PATH openrp_databasePath.string
 
+/*
 #ifndef CMD_NOINTERMISSION
 	#define CMD_NOINTERMISSION		(1<<0)
 #endif
@@ -15,3 +16,4 @@
 #ifndef CMD_BOT_WP_EDIT
 	#define CMD_BOT_WP_EDIT			(1<<3)
 #endif
+*/

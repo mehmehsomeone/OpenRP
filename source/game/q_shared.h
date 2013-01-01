@@ -17,7 +17,7 @@
 //	#define IOJAMP // ensure iojamp compatibility (disables engine modifications, new vmMain/trap functionality, etc)
 	
 	#ifndef IOJAMP
-		#define PATCH_ENGINE
+		//#define PATCH_ENGINE
 	#endif
 
 #else

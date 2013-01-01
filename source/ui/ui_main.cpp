@@ -6137,8 +6137,7 @@ static void UI_ResetCharacterListBoxes( void )
 #define MAX_SABER_HILTS	64
 
 char *saberSingleHiltInfo [MAX_SABER_HILTS];
-char *saberStaffHiltInfo [
-];
+char *saberStaffHiltInfo [MAX_SABER_HILTS];
 */
 
 void UI_SaberGetHiltInfo(void);

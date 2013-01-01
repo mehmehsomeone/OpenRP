@@ -195,6 +195,12 @@ void Cmd_amBan_F(gentity_t *ent)
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1; 
 
+	if(!G_CheckAdmin(ent, ADMIN_BAN))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amban <name/clientid>\n\""));
@@ -258,6 +264,12 @@ void Cmd_amKick_F(gentity_t *ent)
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
 
+	if(!G_CheckAdmin(ent, ADMIN_KICK))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amkick <name/clientid>\n\""));
@@ -312,6 +324,12 @@ void Cmd_amWarn_F(gentity_t *ent)
 {
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
+
+	if(!G_CheckAdmin(ent, ADMIN_WARN))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if(trap_Argc() < 2)
 	{
@@ -385,6 +403,12 @@ void Cmd_amTeleport_F(gentity_t *ent)
 	char	arg1[MAX_STRING_CHARS];
 	char	arg2[MAX_STRING_CHARS];
 	char	buffer[MAX_TOKEN_CHARS]; 
+
+	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if ( trap_Argc() == 1 )
 	{
@@ -604,6 +628,12 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 	int clientid = -1;
 	int i;
 
+	if(!G_CheckAdmin(ent, ADMIN_ANNOUNCE))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	while(*msg)
 	{ 
 		if(msg[0] == '\\' && msg[1] == 'n')
@@ -681,6 +711,12 @@ void Cmd_amSilence_F(gentity_t *ent)
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
 
+	if(!G_CheckAdmin(ent, ADMIN_SILENCE))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amsilence <name/clientid>\n\""));
@@ -740,6 +776,12 @@ void Cmd_amUnSilence_F(gentity_t *ent)
 {
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
+
+	if(!G_CheckAdmin(ent, ADMIN_SILENCE))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if(trap_Argc() < 2)
 	{
@@ -802,6 +844,12 @@ void Cmd_amSleep_F(gentity_t *ent)
 {
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
+
+	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if(trap_Argc() < 2)
 	{
@@ -889,6 +937,12 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
 
+	if(!G_CheckAdmin(ent, ADMIN_SLEEP))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if(trap_Argc() < 2)
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amunsleep <name/clientid>\n\""));
@@ -965,6 +1019,12 @@ void Cmd_amEffect_F(gentity_t *ent)
 	char	effect[MAX_STRING_CHARS]; // 16k file size
 	gentity_t *fx_runner = G_Spawn();
 	int i = 0;
+
+	if(!G_CheckAdmin(ent, ADMIN_ADDEFFECT))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 	
 	if ( trap_Argc() < 2 )
 	{
@@ -1010,6 +1070,12 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 {
 	char teamname[MAX_STRING_CHARS], cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1;
+
+	if(!G_CheckAdmin(ent, ADMIN_FORCETEAM))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 	
 	if(trap_Argc() != 3) //If the user doesn't specify both args.
 	{
@@ -1075,6 +1141,12 @@ void Cmd_amMap_F(gentity_t *ent)
 {
 	char map[MAX_STRING_CHARS];
 
+	if(!G_CheckAdmin(ent, ADMIN_MAP))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if ( trap_Argc() < 2 )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amMap <mapName>\n\"" );
@@ -1118,6 +1190,12 @@ void Cmd_amWeather_F(gentity_t *ent)
 {
 	char weather[MAX_STRING_CHARS];
 	int num;
+
+	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if ( trap_Argc() < 2 )
 	{
@@ -1217,6 +1295,12 @@ void Cmd_amWeatherPlus_F(gentity_t *ent)
 {
 	char weather[MAX_STRING_CHARS];
 	int num;
+
+	if(!G_CheckAdmin(ent, ADMIN_WEATHER))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if ( trap_Argc() < 2 )
 	{
@@ -1320,6 +1404,12 @@ void Cmd_amStatus_F(gentity_t *ent)
 	char hasClientText[64];
 	int i;
 
+	if(!G_CheckAdmin(ent, ADMIN_STATUS))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Status:\n\"" ) );
 	for(i = 0; i < level.maxclients; i++)
 	{ 
@@ -1376,6 +1466,12 @@ void Cmd_amRename_F(gentity_t *ent)
    char currentname[MAX_STRING_CHARS], newname[MAX_STRING_CHARS];
    int clientid = -1;
 
+   if(!G_CheckAdmin(ent, ADMIN_RENAME))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
    if ( trap_Argc() != 3) 
    { 
       trap_SendServerCommand( ent-g_entities, va( "print \"^2Command Usage: /amrename <currentname> <newname>\n\"" ) ); 
@@ -1426,6 +1522,12 @@ void Cmd_GrantAdmin_F( gentity_t * ent )
 	Query q(db);
 	char username[MAX_TOKEN_CHARS], temp[MAX_STRING_CHARS], DBname[MAX_STRING_CHARS];
 	int adminLevel, accountID;
+
+	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if (!db.Connected())
 	{
@@ -1551,6 +1653,12 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 	char username[MAX_TOKEN_CHARS];
 	int valid;
 
+	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if (!db.Connected())
 	{
 		G_Printf("Database not connected, %s\n",DATABASE_PATH);
@@ -1652,6 +1760,12 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 	int i;
 	extern void LevelCheck( int charID );
 
+	if(!G_CheckAdmin(ent, ADMIN_SKILLPOINTS))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if ( !db.Connected() )
 	{
 		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
@@ -1752,6 +1866,12 @@ void Cmd_GenerateCredits_F(gentity_t * ent)
 	int currentCredits;
 	int newCreditsTotal;
 
+	if(!G_CheckAdmin(ent, ADMIN_CREDITS))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if ( !db.Connected() )
 	{
 		G_Printf( "Database not connected, %s\n", DATABASE_PATH );
@@ -1820,6 +1940,12 @@ void Cmd_CreateFaction_F(gentity_t * ent)
 	char factionName[MAX_STRING_CHARS], DBname[MAX_STRING_CHARS];
 	int charCurrentFactionID, factionID;
 
+	if(!G_CheckAdmin(ent, ADMIN_FACTION))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if( !ent->client->sess.characterChosen )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^1You must be logged in and have a character selected in order to use this command.\n\"" );
@@ -1883,6 +2009,12 @@ void Cmd_SetFaction_F( gentity_t * ent )
 	int clientID;
 	int loggedIn;
 	int factionID;
+
+	if(!G_CheckAdmin(ent, ADMIN_FACTION))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if ( !db.Connected() )
 	{
@@ -1962,6 +2094,12 @@ void Cmd_FactionGenerateCredits_F(gentity_t * ent)
 	int currentCredits;
 	int newCreditsTotal;
 
+	if(!G_CheckAdmin(ent, ADMIN_FACTION) && !G_CheckAdmin(ent, ADMIN_CREDITS))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if(!G_CheckAdmin(ent, ADMIN_CREDITS) && !G_CheckAdmin(ent, ADMIN_FACTION))
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
@@ -2016,6 +2154,12 @@ void Cmd_ShakeScreen_F( gentity_t * ent )
 	char temp[MAX_STRING_CHARS], temp2[MAX_STRING_CHARS];
 	int intensity, length;
 
+	if(!G_CheckAdmin(ent, ADMIN_SHAKE))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if ( trap_Argc() != 3 )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amShakeScreen <intensity> <length>\nExample: /amShakeScreen 5 7\"" );
@@ -2046,6 +2190,12 @@ void Cmd_Audio_F( gentity_t * ent )
 {
 	char audioPath[MAX_STRING_CHARS];
 	int i;
+
+	if(!G_CheckAdmin(ent, ADMIN_AUDIO))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if(trap_Argc() < 2)
 	{
@@ -2094,6 +2244,12 @@ void Cmd_Audio_F( gentity_t * ent )
 
 void Cmd_amTelemark_F( gentity_t * ent )
 {
+	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	// mark the teleportation point with a mark.
 	ent->client->ps.viewangles[0] = 0.0f;
 	ent->client->ps.viewangles[2] = 0.0f;
@@ -2110,6 +2266,12 @@ void Cmd_amOrigin_F( gentity_t * ent )
 {
 	int	clientid = -1; 
 	char	arg1[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_TELEPORT))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	clientid = M_G_ClientNumberFromName( arg1 );
@@ -2183,6 +2345,12 @@ void Cmd_AllChat_F( gentity_t * ent )
 {
 	char parameter[MAX_STRING_CHARS];
 
+	if(!G_CheckAdmin(ent, ADMIN_ALLCHAT))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if ( trap_Argc() < 2 )
 	{
 		if ( !ent->client->sess.allChat )
@@ -2232,6 +2400,12 @@ void Cmd_amWarningList_F(gentity_t *ent)
 {
 	int i;
 
+	if(!G_CheckAdmin(ent, ADMIN_WARN))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	trap_SendServerCommand( ent-g_entities, "print \"^2Warning List:\n\n\"" );
 	for ( i = 0; i < level.maxclients; i++ )
 	{
@@ -2252,6 +2426,12 @@ void Cmd_SpawnEnt_F( gentity_t *ent )
 	vec3_t fPos; //We're going to adjust the tr.endpos, and put it in here
 	int i; //For looping 
 	char spawnflags[MAX_STRING_CHARS];
+
+	if(!G_CheckAdmin(ent, ADMIN_BUILD))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
 
 	if ( trap_Argc() < 2 )
 	{
@@ -2338,6 +2518,12 @@ void Cmd_RemoveEntity_F( gentity_t *ent )
 	int entID;
 	char entIDTemp[MAX_STRING_CHARS];
 
+	if(!G_CheckAdmin(ent, ADMIN_BUILD))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	if ( trap_Argc() < 2 )
 	{
 		trap_SendServerCommand( ent-g_entities, "print \"Command Usage: /amRemoveEnt <entID>\n\"" );
@@ -2393,6 +2579,12 @@ void Cmd_ListEnts_F( gentity_t *ent )
 {
 	int i = 0;
 
+	if(!G_CheckAdmin(ent, ADMIN_BUILD))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	trap_SendServerCommand( ent-g_entities, "print \"^2Your entities:\n\"" );
 	for ( i = 0; i < 127; i++ )
 	{
@@ -2406,6 +2598,12 @@ void Cmd_ListEnts_F( gentity_t *ent )
 
 void Cmd_Invisible_F( gentity_t *ent )
 {
+	if(!G_CheckAdmin(ent, ADMIN_INVISIBLE))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
 	   if ( ent->client->sess.isInvisible )
         {
                 ent->client->sess.isInvisible = qfalse;

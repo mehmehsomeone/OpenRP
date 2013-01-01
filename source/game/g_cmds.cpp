@@ -3,9 +3,6 @@
 #include "g_local.h"
 #include "bg_saga.h"
 
-//JAC
-#include "g_engine.h"
-
 
 #include "g_cvars.h"
 
@@ -13,9 +10,8 @@
 #include "g_character.h"
 #include "g_admin.h"
 #include "g_emote.h"
-
-#include "OpenRP.h"	
 #include "g_OpenRP.h"
+#include "OpenRP.h"
 
 //[SVN]
 //rearraigned repository to make it easier to initially compile.
@@ -52,7 +48,7 @@ char	*ConcatArgs( int start );
 int M_G_ClientNumberFromName ( const char* name );
 
 //[OpenRP - Commands]
-void Cmd_SayOpenRP_f( gentity_t *ent, int mode );
+void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 );
 //[/OpenRP - Commands]
 
 //[JKH Bugfix]
@@ -164,8 +160,6 @@ void Cmd_Score_f( gentity_t *ent ) {
 CheatsOk
 ==================
 */
-//JAC
-/*
 qboolean	CheatsOk( gentity_t *ent ) {
 	if ( ent->client->sess.cheatAccess )
 	{
@@ -181,7 +175,7 @@ qboolean	CheatsOk( gentity_t *ent ) {
 	}
 	return qtrue;
 }
-*/
+
 
 /*
 ==================
@@ -299,7 +293,6 @@ int ClientNumberFromString( gentity_t *to, char *s ) {
 	return -1;
 }
 
-
 /*
 ==================
 Cmd_Give_f
@@ -310,195 +303,164 @@ Give items to a client
 //[VisualWeapons]
 extern qboolean OJP_AllPlayersHaveClientPlugin(void);
 //[/VisualWeapons]
-void G_Give( gentity_t *ent, const char *name, const char *args, int argc )
+void Cmd_Give_f (gentity_t *cmdent, int baseArg)
 {
+	char		name[MAX_TOKEN_CHARS];
+	gentity_t	*ent;
+	//gitem_t		*it; // ensiform - removed
 	int			i;
-	qboolean	give_all = qfalse;
+	qboolean	give_all;
+	//gentity_t		*it_ent; // ensiform - removed
+	//trace_t		trace; // ensiform - removed
 	char		arg[MAX_TOKEN_CHARS];
 
-	if ( !Q_stricmp( name, "all" ) )
-		give_all = qtrue;
-
-	if ( give_all )
-	{
-		for ( i=0; i<HI_NUM_HOLDABLE; i++ )
-			ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << i);
-	}
-
-	if ( give_all || !Q_stricmp( name, "health") )
-	{
-		if ( argc == 3 )
-			ent->health = Com_Clampi( 1, ent->client->ps.stats[STAT_MAX_HEALTH], atoi( args ) );
-		else
-		{
-			if ( g_gametype.integer == GT_SIEGE && ent->client->siegeClass != -1 )
-				ent->health = bgSiegeClasses[ent->client->siegeClass].maxhealth;
-			else
-				ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
-		}
-		if ( !give_all )
-			return;
-	}
-
-	if ( give_all || !Q_stricmp( name, "armor" ) || !Q_stricmp( name, "shield" ) )
-	{
-		if ( argc == 3 )
-			ent->client->ps.stats[STAT_ARMOR] = Com_Clampi( 0, ent->client->ps.stats[STAT_MAX_HEALTH], atoi( arg ) );
-		else
-		{
-			if ( g_gametype.integer == GT_SIEGE && ent->client->siegeClass != -1 )
-				ent->client->ps.stats[STAT_ARMOR] = bgSiegeClasses[ent->client->siegeClass].maxarmor;
-			else
-				ent->client->ps.stats[STAT_ARMOR] = ent->client->ps.stats[STAT_MAX_HEALTH];
-		}
-
-		if ( !give_all )
-			return;
-	}
-
-	if ( give_all || !Q_stricmp( name, "force" ) )
-	{
-		if ( argc == 3 )
-			ent->client->ps.fd.forcePower = Com_Clampi( 0, ent->client->ps.fd.forcePowerMax, atoi( args ) );
-		else
-			ent->client->ps.fd.forcePower = ent->client->ps.fd.forcePowerMax;
-
-		if ( !give_all )
-			return;
-	}
-
-	if ( give_all || !Q_stricmp( name, "weapons" ) )
-	{
-		ent->client->ps.stats[STAT_WEAPONS] = (1 << (LAST_USEABLE_WEAPON+1)) - ( 1 << WP_NONE );
-
-		//[VisualWeapons]
-		//update the weapon stats for this player since they have changed.
-		if(OJP_AllPlayersHaveClientPlugin())
-		{//don't send the weapon updates if someone isn't able to process this new event type (IE anyone without
-			//the OJP client plugin)
-			G_AddEvent(ent, EV_WEAPINVCHANGE, ent->client->ps.stats[STAT_WEAPONS]);
-		}
-		//[/VisualWeapons]
-
-		if ( !give_all )
-			return;
-	}
-
-	if ( !give_all && !Q_stricmp( name, "weaponnum" ) )
-	{
-		ent->client->ps.stats[STAT_WEAPONS] |= (1 << atoi( args ));
-
-		//[VisualWeapons]
-		//update the weapon stats for this player since they have changed.
-		if(OJP_AllPlayersHaveClientPlugin())
-		{//don't send the weapon updates if someone isn't able to process this new event type (IE anyone without
-			//the OJP client plugin)
-			G_AddEvent(ent, EV_WEAPINVCHANGE, ent->client->ps.stats[STAT_WEAPONS]);
-		}
-		//[/VisualWeapons]
-
+	if ( !CheatsOk( cmdent ) ) {
 		return;
 	}
 
-	if ( give_all || !Q_stricmp( name, "ammo" ) )
+	if (baseArg)
 	{
-		int num = 999;
-		if ( argc == 3 )
-			num = atoi( args );
-		//[CoOp]
-		for ( i = AMMO_BLASTER ; i < AMMO_MAX ; i++ )
+		char otherindex[MAX_TOKEN_CHARS];
+
+		trap_Argv( 1, otherindex, sizeof( otherindex ) );
+
+		if (!otherindex[0])
 		{
-			if ( num > ammoData[i].max )
-				num = ammoData[i].max;
-			Add_Ammo( ent, i, num );
+			Com_Printf("giveother requires that the second argument be a client index number.\n");
+			return;
 		}
-		//[/CoOp]
-		if ( !give_all )
+
+		i = atoi(otherindex);
+
+		if (i < 0 || i >= MAX_CLIENTS)
+		{
+			Com_Printf("%i is not a client index\n", i);
+			return;
+		}
+
+		ent = &g_entities[i];
+
+		if (!ent->inuse || !ent->client)
+		{
+			Com_Printf("%i is not an active client\n", i);
+			return;
+		}
+	}
+	else
+	{
+		ent = cmdent;
+	}
+
+	trap_Argv( 1+baseArg, name, sizeof( name ) );
+
+	if (Q_stricmp(name, "all") == 0)
+		give_all = qtrue;
+	else
+		give_all = qfalse;
+
+	if (give_all || Q_stricmp( name, "health") == 0)
+	{
+		if (trap_Argc() == 3+baseArg) {
+			trap_Argv( 2+baseArg, arg, sizeof( arg ) );
+			ent->health = atoi(arg);
+			if (ent->health > ent->client->ps.stats[STAT_MAX_HEALTH]) {
+				ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
+			}
+		}
+		else {
+			ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
+		}
+		if (!give_all)
 			return;
 	}
 
 	//[CoOp]
-	if  ( give_all || !Q_stricmp( name, "inventory" ) )
+	if (give_all || Q_stricmp( name, "inventory") == 0)
 	{
 		i = 0;
-		for ( i = 0 ; i < HI_NUM_HOLDABLE ; i++ )
-		{
+		for ( i = 0 ; i < HI_NUM_HOLDABLE ; i++ ) {
 			ent->client->ps.stats[STAT_HOLDABLE_ITEMS] |= (1 << i);
 		}
 	}
+
+	if (give_all || Q_stricmp( name, "force") == 0)
+	{
+		if (trap_Argc() == 3+baseArg) {
+			trap_Argv( 2+baseArg, arg, sizeof( arg ) );
+			ent->client->ps.fd.forcePower = atoi(arg);
+			if (ent->client->ps.fd.forcePower > 100) {
+				ent->client->ps.fd.forcePower = 100;
+			}
+		}
+		else {
+			ent->client->ps.fd.forcePower = 100;
+		}
+		if (!give_all)
+			return;
+	}
 	//[/CoOp]
 
-	if ( !Q_stricmp( name, "excellent" ) ) {
-		ent->client->ps.persistant[PERS_EXCELLENT_COUNT]++;
-		return;
-	}
-	if ( !Q_stricmp( name, "impressive" ) ) {
-		ent->client->ps.persistant[PERS_IMPRESSIVE_COUNT]++;
-		return;
-	}
-	if ( !Q_stricmp( name, "gauntletaward" ) ) {
-		ent->client->ps.persistant[PERS_GAUNTLET_FRAG_COUNT]++;
-		return;
-	}
-	if ( !Q_stricmp( name, "defend" ) ) {
-		ent->client->ps.persistant[PERS_DEFEND_COUNT]++;
-		return;
-	}
-	if ( !Q_stricmp( name, "assist" ) ) {
-		ent->client->ps.persistant[PERS_ASSIST_COUNT]++;
-		return;
-	}
-}
-
-void Cmd_Give_f( gentity_t *ent )
-{
-	char name[MAX_TOKEN_CHARS] = {0};
-
-	trap_Argv( 1, name, sizeof( name ) );
-	G_Give( ent, name, ConcatArgs( 3 ), trap_Argc() );
-}
-
-void Cmd_GiveOther_f( gentity_t *ent )
-{
-	char		name[MAX_TOKEN_CHARS] = {0};
-	int			clientid = -1;
-	char		otherindex[MAX_TOKEN_CHARS];
-	gentity_t	*otherEnt = NULL;
-
-	if ( trap_Argc() < 2 ) {
-		trap_SendServerCommand( ent-g_entities, va("print \"^2Command Usage: /giveOther <name/clientid> <What you want to give (Optional)>\n\""));
-		return;
-	}
-
-	trap_Argv( 1, otherindex, sizeof( otherindex ) );
-
-	clientid = M_G_ClientNumberFromName( otherindex );
-	if (clientid == -1) 
-	{ 
-		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", otherindex ) ); 
-		return; 
-	} 
-	if (clientid == -2) 
-	{ 
-		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", otherindex ) ); 
-		return; 
-	}
-	if (clientid >= MAX_CLIENTS || clientid < 0) 
-	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", otherindex ) );
-		return;
-	}
-	if (!g_entities[clientid].inuse) 
+	if (give_all || Q_stricmp(name, "weapons") == 0)
 	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", otherindex ) ); 
+		ent->client->ps.stats[STAT_WEAPONS] = (1 << (LAST_USEABLE_WEAPON+1))  - ( 1 << WP_NONE );
+		//[VisualWeapons]
+		//update the weapon stats for this player since they have changed.
+		if(OJP_AllPlayersHaveClientPlugin())
+		{//don't send the weapon updates if someone isn't able to process this new event type (IE anyone without
+			//the OJP client plugin)
+			G_AddEvent(ent, EV_WEAPINVCHANGE, ent->client->ps.stats[STAT_WEAPONS]);
+		}
+		//[/VisualWeapons]
+		if (!give_all)
+			return;
+	}
+	
+	if ( !give_all && Q_stricmp(name, "weaponnum") == 0 )
+	{
+		trap_Argv( 2+baseArg, arg, sizeof( arg ) );
+		ent->client->ps.stats[STAT_WEAPONS] |= (1 << atoi(arg));
+
+		//[VisualWeapons]
+		//update the weapon stats for this player since they have changed.
+		if(OJP_AllPlayersHaveClientPlugin())
+		{//don't send the weapon updates if someone isn't able to process this new event type (IE anyone without
+			//the OJP client plugin)
+			G_AddEvent(ent, EV_WEAPINVCHANGE, ent->client->ps.stats[STAT_WEAPONS]);
+		}
+		//[/VisualWeapons]
 		return;
 	}
 
-	trap_Argv( 2, name, sizeof( name ) );
+	//[CoOp]
+	if (give_all || Q_stricmp(name, "ammo") == 0)
+	{
+		int num = 999;
+		if (trap_Argc() == 3+baseArg) {
+			trap_Argv( 2+baseArg, arg, sizeof( arg ) );
+			num = atoi(arg);
+		}
+		for ( i = AMMO_BLASTER ; i < AMMO_MAX ; i++ ) {
+			if ( num > ammoData[i].max )
+				num = ammoData[i].max;
+			Add_Ammo( ent, i, num );
+		}
+		if (!give_all)
+			return;
+	}
 
-	G_Give( otherEnt, name, ConcatArgs( 3 ), trap_Argc()-1 );
+	if (give_all || Q_stricmp(name, "armor") == 0 || Q_stricmp(name, "shields") == 0)
+	{
+		if (trap_Argc() == 3+baseArg) {
+			trap_Argv( 2+baseArg, arg, sizeof( arg ) );
+			ent->client->ps.stats[STAT_ARMOR] = atoi(arg);
+		} else {
+			ent->client->ps.stats[STAT_ARMOR] = ent->client->ps.stats[STAT_MAX_HEALTH];
+		}
+
+		if (!give_all)
+			return;
+	}
 }
-
 
 /*
 ==================
@@ -509,16 +471,21 @@ Sets client to godmode
 argv(0) god
 ==================
 */
-void Cmd_God_f( gentity_t *ent ) {
-	char *msg = NULL;
+void Cmd_God_f (gentity_t *ent)
+{
+	char	*msg;
+
+	if ( !CheatsOk( ent ) ) {
+		return;
+	}
 
 	ent->flags ^= FL_GODMODE;
-	if ( !(ent->flags & FL_GODMODE) )
-		msg = "godmode OFF";
+	if (!(ent->flags & FL_GODMODE) )
+		msg = "godmode OFF\n";
 	else
-		msg = "godmode ON";
+		msg = "godmode ON\n";
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", msg ) );
+	trap_SendServerCommand( ent-g_entities, va("print \"%s\"", msg));
 }
 
 
@@ -532,15 +499,19 @@ argv(0) notarget
 ==================
 */
 void Cmd_Notarget_f( gentity_t *ent ) {
-	char *msg = NULL;
+	char	*msg;
+
+	if ( !CheatsOk( ent ) ) {
+		return;
+	}
 
 	ent->flags ^= FL_NOTARGET;
-	if ( !(ent->flags & FL_NOTARGET) )
-		msg = "notarget OFF";
+	if (!(ent->flags & FL_NOTARGET) )
+		msg = "notarget OFF\n";
 	else
-		msg = "notarget ON";
+		msg = "notarget ON\n";
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", msg ) );
+	trap_SendServerCommand( ent-g_entities, va("print \"%s\"", msg));
 }
 
 
@@ -552,27 +523,26 @@ argv(0) noclip
 ==================
 */
 void Cmd_Noclip_f( gentity_t *ent ) {
-	char *msg = NULL;
+	char	*msg;
+
+	if ( !CheatsOk( ent ) ) {
+		return;
+	}
 
 	//[CoOp]
 	if (in_camera)
 		return;
 	//[/CoOp]
 
-	if ( !ent->client->noclip )
-	{
-		ent->client->noclip = qtrue;
-		msg = "noclip ON";
-	}	
-	else
-	{
-		ent->client->noclip = qfalse;
-		msg = "noclip OFF";
+	if ( ent->client->noclip ) {
+		msg = "noclip OFF\n";
+	} else {
+		msg = "noclip ON\n";
 	}
+	ent->client->noclip = (qboolean)(!ent->client->noclip);
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"%s\n\"", msg ) );
+	trap_SendServerCommand( ent-g_entities, va("print \"%s\"", msg));
 }
-
 
 
 /*
@@ -585,18 +555,15 @@ and sends over a command to the client to resize the view,
 hide the scoreboard, and take a special screenshot
 ==================
 */
-void Cmd_LevelShot_f( gentity_t *ent )
-{
-	if ( !ent->client->pers.localClient )
-	{
-		trap_SendServerCommand(ent-g_entities, "print \"The levelshot command must be executed by a local client\n\"");
+void Cmd_LevelShot_f( gentity_t *ent ) {
+	if ( !CheatsOk( ent ) ) {
 		return;
 	}
 
 	// doesn't work in single player
-	if ( g_gametype.integer == GT_SINGLE_PLAYER )
-	{
-		trap_SendServerCommand(ent-g_entities, "print \"Must not be in singleplayer mode for levelshot\n\"" );
+	if ( g_gametype.integer != 0 ) {
+		trap_SendServerCommand( ent-g_entities, 
+			"print \"Must be in g_gametype 0 for levelshot\n\"" );
 		return;
 	}
 
@@ -753,50 +720,6 @@ void Cmd_Kill_f( gentity_t *ent ) {
 	player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 }
 
-static int G_ClientNumFromNetname(char *name)
-{
-	int i = 0;
-	gentity_t *ent;
-
-	while (i < MAX_CLIENTS)
-	{
-		ent = &g_entities[i];
-
-		if (ent->inuse && ent->client &&
-			!Q_stricmp(ent->client->pers.netname, name))
-		{
-			return ent->s.number;
-		}
-		i++;
-	}
-
-	return -1;
-}
-
-void Cmd_KillOther_f( gentity_t *ent ) {
-	if ( trap_Argc() > 1 )
-	{
-		char sArg[MAX_STRING_CHARS] = {0};
-		int entNum = 0;
-
-		trap_Argv( 1, sArg, sizeof( sArg ) );
-
-		entNum = G_ClientNumFromNetname( sArg );
-
-		if ( entNum >= 0 && entNum < MAX_GENTITIES )
-		{
-			gentity_t *kEnt = &g_entities[entNum];
-
-			if ( kEnt->inuse && kEnt->client )
-			{
-				kEnt->flags &= ~FL_GODMODE;
-				kEnt->client->ps.stats[STAT_HEALTH] = kEnt->health = -999;
-				player_die( kEnt, kEnt, kEnt, 100000, MOD_SUICIDE );
-			}
-		}
-	}
-}
-
 /*
 =================
 BroadCastTeamChange
@@ -893,12 +816,6 @@ void SetTeam( gentity_t *ent, char *s )
 	spectatorState_t	specState;
 	int					specClient;
 	int					teamLeader;
-
-	//JAC Bugfix: this prevents rare creation of invalid players
-	if (!ent->inuse)
-	{
-		return;
-	}
 
 	//
 	// see what change is requested
@@ -1229,9 +1146,6 @@ void StopFollowing( gentity_t *ent ) {
 	ent->client->savedHP = 0;
 	ent->client->savedArmor = 0;
 	ent->client->specialActionLastAnim = 0;
-
-	//JAC Bugfix
-	ent->client->ps.bobCycle = 0;
 }
 
 /*
@@ -1279,14 +1193,14 @@ void Cmd_Team_f( gentity_t *ent ) {
 		return;
 	}
 
-	/*
 	//[OpenRP - Disabled team switch time]
+	/*
 	if ( ent->client->switchTeamTime > level.time ) {
 		trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"", G_GetStringEdString("MP_SVGAME", "NOSWITCH")) );
 		return;
 	}
-	//[/OpenRP - Disabled team switch time]
 	*/
+	//[/OpenRP - Disabled team switch time]
 
 	if (gEscaping)
 		return;
@@ -1319,7 +1233,6 @@ void Cmd_Team_f( gentity_t *ent ) {
 	//[OpenRP - Disabled team switch time]
 	//ent->client->switchTeamTime = level.time + 5000;
 	//[/OpenRP - Disabled team switch time]
-
 }
 
 /*
@@ -1805,13 +1718,6 @@ void Cmd_FollowCycle_f( gentity_t *ent, int dir ) {
 	// leave it where it was
 }
 
-void Cmd_FollowNext_f( gentity_t *ent ) {
-	Cmd_FollowCycle_f( ent, 1 );
-}
-
-void Cmd_FollowPrev_f( gentity_t *ent ) {
-	Cmd_FollowCycle_f( ent, -1 );
-}
 
 /*
 ==================
@@ -1894,6 +1800,9 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 	}
 	//[/OpenRP - Chat System]
 }
+
+#define EC		"\x19"
+
 
 //[TABBot]
 extern void TAB_BotOrder( gentity_t *orderer, gentity_t *orderee, int order, gentity_t *objective);
@@ -2042,13 +1951,6 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	char		location[64];
 	char		*locMsg = NULL;
 	int distance = 0;
-
-	if ( ent->client->sess.isSilenced )
-	{
-		trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
-		trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
-		return;
-	}
 
 	//[OpenRP - OOC]
 	/*
@@ -2301,36 +2203,23 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 Cmd_Say_f
 ==================
 */
-//JAC
-static void Cmd_Say_f( gentity_t *ent )
-{
-	char *p = NULL;
+void Cmd_Say_f( gentity_t *ent, int mode, qboolean arg0 ) {
+	char		*p;
 
-	if ( trap_Argc () < 2 )
+	if ( trap_Argc () < 2 && !arg0 ) {
 		return;
-
-	p = ConcatArgs( 1 );
-
-	//Raz: BOF
-	if ( strlen( p ) > MAX_SAY_TEXT )
-	{
-		p[MAX_SAY_TEXT-1] = '\0';
-		G_SecurityLogPrintf( "Cmd_Say_f from %d (%s) has been truncated: %s\n", ent->s.number, ent->client->pers.netname, p );
 	}
 
-	G_Say( ent, NULL, SAY_ALL, p );
-}
-
-void Cmd_SayOpenRP_f( gentity_t *ent, int mode )
-{
-	char *p = NULL;
-
-	if ( trap_Argc () < 2 )
-		return;
+	if (arg0)
+	{
+		p = ConcatArgs( 0 );
+	}
+	else
+	{
+		p = ConcatArgs( 1 );
+	}
 
 	//JAC Bugfix
-	p = ConcatArgs( 1 );
-
 	//Raz: BOF
 	if ( strlen( p ) > MAX_SAY_TEXT )
 	{
@@ -2339,31 +2228,6 @@ void Cmd_SayOpenRP_f( gentity_t *ent, int mode )
 	}
 
 	G_Say( ent, NULL, mode, p );
-}
-
-/*
-==================
-Cmd_SayTeam_f
-==================
-*/
-//JAC
-static void Cmd_SayTeam_f( gentity_t *ent ) {
-	char *p = NULL;
-
-	if ( trap_Argc () < 2 )
-		return;
-
-	p = ConcatArgs( 1 );
-
-	//Raz: BOF
-	if ( strlen( p ) > MAX_SAY_TEXT )
-	{
-		p[MAX_SAY_TEXT-1] = '\0';
-		G_SecurityLogPrintf( "Cmd_SayTeam_f from %d (%s) has been truncated: %s\n", ent->s.number, ent->client->pers.netname, p );
-	}
-
-	//G_Say( ent, NULL, (g_gametype.integer>=GT_TEAM) ? SAY_TEAM : SAY_ALL, p );
-	G_Say( ent, NULL, SAY_TEAM, p );
 }
 
 /*
@@ -2415,7 +2279,6 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	}
 
 	G_LogPrintf( "tell: %s to %s: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, p );
-	//OpenRP - Allchat
 	for ( i = 0; i < level.maxclients; i++ )
 	{
 		if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
@@ -3154,10 +3017,6 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 		Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
 	}
 
-	//JAC
-	Q_strncpyz( level.voteStringClean, level.voteString, sizeof( level.voteStringClean ) );
-	Q_strstrip( level.voteStringClean, "\"\n\r", NULL );
-
 	trap_SendServerCommand( -1, va("print \"%s^7 %s\n\"", ent->client->pers.netname, G_GetStringEdString("MP_SVGAME", "PLCALLEDVOTE") ) );
 
 	// start the voting, the caller automatically votes yes
@@ -3508,6 +3367,30 @@ void Cmd_SetViewpos_f( gentity_t *ent ) {
 	TeleportPlayer( ent, origin, angles );
 }
 
+
+
+/*
+=================
+Cmd_Stats_f
+=================
+*/
+void Cmd_Stats_f( gentity_t *ent ) {
+/*
+	int max, n, i;
+
+	max = trap_AAS_PointReachabilityAreaIndex( NULL );
+
+	n = 0;
+	for ( i = 0; i < max; i++ ) {
+		if ( ent->client->areabits[i >> 3] & (1 << (i & 7)) )
+			n++;
+	}
+
+	//trap_SendServerCommand( ent-g_entities, va("print \"visited %d of %d areas\n\"", n, max));
+	trap_SendServerCommand( ent-g_entities, va("print \"%d%% level coverage\n\"", n * 100 / max));
+*/
+}
+
 //[BugFix38]
 void G_LeaveVehicle( gentity_t* ent, qboolean ConCheck ) {
 
@@ -3539,11 +3422,6 @@ int G_ItemUsable(playerState_t *ps, int forcedUse)
 	vec3_t mins, maxs;
 	vec3_t trtest;
 	trace_t tr;
-
-	// JAC Bugfix: dead players shouldn't use items
-	if (ps->stats[STAT_HEALTH] <= 0){
-		return 0;
-	}
 
 	if (ps->m_iVehicleNum)
 	{
@@ -4425,7 +4303,7 @@ void Cmd_DebugSetSaberBlock_f(gentity_t *self)
 //[/SaberSys]
 
 
-void Cmd_DebugSetBodyAnim_f(gentity_t *self)
+void Cmd_DebugSetBodyAnim_f(gentity_t *self, int flags)
 {
 	int argNum = trap_Argc();
 	char arg[MAX_STRING_CHARS];
@@ -4458,7 +4336,7 @@ void Cmd_DebugSetBodyAnim_f(gentity_t *self)
 		return;
 	}
 
-	G_SetAnim(self, NULL, SETANIM_BOTH, i, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD, 0);
+	G_SetAnim(self, NULL, SETANIM_BOTH, i, flags, 0);
 
 	Com_Printf("Set body anim to %s\n", arg);
 }
@@ -4478,7 +4356,6 @@ extern void DismembermentByNum(gentity_t *self, int num);
 extern void G_SetVehDamageFlags( gentity_t *veh, int shipSurf, int damageLevel );
 #endif
 
-/*
 static int G_ClientNumFromNetname(char *name)
 {
 	int i = 0;
@@ -4498,7 +4375,6 @@ static int G_ClientNumFromNetname(char *name)
 
 	return -1;
 }
-*/
 
 qboolean TryGrapple(gentity_t *ent)
 {
@@ -4549,515 +4425,861 @@ qboolean TryGrapple(gentity_t *ent)
 	return qfalse;
 }
 
-void Cmd_TargetUse_f( gentity_t *ent )
-{
-	if ( trap_Argc() > 1 )
-	{
-		char sArg[MAX_STRING_CHARS] = {0};
-		gentity_t *targ;
-
-		trap_Argv( 1, sArg, sizeof( sArg ) );
-		targ = G_Find( NULL, FOFS( targetname ), sArg );
-
-		while ( targ )
-		{
-			if ( targ->use )
-				targ->use( targ, ent, ent );
-			targ = G_Find( targ, FOFS( targetname ), sArg );
-		}
-	}
-}
-
-void Cmd_TheDestroyer_f( gentity_t *ent ) {
-	if ( !ent->client->ps.saberHolstered || ent->client->ps.weapon != WP_SABER )
-		return;
-
-	Cmd_ToggleSaber_f( ent );
-}
-
-void Cmd_BotMoveForward_f( gentity_t *ent ) {
-	int arg = 4000;
-	int bCl = 0;
-	char sarg[MAX_STRING_CHARS];
-
-	assert( trap_Argc() > 1 );
-	trap_Argv( 1, sarg, sizeof( sarg ) );
-
-	assert( sarg[0] );
-	bCl = atoi( sarg );
-	Bot_SetForcedMovement( bCl, arg, -1, -1 );
-}
-
-void Cmd_BotMoveBack_f( gentity_t *ent ) {
-	int arg = -4000;
-	int bCl = 0;
-	char sarg[MAX_STRING_CHARS];
-
-	assert( trap_Argc() > 1 );
-	trap_Argv( 1, sarg, sizeof( sarg ) );
-
-	assert( sarg[0] );
-	bCl = atoi( sarg );
-	Bot_SetForcedMovement( bCl, arg, -1, -1 );
-}
-
-void Cmd_BotMoveRight_f( gentity_t *ent ) {
-	int arg = 4000;
-	int bCl = 0;
-	char sarg[MAX_STRING_CHARS];
-
-	assert( trap_Argc() > 1 );
-	trap_Argv( 1, sarg, sizeof( sarg ) );
-
-	assert( sarg[0] );
-	bCl = atoi( sarg );
-	Bot_SetForcedMovement( bCl, -1, arg, -1 );
-}
-
-void Cmd_BotMoveLeft_f( gentity_t *ent ) {
-	int arg = -4000;
-	int bCl = 0;
-	char sarg[MAX_STRING_CHARS];
-
-	assert( trap_Argc() > 1 );
-	trap_Argv( 1, sarg, sizeof( sarg ) );
-
-	assert( sarg[0] );
-	bCl = atoi( sarg );
-	Bot_SetForcedMovement( bCl, -1, arg, -1 );
-}
-
-void Cmd_BotMoveUp_f( gentity_t *ent ) {
-	int arg = 4000;
-	int bCl = 0;
-	char sarg[MAX_STRING_CHARS];
-
-	assert( trap_Argc() > 1 );
-	trap_Argv( 1, sarg, sizeof( sarg ) );
-
-	assert( sarg[0] );
-	bCl = atoi( sarg );
-	Bot_SetForcedMovement( bCl, -1, -1, arg );
-}
-
-void Cmd_AddBot_f( gentity_t *ent ) {
-	//because addbot isn't a recognized command unless you're the server, but it is in the menus regardless
-	trap_SendServerCommand( ent-g_entities, va( "print \"%s.\n\"", G_GetStringEdString( "MP_SVGAME", "ONLY_ADD_BOTS_AS_SERVER" ) ) );
-}
-
-void Cmd_LamerCheck_f( gentity_t *ent )
-{
-	trap_SendServerCommand( ent-g_entities, va("cp \"This mod is based on code taken from the\nOpen Jedi Project. If the supposed author doesn't\ngive proper credit to OJP,\nplease contact us and we\n will deal with it.\nEmail: razorace@hotmail.com\n\""));
-	return;
-}
+#ifndef FINAL_BUILD
+qboolean saberKnockOutOfHand(gentity_t *saberent, gentity_t *saberOwner, vec3_t velocity);
+#endif
 
 //[ROQFILES]
 extern qboolean inGameCinematic;
 //[/ROQFILES]
-
-void Cmd_EndCinematic_f( gentity_t *ent )
-{
-	inGameCinematic = qfalse;
-	return;
-}
-
-//[CoOpEditor]
-extern void Create_Autosave( vec3_t origin, int size, qboolean teleportPlayers );
-extern void Add_Autosaves( gentity_t *ent );
-extern void Save_Autosaves( gentity_t *ent );
-extern void Delete_Autosaves(gentity_t* ent);
-//[/CoOpEditor]
-extern void SetupReload(gentity_t *ent);
-
-void Cmd_Reload_f( gentity_t *ent )
-{
-	if(ent->reloadTime > 0)
-		CancelReload(ent);
-	else
-		SetupReload(ent);
-	return;
-}
 
 /*
 =================
 ClientCommand
 =================
 */
-
-typedef struct baseCommand_s {
-	const char	*name;
-	void		(*func)(gentity_t *ent);
-	int			flags;
-} baseCommand_t;
-
-int cmdcmp( const void *a, const void *b ) {
-	return Q_stricmp( (const char *)a, ((baseCommand_t*)b)->name );
-}
-
-baseCommand_t baseCommands[] = {
-	{ "addbot",				Cmd_AddBot_f,				0 },
-	//[CoOpEditor]
-	{ "autosave_add",		Add_Autosaves,				CMD_CHEAT|CMD_ALIVE|CMD_NOINTERMISSION|CMD_BOT_WP_EDIT },
-	{ "autosave_save",		Save_Autosaves,				CMD_CHEAT|CMD_ALIVE|CMD_NOINTERMISSION|CMD_BOT_WP_EDIT },
-	{ "autosave_add",		Add_Autosaves,				CMD_CHEAT|CMD_ALIVE|CMD_NOINTERMISSION|CMD_BOT_WP_EDIT },
-	//[/CoOpEditor]
-	{ "callteamvote",		Cmd_CallTeamVote_f,			CMD_NOINTERMISSION },
-	{ "callvote",			Cmd_CallVote_f,				CMD_NOINTERMISSION },
-	{ "debugBMove_Back",	Cmd_BotMoveBack_f,			CMD_CHEAT|CMD_ALIVE },
-	{ "debugBMove_Forward",	Cmd_BotMoveForward_f,		CMD_CHEAT|CMD_ALIVE },
-	{ "debugBMove_Left",	Cmd_BotMoveLeft_f,			CMD_CHEAT|CMD_ALIVE },
-	{ "debugBMove_Right",	Cmd_BotMoveRight_f,			CMD_CHEAT|CMD_ALIVE },
-	{ "debugBMove_Up",		Cmd_BotMoveUp_f,			CMD_CHEAT|CMD_ALIVE },
-	{ "duelteam",			Cmd_DuelTeam_f,				CMD_NOINTERMISSION },
-	//[ROQFILES]
-	{ "endcinematic",		Cmd_EndCinematic_f,			0 },
-	//[/ROQFILES]
-	{ "follow",				Cmd_Follow_f,				CMD_NOINTERMISSION },
-	{ "follownext",			Cmd_FollowNext_f,			CMD_NOINTERMISSION },
-	{ "followprev",			Cmd_FollowPrev_f,			CMD_NOINTERMISSION },
-	{ "forcechanged",		Cmd_ForceChanged_f,			0 },
-	{ "gc",					Cmd_GameCommand_f,			CMD_NOINTERMISSION },
-	{ "give",				Cmd_Give_f,					CMD_CHEAT|CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "giveother",			Cmd_GiveOther_f,			CMD_CHEAT|CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "god",				Cmd_God_f,					CMD_CHEAT|CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "kill",				Cmd_Kill_f,					CMD_NOINTERMISSION },
-	{ "killother",			Cmd_KillOther_f,			CMD_CHEAT|CMD_ALIVE },
-//	{ "kylesmash",			TryGrapple,					0 },
-	{ "lamercheck",			Cmd_LamerCheck_f,			0 },
-	{ "levelshot",			Cmd_LevelShot_f,			CMD_CHEAT|CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "noclip",				Cmd_Noclip_f,				CMD_CHEAT|CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "notarget",			Cmd_Notarget_f,				CMD_CHEAT|CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "npc",				Cmd_NPC_f,					CMD_CHEAT|CMD_ALIVE },
-	{ "reload",				Cmd_Reload_f,				CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "say",				Cmd_Say_f,					0 },
-	{ "say_team",			Cmd_SayTeam_f,				0 },
-	{ "score",				Cmd_Score_f,				0 },
-	{ "setviewpos",			Cmd_SetViewpos_f,			CMD_NOINTERMISSION },
-	{ "siegeclass",			Cmd_SiegeClass_f,			CMD_NOINTERMISSION },
-	{ "team",				Cmd_Team_f,					CMD_NOINTERMISSION },
-	//{ "teamtask",			Cmd_TeamTask_f,				CMD_NOINTERMISSION },
-	{ "teamvote",			Cmd_TeamVote_f,				CMD_NOINTERMISSION },
-	{ "tell",				Cmd_Tell_f,					0 },
-	{ "thedestroyer",		Cmd_TheDestroyer_f,			CMD_CHEAT|CMD_ALIVE },
-	{ "togglesaber",		Cmd_ToggleSaber_f,			CMD_ALIVE },
-	{ "t_use",				Cmd_TargetUse_f,			CMD_CHEAT|CMD_ALIVE },
-	{ "voice_cmd",			Cmd_VoiceCommand_f,			0 },
-	{ "vote",				Cmd_Vote_f,					CMD_NOINTERMISSION },
-	{ "where",				Cmd_Where_f,				CMD_NOINTERMISSION },
-};
-static size_t numBaseCommands = ARRAY_LEN( baseCommands );
-
-typedef struct emoteCommand_s {
-	const char	*name;
-	int anim;
-	qboolean freeze;
-	int			flags;
-} emoteCommand_t;
-
-emoteCommand_t emoteCommands[] = {
-	{ "emaim",				TORSO_WEAPONIDLE4,			qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "embutton",			BOTH_BUTTON_HOLD,			qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emchoke",			BOTH_CHOKE1,				qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emdie",				BOTH_DEATH1,				qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emdie2",				BOTH_DEATH14,				qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emdie3",				BOTH_DEATH17,				qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emdie4",				BOTH_DEATH4,				qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emhips",				BOTH_STAND8,				qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emintimidate",		BOTH_ROSH_HEAL,				qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "empoint",			BOTH_SCEPTER_HOLD,			qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "empush",				BOTH_ATTACK11,				qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emsit",				BOTH_SIT1,					qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emsit2",				BOTH_SIT2,					qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emsit3",				BOTH_SIT3,					qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emsit4",				BOTH_SIT4,					qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emsit5",				BOTH_SIT5,					qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emsit6",				BOTH_SIT6,					qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emsit7",				BOTH_SIT7,					qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emsorrow",			BOTH_FORCEHEAL_START,		qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emstand",			BOTH_STAND8,				qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emthrow",			BOTH_SABERTHROW1START,		qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emtwitch",			BOTH_DEATH14_UNGRIP,		qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emtyping",			BOTH_CONSOLE1,				qtrue,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "emwait",				BOTH_STAND10,				qfalse,		CMD_ALIVE|CMD_NOINTERMISSION },
-};
-static size_t numEmoteCommands = ARRAY_LEN( emoteCommands );
-
-typedef struct characterCommand_s {
-	const char	*name;
-	void		(*func)(gentity_t *ent);
-	int			flags;
-} characterCommand_t;
-
-characterCommand_t characterCommands[] = {
-	{ "characterinfo",		Cmd_CharacterInfo_F,		0 },
-	{ "bounty",				Cmd_Bounty_F,				0 },
-	{ "character",			Cmd_SelectCharacter_F,		0 },
-	{ "charactername",		Cmd_CharName_F,				0 },
-	//{ "checkinventory",	Cmd_CheckInventory_F,		0 },
-	{ "comm",				Cmd_Comm_F,					0 },
-	{ "createcharacter",	Cmd_CreateCharacter_F,		0 },
-	{ "editcharacter",		Cmd_EditCharacter_F,		0 },
-	{ "faction",			Cmd_Faction_F,				0 },
-	{ "factiondeposit",		Cmd_FactionDeposit_F,		0 },
-	{ "factioninfo",		Cmd_FactionInfo_F,			0 },
-	{ "factionwithdraw",	Cmd_FactionWithdraw_F,		0 },
-	{ "force",				Cmd_ForceMessage_F,			0 },
-	{ "givecredits",		Cmd_GiveCredits_F,			0 },
-	{ "inventory",			Cmd_Inventory_F,			0 },
-	{ "listfactions",		Cmd_ListFactions_F,			0 },
-	{ "mycharacters",		Cmd_ListCharacters_F,		0 },
-	{ "setfactionrank",		Cmd_SetFactionRank_F,		0 },
-	{ "shop",				Cmd_Shop_F,					0 },
-};
-static size_t numCharacterCommands = ARRAY_LEN( characterCommands );
-
-typedef struct accountCommand_s {
-	const char	*name;
-	void		(*func)(gentity_t *ent);
-	int			flags;
-} accountCommand_t;
-
-accountCommand_t accountCommands[] = {
-	{ "accountinfo",		Cmd_AccountInfo_F,			0 },
-	{ "accountname",		Cmd_AccountName_F,			0 },
-	{ "editaccount",		Cmd_EditAccount_F,			0 },
-	{ "login",				Cmd_AccountLogin_F,			0 },
-	{ "logout",				Cmd_AccountLogout_F,		0 },
-	{ "register",			Cmd_AccountCreate_F,		0 },
-};
-static size_t numAccountCommands = ARRAY_LEN( accountCommands );
-
-typedef struct adminCommand_s {
-	const char	*name;
-	void		(*func)(gentity_t *ent);
-	int			bitvalue;
-} adminCommand_t;
-
-adminCommand_t adminCommands[] = {
-	{ "amallchat",			Cmd_AllChat_F,		ADMIN_ALLCHAT },
-	{ "amannounce",			Cmd_amAnnounce_F,	ADMIN_ANNOUNCE },
-	{ "amaudio",			Cmd_Audio_F,		ADMIN_AUDIO },
-	{ "amban",				Cmd_amBan_F,		ADMIN_BAN },
-	{ "amdisguise",			Cmd_Disguise_F,		0 },
-	{ "amcreatefaction",	Cmd_CreateFaction_F,ADMIN_FACTION },
-	{ "ameffect",			Cmd_amEffect_F,		ADMIN_ADDEFFECT },
-	{ "amfactiongencredits",Cmd_FactionGenerateCredits_F,ADMIN_FACTION|ADMIN_CREDITS},
-	{ "amforceteam",		Cmd_amForceTeam_F,	ADMIN_FORCETEAM },
-	{ "amgencredits",		Cmd_GenerateCredits_F,ADMIN_CREDITS },
-	{ "amgiveadmin",		Cmd_GrantAdmin_F,	ADMIN_GRANTREMOVEADMIN },
-	{ "amgiveskillpoints",	Cmd_GiveSkillPoints_F,ADMIN_SKILLPOINTS },
-	{ "aminvisible",		Cmd_Invisible_F,	ADMIN_INVISIBLE },
-	{ "amkick",				Cmd_amKick_F,		ADMIN_KICK },
-	{ "amlistents",			Cmd_ListEnts_F,		ADMIN_BUILD },
-	{ "amlistwarnings",		Cmd_amWarningList_F,ADMIN_WARN },
-	{ "ammap",				Cmd_amMap_F,		ADMIN_MAP },
-	{ "amorigin",			Cmd_amOrigin_F,		ADMIN_TELEPORT },
-	{ "amremoveadmin",		Cmd_RemoveAdmin_F,	ADMIN_GRANTREMOVEADMIN },
-	{ "amremoveent",		Cmd_RemoveEntity_F,	ADMIN_BUILD },
-	{ "amrename",			Cmd_amRename_F,		ADMIN_RENAME },
-	{ "amsetfaction",		Cmd_SetFaction_F,	ADMIN_FACTION },
-	{ "amshakescreen",		Cmd_ShakeScreen_F,	ADMIN_SHAKE },
-	{ "amsilence",			Cmd_amSilence_F,	ADMIN_SILENCE },
-	{ "amsleep",			Cmd_amSleep_F,		ADMIN_SLEEP },
-	{ "amspawnent",			Cmd_SpawnEnt_F,		ADMIN_BUILD },
-	{ "amstatus",			Cmd_amStatus_F,		ADMIN_STATUS },
-	{ "amtele",				Cmd_amTeleport_F,	ADMIN_TELEPORT },
-	{ "amtelemark",			Cmd_amTelemark_F,	ADMIN_TELEPORT },
-	{ "amunsilence",		Cmd_amUnSilence_F,	ADMIN_SILENCE },
-	{ "amunsleep",			Cmd_amUnsleep_F,	ADMIN_SLEEP },
-	{ "amwarn",				Cmd_amWarn_F,		ADMIN_WARN },
-	{ "amweather",			Cmd_amWeather_F,	ADMIN_WEATHER },
-	{ "amweatherplus",		Cmd_amWeatherPlus_F, ADMIN_WEATHER },
-};
-static size_t numAdminCommands = ARRAY_LEN( adminCommands );
-
-typedef struct OpenRPCommand_s {
-	const char	*name;
-	void		(*func)(gentity_t *ent);
-	int			flags;
-} OpenRPCommand_t;
-
-OpenRPCommand_t OpenRPCommands[] = {
-	{ "amallchat",			Cmd_AllChat_F,		ADMIN_ALLCHAT },
-	{ "amannounce",			Cmd_amAnnounce_F,	ADMIN_ANNOUNCE },
-	{ "amaudio",			Cmd_Audio_F,		ADMIN_AUDIO },
-	{ "amban",				Cmd_amBan_F,		ADMIN_BAN },
-	{ "amdisguise",			Cmd_Disguise_F,		0 },
-	{ "amcreatefaction",	Cmd_CreateFaction_F,ADMIN_FACTION },
-	{ "ameffect",			Cmd_amEffect_F,		ADMIN_ADDEFFECT },
-	{ "amfactiongencredits",Cmd_FactionGenerateCredits_F,ADMIN_FACTION|ADMIN_CREDITS},
-	{ "amforceteam",		Cmd_amForceTeam_F,	ADMIN_FORCETEAM },
-	{ "amgencredits",		Cmd_GenerateCredits_F,ADMIN_CREDITS },
-};
-static size_t numOpenRPCommands = ARRAY_LEN( OpenRPCommands );
-
-typedef struct chatCommand_s {
-	const char	*name;
-	int			chatMode;
-	int			flags;
-} chatCommand_t;
-
-chatCommand_t chatCommands[] = {
-	{ "admin",			SAY_ADMIN,		0 },
-	{ "it",				SAY_IT,			CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "looc",			SAY_LOOC,		CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "me",				SAY_ME,			CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "ooc",			SAY_OOC,		0 },
-	{ "report",			SAY_REPORT,		0 },
-	{ "whisper",		SAY_WHISPER,	CMD_ALIVE|CMD_NOINTERMISSION },
-	{ "yell",			SAY_YELL,		CMD_ALIVE|CMD_NOINTERMISSION },
-};
-static size_t numChatCommands = ARRAY_LEN( chatCommands );
+//[CoOpEditor]
+extern void Create_Autosave( vec3_t origin, int size, qboolean teleportPlayers );
+extern void Save_Autosaves(void);
+extern void Delete_Autosaves(gentity_t* ent);
+//[/CoOpEditor]
+//[KnockdownSys]
+extern void G_Knockdown( gentity_t *self, gentity_t *attacker, const vec3_t pushDir, float strength, qboolean breakSaberLock );
+//[/KnockdownSys]
+extern void SetupReload(gentity_t *ent);
 
 void ClientCommand( int clientNum ) {
-	gentity_t	*ent = NULL;
-	char		cmd[MAX_TOKEN_CHARS] = {0};
-	extern qboolean G_CheckAdmin(gentity_t *ent, int bitvalue);
-	baseCommand_t	*baseCommand = NULL;
-	emoteCommand_t	*emoteCommand = NULL;
-	characterCommand_t *characterCommand = NULL;
-	accountCommand_t *accountCommand = NULL;
-	adminCommand_t *adminCommand = NULL;
-	OpenRPCommand_t *OpenRPCommand = NULL;
-	chatCommand_t *chatCommand = NULL;
+	gentity_t *ent;
+//	gentity_t *targetplayer;
+	char	cmd[MAX_TOKEN_CHARS];
+//	char	cmd2[MAX_TOKEN_CHARS];
+	//char	cmd3[MAX_TOKEN_CHARS];
+//	float		bounty; 
 
 	ent = g_entities + clientNum;
-
-	if ( !ent->client || ent->client->pers.connected != CON_CONNECTED )
-	{
-		#ifdef PATCH_ENGINE
-			char tmpIP[NET_ADDRSTRMAXLEN] = {0};
-			NET_AddrToString( tmpIP, sizeof( tmpIP ), &svs->clients[clientNum].netchan.remoteAddress );
-		#else
-			char *tmpIP = "Unknown";
-		#endif
-		G_SecurityLogPrintf( "ClientCommand(%d) without an active connection [IP: %s]\n", clientNum, tmpIP );
+	if ( !ent->client ) {
 		return;		// not fully in game yet
 	}
+
 
 	trap_Argv( 0, cmd, sizeof( cmd ) );
 
 	//rww - redirect bot commands
-	if ( strstr( cmd, "bot_" ) && AcceptBotCommand( cmd, ent ) )
+	if (strstr(cmd, "bot_") && AcceptBotCommand(cmd, ent))
+	{
 		return;
+	}
 	//end rww
 
-	baseCommand = (baseCommand_t *)bsearch( cmd, baseCommands, numBaseCommands, sizeof( baseCommands[0] ), cmdcmp );
-	if ( !baseCommand )
-		emoteCommand = (emoteCommand_t *)bsearch( cmd, emoteCommands, numEmoteCommands, sizeof( emoteCommands[0] ), cmdcmp );
-	if ( !emoteCommand )
-		characterCommand = (characterCommand_t *)bsearch( cmd, characterCommands, numCharacterCommands, sizeof( characterCommands[0] ), cmdcmp );
-	if ( !characterCommand )
-		accountCommand = (accountCommand_t *)bsearch( cmd, accountCommands, numAccountCommands, sizeof( accountCommands[0] ), cmdcmp );
-	if ( !accountCommand )
-		adminCommand = (adminCommand_t *)bsearch( cmd, adminCommands, numAdminCommands, sizeof( adminCommands[0] ), cmdcmp );
-	if ( !adminCommand )
-		OpenRPCommand = (OpenRPCommand_t *)bsearch( cmd, OpenRPCommands, numOpenRPCommands, sizeof( OpenRPCommands[0] ), cmdcmp );
-	if ( !OpenRPCommand )
-		chatCommand = (chatCommand_t *)bsearch( cmd, chatCommands, numChatCommands, sizeof( chatCommands[0] ), cmdcmp );
-
-	if ( !baseCommand && !emoteCommand && !characterCommand && !accountCommand && !adminCommand && !OpenRPCommand && !chatCommand )
+	if ( !Q_stricmp( cmd, "emaim" ) )
 	{
-		trap_SendServerCommand( clientNum, va( "print \"Unknown command %s\n\"", cmd ) );
+      TheEmote( TORSO_WEAPONIDLE4, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "embutton" ) )
+	{
+      TheEmote( BOTH_BUTTON_HOLD, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emchoke" ) )
+	{
+      TheEmote( BOTH_CHOKE1, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emdie" ) )
+	{
+      TheEmote( BOTH_DEATH1, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emdie2" ) )
+	{
+      TheEmote( BOTH_DEATH14, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emdie3" ) )
+	{
+      TheEmote( BOTH_DEATH17, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emdie4" ) )
+	{
+      TheEmote( BOTH_DEATH4, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emhips" ) )
+	{
+      TheEmote( BOTH_STAND8, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emintimidate" ) )
+	{
+      TheEmote( BOTH_ROSH_HEAL, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "empoint" ) )
+	{
+      TheEmote( BOTH_SCEPTER_HOLD, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "empush" ) )
+	{
+      TheEmote( BOTH_ATTACK11, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emsit" ) )
+	{
+      TheEmote( BOTH_SIT1, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emsit2" ) )
+	{
+      TheEmote( BOTH_SIT2, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emsit3" ) )
+	{
+      TheEmote( BOTH_SIT3, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emsit4" ) )
+	{
+      TheEmote( BOTH_SIT4, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emsit5" ) )
+	{
+      TheEmote( BOTH_SIT5, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emsit6" ) )
+	{
+      TheEmote( BOTH_SIT6, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emsit7" ) )
+	{
+      TheEmote( BOTH_SIT7, ent, qtrue );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emsorrow" ) )
+	{
+      TheEmote( BOTH_FORCEHEAL_START, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emstand" ) )
+	{
+      TheEmote( BOTH_STAND8, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emthrow" ) )
+	{
+      TheEmote( BOTH_SABERTHROW1START, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emtwitch" ) )
+	{
+      TheEmote( BOTH_DEATH14_UNGRIP, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emtyping" ) )
+	{
+      TheEmote( BOTH_DEATH14_UNGRIP, ent, qfalse );
+	  return;
+	}
+	if ( !Q_stricmp( cmd, "emwait" ) )
+	{
+      TheEmote( BOTH_STAND10, ent, qfalse );
+	  return;
+	}
+
+
+
+	if ( !Q_stricmp( cmd, "characterinfo" ) )
+	{
+		Cmd_CharacterInfo_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "bounty" ) )
+	{
+		Cmd_Bounty_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "character" ) )
+	{
+		Cmd_SelectCharacter_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "charactername" ) )
+	{
+		Cmd_CharName_F( ent );
+		return;
+	}
+	/*
+	if ( !Q_stricmp( cmd, "checkinventory" ) )
+	{
+		Cmd_CheckInventory_F( ent );
+		return;
+	}
+	*/
+	if ( !Q_stricmp( cmd, "comm" ) )
+	{
+		Cmd_Comm_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "createcharacter" ) )
+	{
+		Cmd_CreateCharacter_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "editcharacter" ) )
+	{
+		Cmd_EditCharacter_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "faction" ) )
+	{
+		Cmd_Faction_F( ent );	
+		return;
+	}
+	if ( !Q_stricmp( cmd, "factiondeposit" ) )
+	{
+		Cmd_FactionDeposit_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "factioninfo" ) )
+	{
+		Cmd_FactionInfo_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "factionwithdraw" ) )
+	{
+		Cmd_FactionWithdraw_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "force" ) )
+	{
+		Cmd_ForceMessage_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "givecredits" ) )
+	{
+		Cmd_GiveCredits_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "inventory" ) )
+	{
+		Cmd_Inventory_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "listfactions" ) )
+	{
+		Cmd_ListFactions_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "mycharacters" ) )
+	{
+		Cmd_ListCharacters_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "setfactionrank" ) )
+	{
+		Cmd_SetFactionRank_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "shop" ) )
+	{
+		Cmd_Shop_F( ent );
 		return;
 	}
 
-	if ( !adminCommand )
+
+
+	if ( !Q_stricmp( cmd, "accountinfo" ) )
 	{
-		if ( ( 
-			( baseCommand->flags & CMD_NOINTERMISSION ) || ( emoteCommand->flags & CMD_NOINTERMISSION ) || ( characterCommand->flags & CMD_NOINTERMISSION ) || ( accountCommand->flags & CMD_NOINTERMISSION ) || ( OpenRPCommand->flags & CMD_NOINTERMISSION ) || ( chatCommand->flags & CMD_NOINTERMISSION ) )
-			&& level.intermissiontime )
-		{
-			trap_SendServerCommand( clientNum, va( "print \"%s (%s)\n\"", G_GetStringEdString( "MP_SVGAME", "CANNOT_TASK_INTERMISSION" ), cmd ) );
-			return;
-		}
-
-		else if ( ( 
-			( baseCommand->flags & CMD_CHEAT ) || ( emoteCommand->flags & CMD_CHEAT ) || ( characterCommand->flags & CMD_CHEAT ) || ( accountCommand->flags & CMD_CHEAT ) || ( OpenRPCommand->flags & CMD_CHEAT ) || ( chatCommand->flags & CMD_CHEAT ) )
-			&& !ent->client->sess.cheatAccess )
-		{
-			if (! g_cheats.integer )
-			{
-				trap_SendServerCommand( clientNum, va( "print \"%s\n\"", G_GetStringEdString( "MP_SVGAME", "NOCHEATS" ) ) );
-				return;
-			}
-		}
-
-		else if ( ( 
-			( baseCommand->flags & CMD_ALIVE ) || ( emoteCommand->flags & CMD_ALIVE ) || ( characterCommand->flags & CMD_ALIVE ) || ( accountCommand->flags & CMD_ALIVE ) || ( OpenRPCommand->flags & CMD_ALIVE ) || ( chatCommand->flags & CMD_ALIVE ) )
-			&& ent->health <= 0 )
-		{
-			trap_SendServerCommand( clientNum, va( "print \"%s\n\"", G_GetStringEdString( "MP_SVGAME", "MUSTBEALIVE" ) ) );
-			return;
-		}
-		else if ( ( baseCommand->flags & CMD_BOT_WP_EDIT )
-			&& !bot_wp_edit.integer )
-		{
-			trap_SendServerCommand( clientNum, "print \"The cvar bot_wp_edit is 0. It must be 1 or higher to use this command.\n\"" );
-			return;
-		}
+		Cmd_AccountInfo_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "accountname" ) )
+	{
+		Cmd_AccountName_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "editaccount" ) )
+	{
+		Cmd_EditAccount_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "login" ) )
+	{
+		Cmd_AccountLogin_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "logout" ) )
+	{
+		Cmd_AccountLogout_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "register" ) )
+	{
+		Cmd_AccountCreate_F( ent );
+		return;
 	}
 
-	if ( baseCommand )
-		baseCommand->func( ent );
-	else if ( emoteCommand )
-		TheEmote( emoteCommand->anim, ent, emoteCommand->freeze );
-	else if ( characterCommand )
-		characterCommand->func( ent );
-	else if ( accountCommand )
-		accountCommand->func( ent );
-	else if ( adminCommand )
+
+
+	if ( !Q_stricmp( cmd, "amallchat" ) )
 	{
-		if ( !G_CheckAdmin( ent, adminCommand->bitvalue ) )
+		Cmd_AllChat_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amannounce" ) )
+	{
+		Cmd_amAnnounce_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amaudio" ) )
+	{
+		Cmd_Audio_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amban" ) )
+	{
+		Cmd_amBan_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amdisguise" ) )
+	{
+		Cmd_Disguise_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amcreatefaction" ) )
+	{
+		Cmd_CreateFaction_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "ameffect" ) )
+	{
+		Cmd_amEffect_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amfactiongencredits" ) )
+	{
+		Cmd_FactionGenerateCredits_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amforceteam" ) )
+	{
+		Cmd_amForceTeam_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amgencredits" ) )
+	{
+		Cmd_GenerateCredits_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amgiveadmin" ) )
+	{
+		Cmd_GrantAdmin_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amgiveskillpoints" ) )
+	{
+		Cmd_GiveSkillPoints_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "aminvisible" ) )
+	{
+		Cmd_Invisible_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amkick" ) )
+	{
+		Cmd_amKick_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amlistents" ) )
+	{
+		Cmd_ListEnts_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amlistwarnings" ) )
+	{
+		Cmd_amWarningList_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "ammap" ) )
+	{
+		Cmd_amMap_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amorigin" ) )
+	{
+		Cmd_amOrigin_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amremoveadmin" ) )
+	{
+		Cmd_RemoveAdmin_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amremoveent" ) )
+	{
+		Cmd_RemoveEntity_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amrename" ) )
+	{
+		Cmd_amRename_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amsetfaction" ) )
+	{
+		Cmd_SetFaction_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amshakescreen" ) )
+	{
+		Cmd_ShakeScreen_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amsilence" ) )
+	{
+		Cmd_amSilence_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amsleep" ) )
+	{
+		Cmd_amSleep_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amspawnent" ) )
+	{
+		Cmd_SpawnEnt_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amstatus" ) )
+	{
+		Cmd_amStatus_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amtele" ) )
+	{
+		Cmd_amTeleport_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amtelemark" ) )
+	{
+		Cmd_amTelemark_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amunsilence" ) )
+	{
+		Cmd_amUnSilence_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amunsleep" ) )
+	{
+		Cmd_amUnsleep_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amwarn" ) )
+	{
+		Cmd_amWarn_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amweather" ) )
+	{
+		Cmd_amWeather_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amweatherplus" ) )
+	{
+		Cmd_amWeatherPlus_F( ent );
+		return;
+	}
+
+
+
+	if ( !Q_stricmp( cmd, "aminfo" ) )
+	{
+		Cmd_aminfo_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "eminfo" ) )
+	{
+		Cmd_eminfo_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "info" ) )
+	{
+		Cmd_info_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "listadmins" ) )
+	{
+		Cmd_ListAdmins_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "togglechat" ) )
+	{
+		Cmd_ToggleChat_F( ent );
+		return;
+	}
+
+
+
+	if ( !Q_stricmp( cmd, "admin" ) )
+	{
+		Cmd_Say_f( ent, SAY_ADMIN, qfalse );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "it" ) )
+	{
+		Cmd_Say_f( ent, SAY_IT, qfalse );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "looc" ) )
+	{
+		Cmd_Say_f( ent, SAY_LOOC, qfalse );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "me" ) )
+	{
+		Cmd_Say_f( ent, SAY_ME, qfalse );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "ooc" ) )
+	{
+		Cmd_Say_f( ent, SAY_OOC, qfalse );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "report" ) )
+	{
+		Cmd_Say_f( ent, SAY_REPORT, qfalse );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "whisper" ) )
+	{
+		Cmd_Say_f( ent, SAY_WHISPER, qfalse );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "yell" ) )
+	{
+		Cmd_Say_f( ent, SAY_YELL, qfalse );
+		return;
+	}
+
+
+	if(Q_stricmp(cmd,"reload") == 0)
+	{
+		if(ent->reloadTime > 0)
+			CancelReload(ent);
+		else
+			SetupReload(ent);
+		return;
+	}
+	if (Q_stricmp (cmd, "say") == 0) {
+
+		if ( ent->client->sess.isSilenced )
 		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
+			trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
+			trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
 			return;
+		}
+
+		Cmd_Say_f (ent, SAY_ALL, qfalse);
+		return;
+	}
+	if ( (Q_stricmp (cmd, "say_team") == 0) ){
+		//[OpenRP - OOC]
+		/*if (g_gametype.integer < GT_TEAM)
+		{ //not a team game, just refer to regular say.
+			Cmd_Say_f (ent, SAY_ALL, qfalse);
 		}
 		else
-			adminCommand->func( ent );
-	}
-	else if ( OpenRPCommand )
-		OpenRPCommand->func( ent );
-	else if ( chatCommand )
-		Cmd_SayOpenRP_f( ent, chatCommand->chatMode );
-}
+		*/
+		//{
+		if ( ent->client->sess.isSilenced )
+		{
+			trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
+			trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
+			return;
+		}
 
-/*
-cvar_t __declspec(naked) * Cvar_Get(const char *cvarname, const char *value, int flags)
-{
-	(void)cvarname;
-	(void)value;
-	(void)flags;
-	__asm
-	{
-		push 0x439470
-		ret
+			Cmd_Say_f (ent, SAY_TEAM, qfalse);
+		//}
+		//[/OpenRP - OOC]
+		return;
 	}
-}
+	if ( (Q_stricmp (cmd, "tell") == 0) || (Q_stricmp (cmd, "pm") == 0) ) {
 
-cvar_t __declspec(naked) *Cvar_FindVar(const char *cvarname)
-{
-	__asm
-	{
-		mov edi, cvarname
-		mov eax, 0x4393B0
-		call eax
-	}
-}
+		if ( ent->client->sess.isSilenced )
+		{
+			trap_SendServerCommand(ent-g_entities,"print \"^1You are silenced and can't speak.\n\"");
+			trap_SendServerCommand(ent-g_entities,"cp \"^1You are silenced and can't speak.\n\"");
+			return;
+		}
 
-void __declspec(naked) Cvar_Set2(const char *cvarname, const char *newvalue, int force)
-{
-	(void)cvarname;
-	(void)newvalue;
-	(void)force;
-	__asm
-	{
-		push 0x4396A0
-		ret
+		Cmd_Tell_f ( ent );
+		return;
 	}
-}
-*/
-	/*
+
+	//note: these voice_cmds come from the ui/jamp/ingame_voicechat.menu menu file...
+	//		the strings are in strings/English/menus.str and all start with "VC_"
+	if (Q_stricmp(cmd, "voice_cmd") == 0)
+	{
+		Cmd_VoiceCommand_f(ent);
+		return;
+	}
+
+	if (Q_stricmp (cmd, "score") == 0) {
+		Cmd_Score_f (ent);
+		return;
+	}
+
+	//[ROQFILES]
+	if (Q_stricmp (cmd, "EndCinematic") == 0)
+	{//one of the clients just finished their cutscene, start rendering server frames again.
+		inGameCinematic = qfalse;
+		return;
+	}
+	//[/ROQFILES]
+	
+
+	// ignore all other commands when at intermission
+	if (level.intermissiontime)
+	{
+		qboolean giveError = qfalse;
+		//rwwFIXMEFIXME: This is terrible, write it differently
+
+		if (!Q_stricmp(cmd, "give"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "giveother"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "god"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "notarget"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "noclip"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "kill"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "teamtask"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "levelshot"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "follow"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "follownext"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "followprev"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "team"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "duelteam"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "siegeclass"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "forcechanged"))
+		{ //special case: still update force change
+			Cmd_ForceChanged_f (ent);
+			return;
+		}
+		else if (!Q_stricmp(cmd, "where"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "callvote"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "vote"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "callteamvote"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "teamvote"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "gc"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "setviewpos"))
+		{
+			giveError = qtrue;
+		}
+		else if (!Q_stricmp(cmd, "stats"))
+		{
+			giveError = qtrue;
+		}
+
+		if (giveError)
+		{
+			trap_SendServerCommand( clientNum, va("print \"%s (%s) \n\"", G_GetStringEdString("MP_SVGAME", "CANNOT_TASK_INTERMISSION"), cmd ) );
+		}
+		else
+		{
+			Cmd_Say_f (ent, qfalse, qtrue);
+		}
+		return;
+	}
+
+	if (Q_stricmp (cmd, "give") == 0)
+	{
+		Cmd_Give_f (ent, 0);
+	}
+	else if (Q_stricmp (cmd, "giveother") == 0)
+	{ //for debugging pretty much
+		Cmd_Give_f (ent, 1);
+	}
+	else if (Q_stricmp (cmd, "t_use") == 0 && CheatsOk(ent))
+	{ //debug use map object
+		if (trap_Argc() > 1)
+		{
+			char sArg[MAX_STRING_CHARS];
+			gentity_t *targ;
+
+			trap_Argv( 1, sArg, sizeof( sArg ) );
+			targ = G_Find( NULL, FOFS(targetname), sArg );
+
+			while (targ)
+			{
+				if (targ->use)
+				{
+					targ->use(targ, ent, ent);
+				}
+				targ = G_Find( targ, FOFS(targetname), sArg );
+			}
+		}
+	}
+	else if (Q_stricmp (cmd, "god") == 0)
+		Cmd_God_f (ent);
+	else if (Q_stricmp (cmd, "notarget") == 0)
+		Cmd_Notarget_f (ent);
+	else if (Q_stricmp (cmd, "noclip") == 0)
+		Cmd_Noclip_f (ent);
+	else if ( Q_stricmp( cmd, "NPC" ) == 0 && CheatsOk(ent) && !in_camera)
+	{
+		Cmd_NPC_f( ent );
+	}
+	else if (Q_stricmp (cmd, "kill") == 0)
+		Cmd_Kill_f (ent);
+	else if (Q_stricmp (cmd, "teamtask") == 0)
+		Cmd_TeamTask_f (ent);
+	else if (Q_stricmp (cmd, "levelshot") == 0)
+		Cmd_LevelShot_f (ent);
+	else if (Q_stricmp (cmd, "follow") == 0)
+		Cmd_Follow_f (ent);
+	else if (Q_stricmp (cmd, "follownext") == 0)
+		Cmd_FollowCycle_f (ent, 1);
+	else if (Q_stricmp (cmd, "followprev") == 0)
+		Cmd_FollowCycle_f (ent, -1);
+	else if (Q_stricmp (cmd, "team") == 0)
+		Cmd_Team_f (ent);
+	else if (Q_stricmp (cmd, "duelteam") == 0)
+		Cmd_DuelTeam_f (ent);
+	else if (Q_stricmp (cmd, "siegeclass") == 0)
+		Cmd_SiegeClass_f (ent);
+	else if (Q_stricmp (cmd, "forcechanged") == 0)
+		Cmd_ForceChanged_f (ent);
+	else if (Q_stricmp (cmd, "where") == 0)
+		Cmd_Where_f (ent);
+	else if (Q_stricmp (cmd, "callvote") == 0)
+		Cmd_CallVote_f (ent);
+	else if (Q_stricmp (cmd, "vote") == 0)
+		Cmd_Vote_f (ent);
+	else if (Q_stricmp (cmd, "callteamvote") == 0)
+		Cmd_CallTeamVote_f (ent);
+	else if (Q_stricmp (cmd, "teamvote") == 0)
+		Cmd_TeamVote_f (ent);
+	else if (Q_stricmp (cmd, "gc") == 0)
+		Cmd_GameCommand_f( ent );
+	else if (Q_stricmp (cmd, "setviewpos") == 0)
+		Cmd_SetViewpos_f( ent );
+	else if (Q_stricmp (cmd, "stats") == 0)
+		Cmd_Stats_f( ent );
+	//for convenient powerduel testing in release
+	else if (Q_stricmp(cmd, "killother") == 0 && CheatsOk( ent ))
+	{
+		if (trap_Argc() > 1)
+		{
+			char sArg[MAX_STRING_CHARS];
+			int entNum = 0;
+
+			trap_Argv( 1, sArg, sizeof( sArg ) );
+
+			entNum = G_ClientNumFromNetname(sArg);
+
+			if (entNum >= 0 && entNum < MAX_GENTITIES)
+			{
+				gentity_t *kEnt = &g_entities[entNum];
+
+				if (kEnt->inuse && kEnt->client)
+				{
+					kEnt->flags &= ~FL_GODMODE;
+					kEnt->client->ps.stats[STAT_HEALTH] = kEnt->health = -999;
+					player_die (kEnt, kEnt, kEnt, 100000, MOD_SUICIDE);
+				}
+			}
+		}
+	}
+	//[Test]
+#ifndef FINAL_BUILD
+	else if (Q_stricmp(cmd, "testtrace") == 0)
+	{
+		trace_t tr;
+		vec3_t traceTo, traceFrom, traceDir;
+
+		AngleVectors(ent->client->ps.viewangles, traceDir, 0, 0);
+		VectorCopy(ent->client->ps.origin, traceFrom);
+		VectorMA( traceFrom, 30, traceDir, traceTo );
+
+		trap_Trace( &tr, traceFrom, NULL, NULL, traceTo, ent->s.number, MASK_SHOT );
+
+		if(tr.fraction < 1.0f)
+		{
+			G_Printf("%i", tr.entityNum);
+		}
+	}
+#endif
+	//[/Test]
+	else if (Q_stricmp(cmd, "lamercheck") == 0)
+	{
+		trap_SendServerCommand( -1, va("cp \"This mod is based on code taken from the\nOpen Jedi Project. If the supposed author doesn't\ngive proper credit to OJP,\nplease contact us and we\n will deal with it.\nEmail: razorace@hotmail.com\n\""));
+	}
 	//[HolocronFiles]
 	else if (Q_stricmp(cmd, "!addholocron") == 0 && bot_wp_edit.integer >= 1)
 	{// Add a new holocron point. Unique1 added.
@@ -5072,4 +5294,675 @@ void __declspec(naked) Cvar_Set2(const char *cvarname, const char *newvalue, int
 		AOTCTC_Create_Holocron( rand()%18, ent->r.currentOrigin );
 	}
 	//[/HolocronFiles]
+	//[CoOpEditor]
+	else if (Q_stricmp (cmd, "autosave_add") == 0 && bot_wp_edit.integer)
+	{
+		int args = trap_Argc();
+		char arg1[MAX_STRING_CHARS];
+		char arg2[MAX_STRING_CHARS];
+
+		
+		if(args < 1)
+		{//no args, use defaults
+			Create_Autosave(ent->r.currentOrigin, 0, qfalse);
+		}
+		else
+		{
+			trap_Argv(1, arg1, sizeof(arg1));
+			if(arg1[0] == 't')
+			{//use default size with teleport flag
+				Create_Autosave(ent->r.currentOrigin, 0, qtrue);
+			}
+			else if(args > 1)
+			{//size and teleport flag
+				trap_Argv(2, arg2, sizeof(arg2));
+				Create_Autosave(ent->r.currentOrigin, atoi(arg1), arg2[0] == 't' ? qtrue:qfalse );
+			}
+			else
+			{//just size
+				Create_Autosave(ent->r.currentOrigin, atoi(arg1), qfalse );
+			}
+		}
+	}
+	else if (Q_stricmp (cmd, "autosave_save") == 0 && bot_wp_edit.integer)
+	{
+		Save_Autosaves();
+	}
+	else if (Q_stricmp (cmd, "autosave_delete") == 0 && bot_wp_edit.integer)
+	{
+		Delete_Autosaves(ent);
+	}
+	//[/CoOpEditor]
+#ifdef _DEBUG
+	else if (Q_stricmp(cmd, "relax") == 0 && CheatsOk( ent ))
+	{
+		if (ent->client->ps.eFlags & EF_RAG)
+		{
+			ent->client->ps.eFlags &= ~EF_RAG;
+		}
+		else
+		{
+			ent->client->ps.eFlags |= EF_RAG;
+		}
+	}
+	else if (Q_stricmp(cmd, "holdme") == 0 && CheatsOk( ent ))
+	{
+		if (trap_Argc() > 1)
+		{
+			char sArg[MAX_STRING_CHARS];
+			int entNum = 0;
+
+			trap_Argv( 1, sArg, sizeof( sArg ) );
+
+			entNum = atoi(sArg);
+
+			if (entNum >= 0 &&
+				entNum < MAX_GENTITIES)
+			{
+				gentity_t *grabber = &g_entities[entNum];
+
+				if (grabber->inuse && grabber->client && grabber->ghoul2)
+				{
+					if (!grabber->s.number)
+					{ //switch cl 0 and entitynum_none, so we can operate on the "if non-0" concept
+						ent->client->ps.ragAttach = ENTITYNUM_NONE;
+					}
+					else
+					{
+						ent->client->ps.ragAttach = grabber->s.number;
+					}
+				}
+			}
+		}
+		else
+		{
+			ent->client->ps.ragAttach = 0;
+		}
+	}
+	else if (Q_stricmp(cmd, "limb_break") == 0 && CheatsOk( ent ))
+	{
+		if (trap_Argc() > 1)
+		{
+			char sArg[MAX_STRING_CHARS];
+			int breakLimb = 0;
+
+			trap_Argv( 1, sArg, sizeof( sArg ) );
+			if (!Q_stricmp(sArg, "right"))
+			{
+				breakLimb = BROKENLIMB_RARM;
+			}
+			else if (!Q_stricmp(sArg, "left"))
+			{
+				breakLimb = BROKENLIMB_LARM;
+			}
+
+			G_BreakArm(ent, breakLimb);
+		}
+	}
+	else if (Q_stricmp(cmd, "headexplodey") == 0 && CheatsOk( ent ))
+	{
+		Cmd_Kill_f (ent);
+		if (ent->health < 1)
+		{
+			DismembermentTest(ent);
+		}
+	}
+	else if (Q_stricmp(cmd, "debugstupidthing") == 0 && CheatsOk( ent ))
+	{
+		int i = 0;
+		gentity_t *blah;
+		while (i < MAX_GENTITIES)
+		{
+			blah = &g_entities[i];
+			if (blah->inuse && blah->classname && blah->classname[0] && !Q_stricmp(blah->classname, "NPC_Vehicle"))
+			{
+				Com_Printf("Found it.\n");
+			}
+			i++;
+		}
+	}
+	else if (Q_stricmp(cmd, "arbitraryprint") == 0 && CheatsOk( ent ))
+	{
+		trap_SendServerCommand( -1, va("cp \"Blah blah blah\n\""));
+	}
+	else if (Q_stricmp(cmd, "handcut") == 0 && CheatsOk( ent ))
+	{
+		int bCl = 0;
+		char sarg[MAX_STRING_CHARS];
+
+		if (trap_Argc() > 1)
+		{
+			trap_Argv( 1, sarg, sizeof( sarg ) );
+
+			if (sarg[0])
+			{
+				bCl = atoi(sarg);
+
+				if (bCl >= 0 && bCl < MAX_GENTITIES)
+				{
+					gentity_t *hEnt = &g_entities[bCl];
+
+					if (hEnt->client)
+					{
+						if (hEnt->health > 0)
+						{
+							gGAvoidDismember = 1;
+							hEnt->flags &= ~FL_GODMODE;
+							hEnt->client->ps.stats[STAT_HEALTH] = hEnt->health = -999;
+							player_die (hEnt, hEnt, hEnt, 100000, MOD_SUICIDE);
+						}
+						gGAvoidDismember = 2;
+						G_CheckForDismemberment(hEnt, ent, hEnt->client->ps.origin, 999, hEnt->client->ps.legsAnim, qfalse);
+						gGAvoidDismember = 0;
+					}
+				}
+			}
+		}
+	}
+	else if (Q_stricmp(cmd, "loveandpeace") == 0 && CheatsOk( ent ))
+	{
+		trace_t tr;
+		vec3_t fPos;
+
+		AngleVectors(ent->client->ps.viewangles, fPos, 0, 0);
+
+		fPos[0] = ent->client->ps.origin[0] + fPos[0]*40;
+		fPos[1] = ent->client->ps.origin[1] + fPos[1]*40;
+		fPos[2] = ent->client->ps.origin[2] + fPos[2]*40;
+
+		trap_Trace(&tr, ent->client->ps.origin, 0, 0, fPos, ent->s.number, ent->clipmask);
+
+		if (tr.entityNum < MAX_CLIENTS && tr.entityNum != ent->s.number)
+		{
+			gentity_t *other = &g_entities[tr.entityNum];
+
+			if (other && other->inuse && other->client)
+			{
+				vec3_t entDir;
+				vec3_t otherDir;
+				vec3_t entAngles;
+				vec3_t otherAngles;
+
+				if (ent->client->ps.weapon == WP_SABER && !ent->client->ps.saberHolstered)
+				{
+					Cmd_ToggleSaber_f(ent);
+				}
+
+				if (other->client->ps.weapon == WP_SABER && !other->client->ps.saberHolstered)
+				{
+					Cmd_ToggleSaber_f(other);
+				}
+
+				if ((ent->client->ps.weapon != WP_SABER || ent->client->ps.saberHolstered) &&
+					(other->client->ps.weapon != WP_SABER || other->client->ps.saberHolstered))
+				{
+					VectorSubtract( other->client->ps.origin, ent->client->ps.origin, otherDir );
+					VectorCopy( ent->client->ps.viewangles, entAngles );
+					entAngles[YAW] = vectoyaw( otherDir );
+					SetClientViewAngle( ent, entAngles );
+
+					StandardSetBodyAnim(ent, /*BOTH_KISSER1LOOP*/BOTH_STAND1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
+					ent->client->ps.saberMove = LS_NONE;
+					ent->client->ps.saberBlocked = 0;
+					ent->client->ps.saberBlocking = 0;
+
+					VectorSubtract( ent->client->ps.origin, other->client->ps.origin, entDir );
+					VectorCopy( other->client->ps.viewangles, otherAngles );
+					otherAngles[YAW] = vectoyaw( entDir );
+					SetClientViewAngle( other, otherAngles );
+
+					StandardSetBodyAnim(other, /*BOTH_KISSEE1LOOP*/BOTH_STAND1, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
+					other->client->ps.saberMove = LS_NONE;
+					other->client->ps.saberBlocked = 0;
+					other->client->ps.saberBlocking = 0;
+				}
+			}
+		}
+	}
+#endif
+	//[MELEE]
+	else if (Q_stricmp(cmd, "togglesaber") == 0)
+	{
+		Cmd_ToggleSaber_f(ent);
+	}
+	/* racc - This cheat code isn't used anymore.
+	else if (Q_stricmp(cmd, "thedestroyer") == 0 && CheatsOk( ent ) && ent && ent->client && ent->client->ps.saberHolstered && ent->client->ps.weapon == WP_SABER)
+	{
+		Cmd_ToggleSaber_f(ent);
+
+		if (!ent->client->ps.saberHolstered)
+		{
+		}
+	}
 	*/
+	//begin bot debug cmds
+	else if (Q_stricmp(cmd, "debugBMove_Forward") == 0 && CheatsOk(ent))
+	{
+		int arg = 4000;
+		int bCl = 0;
+		char sarg[MAX_STRING_CHARS];
+
+		assert(trap_Argc() > 1);
+		trap_Argv( 1, sarg, sizeof( sarg ) );
+
+		assert(sarg[0]);
+		bCl = atoi(sarg);
+		Bot_SetForcedMovement(bCl, arg, -1, -1);
+	}
+	else if (Q_stricmp(cmd, "debugBMove_Back") == 0 && CheatsOk(ent))
+	{
+		int arg = -4000;
+		int bCl = 0;
+		char sarg[MAX_STRING_CHARS];
+
+		assert(trap_Argc() > 1);
+		trap_Argv( 1, sarg, sizeof( sarg ) );
+
+		assert(sarg[0]);
+		bCl = atoi(sarg);
+		Bot_SetForcedMovement(bCl, arg, -1, -1);
+	}
+	else if (Q_stricmp(cmd, "debugBMove_Right") == 0 && CheatsOk(ent))
+	{
+		int arg = 4000;
+		int bCl = 0;
+		char sarg[MAX_STRING_CHARS];
+
+		assert(trap_Argc() > 1);
+		trap_Argv( 1, sarg, sizeof( sarg ) );
+
+		assert(sarg[0]);
+		bCl = atoi(sarg);
+		Bot_SetForcedMovement(bCl, -1, arg, -1);
+	}
+	else if (Q_stricmp(cmd, "debugBMove_Left") == 0 && CheatsOk(ent))
+	{
+		int arg = -4000;
+		int bCl = 0;
+		char sarg[MAX_STRING_CHARS];
+
+		assert(trap_Argc() > 1);
+		trap_Argv( 1, sarg, sizeof( sarg ) );
+
+		assert(sarg[0]);
+		bCl = atoi(sarg);
+		Bot_SetForcedMovement(bCl, -1, arg, -1);
+	}
+	else if (Q_stricmp(cmd, "debugBMove_Up") == 0 && CheatsOk(ent))
+	{
+		int arg = 4000;
+		int bCl = 0;
+		char sarg[MAX_STRING_CHARS];
+
+		assert(trap_Argc() > 1);
+		trap_Argv( 1, sarg, sizeof( sarg ) );
+
+		assert(sarg[0]);
+		bCl = atoi(sarg);
+		Bot_SetForcedMovement(bCl, -1, -1, arg);
+	}
+	//end bot debug cmds
+#ifndef FINAL_BUILD
+	else if (Q_stricmp(cmd, "debugSetSaberMove") == 0)
+	{
+		Cmd_DebugSetSaberMove_f(ent);
+	}
+	//[SaberSys]
+	//This command forces the player into a given saberblocked state which is determined by the inputed numberical value.
+	else if (Q_stricmp(cmd, "debugSetSaberBlock") == 0)
+	{
+		Cmd_DebugSetSaberBlock_f(ent);
+	}
+	//[/SaberSys]
+	else if (Q_stricmp(cmd, "debugSetBodyAnim") == 0)
+	{
+		Cmd_DebugSetBodyAnim_f(ent, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD);
+	}
+	else if (Q_stricmp(cmd, "debugDismemberment") == 0)
+	{
+		Cmd_Kill_f (ent);
+		if (ent->health < 1)
+		{
+			char	arg[MAX_STRING_CHARS];
+			int		iArg = 0;
+
+			if (trap_Argc() > 1)
+			{
+				trap_Argv( 1, arg, sizeof( arg ) );
+
+				if (arg[0])
+				{
+					iArg = atoi(arg);
+				}
+			}
+
+			DismembermentByNum(ent, iArg);
+		}
+	}
+	else if (Q_stricmp(cmd, "debugDropSaber") == 0)
+	{
+		if (ent->client->ps.weapon == WP_SABER &&
+			ent->client->ps.saberEntityNum &&
+			!ent->client->ps.saberInFlight)
+		{
+			saberKnockOutOfHand(&g_entities[ent->client->ps.saberEntityNum], ent, vec3_origin);
+		}
+	}
+	else if (Q_stricmp(cmd, "debugKnockMeDown") == 0)
+	{
+		//[KnockdownSys]
+		G_Knockdown(ent, NULL, vec3_origin, 300, qtrue);
+		/*
+		if (BG_KnockDownable(&ent->client->ps))
+		{
+			ent->client->ps.forceHandExtend = HANDEXTEND_KNOCKDOWN;
+			ent->client->ps.forceDodgeAnim = 0;
+			if (trap_Argc() > 1)
+			{
+				ent->client->ps.forceHandExtendTime = level.time + 1100;
+				ent->client->ps.quickerGetup = qfalse;
+			}
+			else
+			{
+				ent->client->ps.forceHandExtendTime = level.time + 700;
+				ent->client->ps.quickerGetup = qtrue;
+			}
+		}
+		*/
+		//[/KnockdownSys]
+	}
+	else if (Q_stricmp(cmd, "debugSaberSwitch") == 0)
+	{
+		gentity_t *targ = NULL;
+
+		if (trap_Argc() > 1)
+		{
+			char	arg[MAX_STRING_CHARS];
+
+			trap_Argv( 1, arg, sizeof( arg ) );
+
+			if (arg[0])
+			{
+				int x = atoi(arg);
+				
+				if (x >= 0 && x < MAX_CLIENTS)
+				{
+					targ = &g_entities[x];
+				}
+			}
+		}
+
+		if (targ && targ->inuse && targ->client)
+		{
+			Cmd_ToggleSaber_f(targ);
+		}
+	}
+	else if (Q_stricmp(cmd, "debugIKGrab") == 0)
+	{
+		gentity_t *targ = NULL;
+
+		if (trap_Argc() > 1)
+		{
+			char	arg[MAX_STRING_CHARS];
+
+			trap_Argv( 1, arg, sizeof( arg ) );
+
+			if (arg[0])
+			{
+				int x = atoi(arg);
+				
+				if (x >= 0 && x < MAX_CLIENTS)
+				{
+					targ = &g_entities[x];
+				}
+			}
+		}
+
+		if (targ && targ->inuse && targ->client && ent->s.number != targ->s.number)
+		{
+			targ->client->ps.heldByClient = ent->s.number+1;
+		}
+	}
+	else if (Q_stricmp(cmd, "debugIKBeGrabbedBy") == 0)
+	{
+		gentity_t *targ = NULL;
+
+		if (trap_Argc() > 1)
+		{
+			char	arg[MAX_STRING_CHARS];
+
+			trap_Argv( 1, arg, sizeof( arg ) );
+
+			if (arg[0])
+			{
+				int x = atoi(arg);
+				
+				if (x >= 0 && x < MAX_CLIENTS)
+				{
+					targ = &g_entities[x];
+				}
+			}
+		}
+
+		if (targ && targ->inuse && targ->client && ent->s.number != targ->s.number)
+		{
+			ent->client->ps.heldByClient = targ->s.number+1;
+		}
+	}
+	else if (Q_stricmp(cmd, "debugIKRelease") == 0)
+	{
+		gentity_t *targ = NULL;
+
+		if (trap_Argc() > 1)
+		{
+			char	arg[MAX_STRING_CHARS];
+
+			trap_Argv( 1, arg, sizeof( arg ) );
+
+			if (arg[0])
+			{
+				int x = atoi(arg);
+				
+				if (x >= 0 && x < MAX_CLIENTS)
+				{
+					targ = &g_entities[x];
+				}
+			}
+		}
+
+		if (targ && targ->inuse && targ->client)
+		{
+			targ->client->ps.heldByClient = 0;
+		}
+	}
+	else if (Q_stricmp(cmd, "debugThrow") == 0)
+	{
+		trace_t tr;
+		vec3_t tTo, fwd;
+
+		if (ent->client->ps.weaponTime > 0 || ent->client->ps.forceHandExtend != HANDEXTEND_NONE ||
+			ent->client->ps.groundEntityNum == ENTITYNUM_NONE || ent->health < 1)
+		{
+			return;
+		}
+
+		AngleVectors(ent->client->ps.viewangles, fwd, 0, 0);
+		tTo[0] = ent->client->ps.origin[0] + fwd[0]*32;
+		tTo[1] = ent->client->ps.origin[1] + fwd[1]*32;
+		tTo[2] = ent->client->ps.origin[2] + fwd[2]*32;
+
+		trap_Trace(&tr, ent->client->ps.origin, 0, 0, tTo, ent->s.number, MASK_PLAYERSOLID);
+
+		if (tr.fraction != 1)
+		{
+			gentity_t *other = &g_entities[tr.entityNum];
+
+			if (other->inuse && other->client && other->client->ps.forceHandExtend == HANDEXTEND_NONE &&
+				other->client->ps.groundEntityNum != ENTITYNUM_NONE && other->health > 0 &&
+				(int)ent->client->ps.origin[2] == (int)other->client->ps.origin[2])
+			{
+				float pDif = 40.0f;
+				vec3_t entAngles, entDir;
+				vec3_t otherAngles, otherDir;
+				vec3_t intendedOrigin;
+				vec3_t boltOrg, pBoltOrg;
+				vec3_t tAngles, vDif;
+				vec3_t fwd, right;
+				trace_t tr;
+				trace_t tr2;
+
+				VectorSubtract( other->client->ps.origin, ent->client->ps.origin, otherDir );
+				VectorCopy( ent->client->ps.viewangles, entAngles );
+				entAngles[YAW] = vectoyaw( otherDir );
+				SetClientViewAngle( ent, entAngles );
+
+				ent->client->ps.forceHandExtend = HANDEXTEND_PRETHROW;
+				ent->client->ps.forceHandExtendTime = level.time + 5000;
+
+				ent->client->throwingIndex = other->s.number;
+				ent->client->doingThrow = level.time + 5000;
+				ent->client->beingThrown = 0;
+
+				VectorSubtract( ent->client->ps.origin, other->client->ps.origin, entDir );
+				VectorCopy( other->client->ps.viewangles, otherAngles );
+				otherAngles[YAW] = vectoyaw( entDir );
+				SetClientViewAngle( other, otherAngles );
+
+				other->client->ps.forceHandExtend = HANDEXTEND_PRETHROWN;
+				other->client->ps.forceHandExtendTime = level.time + 5000;
+
+				other->client->throwingIndex = ent->s.number;
+				other->client->beingThrown = level.time + 5000;
+				other->client->doingThrow = 0;
+
+				//Doing this now at a stage in the throw, isntead of initially.
+				//other->client->ps.heldByClient = ent->s.number+1;
+
+				G_EntitySound( other, CHAN_VOICE, G_SoundIndex("*pain100.wav") );
+				G_EntitySound( ent, CHAN_VOICE, G_SoundIndex("*jump1.wav") );
+				G_Sound(other, CHAN_AUTO, G_SoundIndex( "sound/movers/objects/objectHit.wav" ));
+
+				//see if we can move to be next to the hand.. if it's not clear, break the throw.
+				VectorClear(tAngles);
+				tAngles[YAW] = ent->client->ps.viewangles[YAW];
+				VectorCopy(ent->client->ps.origin, pBoltOrg);
+				AngleVectors(tAngles, fwd, right, 0);
+				boltOrg[0] = pBoltOrg[0] + fwd[0]*8 + right[0]*pDif;
+				boltOrg[1] = pBoltOrg[1] + fwd[1]*8 + right[1]*pDif;
+				boltOrg[2] = pBoltOrg[2];
+
+				VectorSubtract(boltOrg, pBoltOrg, vDif);
+				VectorNormalize(vDif);
+
+				VectorClear(other->client->ps.velocity);
+				intendedOrigin[0] = pBoltOrg[0] + vDif[0]*pDif;
+				intendedOrigin[1] = pBoltOrg[1] + vDif[1]*pDif;
+				intendedOrigin[2] = other->client->ps.origin[2];
+
+				trap_Trace(&tr, intendedOrigin, other->r.mins, other->r.maxs, intendedOrigin, other->s.number, other->clipmask);
+				trap_Trace(&tr2, ent->client->ps.origin, ent->r.mins, ent->r.maxs, intendedOrigin, ent->s.number, CONTENTS_SOLID);
+
+				if (tr.fraction == 1.0 && !tr.startsolid && tr2.fraction == 1.0 && !tr2.startsolid)
+				{
+					VectorCopy(intendedOrigin, other->client->ps.origin);
+				}
+				else
+				{ //if the guy can't be put here then it's time to break the throw off.
+					vec3_t oppDir;
+					int strength = 4;
+
+					other->client->ps.heldByClient = 0;
+					other->client->beingThrown = 0;
+					ent->client->doingThrow = 0;
+
+					ent->client->ps.forceHandExtend = HANDEXTEND_NONE;
+					G_EntitySound( ent, CHAN_VOICE, G_SoundIndex("*pain25.wav") );
+
+					other->client->ps.forceHandExtend = HANDEXTEND_NONE;
+					VectorSubtract(other->client->ps.origin, ent->client->ps.origin, oppDir);
+					VectorNormalize(oppDir);
+					other->client->ps.velocity[0] = oppDir[0]*(strength*40);
+					other->client->ps.velocity[1] = oppDir[1]*(strength*40);
+					other->client->ps.velocity[2] = 150;
+
+					VectorSubtract(ent->client->ps.origin, other->client->ps.origin, oppDir);
+					VectorNormalize(oppDir);
+					ent->client->ps.velocity[0] = oppDir[0]*(strength*40);
+					ent->client->ps.velocity[1] = oppDir[1]*(strength*40);
+					ent->client->ps.velocity[2] = 150;
+				}
+			}
+		}
+	}
+#endif
+#ifdef VM_MEMALLOC_DEBUG
+	else if (Q_stricmp(cmd, "debugTestAlloc") == 0)
+	{ //rww - small routine to stress the malloc trap stuff and make sure nothing bad is happening.
+		char *blah;
+		int i = 1;
+		int x;
+
+		//stress it. Yes, this will take a while. If it doesn't explode miserably in the process.
+		while (i < 32768)
+		{
+			x = 0;
+
+			trap_TrueMalloc((void **)&blah, i);
+			if (!blah)
+			{ //pointer is returned null if allocation failed
+				trap_SendServerCommand( -1, va("print \"Failed to alloc at %i!\n\"", i));
+				break;
+			}
+			while (x < i)
+			{ //fill the allocated memory up to the edge
+				if (x+1 == i)
+				{
+					blah[x] = 0;
+				}
+				else
+				{
+					blah[x] = 'A';
+				}
+				x++;
+			}
+			trap_TrueFree((void **)&blah);
+			if (blah)
+			{ //should be nullified in the engine after being freed
+				trap_SendServerCommand( -1, va("print \"Failed to free at %i!\n\"", i));
+				break;
+			}
+
+			i++;
+		}
+
+		trap_SendServerCommand( -1, "print \"Finished allocation test\n\"");
+	}
+#endif
+#ifndef FINAL_BUILD
+	else if (Q_stricmp(cmd, "debugShipDamage") == 0)
+	{
+		char	arg[MAX_STRING_CHARS];
+		char	arg2[MAX_STRING_CHARS];
+		int		shipSurf, damageLevel;
+
+		trap_Argv( 1, arg, sizeof( arg ) );
+		trap_Argv( 2, arg2, sizeof( arg2 ) );
+		shipSurf = SHIPSURF_FRONT+atoi(arg);
+		damageLevel = atoi(arg2);
+
+		G_SetVehDamageFlags( &g_entities[ent->s.m_iVehicleNum], shipSurf, damageLevel );
+	}
+#endif
+	else
+	{
+		if (Q_stricmp(cmd, "addbot") == 0)
+		{ //because addbot isn't a recognized command unless you're the server, but it is in the menus regardless
+//			trap_SendServerCommand( clientNum, va("print \"You can only add bots as the server.\n\"" ) );
+			trap_SendServerCommand( clientNum, va("print \"%s.\n\"", G_GetStringEdString("MP_SVGAME", "ONLY_ADD_BOTS_AS_SERVER")));
+		}
+		else
+		{
+			trap_SendServerCommand( clientNum, va("print \"unknown cmd %s\n\"", cmd ) );
+		}
+	}
+}
