@@ -913,6 +913,12 @@ static GAME_INLINE qboolean G_CheckLookTarget( gentity_t *ent, vec3_t	lookAngles
 		}
 		else if ( ent->client->renderInfo.lookMode == LM_INTEREST && ent->client->renderInfo.lookTarget > -1 && ent->client->renderInfo.lookTarget < MAX_INTEREST_POINTS )
 		{
+			gentity_t	*lookCent = &g_entities[ent->client->renderInfo.lookTarget];
+			//[OpenRP - Don't turn head when cloaked player is next to you]	  	
+			if ( lookCent->client->ps.powerups[PW_CLOAKED] )
+					return qfalse;
+			//[/OpenRP - Don't turn head when cloaked player is next to you]
+
 			VectorCopy( level.interestPoints[ent->client->renderInfo.lookTarget].origin, lookOrg );
 		}
 		else

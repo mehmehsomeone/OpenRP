@@ -757,8 +757,6 @@ vmCvar_t	g_allowBlackNames;		// Allow clients to use black names
 //vmCvar_t	openrp_jetpackFuel;
 //vmCvar_t	openrp_cloakFuel;
 
-vmCvar_t openrp_allChat;
-
 vmCvar_t	openrp_showRenames;
 
 vmCvar_t	openrp_databasePath;
@@ -1286,8 +1284,6 @@ static cvarTable_t		gameCvarTable[] = {
 
 	//{ &openrp_jetpackFuel, "openrp_jetpackFuel", "0", CVAR_ARCHIVE, 0, qtrue },
 	//{ &openrp_cloakFuel, "openrp_cloakFuel", "0", CVAR_ARCHIVE, 0, qtrue },
-	
-	{ &openrp_allChat, "openrp_allChat", "1", CVAR_ARCHIVE, 0, qtrue },
 
 	{ &openrp_showRenames, "openrp_showRenames", "1", CVAR_ARCHIVE, 0, qtrue },
 
@@ -4219,6 +4215,7 @@ void G_RunFrame( int levelTime ) {
 
 	#ifdef PATCH_ENGINE
 		//Raz: fake client detected, client didn't validate themselves
+		//OPENRPTODO  - This didn't seem to work properly, client couldn't connect
 		if ( g_antiFakePlayer.integer && level.security.isPatched )
 		{//Patched, check for q3fill (Connection activity check)
 			gclient_t	*cl;

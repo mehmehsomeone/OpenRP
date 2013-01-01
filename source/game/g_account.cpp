@@ -554,7 +554,7 @@ void Cmd_AccountName_F( gentity_t * ent )
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 

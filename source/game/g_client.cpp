@@ -3243,9 +3243,13 @@ void player_touch(gentity_t *self, gentity_t *other, trace_t *trace )
 			gentity_t *gripper = NULL;
 			int i=0;
 
+			//[OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
+			/*
 			G_Knockdown(self,other,other->client->ps.velocity,100,qfalse);
 			self->client->ps.velocity[1] = other->client->ps.velocity[1]*5.5f;
 			self->client->ps.velocity[0] = other->client->ps.velocity[0]*5.5f;
+			*/
+			//[/OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
 
 			for(i=0;i<1024;i++)
 			{
@@ -3260,10 +3264,14 @@ void player_touch(gentity_t *self, gentity_t *other, trace_t *trace )
 			if(gripper == NULL)
 				return;
 
-			G_Printf("Damage: %i\n",damage);
+			//[OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
+			//G_Printf("Damage: %i\n",damage);
+			//[/OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
 			//G_Damage(gripEnt, self, self, NULL, NULL, 2, DAMAGE_NO_ARMOR, MOD_FORCE_DARK);
-			G_Damage(other,gripper,gripper,NULL,NULL,damage,DAMAGE_NO_ARMOR,MOD_FORCE_DARK);
-			G_Damage(self,other,other,NULL,NULL,damage,DAMAGE_NO_ARMOR,0);
+			//[OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
+			//G_Damage(other,gripper,gripper,NULL,NULL,damage,DAMAGE_NO_ARMOR,MOD_FORCE_DARK);
+			//G_Damage(self,other,other,NULL,NULL,damage,DAMAGE_NO_ARMOR,0);
+			//[/OpenRP - Fixed issue when people collide, dmg gets dealt. Same with pulling an enemy into you.]
 		}
 	}
 }

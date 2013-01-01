@@ -222,7 +222,7 @@ void Cmd_amBan_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -291,7 +291,7 @@ void Cmd_amKick_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -352,7 +352,7 @@ void Cmd_amWarn_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -450,7 +450,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		}
 		if (clientid >= MAX_CLIENTS || clientid < 0) 
 		{ 
-			trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", arg1 ) );
+			trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", arg1 ) );
 			return;
 		}
 		// either we have the client id or the string did not match
@@ -511,12 +511,12 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		}
 		if (clientid >= MAX_CLIENTS || clientid < 0) 
 		{ 
-			trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", arg1 ) );
+			trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", arg1 ) );
 			return;
 		}
 		if (clientid2 >= MAX_CLIENTS || clientid2 < 0) 
 		{ 
-			trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", arg1 ) );
+			trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", arg1 ) );
 			return;
 		}
 
@@ -585,7 +585,7 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		}
 		if (clientid >= MAX_CLIENTS || clientid < 0) 
 		{ 
-			trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", arg1 ) );
+			trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", arg1 ) );
 			return;
 		}
 		// either we have the client id or the string did not match
@@ -686,7 +686,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -738,7 +738,7 @@ void Cmd_amSilence_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -804,7 +804,7 @@ void Cmd_amUnSilence_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -872,7 +872,7 @@ void Cmd_amSleep_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -964,7 +964,7 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -1100,7 +1100,7 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -1279,7 +1279,7 @@ void Cmd_amWeather_F(gentity_t *ent)
 		G_LogPrintf("Weather cleared by %s.\n", ent->client->pers.netname);
 		return;
 	}
-
+	 
 	else
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2Weather changed to %s. To change it back, use /amweather clear\n\"", weather ) );
@@ -1492,7 +1492,7 @@ void Cmd_amRename_F(gentity_t *ent)
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", currentname ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", currentname ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -2647,7 +2647,74 @@ void Cmd_Disguise_F( gentity_t *ent )
 	return;
 }
 
-void Cmd_CheckForce_F( gentity_t *ent )
+void Cmd_CheckStats_F( gentity_t *ent )
 {
+	char cmdTarget[MAX_STRING_CHARS];
+	int clientid = -1; 
+	int i;
+	static const char *forcePowersNames[] =
+	{
+		"Force Heal",
+		"Force Jump",
+		"Force Speed",
+		"Force Push",
+		"Force Pull",
+		"Force Mindtrick",
+		"Force Grip",
+		"Force Lightning",
+		"Force Rage",
+		"Force Manipulate",
+		"Force Absorb",
+		"Force Team Heal",
+		"Force Lift",
+		"Force Drain",
+		"Force Sense",
+		"Saber Offense",
+		"Saber Defense",
+		"Saber Throw",
+	};
 
+	if(!G_CheckAdmin(ent, ADMIN_CHECKSTATS))
+	{  	
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
+		return;  	
+	}
+
+	if(trap_Argc() < 2)
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amcheckstats <name/clientid>\n\""));
+		return;
+	}
+
+	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
+
+	clientid = M_G_ClientNumberFromName( cmdTarget );
+	if (clientid == -1) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
+		return; 
+	} 
+	if (clientid == -2) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
+		return; 
+	}
+	if (clientid >= MAX_CLIENTS || clientid < 0) 
+	{ 
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
+		return;
+	}
+	if (!g_entities[clientid].inuse) 
+	{
+		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
+		return; 
+	}
+
+	trap_SendServerCommand( ent-g_entities, va( "print \"Force Stats for %s:\n\"", g_entities[clientid].client->pers.netname ) );
+	//It's NUM_FORCE_POWERS-1 because force powers go from 0-17, not 1-18
+	for ( i = 0; i < NUM_FORCE_POWERS-1; i++ )
+	{
+		trap_SendServerCommand( ent-g_entities, va( "print \"%s - Level: %i\n\"", forcePowersNames[i+1], g_entities[clientid].client->ps.fd.forcePowerLevel[i] ) );
+	}
+	return;
 }

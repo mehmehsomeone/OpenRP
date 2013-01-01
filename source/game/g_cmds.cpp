@@ -2122,7 +2122,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	// send it to all the appropriate clients
 
 	//[OpenRP - Chat System]
-	if ( !openrp_allChat.integer && ( mode == SAY_ALL || mode == SAY_YELL || mode == SAY_WHISPER || mode == SAY_ME || mode == SAY_IT || mode == SAY_LOOC ) )
+	if ( mode == SAY_ALL || mode == SAY_YELL || mode == SAY_WHISPER || mode == SAY_ME || mode == SAY_IT || mode == SAY_LOOC )
 	{
 		for ( j = 0; j < level.maxclients; j++ )
 		{
@@ -2259,7 +2259,7 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 	}
 	if (clientid >= MAX_CLIENTS || clientid < 0) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", arg ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", arg ) );
 		return;
 	}
 	if (!g_entities[clientid].inuse) 
@@ -4621,9 +4621,9 @@ void ClientCommand( int clientNum ) {
 		return;
 	}
 	*/
-	if ( !Q_stricmp( cmd, "comm" ) )
+	if ( !Q_stricmp( cmd, "radio" ) )
 	{
-		Cmd_Comm_F( ent );
+		Cmd_Radio_F( ent );
 		return;
 	}
 	if ( !Q_stricmp( cmd, "createcharacter" ) )
@@ -4745,6 +4745,11 @@ void ClientCommand( int clientNum ) {
 	if ( !Q_stricmp( cmd, "amban" ) )
 	{
 		Cmd_amBan_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amcheckstats" ) )
+	{
+		Cmd_CheckStats_F( ent );
 		return;
 	}
 	if ( !Q_stricmp( cmd, "amdisguise" ) )

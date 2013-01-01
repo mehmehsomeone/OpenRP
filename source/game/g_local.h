@@ -446,8 +446,6 @@ extern vmCvar_t		openrp_adminControl;
 //extern vmCvar_t		openrp_jetpackFuel;
 //extern vmCvar_t		openrp_cloakFuel;
 
-extern vmCvar_t		openrp_allChat;
-
 extern vmCvar_t		openrp_showRenames;
 
 extern vmCvar_t		openrp_databasePath;
@@ -947,9 +945,8 @@ typedef struct {
 	qboolean chatCommandExecuted;
 	qboolean isDisguised;
 	int chatMode;
-	float commFrequency;
-	int commMode;
-	qboolean commOn;
+	float radioFrequency;
+	qboolean radioOn;
 
 	char *entListNames[128][128];
 	int entListIDs[128];

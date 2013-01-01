@@ -2260,15 +2260,13 @@ void Cmd_CharName_F( gentity_t * ent )
 	return;
 }
 
-void Cmd_Comm_F(gentity_t *ent)
+void Cmd_Radio_F(gentity_t *ent)
 {
 	extern char	*ConcatArgs( int start );
 	int pos = 0;
 	char real_msg[MAX_STRING_CHARS];
-	char *msg = ConcatArgs(2);
-	char cmdTarget[MAX_STRING_CHARS];
-	int clientid = -1;
-	int i;
+	char *msg = ConcatArgs(1);
+	int i, j;
 
 	if ( ent->client->sess.isSilenced )
 	{
@@ -2295,105 +2293,97 @@ void Cmd_Comm_F(gentity_t *ent)
 
 	if ( trap_Argc() < 2 )
 	{ 
-		if ( !ent->client->sess.commOn )
+		if ( !ent->client->sess.radioOn )
 		{
-			ent->client->sess.commOn = qtrue;
-			trap_SendServerCommand( ent-g_entities, "print \"^2Comm is now ON.\n\"" );
+			ent->client->sess.radioOn = qtrue;
+			trap_SendServerCommand( ent-g_entities, "print \"^2Radio is now ON.\n\"" );
 			return;
 		}
 		else
 		{
-			ent->client->sess.commOn = qfalse;
-			trap_SendServerCommand( ent-g_entities, "print \"^2Comm is now OFF.\n\"" );
+			ent->client->sess.radioOn = qfalse;
+			trap_SendServerCommand( ent-g_entities, "print \"^2Radio is now OFF.\n\"" );
 			return;
 		}
 	}
 
-	trap_Argv(1, cmdTarget, MAX_STRING_CHARS);
-
-	if ( !ent->client->sess.commOn )
+	if ( !ent->client->sess.radioOn )
 	{
-		trap_SendServerCommand( ent-g_entities, "print \"^1Your comm is off. Use /comm to turn it on.\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^1Your radio is off. Use /radio to turn it on.\n\"" );
 		return;
 	}
 
-
-	if(!Q_stricmp(cmdTarget, "all") || (!Q_stricmp(cmdTarget, "-1") ) || (!Q_stricmp(cmdTarget, "system") ) || (!Q_stricmp(cmdTarget, "broadcast") ) )
+	for ( i = 0; i < level.maxclients; i++ )
 	{
-		if ( !G_CheckAdmin( ent, ADMIN_COMMBROADCAST ) )
+		if ( g_entities[i].client->sess.allChat || ( g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
 		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
-			return;
+			trap_SendServerCommand( i, va( "chat \"^1<All Chat>^7Radio (Freq. %f) ^7%s - ^4%s\"", 
+			ent->client->sess.radioFrequency, ent->client->pers.netname, real_msg ) );
 		}
-		trap_SendServerCommand( -1, va("chat \"^7COMM SYSTEM BROADCAST ^3%s ^7- ^4%s\"", ent->client->pers.netname, real_msg) );
-		G_LogPrintf("Systemwide comm message sent by %s. Message: %s\n", ent->client->pers.netname, real_msg);
-		return;
-	}
 
-	clientid = M_G_ClientNumberFromName( cmdTarget );
-	if (clientid == -1) 
-	{ 
-		trap_SendServerCommand( ent-g_entities, va("print \"Can't find client ID for %s\n\"", cmdTarget ) ); 
-		return; 
-	} 
-	if (clientid == -2) 
-	{ 
-		trap_SendServerCommand( ent-g_entities, va("print \"Ambiguous client ID for %s\n\"", cmdTarget ) ); 
-		return; 
-	}
-	if (clientid >= MAX_CLIENTS || clientid < 0) 
-	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
-		return;
-	}
-	if (!g_entities[clientid].inuse) 
-	{
-		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
-		return; 
-	}
-
-	if ( !openrp_allChat.integer )
-	{
-		for ( i = 0; i < level.maxclients; i++ )
+		//Dist from one using the radio to someone near them
+		if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 600 )
 		{
-			if ( g_entities[i].client->sess.allChat || ( g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
-			{
-				if ( !g_entities[clientid].client->sess.commOn )
-				{
-					trap_SendServerCommand(i, va("chat \"1<All Chat>^7Comm ^7%s ^7to ^7%s ^7- ^4%s ^6(Recipient's comm is off.)\"", 
-						ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
-				}
-				else
-				{
-					trap_SendServerCommand(i, va("chat \"^1<All Chat>^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", 
-						ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
-				}
-			}
-			if ( Distance( ent->client->ps.origin, g_entities[i].client->ps.origin ) < 600 )
-			{
-				if ( i == ent-g_entities )
-				{
-					continue;
-				}
-				trap_SendServerCommand(i, va("chat \"^7Comm ^7%s ^7- ^2%s\"", ent->client->pers.netname, real_msg));
-			}
-			else
-			{
+			if ( i == ent-g_entities )
 				continue;
-			}
-			if ( Distance( g_entities[clientid].client->ps.origin, g_entities[i].client->ps.origin ) < 600 )
+			trap_SendServerCommand( i, va( "chat \"^7Radio ^7%s ^7- ^2%s\"", ent->client->pers.netname, real_msg ) );
+		}
+		else
+			continue;
+	}
+	for ( i = 0; i < level.maxclients; i++ )
+	{
+		if ( ent->client->sess.radioFrequency == g_entities[i].client->sess.radioFrequency )
+		{
+			if ( i != ent-g_entities )
 			{
-				if ( clientid == i )
-				{
-						continue;
-				}
-				trap_SendServerCommand(i, va("chat \"^7Heard on ^7%s^7's ^7Comm - ^4%s\"", g_entities[clientid].client->pers.netname, real_msg));
+				//This person is on the same freq as the one who is talking, so they hear the talker
+				trap_SendServerCommand( i, va( "chat \"^7Radio (Freq. %f) ^7%s - ^4%s\"", 
+					ent->client->sess.radioFrequency, ent->client->pers.netname,real_msg ) );
 			}
+
+			for ( j = 0; j < level.maxclients; j++ )
+			{
+				//Dist from one receiving the radio to someone near them
+				if( Distance( g_entities[i].client->ps.origin, g_entities[j].client->ps.origin ) < 600 )
+				{
+					//Make it the one who is receiving the radio chatter doesn't hear this
+					//We could do j == ent-g_entities too so the one talking doesn't see this
+					//However it's more realistic this way
+					if ( i == j )
+						continue;
+					trap_SendServerCommand( i, va( "chat \"^4Heard on ^7%s's ^4radio - ^2%s\"", g_entities[i].client->ps.origin, real_msg ) );
+				}
+			}
+
 		}
 	}
+	trap_SendServerCommand( ent-g_entities, va( "chat \"^7Radio (Freq. %f) ^7%s - ^4%s\"", 
+			 ent->client->sess.radioFrequency, ent->client->pers.netname, real_msg ) );
+	return;
+}
 
-	trap_SendServerCommand(ent-g_entities, va("chat \"^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
-	trap_SendServerCommand(clientid, va("chat \"^7Comm ^7%s ^7to ^7%s ^7- ^4%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
+void Cmd_Frequency_F( gentity_t *ent )
+{
+	char frequencyTemp[12];
+	float frequency;
+
+	if ( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /frequency <frequency> Frequencies must be from 0 to 100, and you can use up to 6 decimals.\nExample: /frequency 45.405\n\"" );
+		return;
+	}
+
+	trap_Argv( 1, frequencyTemp, sizeof( frequencyTemp ) );
+	frequency = atof( frequencyTemp );
+
+	if ( frequency < 0 || frequency > 100 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^1 Frequencies must be from 0 to 100, and you can use up to 6 decimals.\nExample: /frequency 45.405\n\"" );
+		return;
+	}
+	ent->client->sess.radioFrequency = frequency;
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Frequency set to ^7%f\n\"", frequency ) );
 	return;
 }
 
@@ -2475,7 +2465,7 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 	}
 	if ( clientid >= MAX_CLIENTS || clientid < 0 ) 
 	{ 
-		trap_SendServerCommand( ent-g_entities, va("Bad client ID for %s\n", cmdTarget ) );
+		trap_SendServerCommand( ent-g_entities, va("print \"Bad client ID for %s\n", cmdTarget ) );
 		return;
 	}
 	if ( !g_entities[clientid].inuse ) 
@@ -2484,8 +2474,6 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 		return; 
 	}
 
-	if ( !openrp_allChat.integer )
-	{
 		for ( i = 0; i < level.maxclients; i++ )
 		{
 			if ( ( g_entities[i].client->sess.allChat && Q_stricmp( ent->client->pers.netname, g_entities[clientid].client->pers.netname ) ) || g_entities[i].client->sess.allChatComplete || ( g_entities[i].client->sess.sessionTeam == TEAM_SPECTATOR || g_entities[i].client->tempSpectate >= level.time ) )
@@ -2497,7 +2485,6 @@ void Cmd_ForceMessage_F(gentity_t *ent)
 				continue;
 			}
 		}
-	}
 
 	trap_SendServerCommand(ent-g_entities, va("chat \"^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));
 	trap_SendServerCommand(clientid, va("chat \"^7<%s ^7to %s^7> ^5%s\"", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg));

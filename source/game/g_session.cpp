@@ -346,7 +346,7 @@ void G_InitSessionData( gclient_t *client, char *userinfo, qboolean isBot, qbool
 		sess->IP[0] = 0;
 		sess->skillPoints = 1;
 		sess->adminLevel = 11;
-		sess->commOn = qtrue;
+		sess->radioOn = qtrue;
 	}
 	//[/OpenRP - Skillpoint System]
 	else
