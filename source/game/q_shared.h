@@ -552,18 +552,6 @@ typedef int ivec3_t[3];
 typedef int ivec4_t[4];
 typedef int ivec5_t[5];
 
-//QtZ - Colors!
-typedef float number;
-typedef struct { number x, y; } vector2;
-typedef struct { number x, y, z; } vector3;
-typedef struct { number x, y, z, w; } vector4;
-
-//QtZ - Colors!
-typedef struct { number pitch, yaw, roll; } angle3;
-typedef struct { number r, g, b; } color3;
-typedef struct { number r, g, b, a; } color4;
-
-
 typedef	int	fixed4_t;
 typedef	int	fixed8_t;
 typedef	int	fixed16_t;
@@ -1280,7 +1268,7 @@ extern	vec4_t		colorOrange;
 // you MUST have the last bit on here about colour strings being less than 7 or taiwanese strings register as colour!!!!
 #define Q_IsColorString(p)	( p && *(p) == Q_COLOR_ESCAPE && *((p)+1) && *((p)+1) != Q_COLOR_ESCAPE && *((p)+1) <= '7' && *((p)+1) >= '0' )
 
-//QtZ - Colors!
+
 #define COLOR_BLACK		'0'
 #define COLOR_RED		'1'
 #define COLOR_GREEN		'2'
@@ -1289,22 +1277,18 @@ extern	vec4_t		colorOrange;
 #define COLOR_CYAN		'5'
 #define COLOR_MAGENTA	'6'
 #define COLOR_WHITE		'7'
-#define COLOR_GREY		'8'
-#define COLOR_ORANGE	'9'
-#define ColorIndex(c)	(((c) - '0') & 0xF)
+#define ColorIndex(c)	( ( (c) - '0' ) & 7 )
 
-#define S_COLOR_BLACK		"^0"
-#define S_COLOR_RED			"^1"
-#define S_COLOR_GREEN		"^2"
-#define S_COLOR_YELLOW		"^3"
-#define S_COLOR_BLUE		"^4"
-#define S_COLOR_CYAN		"^5"
-#define S_COLOR_MAGENTA		"^6"
-#define S_COLOR_WHITE		"^7"
-#define S_COLOR_GREY		"^8"
-#define S_COLOR_ORANGE		"^9"
+#define S_COLOR_BLACK	"^0"
+#define S_COLOR_RED		"^1"
+#define S_COLOR_GREEN	"^2"
+#define S_COLOR_YELLOW	"^3"
+#define S_COLOR_BLUE	"^4"
+#define S_COLOR_CYAN	"^5"
+#define S_COLOR_MAGENTA	"^6"
+#define S_COLOR_WHITE	"^7"
 
-extern vec4_t	g_color_table[10];
+extern vec4_t	g_color_table[8];
 
 #define	MAKERGB( v, r, g, b ) v[0]=r;v[1]=g;v[2]=b
 #define	MAKERGBA( v, r, g, b, a ) v[0]=r;v[1]=g;v[2]=b;v[3]=a

@@ -10250,6 +10250,7 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 
 			//[/BugFix29]
 			//[DodgeSys]
+			/*
 			if(OJP_DodgeKick(hitEnt, ent, kickDir))
 			{//but the lucky devil dodged it by backflipping
 				//toss them back a bit and make sure that the kicker gets the kill if the 
@@ -10269,6 +10270,7 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 				G_Throw( hitEnt, kickDir, kickPush );
 				return (hitEnt);
 			}
+			*/
 			//[/DodgeSys]
 
 			//FIXME: don't hit same ent more than once per kick
@@ -10325,9 +10327,11 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 
 					//[SaberSys]
 					//made the knockdown behavior of kicks be based on the player's mishap level or low DP and not hold alt attack.
-					//if ((hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY
-						//|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
-						//&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
+					//[OpenRP - always be able to kick someone]
+					/*
+					if ((hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_HEAVY
+						|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
+					if (!(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
 					{//knockdown
 						if(hitEnt->client->ps.fd.saberAnimLevel == SS_STAFF)
 						{
@@ -10345,28 +10349,31 @@ static gentity_t *G_KickTrace( gentity_t *ent, vec3_t kickDir, float kickDist, v
 							}
 						}
 					}
-					//[OpenRP - always be able to kick someone]
-					/*
-					else if (ent->client->ps.fd.saberAnimLevel == SS_DESANN
-						&& (hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT
-						|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
-						&& !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
+					*/
+					
+					
+					//else if (ent->client->ps.fd.saberAnimLevel == SS_DESANN
+						//&& (hitEnt->client->ps.saberAttackChainCount >= MISHAPLEVEL_LIGHT
+						//|| hitEnt->client->ps.stats[STAT_DODGE] <= DODGE_CRITICALLEVEL)
+					//if ( !(hitEnt->client->buttons & BUTTON_ALT_ATTACK))
 					{//knockdown
 						if ( kickPush >= 75.0f && !Q_irand( 0, 2 ) )
-							{
-								G_Knockdown( hitEnt, ent, kickDir, 300, qtrue );
-							}
+						{
+							G_Knockdown( hitEnt, ent, kickDir, 300, qtrue );
+						}
 						else
-							{
-								G_Knockdown( hitEnt, ent, kickDir, kickPush, qtrue );
-							}
+						{
+							G_Knockdown( hitEnt, ent, kickDir, kickPush, qtrue );
+						}
 					}
 					
+					/*
 					else
 					{//stumble
 						AnimateStun(hitEnt, ent, trace.endpos);   
 					}
 					*/
+					
 					//[/OpenRP - always be able to kick someone]
 
 					BG_ReduceMishapLevel(&hitEnt->client->ps);

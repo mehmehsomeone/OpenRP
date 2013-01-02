@@ -160,13 +160,13 @@ void Cmd_TrainingSaber_F( gentity_t *ent )
 	if ( !ent->client->sess.trainingSaber )
 	{
 		ent->client->sess.trainingSaber = qtrue;
-		trap_SendServerCommand( ent-g_entities, "print \"^2Saber training setting ^1ON\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Saber training setting ^7ON^2.\n\"" );
 		return;
 	}
 	else
 	{
 		ent->client->sess.trainingSaber = qfalse;
-		trap_SendServerCommand( ent-g_entities, "print \"^2Saber training setting ^1ON\n\"" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Saber training setting ^7OFF^2.\n\"" );
 		return;
 	}
 }

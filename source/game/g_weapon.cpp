@@ -1292,6 +1292,10 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 	//[CoOp]
 	float alert = 256;  //alert level for weapon alter events
 	//[/CoOp]
+	//[OpenRP - Weapon Accuracy]
+	extern qboolean PM_RunningAnim( int anim );
+	extern qboolean PM_WalkingAnim( int anim );
+	//[/OpenRP - Weapon Accuracy]
 
 	// track shots taken for accuracy tracking.  Grapple is not a weapon and gauntet is just not tracked
 	if( ent->s.weapon != WP_SABER&& ent->s.weapon != WP_MELEE ) 
@@ -1386,25 +1390,51 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 			//float slopFactor = MISHAP_MAXINACCURACY * ent->client->ps.saberAttackChainCount/MISHAPLEVEL_MAX;
 			float slopFactor;
 
-			if ( ent->client->ps.weapon == WP_BRYAR_PISTOL )
-			{
-			}
+			if ( ent->client->ps.weapon == WP_TUSKEN_RIFLE )
+				slopFactor = 0.1;
+			else if ( ent->client->ps.weapon == WP_BRYAR_PISTOL )
+				slopFactor = 0.4;
+			else if ( ent->client->ps.weapon == WP_BLASTER )
+				slopFactor = 0.2;
+			else if ( ent->client->ps.weapon == WP_DISRUPTOR )
+				slopFactor = 0.1;
+			else if ( ent->client->ps.weapon == WP_BOWCASTER )
+				slopFactor = 0.3;
+			else if ( ent->client->ps.weapon == WP_REPEATER )
+				slopFactor = 0.4;
+			else if ( ent->client->ps.weapon == WP_DEMP2 )
+				slopFactor = 0.4;
+			else if ( ent->client->ps.weapon == WP_FLECHETTE )
+				slopFactor = 0.2;
+			else if ( ent->client->ps.weapon == WP_ROCKET_LAUNCHER )
+				slopFactor = 0.3;
+			else if ( ent->client->ps.weapon == WP_CONCUSSION )
+				slopFactor = 0.3;
+			else if ( ent->client->ps.weapon == WP_BRYAR_OLD )
+				slopFactor = 0.4;
+			else if ( ent->client->ps.weapon == WP_EMPLACED_GUN )
+				slopFactor = 0.2;
 
+			//Crouching = more accurate
 			if ( ent->client->ps.pm_flags & PMF_DUCKED )
-			{
-				slopFactor = 0.300000;
-			}
+				slopFactor *= 0.030000;
 			else
-			{
-				slopFactor = 0.355555;
-			}
+				slopFactor *= 0.055555;
+
+			//If they're running, make them less accurate
+			if( PM_RunningAnim( ent->client->ps.legsAnim ) )
+				slopFactor *= 0.033333;
+			//If they're running, make them less accurate(not as inaccurate as running, though)
+			if( PM_WalkingAnim( ent->client->ps.legsAnim ) )
+				slopFactor *= 0.888888;
+				
+
+			//[/OpenRP - Weapon Accuracy]
 
 			vectoangles( forward, angs );
 			angs[PITCH] += flrand( -slopFactor, slopFactor );
 			angs[YAW] += flrand( -slopFactor, slopFactor );
 			AngleVectors( angs, forward, NULL, NULL );
-
-			//[/OpenRP - Weapon Accuracy]
 
 			//increase mishap level
 			if(!Q_irand(0, SkillLevelforWeapon(ent, ent->s.weapon)-1) && ent->s.weapon != WP_EMPLACED_GUN )//Sorry but the mishap meter needs to go up more that before.
