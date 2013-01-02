@@ -303,13 +303,13 @@
     <ClCompile Include="g_cmds.cpp" />
     <ClCompile Include="g_combat.cpp" />
     <ClCompile Include="g_crash.cpp" />
+    <ClCompile Include="g_datapad.cpp" />
     <ClCompile Include="g_dynmusic.cpp" />
     <ClCompile Include="g_engine.cpp" />
     <ClCompile Include="g_exphysics.cpp" />
     <ClCompile Include="g_ICARUScb.cpp" />
     <ClCompile Include="g_items.cpp" />
     <ClCompile Include="g_log.cpp" />
-    <ClCompile Include="g_mail.cpp" />
     <ClCompile Include="g_main.cpp" />
     <ClCompile Include="g_mem.cpp" />
     <ClCompile Include="g_misc.cpp" />
@@ -465,11 +465,11 @@
     <ClInclude Include="..\ghoul2\G2.h" />
     <ClInclude Include="g_camera.h" />
     <ClInclude Include="g_character.h" />
+    <ClInclude Include="g_datapad.h" />
     <ClInclude Include="g_dynmusic.h" />
     <ClInclude Include="g_engine.h" />
     <ClInclude Include="g_ICARUScb.h" />
     <ClInclude Include="g_local.h" />
-    <ClInclude Include="g_mail.h" />
     <ClInclude Include="g_nav.h" />
     <ClInclude Include="g_OpenRP.h" />
     <ClInclude Include="g_public.h" />

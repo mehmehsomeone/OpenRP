@@ -7813,6 +7813,17 @@ static void CG_Draw2DScreenTints( void )
 	CGCam_DoFade();
 	//[/CoOp]
 
+	if ( cg.snap->ps.userFloat1 )
+	{
+		float phase = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
+		hcolor[3] = 0.3 + (0.05f*sin( phase ));
+		hcolor[0] = 0;
+		hcolor[1] = 0.2f;
+		hcolor[2] = 0.8;
+		
+		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, hcolor  );
+	}
+
 	if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
 	{
 		if (cg.snap->ps.fd.forcePowersActive & (1 << FP_RAGE))

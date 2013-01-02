@@ -2756,7 +2756,6 @@ void Cmd_CheckStats_F( gentity_t *ent )
 
 void Cmd_FadeToBlack_F( gentity_t *ent )
 {
-	/*
 	int i;
 	qboolean fadeToBlack;
 
@@ -2766,20 +2765,19 @@ void Cmd_FadeToBlack_F( gentity_t *ent )
 		return;
 	}
 
-	if ( !ent->client->OpenRP.fadeToBlack )
+	if ( !ent->client->ps.userFloat1 )
 		fadeToBlack = qtrue;
 	else
 		fadeToBlack = qfalse;
 
 	for ( i = 0; i < level.maxclients; i++ )
 	{
-		g_entities[i].client->OpenRP.fadeToBlack = fadeToBlack;
+		g_entities[i].client->ps.userFloat1 = fadeToBlack;
 	}
 	if ( fadeToBlack )
 		trap_SendServerCommand( ent-g_entities, "print \"^2All players screens now fade to black...\n\"" );
 	else
 		trap_SendServerCommand( ent-g_entities, "print \"^2All players screens now come back to normal.\n\"" );
-	*/
 
 	return;
 }

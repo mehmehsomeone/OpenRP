@@ -454,7 +454,7 @@
     <ClCompile Include="OpenRP.cpp">
       <Filter>Source Files\OpenRP</Filter>
     </ClCompile>
-    <ClCompile Include="g_mail.cpp">
+    <ClCompile Include="g_datapad.cpp">
       <Filter>Source Files\OpenRP</Filter>
     </ClCompile>
   </ItemGroup>
@@ -654,7 +654,7 @@
     <ClInclude Include="OpenRP.h">
       <Filter>Header Files\OpenRP</Filter>
     </ClInclude>
-    <ClInclude Include="g_mail.h">
+    <ClInclude Include="g_datapad.h">
       <Filter>Header Files\OpenRP</Filter>
     </ClInclude>
   </ItemGroup>

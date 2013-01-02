@@ -170,7 +170,7 @@
 userInt1, 10
 ;userInt2, 1
 userInt3, 32
-;userFloat1, 1
+userFloat1, 0
 ;userFloat2, 1
 ;userFloat3, 1
 ;userVec1[0], 1
