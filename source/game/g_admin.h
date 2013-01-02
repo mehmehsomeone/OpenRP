@@ -28,6 +28,7 @@
 #define ADMIN_ITEM					67108864 // Item related
 #define ADMIN_AUDIO					134217728 // /amaudio
 #define ADMIN_BOUNTY				268435456 // /bounty remove
+#define ADMIN_FADETOBLACK			536870912 // /amfadetoblack
 
 void AddSpawnField(char *field, char *value);
 void SP_fx_runner( gentity_t *ent );
@@ -85,3 +86,5 @@ void Cmd_ListEnts_F( gentity_t *ent );
 void Cmd_Invisible_F( gentity_t *ent );
 void Cmd_Disguise_F( gentity_t *ent );
 void Cmd_CheckStats_F( gentity_t *ent );
+void Cmd_FadeToBlack_F( gentity_t *ent );
+

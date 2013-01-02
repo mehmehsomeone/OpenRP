@@ -31,3 +31,4 @@ void Cmd_Radio_F(gentity_t *ent);
 void Cmd_ForceMessage_F(gentity_t *ent);
 void Cmd_Faction_F( gentity_t * ent );
 void Cmd_SetFactionRank_F( gentity_t * ent );
+void Cmd_Frequency_F( gentity_t *ent );

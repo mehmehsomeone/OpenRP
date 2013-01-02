@@ -152,3 +152,21 @@ void Cmd_ToggleChat_F( gentity_t * ent )
 	trap_SendServerCommand( ent-g_entities, va( "print \"^2Your chat mode is set to ^7%s.\n\"", chatModeName ) );
 	return;
 }
+
+void Cmd_TrainingSaber_F( gentity_t *ent )
+{
+	qboolean trainingSaber;
+
+	if ( !ent->client->sess.trainingSaber )
+	{
+		ent->client->sess.trainingSaber = qtrue;
+		trap_SendServerCommand( ent-g_entities, "print \"^2Saber training setting ^1ON\n\"" );
+		return;
+	}
+	else
+	{
+		ent->client->sess.trainingSaber = qfalse;
+		trap_SendServerCommand( ent-g_entities, "print \"^2Saber training setting ^1ON\n\"" );
+		return;
+	}
+}

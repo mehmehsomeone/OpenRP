@@ -85,9 +85,11 @@ qboolean ButterFingers(gentity_t *saberent, gentity_t *saberOwner, gentity_t *ot
 
 //[SaberSys]
 //Default damage for an attack animation
-#define DAMAGE_ATTACK			50
+//OpenRP - saber hit = instant kill
+#define DAMAGE_ATTACK			200
+//OpenRP - saber hit = instant kill
 //Default damage for an transition animation
-#define DAMAGE_TRANSITION		125
+#define DAMAGE_TRANSITION		200
 
 #define DODGE_SABERBLOCK		15  //standard dodge cost for blocking a saber.
 
@@ -881,8 +883,14 @@ static GAME_INLINE qboolean G_CheckLookTarget( gentity_t *ent, vec3_t	lookAngles
 		if ( ent->client->renderInfo.lookMode == LM_ENT )
 		{
 			gentity_t	*lookCent = &g_entities[ent->client->renderInfo.lookTarget];
+
 			if ( lookCent )
 			{
+				//[OpenRP - Don't turn head when cloaked player is next to you]	  	
+				if ( lookCent->client->ps.powerups[PW_CLOAKED] )
+					return qfalse;
+				//[/OpenRP - Don't turn head when cloaked player is next to you]
+
 				if ( lookCent != ent->enemy )
 				{//We turn heads faster than headbob speed, but not as fast as if watching an enemy
 					*lookingSpeed = LOOK_DEFAULT_SPEED;
@@ -6587,6 +6595,7 @@ void DebounceSaberImpact(gentity_t *self, gentity_t *otherSaberer,
 						 int rSaberNum, int rBladeNum, int sabimpactentitynum);
 void OJP_SetSlowBounce(gentity_t* self, gentity_t* attacker);
 qboolean G_InAttackParry(gentity_t *self);
+//OpenRP - OJP saber damage stuff is here!
 static GAME_INLINE qboolean CheckSaberDamage(gentity_t *self, int rSaberNum, int rBladeNum, vec3_t saberStart, vec3_t saberEnd, qboolean doInterpolate, int trMask, qboolean extrapolate )
 {
 	static trace_t tr;
@@ -6978,6 +6987,11 @@ static GAME_INLINE qboolean CheckSaberDamage(gentity_t *self, int rSaberNum, int
 				damage *= g_saberWallDamageScale.value;
 				dmg = (int) damage;
 			}
+
+			//[OpenRP - Training Saber]
+			if ( self->client->sess.trainingSaber )
+				dmg = 1;
+			//[/OpenRP - Training Saber]
 
 			//We need the final damage total to know if we need to bounce the saber back or not.
 			G_Damage( victim, self, self, dir, tr.endpos, dmg, dflags, MOD_SABER );

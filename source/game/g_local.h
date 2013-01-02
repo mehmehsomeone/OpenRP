@@ -959,6 +959,8 @@ typedef struct {
 	qboolean ojpClientPlugIn;
 	//[/ClientPlugInDetect]
 
+	qboolean trainingSaber;
+
 } clientSession_t;
 
 // playerstate mGameFlags

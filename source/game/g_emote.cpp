@@ -31,17 +31,13 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 	if ( BG_SaberInAttack(ent->client->ps.saberMove) || BG_SaberInSpecialAttack(ent->client->ps.saberMove) || ent->client->ps.saberLockTime )
 		return;
 	//[OpenRP - Endlessly floating up bug]
-	if(ent->client->forceLifting != -1)
+	if(ent && ent->client && ent->client->forceLifting != -1)
 	{
-		
-		if(ent && ent->client)
-		{
-			g_entities[ent->client->forceLifting].client->ps.forceGripMoveInterval = 0;
-			g_entities[ent->client->forceLifting].client->ps.forceGripChangeMovetype = PM_NORMAL;
-			g_entities[ent->client->forceLifting].client->ps.pm_type = PM_NORMAL;
-			g_entities[ent->client->forceLifting].client->underForceLift=qfalse;
-			ent->client->forceLifting = -1;
-		}
+		g_entities[ent->client->forceLifting].client->ps.forceGripMoveInterval = 0;
+		g_entities[ent->client->forceLifting].client->ps.forceGripChangeMovetype = PM_NORMAL;
+		g_entities[ent->client->forceLifting].client->ps.pm_type = PM_NORMAL;
+		g_entities[ent->client->forceLifting].client->underForceLift=qfalse;
+		ent->client->forceLifting = -1;
 	}
 	//[/OpenRP - Endlessly floating up bug]
 

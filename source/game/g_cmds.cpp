@@ -4661,6 +4661,11 @@ void ClientCommand( int clientNum ) {
 		Cmd_ForceMessage_F( ent );
 		return;
 	}
+	if ( !Q_stricmp( cmd, "frequency" ) )
+	{
+		Cmd_Frequency_F( ent );
+		return;
+	}
 	if ( !Q_stricmp( cmd, "givecredits" ) )
 	{
 		Cmd_GiveCredits_F( ent );
@@ -4770,6 +4775,11 @@ void ClientCommand( int clientNum ) {
 	if ( !Q_stricmp( cmd, "amfactiongencredits" ) )
 	{
 		Cmd_FactionGenerateCredits_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "amfadetoblack" ) )
+	{
+		Cmd_FadeToBlack_F( ent );
 		return;
 	}
 	if ( !Q_stricmp( cmd, "amforceteam" ) )
@@ -4904,7 +4914,6 @@ void ClientCommand( int clientNum ) {
 	}
 
 
-
 	if ( !Q_stricmp( cmd, "aminfo" ) )
 	{
 		Cmd_aminfo_F( ent );
@@ -4923,6 +4932,11 @@ void ClientCommand( int clientNum ) {
 	if ( !Q_stricmp( cmd, "listadmins" ) )
 	{
 		Cmd_ListAdmins_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "settraining" ) )
+	{
+		Cmd_TrainingSaber_F( ent );
 		return;
 	}
 	if ( !Q_stricmp( cmd, "togglechat" ) )

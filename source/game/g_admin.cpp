@@ -166,23 +166,19 @@ qboolean G_CheckAdmin(gentity_t *ent, int bitvalue)
 Admin Control - Determines whether admins can perform admin commands on higher admin levels
 ============
 */
-qboolean G_AdminControl(int UserAdmin, int TargetAdmin)
+qboolean G_AdminControl( gentity_t *ent, gentity_t *target)
 {
-
-	if(openrp_adminControl.integer == 0)
-	{
+	if( !openrp_adminControl.integer )
 		return qtrue;
-	}
+
+	if ( !target->client->sess.isAdmin )
+		return qtrue;
 
 	//Less than is used instead of greater than because admin level 1 is higher than admin level 2
-	if( ( openrp_adminControl.integer == 1 ) && ( UserAdmin <= TargetAdmin ) )
-	{					
+	if( openrp_adminControl.integer  && ( ent->client->sess.adminLevel <= target->client->sess.adminLevel ) )				
 		return qtrue;
-	}
 	else
-	{
 		return qfalse;
-	}
 }
 
 /*
@@ -237,7 +233,7 @@ void Cmd_amBan_F(gentity_t *ent)
 		return;
 	}
 
-	if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
+	if( !G_AdminControl( ent, &g_entities[clientid] ) )
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 		return;
@@ -300,13 +296,10 @@ void Cmd_amKick_F(gentity_t *ent)
 		return; 
 	}
 
-	if ( g_entities[clientid].client->sess.isAdmin )
+	if( !G_AdminControl( ent, &g_entities[clientid] ) )
 	{
-		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-			return;
-		}
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
 	}
 
 	trap_SendServerCommand(ent-g_entities, va("print \"^2The IP of the person you kicked is %s\n\"", g_entities[clientid].client->sess.IP));
@@ -361,13 +354,10 @@ void Cmd_amWarn_F(gentity_t *ent)
 		return; 
 	}
 
-	if ( g_entities[clientid].client->sess.isAdmin )
+	if( !G_AdminControl( ent, &g_entities[clientid] ) )
 	{
-		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-			return;
-		}
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
 	}
 
 	g_entities[clientid].client->sess.warnings++;
@@ -463,9 +453,9 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		{
 			return;
 		}
-		if ( clientid == ent->client->ps.clientNum )
+		if ( clientid == ent-g_entities )
 		{
-			trap_SendServerCommand( ent-g_entities, va("print \"You cant teleport yourself.\n\""));
+			trap_SendServerCommand( ent-g_entities, va("print \"^1You can't teleport yourself.\n\""));
 			return;
 		}
 		//Copy their location
@@ -544,6 +534,12 @@ void Cmd_amTeleport_F(gentity_t *ent)
 		if ( clientid == clientid2 )
 		{
 			trap_SendServerCommand( ent-g_entities, va("print \"Cant teleport client to same client.\n\""));
+			return;
+		}
+
+		if( !G_AdminControl( ent, &g_entities[clientid] ) )
+		{
+			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
 			return;
 		}
 
@@ -747,13 +743,10 @@ void Cmd_amSilence_F(gentity_t *ent)
 		return; 
 	}
 
-	if ( g_entities[clientid].client->sess.isAdmin )
+	if( !G_AdminControl( ent, &g_entities[clientid] ) )
 	{
-		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-			return;
-		}
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
 	}
 
 	if( !g_entities[clientid].client->sess.isSilenced )
@@ -819,14 +812,12 @@ void Cmd_amUnSilence_F(gentity_t *ent)
 		return;
 	}
 
-	if ( g_entities[clientid].client->sess.isAdmin )
+	if( !G_AdminControl( ent, &g_entities[clientid] ) )
 	{
-		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-			return;
-		}
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
 	}
+
 	g_entities[clientid].client->sess.isSilenced = qfalse;
 	
 	trap_SendServerCommand(ent-g_entities, va("print \"^2Player unsilenced.\n\""));
@@ -881,13 +872,10 @@ void Cmd_amSleep_F(gentity_t *ent)
 		return; 
 	}
 
-	if ( g_entities[clientid].client->sess.isAdmin )
+	if( !G_AdminControl( ent, &g_entities[clientid] ) )
 	{
-		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-			return;
-		}
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
 	}
 
 	//TODO
@@ -985,13 +973,10 @@ void Cmd_amUnsleep_F(gentity_t *ent)
 		return;
 	}
 
-	if ( g_entities[clientid].client->sess.isAdmin )
+	if( !G_AdminControl( ent, &g_entities[clientid] ) )
 	{
-		if(!G_AdminControl(ent->client->sess.adminLevel, g_entities[clientid].client->sess.adminLevel))
-		{
-			trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
-			return;
-		}
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
 	}
 
 	g_entities[clientid].client->sess.isSleeping = qfalse;
@@ -1107,6 +1092,12 @@ void Cmd_amForceTeam_F(gentity_t *ent)
 	{
 		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
 		return; 
+	}
+
+	if( !G_AdminControl( ent, &g_entities[clientid] ) )
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
 	}
 		
 	/*
@@ -1501,6 +1492,12 @@ void Cmd_amRename_F(gentity_t *ent)
 		return; 
 	}
 
+	if( !G_AdminControl( ent, &g_entities[clientid] ) )
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You can't use this command on them. They are a higher admin level than you.\n\""));
+		return;
+	}
+
 	trap_Argv( 2, newname, MAX_STRING_CHARS );
 	G_LogPrintf("Rename admin command executed by %s on %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname);
 	trap_SendServerCommand(clientid, va("cvar name %s", newname));
@@ -1653,6 +1650,7 @@ void Cmd_RemoveAdmin_F( gentity_t * ent )
 	char username[MAX_TOKEN_CHARS];
 	int valid;
 
+	//OPENRPTODO - Add g_admincontrol?
 	if(!G_CheckAdmin(ent, ADMIN_GRANTREMOVEADMIN))
 	{  	
 		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));	  	
@@ -2651,28 +2649,10 @@ void Cmd_CheckStats_F( gentity_t *ent )
 {
 	char cmdTarget[MAX_STRING_CHARS];
 	int clientid = -1; 
-	int i;
-	static const char *forcePowersNames[] =
-	{
-		"Force Heal",
-		"Force Jump",
-		"Force Speed",
-		"Force Push",
-		"Force Pull",
-		"Force Mindtrick",
-		"Force Grip",
-		"Force Lightning",
-		"Force Rage",
-		"Force Manipulate",
-		"Force Absorb",
-		"Force Team Heal",
-		"Force Lift",
-		"Force Drain",
-		"Force Sense",
-		"Saber Offense",
-		"Saber Defense",
-		"Saber Throw",
-	};
+	int i, weapLevel;
+	extern stringID_table_t FPTable[];
+	extern stringID_table_t WPTable[];
+	
 
 	if(!G_CheckAdmin(ent, ADMIN_CHECKSTATS))
 	{  	
@@ -2710,11 +2690,96 @@ void Cmd_CheckStats_F( gentity_t *ent )
 		return; 
 	}
 
-	trap_SendServerCommand( ent-g_entities, va( "print \"Force Stats for %s:\n\"", g_entities[clientid].client->pers.netname ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Force Stats for ^7%s^2:\n\"", g_entities[clientid].client->pers.netname ) );
 	//It's NUM_FORCE_POWERS-1 because force powers go from 0-17, not 1-18
 	for ( i = 0; i < NUM_FORCE_POWERS-1; i++ )
-	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"%s - Level: %i\n\"", forcePowersNames[i+1], g_entities[clientid].client->ps.fd.forcePowerLevel[i] ) );
+	{	
+		if ( FPTable[i].id != -1 && FPTable[i].name[0] )
+		{
+			trap_SendServerCommand( ent-g_entities, va( "print \"^7%s ^2- Level: ^7%i\n\"", FPTable[i].name, g_entities[clientid].client->ps.fd.forcePowerLevel[i] ) );
+		}
 	}
+	for ( i = 1; i < WP_NUM_WEAPONS; i++ )
+	{	
+		if ( i == 2 || i == 3 || i == 16 || i == 17 || i == 18 )
+			continue;
+		//OPENRP TODO - Saber style, specific grenade type
+		if ( WPTable[i].id != -1 && WPTable[i].name[0] )
+		{
+			switch ( i )
+			{
+			case 1:
+				weapLevel = 24;
+				break;
+			case 4:
+				weapLevel = 1;
+				break;
+			case 5:
+				weapLevel = 2;
+				break;
+			case 6:
+				weapLevel = 14;
+				break;
+			case 7:
+				weapLevel = 7;
+				break;
+			case 8:
+				weapLevel = 13;
+				break;
+			case 9:
+				weapLevel = 31;
+				break;
+			case 10:
+				weapLevel = 22;
+				break;
+			case 11:
+				weapLevel = 4;
+				break;
+			case 12:
+				weapLevel = 3;
+				break;
+			case 13:
+				weapLevel = 26;
+				break;
+			case 14:
+				weapLevel = 12;
+				break;
+			case 15:
+				weapLevel = 32;
+				break;
+			}
+			trap_SendServerCommand( ent-g_entities, va( "print \"^7%s ^2- Level: ^7%i\n\"", WPTable[i].name, g_entities[clientid].client->skillLevel[weapLevel] ) );
+		}
+	}
+	return;
+}
+
+void Cmd_FadeToBlack_F( gentity_t *ent )
+{
+	/*
+	int i;
+	qboolean fadeToBlack;
+
+	if( !G_CheckAdmin( ent, ADMIN_FADETOBLACK ) )
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
+		return;
+	}
+
+	if ( !ent->client->OpenRP.fadeToBlack )
+		fadeToBlack = qtrue;
+	else
+		fadeToBlack = qfalse;
+
+	for ( i = 0; i < level.maxclients; i++ )
+	{
+		g_entities[i].client->OpenRP.fadeToBlack = fadeToBlack;
+	}
+	if ( fadeToBlack )
+		trap_SendServerCommand( ent-g_entities, "print \"^2All players screens now fade to black...\n\"" );
+	else
+		trap_SendServerCommand( ent-g_entities, "print \"^2All players screens now come back to normal.\n\"" );
+	*/
+
 	return;
 }

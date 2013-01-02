@@ -26,8 +26,10 @@ void ForceRage( gentity_t *self )
 
 
 	// Make sure to turn off Force Protection and Force Absorb.
-	if (self->client->ps.fd.forcePowersActive & (1 << FP_MANIPULATE) )
-		WP_ForcePowerStop( self, FP_MANIPULATE );
+	//[OpenRP - This isn't protection anymore, it's manipulate]
+	/*if (self->client->ps.fd.forcePowersActive & (1 << FP_MANIPULATE) )
+		WP_ForcePowerStop( self, FP_MANIPULATE );*/
+	//[/OpenRP - This isn't protection anymore, it's manipulate]
 
 	if (self->client->ps.fd.forcePowersActive & (1 << FP_ABSORB) )
 		WP_ForcePowerStop( self, FP_ABSORB );
