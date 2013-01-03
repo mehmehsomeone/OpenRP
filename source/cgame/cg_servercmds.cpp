@@ -1877,18 +1877,21 @@ static void CG_ServerCommand( void ) {
 	//[OpenRP - Fade to black]
 	if ( !Q_stricmp( cmd, "fadeToBlack" ) )
 	{
-		cg.snap->OpenRP.fadeToBlack = qtrue;
+		if ( !cg.OpenRP.fadingToBlack && !cg.OpenRP.fadedToBlack )
+			cg.OpenRP.fadingToBlack = qtrue;
+		else
+			cg.OpenRP.fadedToBlack = qfalse;
 		return;
 	}
 	//[/OpenRP - Fade to black]
 
 	if ( !Q_stricmp( cmd, "timer" ) )
 	{
-		if ( !cg.snap->OpenRP.timer )
+		if ( !cg.OpenRP.timer )
 		{
-			cg.snap->OpenRP.timer = qtrue;
-			cg.snap->OpenRP.timerSeconds = atoi( CG_Argv( 1 ) );
-			cg.snap->OpenRP.timerIsMyTeam = (qboolean)atoi( CG_Argv( 2 ) );
+			cg.OpenRP.timer = qtrue;
+			cg.OpenRP.timerSeconds = atoi( CG_Argv( 1 ) );
+			cg.OpenRP.timerIsMyTeam = (qboolean)atoi( CG_Argv( 2 ) );
 		}
 		return;
 	}

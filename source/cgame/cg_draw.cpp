@@ -7812,12 +7812,6 @@ static void CG_Draw2DScreenTints( void )
 	//cutscene camera fade code
 	CGCam_DoFade();
 	//[/CoOp]
-	
-	if ( cg.snap->OpenRP.timer )
-	{
-		CG_DrawSiegeTimer( cg.snap->OpenRP.timerSeconds, cg.snap->OpenRP.timerIsMyTeam );
-		cg.snap->OpenRP.timer = qfalse;
-	}
 
 	if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
 	{
@@ -8230,6 +8224,20 @@ static void CG_Draw2DScreenTints( void )
 		
 		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, hcolor  );
 	}
+
+	//[OpenRP - Fade to black]
+	if ( cg.OpenRP.fadingToBlack )
+	{
+		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, colorTable[CT_BLACK]  );
+		cg.OpenRP.fadingToBlack = qfalse;
+		cg.OpenRP.fadedToBlack = qtrue;
+	}
+	
+	if ( cg.OpenRP.fadedToBlack )
+	{
+		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, colorTable[CT_BLACK]  );
+	}
+	//[/OpenRP - Fade to black]
 }
 
 static void CG_Draw2D( void ) {
@@ -8278,6 +8286,12 @@ static void CG_Draw2D( void ) {
 	}
 
 	CG_Draw2DScreenTints();
+
+	if ( cg.OpenRP.fadedToBlack )
+	{
+		CG_ChatBox_DrawStrings();
+		return;
+	}
 
 	if (cg.snap->ps.rocketLockIndex != ENTITYNUM_NONE && (cg.time - cg.snap->ps.rocketLockTime) > 0)
 	{
@@ -8614,19 +8628,23 @@ static void CG_Draw2D( void ) {
 		CG_DrawSiegeDeathTimer( timeRemaining );
 	}
 
+	//[OpenRP - Timer]
+	/*
+	if ( cg.snap->OpenRP.timer )
+	{
+		CG_DrawSiegeTimer( cg.snap->OpenRP.timerSeconds, cg.snap->OpenRP.timerIsMyTeam );
+		cg.snap->OpenRP.timerSeconds--;
+		if ( cg.snap->OpenRP.timerSeconds == 0 )
+			cg.snap->OpenRP.timer = qfalse;
+	}
+	*/
+	//[/OpenRP - Timer]
+
 	// don't draw center string if scoreboard is up
 	cg.scoreBoardShowing = CG_DrawScoreboard();
 	if ( !cg.scoreBoardShowing) {
 		CG_DrawCenterString();
 	}
-
-	//[OpenRP - Fade to black]
-	if ( cg.snap->OpenRP.fadeToBlack )
-	{
-		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, colorBlack  );
-		cg.snap->OpenRP.fadeToBlack = qfalse;
-	}
-	//[/OpenRP - Fade to black]
 	
 	// always draw chat
 	CG_ChatBox_DrawStrings();

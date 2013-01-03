@@ -10,7 +10,8 @@
 // needs to be larger than PACKET_BACKUP
 
 typedef struct {
-	qboolean fadeToBlack;
+	qboolean fadingToBlack;
+	qboolean fadedToBlack;
 	qboolean timer;
 	int timerSeconds;
 	qboolean timerIsMyTeam;
@@ -41,7 +42,6 @@ typedef struct {
 	int				numServerCommands;		// text based server commands to execute when this
 	int				serverCommandSequence;	// snapshot becomes current
 
-	OpenRP_t		OpenRP;
 } snapshot_t;
 
 enum {

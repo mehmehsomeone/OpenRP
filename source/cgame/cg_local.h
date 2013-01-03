@@ -1044,6 +1044,8 @@ typedef struct {
 	qboolean	dodgeHUDActive;
 	//[/DodgeSys]
 
+	OpenRP_t		OpenRP;
+
 	// development tool
 	refEntity_t		testModelEntity;
 	char			testModelName[MAX_QPATH];
