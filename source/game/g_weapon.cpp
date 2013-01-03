@@ -1428,7 +1428,6 @@ void FireWeapon( gentity_t *ent, qboolean altFire )
 			if( PM_WalkingAnim( ent->client->ps.legsAnim ) )
 				slopFactor *= 0.888888;
 				
-
 			//[/OpenRP - Weapon Accuracy]
 
 			vectoangles( forward, angs );

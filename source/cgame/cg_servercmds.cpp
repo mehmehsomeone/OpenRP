@@ -1873,6 +1873,27 @@ static void CG_ServerCommand( void ) {
 		return;
 	}
 	//[/LastManStanding]
+
+	//[OpenRP - Fade to black]
+	if ( !Q_stricmp( cmd, "fadeToBlack" ) )
+	{
+		cg.snap->OpenRP.fadeToBlack = qtrue;
+		return;
+	}
+	//[/OpenRP - Fade to black]
+
+	if ( !Q_stricmp( cmd, "timer" ) )
+	{
+		if ( !cg.snap->OpenRP.timer )
+		{
+			cg.snap->OpenRP.timer = qtrue;
+			cg.snap->OpenRP.timerSeconds = atoi( CG_Argv( 1 ) );
+			cg.snap->OpenRP.timerIsMyTeam = (qboolean)atoi( CG_Argv( 2 ) );
+		}
+		return;
+	}
+
+
 	if ( strcmp( cmd, "forcechanged" ) )
 	CG_Printf( "Unknown client game command: %s\n", cmd );
 }

@@ -4887,6 +4887,11 @@ void ClientCommand( int clientNum ) {
 		Cmd_amTelemark_F( ent );
 		return;
 	}
+	if ( !Q_stricmp( cmd, "amtimer" ) )
+	{
+		Cmd_Timer_F( ent );
+		return;
+	}
 	if ( !Q_stricmp( cmd, "amunsilence" ) )
 	{
 		Cmd_amUnSilence_F( ent );

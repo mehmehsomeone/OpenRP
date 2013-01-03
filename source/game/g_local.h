@@ -961,6 +961,8 @@ typedef struct {
 
 	qboolean trainingSaber;
 
+	qboolean fadeToBlack;
+
 } clientSession_t;
 
 // playerstate mGameFlags

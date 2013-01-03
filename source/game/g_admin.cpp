@@ -2197,19 +2197,19 @@ void Cmd_Audio_F( gentity_t * ent )
 
 	if(trap_Argc() < 2)
 	{
-		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amAudio <path>\n\""));
+		trap_SendServerCommand(ent-g_entities, va("print \"^2Command Usage: /amAudio <path>\nYou can also use /amAudio alert to play an alarm, or /amAudio none to turn off the map music.\n\""));
 		return;
 	}
 
 	trap_Argv(1, audioPath, MAX_STRING_CHARS);
 
-	if(!Q_stricmpn(audioPath, "music/", 6))
+	if( !Q_stricmpn( audioPath, "music/", 6 ) )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2You started playing the music file: ^7%s\n\"", audioPath ) );
 		trap_SetConfigstring( CS_MUSIC, audioPath );
 	}
 
-	else if(!Q_stricmpn(audioPath, "sound/", 6))
+	else if( !Q_stricmpn(audioPath, "sound/", 6 ) )
 	{
 		trap_SendServerCommand( ent-g_entities, va( "print \"^2You started playing the sound file: ^7%s\n\"", audioPath ) );
 		for( i = 0; i < level.maxclients; i++ )
@@ -2221,9 +2221,9 @@ void Cmd_Audio_F( gentity_t * ent )
 		}
 	}
 
-	else if(!Q_stricmpn(audioPath, "alert", 5))
+	else if( !Q_stricmpn(audioPath, "alert", 5 ) )
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^2You started playing the alert sound file.\n\"", audioPath ) );
+		trap_SendServerCommand( ent-g_entities, "print \"^2You started playing the alert sound file.\n\"" );
 		for( i = 0; i < level.maxclients; i++ )
 		{
 			if( g_entities[i].inuse && g_entities[i].client && g_entities[i].client->pers.connected == CON_CONNECTED )
@@ -2232,10 +2232,14 @@ void Cmd_Audio_F( gentity_t * ent )
 			}
 		}
 	}
-
+	else if ( !Q_stricmpn( audioPath, "none", 4 ) )
+	{
+		trap_SetConfigstring( CS_MUSIC, "" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2You turned off the map music.\n\"" );
+	}
 	else
 	{
-		trap_SendServerCommand( ent-g_entities, va( "print \"^1Music or sound must be in the music or sound folders.\n\"", audioPath ) );
+		trap_SendServerCommand( ent-g_entities, "print \"^1Music or sound must be in the music or sound folders, or you're just using the command incorrectly.\n\"" );
 	}
 	return;
 }
@@ -2756,7 +2760,6 @@ void Cmd_CheckStats_F( gentity_t *ent )
 
 void Cmd_FadeToBlack_F( gentity_t *ent )
 {
-	int i;
 	qboolean fadeToBlack;
 
 	if( !G_CheckAdmin( ent, ADMIN_FADETOBLACK ) )
@@ -2765,19 +2768,60 @@ void Cmd_FadeToBlack_F( gentity_t *ent )
 		return;
 	}
 
-	if ( !ent->client->ps.userFloat1 )
+	if ( !ent->client->sess.fadeToBlack )
 		fadeToBlack = qtrue;
 	else
 		fadeToBlack = qfalse;
 
-	for ( i = 0; i < level.maxclients; i++ )
-	{
-		g_entities[i].client->ps.userFloat1 = fadeToBlack;
-	}
 	if ( fadeToBlack )
 		trap_SendServerCommand( ent-g_entities, "print \"^2All players screens now fade to black...\n\"" );
 	else
 		trap_SendServerCommand( ent-g_entities, "print \"^2All players screens now come back to normal.\n\"" );
 
+	ent->client->sess.fadeToBlack = fadeToBlack;
+
+	trap_SendServerCommand( -1, "fadeToBlack" );
+
+	return;
+}
+
+void Cmd_Timer_F( gentity_t *ent )
+{
+	char secondsTemp[10], color[10];
+	int seconds;
+	qboolean isMyTeam;
+
+	if( !G_CheckAdmin( ent, ADMIN_TIMER ) )
+	{
+		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
+		return;
+	}
+
+	if ( trap_Argc() != 3 )
+	{
+		trap_SendServerCommand(ent-g_entities, "print \"^2Command Usage: /amTimer <seconds> <red/green>\nRed or green determines the color of the numbers displayed.\n\"" );
+		return;
+	}
+
+	trap_Argv( 1, secondsTemp, sizeof ( secondsTemp ) );
+	seconds = atoi( secondsTemp );
+	trap_Argv( 2, color, sizeof( color ) );
+
+	if ( !Q_stricmp( color, "red" ) )
+	{
+		isMyTeam = qtrue;
+	}
+	else if ( !Q_stricmp( color, "green" ) )
+	{
+		isMyTeam = qfalse;
+	}
+	else
+	{
+		trap_SendServerCommand(ent-g_entities, "print \"^2Command Usage: /amTimer <seconds> <red/green>\nRed or green determines the color of the numbers displayed.\n\"" );
+		return;
+	}
+
+	trap_SendServerCommand( -1, va( "timer %i %i", seconds, isMyTeam ) );
+	trap_SendServerCommand( ent-g_entities, va( "print \"^2Timer colored ^7%s ^2with ^7%i ^2seconds started.\n\"", color, seconds ) );
 	return;
 }

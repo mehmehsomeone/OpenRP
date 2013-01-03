@@ -155,8 +155,6 @@ void Cmd_ToggleChat_F( gentity_t * ent )
 
 void Cmd_TrainingSaber_F( gentity_t *ent )
 {
-	qboolean trainingSaber;
-
 	if ( !ent->client->sess.trainingSaber )
 	{
 		ent->client->sess.trainingSaber = qtrue;

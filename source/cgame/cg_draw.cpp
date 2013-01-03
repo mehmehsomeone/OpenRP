@@ -7812,16 +7812,11 @@ static void CG_Draw2DScreenTints( void )
 	//cutscene camera fade code
 	CGCam_DoFade();
 	//[/CoOp]
-
-	if ( cg.snap->ps.userFloat1 )
+	
+	if ( cg.snap->OpenRP.timer )
 	{
-		float phase = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
-		hcolor[3] = 0.3 + (0.05f*sin( phase ));
-		hcolor[0] = 0;
-		hcolor[1] = 0.2f;
-		hcolor[2] = 0.8;
-		
-		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, hcolor  );
+		CG_DrawSiegeTimer( cg.snap->OpenRP.timerSeconds, cg.snap->OpenRP.timerIsMyTeam );
+		cg.snap->OpenRP.timer = qfalse;
 	}
 
 	if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
@@ -8624,6 +8619,14 @@ static void CG_Draw2D( void ) {
 	if ( !cg.scoreBoardShowing) {
 		CG_DrawCenterString();
 	}
+
+	//[OpenRP - Fade to black]
+	if ( cg.snap->OpenRP.fadeToBlack )
+	{
+		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, colorBlack  );
+		cg.snap->OpenRP.fadeToBlack = qfalse;
+	}
+	//[/OpenRP - Fade to black]
 	
 	// always draw chat
 	CG_ChatBox_DrawStrings();

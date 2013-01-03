@@ -9,6 +9,13 @@
 // multiple commands may be combined into a single packet, so this
 // needs to be larger than PACKET_BACKUP
 
+typedef struct {
+	qboolean fadeToBlack;
+	qboolean timer;
+	int timerSeconds;
+	qboolean timerIsMyTeam;
+} OpenRP_t;
+
 
 #define	MAX_ENTITIES_IN_SNAPSHOT	256
 
@@ -33,6 +40,8 @@ typedef struct {
 
 	int				numServerCommands;		// text based server commands to execute when this
 	int				serverCommandSequence;	// snapshot becomes current
+
+	OpenRP_t		OpenRP;
 } snapshot_t;
 
 enum {
