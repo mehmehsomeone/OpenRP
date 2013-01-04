@@ -474,7 +474,7 @@ vmCvar_t	g_developer;
 vmCvar_t	g_speed;
 vmCvar_t	g_gravity;
 //[CoOp]
-vmCvar_t	storyhead;	
+vmCvar_t	storyhead;
 vmCvar_t	tier_storyinfo;
 vmCvar_t	tiers_complete;
 //[/CoOp]
@@ -684,7 +684,7 @@ vmCvar_t		ojp_truebalance;//[TrueBalance]
 vmCvar_t	ojp_modelscaleEnabled;//[ModelScale]
 
 //[OpenRP]
-vmCvar_t		openrp_maxWarnings; 
+vmCvar_t		openrp_maxWarnings;
 
 //Website link
 vmCvar_t		openrp_website;
@@ -737,7 +737,7 @@ vmCvar_t		openrp_concussionDescription;
 
 //Bitvalues for Admins
 vmCvar_t		openrp_admin1Bitvalues;
-vmCvar_t		openrp_admin2Bitvalues; 
+vmCvar_t		openrp_admin2Bitvalues;
 vmCvar_t		openrp_admin3Bitvalues;
 vmCvar_t		openrp_admin4Bitvalues;
 vmCvar_t		openrp_admin5Bitvalues;
@@ -763,7 +763,7 @@ vmCvar_t	openrp_databasePath;
 //[/OpenRP]
 
 #define XCVAR_DECL
-  #include "g_xcvar.h"	
+  #include "g_xcvar.h"
 #undef XCVAR_DECL
 
 //CVARS
@@ -799,7 +799,7 @@ static cvarTable_t		gameCvarTable[] = {
 
 	{ &g_autoMapCycle, "g_autoMapCycle", "0", CVAR_ARCHIVE | CVAR_NORESTART, 0, qtrue },
 	{ &g_dmflags, "dmflags", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
-	
+
 	//[ExpSys]
 	//sets the initial skill points that players get.
 	//[OpenRP - Skillpoint System]
@@ -812,7 +812,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_privateDuel, "g_privateDuel", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
 
 	{ &g_allowNPC, "g_allowNPC", "1", CVAR_SERVERINFO | CVAR_CHEAT, 0, qtrue  },
-	
+
 	//[ROQFILES]
 	{ &g_allowROQ, "g_allowROQ", "0", 0, 0, qtrue  },
 	//[/ROQFILES]
@@ -829,7 +829,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_armBreakage, "g_armBreakage", "0", 0, 0, qtrue  },
 
 	{ &g_saberLocking, "g_saberLocking", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
-	//Changed g_saberlockFactor from 2 to 0 
+	//Changed g_saberlockFactor from 2 to 0
 	{ &g_saberLockFactor, "g_saberLockFactor", "0", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_saberTraceSaberFirst, "g_saberTraceSaberFirst", "0", CVAR_ARCHIVE, 0, qtrue  },
 
@@ -891,7 +891,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_svfps, "sv_fps", "30", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue },
 	//{ &g_svfps, "sv_fps", "20", 0, 0, qtrue },
 	//[/SaberSys]
-	
+
 	//[PrivatePasswordFix]
 	{ &sv_privatepassword, "sv_privatePassword", "", CVAR_TEMP, 0, qfalse },
 	//[/PrivatePasswordFix]
@@ -904,7 +904,7 @@ static cvarTable_t		gameCvarTable[] = {
 	//[DodgeSys]
 	{ &g_dodgeRegenTime, "g_dodgeRegenTime", "1000", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
 	//[/DodgeSys]
-	
+
 	//[SaberSys]
 	{ &g_mishapRegenTime, "g_mishapRegenTime", "3000", CVAR_ARCHIVE, 0, qtrue  },
 	//[/SaberSys]
@@ -969,7 +969,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_gravity, "g_gravity", "800", 0, 0, qtrue  },
 	//[CoOp]
 	//Used by UI to set up SP menu stuff
-	{ &storyhead, "storyhead", "", 0, 0, qfalse  },	
+	{ &storyhead, "storyhead", "", 0, 0, qfalse  },
 	//RAFIXME - these probably need to be saved simply from level to level instead of
 	//in the archive system.
 	{ &tier_storyinfo, "tier_storyinfo", "0", CVAR_ARCHIVE, 0, qfalse  },
@@ -1044,7 +1044,7 @@ static cvarTable_t		gameCvarTable[] = {
 	//[SaberSys]
 #ifndef FINAL_BUILD
 	{ &g_debugsabercombat, "g_debugsabercombat", "0", CVAR_CHEAT, 0, qtrue },
-	//1 == the attacker always drops his saber when it collides with something. 
+	//1 == the attacker always drops his saber when it collides with something.
 #endif
 	//[/SaberSys]
 
@@ -1061,7 +1061,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_siegeTeamSwitch, "g_siegeTeamSwitch", "1", CVAR_SERVERINFO|CVAR_ARCHIVE, qfalse },
 
 	{ &bg_fighterAltControl, "bg_fighterAltControl", "0", CVAR_SERVERINFO, 0, qtrue },
-	
+
 	//[Asteroids]
 	{ &g_vehAutoAimLead, "g_vehAutoAimLead", "0", CVAR_ARCHIVE },
 	//[/Asteroids]
@@ -1101,7 +1101,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &d_asynchronousGroupAI, "d_asynchronousGroupAI", "1", CVAR_CHEAT },
 	//{ &d_asynchronousGroupAI, "d_asynchronousGroupAI", "0", CVAR_CHEAT },
 	//[/CoOp]
-	
+
 	//0 = never (BORING)
 	//1 = kyle only
 	//2 = kyle and last enemy jedi
@@ -1182,16 +1182,16 @@ static cvarTable_t		gameCvarTable[] = {
 	//[/NOBODYQUE]
 
 	//[ExpandedMOTD]
-	//This message of the day is printed in the center of a player's screen when they first join a server if they 
+	//This message of the day is printed in the center of a player's screen when they first join a server if they
 	//have the appropriate version of OJP running.
 	{ &ojp_clientMOTD, "ojp_clientMOTD", "", CVAR_ARCHIVE, 0, qfalse },
 	//This message of the day is printed in the center of a player's screen when they first join a server if they AREN'T
 	//running the right version of OJP.
 	{ &ojp_MOTD, "ojp_MOTD", "Please download the latest version of OpenRP at openrp.jkhub.org/download", CVAR_ARCHIVE, 0, qfalse },
-	//[/ExpandedMOTD]	
+	//[/ExpandedMOTD]
 
 	//[DodgeSys]
-	//toggles the use of Body Dodges, which are matrix-like moves that make the players 
+	//toggles the use of Body Dodges, which are matrix-like moves that make the players
 	//evade damage in exchange for DP.
 	{ &ojp_allowBodyDodge, "ojp_allowBodyDodge", "1", CVAR_SERVERINFO|CVAR_ARCHIVE, 0, qtrue },
 	//[/DodgeSys]
@@ -1210,88 +1210,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_mPSayMode, "g_mPSayMode", "3", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_mAllowEmotes, "g_mAllowEmotes", "4", CVAR_ARCHIVE, 0, qtrue },
 
-	//[OpenRP]
-	{ &openrp_maxWarnings, "openrp_maxWarnings", "3", CVAR_ARCHIVE, 0, qtrue  },
-
-	{ &openrp_admin1Bitvalues, "openrp_admin1Bitvalues", "536870911", 0 , 0, qtrue  },
-	{ &openrp_admin2Bitvalues, "openrp_admin2Bitvalues", "1", 0 , 0, qtrue  },
-	{ &openrp_admin3Bitvalues, "openrp_admin3Bitvalues", "1", 0 , 0, qtrue  },
-	{ &openrp_admin4Bitvalues, "openrp_admin4Bitvalues", "1", 0 , 0, qtrue  },
-	{ &openrp_admin5Bitvalues, "openrp_admin5Bitvalues", "1", 0 , 0, qtrue  },
-	{ &openrp_admin6Bitvalues, "openrp_admin6Bitvalues", "1", 0 , 0, qtrue  },
-	{ &openrp_admin7Bitvalues, "openrp_admin7Bitvalues", "1", 0 , 0, qtrue  },
-	{ &openrp_admin8Bitvalues, "openrp_admin8Bitvalues", "1", 0 , 0, qtrue  },
-	{ &openrp_admin9Bitvalues, "openrp_admin9Bitvalues", "1", 0 , 0, qtrue  },
-	{ &openrp_admin10Bitvalues, "openrp_admin10Bitvalues", "1", 0 , 0, qtrue  },
-
-	{ &openrp_adminControl, "openrp_adminControl", "1", CVAR_ARCHIVE, 0, qtrue  },
-	
-	//openRP website
-	{ &openrp_website, "openrp_website", " ", 0 , 0, qtrue  },
-
-	//Shop stuff
-	{ &openrp_e11BuyCost, "openrp_e11BuyCost", "400", 0 , 0, qtrue  },
-	{ &openrp_e11SellCost, "openrp_e11SellCost", "200", 0 , 0, qtrue  },
-	{ &openrp_e11Level, "openrp_e11Level", "5", 0 , 0, qtrue  },
-	{ &openrp_e11Description, "openrp_e11Description", "An E-11 blaster.", 0 , 0, qtrue  },
-
-	{ &openrp_pistolBuyCost, "openrp_pistolBuyCost", "250", 0 , 0, qtrue  },
-	{ &openrp_pistolSellCost, "openrp_pistolSellCost", "100", 0 , 0, qtrue  },
-	{ &openrp_pistolLevel, "openrp_pistolLevel", "1", 0 , 0, qtrue  },
-	{ &openrp_pistolDescription, "openrp_pistolDescription", "A bryar pistol.", 0 , 0, qtrue  },
-
-	{ &openrp_disruptorBuyCost, "openrp_disruptorBuyCost", "250", 0 , 0, qtrue  },
-	{ &openrp_disruptorSellCost, "openrp_disruptorSellCost", "100", 0 , 0, qtrue  },
-	{ &openrp_disruptorLevel, "openrp_disruptorLevel", "1", 0 , 0, qtrue  },
-	{ &openrp_disruptorDescription, "openrp_disruptorDescription", "A bryar pistol.", 0 , 0, qtrue  },
-
-
-	{ &openrp_bowcasterBuyCost, "openrp_bowcasterBuyCost", "250", 0 , 0, qtrue  },
-	{ &openrp_bowcasterSellCost, "openrp_bowcasterSellCost", "100", 0 , 0, qtrue  },
-	{ &openrp_bowcasterLevel, "openrp_bowcasterLevel", "1", 0 , 0, qtrue  },
-	{ &openrp_bowcasterDescription, "openrp_bowcasterDescription", "A bryar pistol.", 0 , 0, qtrue  },
-
-
-	{ &openrp_repeaterBuyCost, "openrp_repeaterBuyCost", "250", 0 , 0, qtrue  },
-	{ &openrp_repeaterSellCost, "openrp_repeaterSellCost", "100", 0 , 0, qtrue  },
-	{ &openrp_repeaterLevel, "openrp_repeaterLevel", "1", 0 , 0, qtrue  },
-	{ &openrp_repeaterDescription, "openrp_repeaterDescription", "A bryar pistol.", 0 , 0, qtrue  },
-
-	{ &openrp_demp2BuyCost, "openrp_demp2BuyCost", "250", 0 , 0, qtrue  },
-	{ &openrp_demp2SellCost, "openrp_demp2SellCost", "100", 0 , 0, qtrue  },
-	{ &openrp_demp2Level, "openrp_demp2Level", "1", 0 , 0, qtrue  },
-	{ &openrp_demp2Description, "openrp_demp2Description", "A bryar pistol.", 0 , 0, qtrue  },
-
-	{ &openrp_flechetteBuyCost, "openrp_flechetteBuyCost", "250", 0 , 0, qtrue  },
-	{ &openrp_flechetteSellCost, "openrp_flechetteSellCost", "100", 0 , 0, qtrue  },
-	{ &openrp_flechetteLevel, "openrp_flechetteLevel", "1", 0 , 0, qtrue  },
-	{ &openrp_flechetteDescription, "openrp_flechetteDescription", "A bryar pistol.", 0 , 0, qtrue  },
-
-	{ &openrp_rocketBuyCost, "openrp_rocketBuyCost", "250", 0 , 0, qtrue  },
-	{ &openrp_rocketSellCost, "openrp_rocketSellCost", "100", 0 , 0, qtrue  },
-	{ &openrp_rocketLevel, "openrp_rocketLevel", "1", 0 , 0, qtrue  },
-	{ &openrp_rocketDescription, "openrp_rocketDescription", "A bryar pistol.", 0 , 0, qtrue  },
-
-	{ &openrp_concussionBuyCost, "openrp_concussionBuyCost", "250", 0 , 0, qtrue  },
-	{ &openrp_concussionSellCost, "openrp_concussionSellCost", "100", 0 , 0, qtrue  },
-	{ &openrp_concussionLevel, "openrp_concussionLevel", "1", 0 , 0, qtrue  },
-	{ &openrp_concussionDescription, "openrp_concussionDescription", "A bryar pistol.", 0 , 0, qtrue  },
-
-	//[BlackNames]
-	//Toggles allowance of black names
-	{ &g_allowBlackNames, "g_allowBlackNames", "1", CVAR_ARCHIVE, 0, qtrue },
-	//[/BlackNames]
-
-	//{ &openrp_jetpackFuel, "openrp_jetpackFuel", "0", CVAR_ARCHIVE, 0, qtrue },
-	//{ &openrp_cloakFuel, "openrp_cloakFuel", "0", CVAR_ARCHIVE, 0, qtrue },
-
-	{ &openrp_showRenames, "openrp_showRenames", "1", CVAR_ARCHIVE, 0, qtrue },
-
-	{ &openrp_databasePath, "openrp_databasePath", "OpenRP/data.db", CVAR_ARCHIVE, 0, qtrue },
-	//[/OpenRP]
-
-	#define XCVAR_LIST	
-		#include "g_xcvar.h"	
+	#define XCVAR_LIST
+		#include "g_xcvar.h"
 	#undef XCVAR_LIST
 
 };
@@ -1347,13 +1267,13 @@ void G_UpdateCvars( void ) {
 				cv->modificationCount = cv->vmCvar->modificationCount;
 
 				if ( cv->trackChange ) {
-					trap_SendServerCommand( -1, va("print \"Server: %s changed to %s\n\"", 
+					trap_SendServerCommand( -1, va("print \"Server: %s changed to %s\n\"",
 						cv->cvarName, cv->vmCvar->string ) );
 				}
 
 				if (cv->teamShader) {
 					remapped = qtrue;
-				}				
+				}
 			}
 		}
 	}
@@ -1510,14 +1430,14 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	level.num_entities = MAX_CLIENTS;
 
 	// let the server system know where the entites are
-	trap_LocateGameData( level.gentities, level.num_entities, sizeof( gentity_t ), 
+	trap_LocateGameData( level.gentities, level.num_entities, sizeof( gentity_t ),
 		&level.clients[0].ps, sizeof( level.clients[0] ) );
 
 	//Load sabers.cfg data
 	WP_SaberLoadParms();
 
 	NPC_InitGame();
-	
+
 	TIMER_Clear();
 	//
 	//ICARUS INIT START
@@ -1594,8 +1514,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	//[BugFix44]
 	//}
 	} else {
-		// We still want to load arenas even if bot_enable is off so that 
-		// g_autoMapCycle can work let alone any other code that relies on 
+		// We still want to load arenas even if bot_enable is off so that
+		// g_autoMapCycle can work let alone any other code that relies on
 		// using arena information that normally wouldn't be loaded :Nervous
 		G_LoadArenas();
 	}
@@ -1612,7 +1532,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	}
 	else
 	{//loaded
-		//FIXME: if this is from a loadgame, it needs to be sure to write this 
+		//FIXME: if this is from a loadgame, it needs to be sure to write this
 		//out whenever you do a savegame since the edges and routes are dynamic...
 		//OR: always do a navigator.CheckBlockedEdges() on map startup after nav-load/calc-paths
 		//navigator.pathsCalculated = qtrue;//just to be safe?  Does this get saved out?  No... assumed
@@ -1677,7 +1597,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 			//create spawnpoint
 			jmsaber = G_Spawn();
 
-			G_SetOrigin(jmsaber, spawnpoint->s.origin); 
+			G_SetOrigin(jmsaber, spawnpoint->s.origin);
 			SP_info_jedimaster_start(jmsaber);
 		}
 	}
@@ -1707,7 +1627,7 @@ void G_ShutdownGame( int restart ) {
 
 //	G_Printf ("==== ShutdownGame ====\n");
 
-	//JAC: Added	
+	//JAC: Added
 	UnpatchEngine();
 
 	//[AdminCommands]
@@ -1868,7 +1788,7 @@ void AddTournamentPlayer( void ) {
 			continue;
 		}
 		// never select the dedicated follow or scoreboard clients
-		if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD || 
+		if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD ||
 			client->sess.spectatorClient < 0  ) {
 			continue;
 		}
@@ -1995,7 +1915,7 @@ void AddPowerDuelPlayers( void )
 		}
 
 		// never select the dedicated follow or scoreboard clients
-		if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD || 
+		if ( client->sess.spectatorState == SPECTATOR_SCOREBOARD ||
 			client->sess.spectatorClient < 0  ) {
 			continue;
 		}
@@ -2026,7 +1946,7 @@ void RemovePowerDuelLosers(void)
 	int remNum = 0;
 	int i = 0;
 	gclient_t *cl;
-	
+
 
 	while (i < MAX_CLIENTS && remNum < 3)
 	{
@@ -2330,7 +2250,7 @@ void CalculateRanks( void ) {
 
 		level.numteamVotingClients[i] = 0;
 	}
-	
+
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
 		if ( level.clients[i].pers.connected != CON_DISCONNECTED ) {
 			level.sortedClients[level.numConnectedClients] = i;
@@ -2343,7 +2263,7 @@ void CalculateRanks( void ) {
 					level.numNonSpectatorClients++;
 					//nonSpecIndex = i;
 				}
-			
+
 				// decide if this should be auto-followed
 				if ( level.clients[i].pers.connected == CON_CONNECTED )
 				{
@@ -2391,7 +2311,7 @@ void CalculateRanks( void ) {
 	*/
 	//NOTE: for now not doing this either. May use later if appropriate.
 
-	qsort( level.sortedClients, level.numConnectedClients, 
+	qsort( level.sortedClients, level.numConnectedClients,
 		sizeof(level.sortedClients[0]), SortRanks );
 
 	// set the rank value for all clients that are connected and not spectators
@@ -2407,7 +2327,7 @@ void CalculateRanks( void ) {
 				cl->ps.persistant[PERS_RANK] = 1;
 			}
 		}
-	} else {	
+	} else {
 		rank = -1;
 		score = 0;
 		for ( i = 0;  i < level.numPlayingClients; i++ ) {
@@ -2524,10 +2444,10 @@ void MoveClientToIntermission( gentity_t *ent ) {
 
 	// clean up powerup info
 	memset( ent->client->ps.powerups, 0, sizeof(ent->client->ps.powerups) );
-	
+
 	//[BugFix38]
 	G_LeaveVehicle( ent, qfalse );
-	
+
 	ent->client->ps.rocketLockIndex = ENTITYNUM_NONE;
 	ent->client->ps.rocketLockTime = 0;
 	//[/BugFix38]
@@ -2572,7 +2492,7 @@ void FindIntermissionPoint( void ) {
 	   	if (gSiegeRoundWinningTeam == SIEGETEAM_TEAM1)
 		{
 			ent = G_Find (NULL, FOFS(classname), "info_player_intermission_red");
-			if ( ent && ent->target2 ) 
+			if ( ent && ent->target2 )
 			{
 				G_UseTargets2( ent, ent, ent->target2 );
 			}
@@ -2580,7 +2500,7 @@ void FindIntermissionPoint( void ) {
 	   	else if (gSiegeRoundWinningTeam == SIEGETEAM_TEAM2)
 		{
 			ent = G_Find (NULL, FOFS(classname), "info_player_intermission_blue");
-			if ( ent && ent->target2 ) 
+			if ( ent && ent->target2 )
 			{
 				G_UseTargets2( ent, ent, ent->target2 );
 			}
@@ -2672,7 +2592,7 @@ void BeginIntermission( void ) {
 ExitLevel
 
 When the intermission has been exited, the server is either killed
-or moved to a new level based on the "nextmap" cvar 
+or moved to a new level based on the "nextmap" cvar
 
 =============
 */
@@ -2693,7 +2613,7 @@ void ExitLevel (void) {
 				level.changemap = NULL;
 				level.intermissiontime = 0;
 			}
-			return;	
+			return;
 		}
 
 		DuelResetWinsLosses();
@@ -2754,7 +2674,7 @@ void QDECL G_LogPrintf( const char *fmt, ... ) {
 	va_list		argptr;
 	char		string[1024] = {0};
 	int			mins, seconds, msec, l;
-	
+
 	//JAC
 	msec = level.time - level.startTime;
 
@@ -2908,12 +2828,12 @@ void CheckIntermissionExit( void ) {
 		{
 			G_LogPrintf("Duel Results:\n");
 			//G_LogPrintf("Duel Time: %d\n", level.time );
-			G_LogPrintf("winner: %s, score: %d, wins/losses: %d/%d\n", 
+			G_LogPrintf("winner: %s, score: %d, wins/losses: %d/%d\n",
 				level.clients[level.sortedClients[0]].pers.netname,
 				level.clients[level.sortedClients[0]].ps.persistant[PERS_SCORE],
 				level.clients[level.sortedClients[0]].sess.wins,
 				level.clients[level.sortedClients[0]].sess.losses );
-			G_LogPrintf("loser: %s, score: %d, wins/losses: %d/%d\n", 
+			G_LogPrintf("loser: %s, score: %d, wins/losses: %d/%d\n",
 				level.clients[level.sortedClients[1]].pers.netname,
 				level.clients[level.sortedClients[1]].ps.persistant[PERS_SCORE],
 				level.clients[level.sortedClients[1]].sess.wins,
@@ -2948,7 +2868,7 @@ void CheckIntermissionExit( void ) {
 			{
 				if (g_gametype.integer == GT_POWERDUEL)
 				{
-					G_LogPrintf("Power Duel Initiated: %s %d/%d vs %s %d/%d and %s %d/%d, kill limit: %d\n", 
+					G_LogPrintf("Power Duel Initiated: %s %d/%d vs %s %d/%d and %s %d/%d, kill limit: %d\n",
 						level.clients[level.sortedClients[0]].pers.netname,
 						level.clients[level.sortedClients[0]].sess.wins,
 						level.clients[level.sortedClients[0]].sess.losses,
@@ -2962,7 +2882,7 @@ void CheckIntermissionExit( void ) {
 				}
 				else
 				{
-					G_LogPrintf("Duel Initiated: %s %d/%d vs %s %d/%d, kill limit: %d\n", 
+					G_LogPrintf("Duel Initiated: %s %d/%d vs %s %d/%d, kill limit: %d\n",
 						level.clients[level.sortedClients[0]].pers.netname,
 						level.clients[level.sortedClients[0]].sess.wins,
 						level.clients[level.sortedClients[0]].sess.losses,
@@ -2972,14 +2892,14 @@ void CheckIntermissionExit( void ) {
 						g_fraglimit.integer );
 				}
 			}
-			
+
 			if (g_gametype.integer == GT_POWERDUEL)
 			{
 				if (level.numPlayingClients >= 3 && level.numNonSpectatorClients >= 3)
 				{
 					trap_SetConfigstring ( CS_CLIENT_DUELISTS, va("%i|%i|%i", level.sortedClients[0], level.sortedClients[1], level.sortedClients[2] ) );
 					trap_SetConfigstring ( CS_CLIENT_DUELWINNER, "-1" );
-				}			
+				}
 			}
 			else
 			{
@@ -2990,12 +2910,12 @@ void CheckIntermissionExit( void ) {
 				}
 			}
 
-			return;	
+			return;
 		}
 
 		if ( g_austrian.integer && g_gametype.integer != GT_POWERDUEL )
 		{
-			G_LogPrintf("Duel Tournament Winner: %s wins/losses: %d/%d\n", 
+			G_LogPrintf("Duel Tournament Winner: %s wins/losses: %d/%d\n",
 				level.clients[level.sortedClients[0]].pers.netname,
 				level.clients[level.sortedClients[0]].sess.wins,
 				level.clients[level.sortedClients[0]].sess.losses );
@@ -3122,7 +3042,7 @@ qboolean ScoreIsTied( void ) {
 	if ( level.numPlayingClients < 2 ) {
 		return qfalse;
 	}
-	
+
 	if ( g_gametype.integer >= GT_TEAM ) {
 		return (qboolean)(level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE]);
 	}
@@ -3142,7 +3062,7 @@ void CheckLMS()
 {
 	int i;
 	if (!LMSReset //not already reseting
-		&& ojp_lms.integer > 0 && BG_IsLMSGametype(g_gametype.integer) 
+		&& ojp_lms.integer > 0 && BG_IsLMSGametype(g_gametype.integer)
 		&& LMS_EnoughPlayers())
 	{//check to see if there's only one LAST MAN STANDING!
 		int		counts[TEAM_NUM_TEAMS];
@@ -3370,10 +3290,10 @@ void CheckExitRules( void ) {
 	{
 		sKillLimit = "Kill limit hit.";
 	}
-	
-	if ( g_gametype.integer < GT_SIEGE && g_fraglimit.integer ) 
+
+	if ( g_gametype.integer < GT_SIEGE && g_fraglimit.integer )
 	{//RACC - check for fraglimit.
-		if ( level.teamScores[TEAM_RED] >= g_fraglimit.integer ) 
+		if ( level.teamScores[TEAM_RED] >= g_fraglimit.integer )
 		{
 			trap_SendServerCommand( -1, va("print \"Red %s\n\"", G_GetStringEdString("MP_SVGAME", "HIT_THE_KILL_LIMIT")) );
 			if (d_powerDuelPrint.integer)
@@ -3428,7 +3348,7 @@ void CheckExitRules( void ) {
 					trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " %s.\n\"",
 													cl->pers.netname,
 													G_GetStringEdString("MP_SVGAME", "HIT_THE_KILL_LIMIT")
-													) 
+													)
 											);
 				}
 				return;
@@ -3438,7 +3358,7 @@ void CheckExitRules( void ) {
 
 	if ( g_gametype.integer >= GT_CTF && g_capturelimit.integer ) {
 
-		if ( level.teamScores[TEAM_RED] >= g_capturelimit.integer ) 
+		if ( level.teamScores[TEAM_RED] >= g_capturelimit.integer )
 		{
 			trap_SendServerCommand( -1,  va("print \"%s \"", G_GetStringEdString("MP_SVGAME", "PRINTREDTEAM")));
 			trap_SendServerCommand( -1,  va("print \"%s.\n\"", G_GetStringEdString("MP_SVGAME", "HIT_CAPTURE_LIMIT")));
@@ -3518,7 +3438,7 @@ void CheckTournament( void ) {
 				playerState_t *ps1, *ps2;
 				ps1 = &level.clients[level.sortedClients[0]].ps;
 				ps2 = &level.clients[level.sortedClients[1]].ps;
-				trap_SetConfigstring ( CS_CLIENT_DUELHEALTHS, va("%i|%i|!", 
+				trap_SetConfigstring ( CS_CLIENT_DUELHEALTHS, va("%i|%i|!",
 					ps1->stats[STAT_HEALTH], ps2->stats[STAT_HEALTH]));
 			}
 		}
@@ -3621,7 +3541,7 @@ void CheckTournament( void ) {
 
 					if ( g_austrian.integer )
 					{
-						G_LogPrintf("Duel Initiated: %s %d/%d vs %s %d/%d and %s %d/%d, kill limit: %d\n", 
+						G_LogPrintf("Duel Initiated: %s %d/%d vs %s %d/%d and %s %d/%d, kill limit: %d\n",
 							level.clients[level.sortedClients[0]].pers.netname,
 							level.clients[level.sortedClients[0]].sess.wins,
 							level.clients[level.sortedClients[0]].sess.losses,
@@ -3948,12 +3868,12 @@ CheckCvars
 */
 void CheckCvars( void ) {
 	static int lastMod = -1;
-	
+
 	if ( g_password.modificationCount != lastMod ) {
 		char password[MAX_INFO_STRING];
 		char *c = password;
 		lastMod = g_password.modificationCount;
-		
+
 		strcpy( password, g_password.string );
 		while( *c )
 		{
@@ -4001,7 +3921,7 @@ void G_RunThink (gentity_t *ent) {
 	if (thinktime > level.time) {
 		goto runicarus;
 	}
-	
+
 	ent->nextthink = 0;
 	if (!ent->think) {
 		//G_Error ( "NULL ent->think");
@@ -4094,7 +4014,7 @@ int gSlowMoDuelTime = 0;
 //#define _G_FRAME_PERFANAL
 
 void NAV_CheckCalcPaths( void )
-{	
+{
 	if ( navCalcPathTime && navCalcPathTime < level.time )
 	{//first time we've ever loaded this map...
 		vmCvar_t	mapname;
@@ -4111,7 +4031,7 @@ void NAV_CheckCalcPaths( void )
 		NAV_CalculatePaths( level.rawmapname, ckSum.integer );
 		//NAV_CalculatePaths( mapname.string, ckSum.integer );
 		//[/RawMapName]
-		
+
 		trap_Nav_CalculatePaths(qfalse);
 
 #ifndef FINAL_BUILD
@@ -4119,7 +4039,7 @@ void NAV_CheckCalcPaths( void )
 		{
 			Com_Printf( S_COLOR_RED"Not saving .nav file due to fatal nav errors\n" );
 		}
-		else 
+		else
 #endif
 		//[RawMapName]
 		if ( trap_Nav_Save( level.rawmapname, ckSum.integer ) == qfalse )
@@ -4354,14 +4274,14 @@ void G_RunFrame( int levelTime ) {
 		trap_Nav_ClearCheckedNodes();
 
 		//remember last waypoint, clear current one
-		for ( i = 0; i < level.num_entities ; i++) 
+		for ( i = 0; i < level.num_entities ; i++)
 		{
 			ent = &g_entities[i];
 
 			if ( !ent->inuse )
 				continue;
 
-			if ( ent->waypoint != WAYPOINT_NONE 
+			if ( ent->waypoint != WAYPOINT_NONE
 				&& ent->noWaypointTime < level.time )
 			{
 				ent->lastWaypoint = ent->waypoint;
@@ -4475,14 +4395,14 @@ void G_RunFrame( int levelTime ) {
 		}
 
 		//[Test]
-		//something is causing clients to be disconnected/not in use between the beginning 
+		//something is causing clients to be disconnected/not in use between the beginning
 		//and here.  Added this additional check so that we don't give weird problems downstream.
 		if(!ent->inuse)
 		{
 			continue;
 		}
 		//[/Test]
-		
+
 		//[AREAPORTALFIX]
 		//fix for self-deactivating areaportals in Siege
 		if ( ent->s.eType == ET_MOVER && g_gametype.integer == GT_SIEGE && level.intermissiontime)
@@ -4490,7 +4410,7 @@ void G_RunFrame( int levelTime ) {
 			if ( !Q_stricmp("func_door", ent->classname) && ent->moverState != MOVER_POS1 )
 			{
 				SetMoverState( ent, MOVER_POS1, level.time );
-				if ( ent->teammaster == ent || !ent->teammaster ) 
+				if ( ent->teammaster == ent || !ent->teammaster )
 				{
 					trap_AdjustAreaPortalState( ent, qfalse );
 				}
@@ -4503,10 +4423,10 @@ void G_RunFrame( int levelTime ) {
 		}
 		//[/AREAPORTALFIX]
 
-		if ( i < MAX_CLIENTS ) 
+		if ( i < MAX_CLIENTS )
 		{
 			G_CheckClientTimeouts ( ent );
-			
+
 			if (ent->client->inSpaceIndex && ent->client->inSpaceIndex != ENTITYNUM_NONE)
 			{ //we're in space, check for suffocating and for exiting
                 gentity_t *spacetrigger = &g_entities[ent->client->inSpaceIndex];
@@ -4514,7 +4434,7 @@ void G_RunFrame( int levelTime ) {
 				if (!spacetrigger->inuse ||
 					!G_PointInBounds(ent->client->ps.origin, spacetrigger->r.absmin, spacetrigger->r.absmax))
 				{ //no longer in space then I suppose
-                    ent->client->inSpaceIndex = 0;					
+                    ent->client->inSpaceIndex = 0;
 				}
 				else
 				{ //check for suffocation
@@ -4622,7 +4542,7 @@ void G_RunFrame( int levelTime ) {
 						*/
 					}
 					//[/JetpackSys]
-					
+
 					if (ent->client->ps.jetpackFuel <= 0)
 					{ //turn it off
 						ent->client->ps.jetpackFuel = 0;
@@ -4657,7 +4577,7 @@ void G_RunFrame( int levelTime ) {
 						ent->client->ps.cloakFuel--;
 					}
 					*/
-					
+
 					if (ent->client->ps.cloakFuel <= 0)
 					{ //turn it off
 						ent->client->ps.cloakFuel = 0;
@@ -4807,7 +4727,7 @@ void G_RunFrame( int levelTime ) {
 }
 
 const char *G_GetStringEdString(char *refSection, char *refName)
-{	
+{
 	//Well, it would've been lovely doing it the above way, but it would mean mixing
 	//languages for the client depending on what the server is. So we'll mark this as
 	//a stringed reference with @@@ and send the refname to the client, and when it goes
