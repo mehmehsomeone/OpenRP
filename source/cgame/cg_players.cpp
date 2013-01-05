@@ -17533,6 +17533,16 @@ stillDoSaber:
 		
 		trap_R_AddRefEntityToScene( &legs );
 	}
+
+	//[OpenRP - Holograms]
+	if ( cg.OpenRP.isHologram )
+	{
+		trap_R_SetRefractProp(1.0f, 0.0f, qfalse, qfalse); //don't need to do this every frame.. but..
+		legs.customShader = cgs.media.hologramShader; //crazy "refractive" shader
+		trap_R_AddRefEntityToScene( &legs );
+		legs.customShader = 0;
+	}
+	//[/OpenRP - Holograms]
 }
 
 

@@ -168,3 +168,30 @@ void Cmd_TrainingSaber_F( gentity_t *ent )
 		return;
 	}
 }
+
+void Cmd_Hologram_F( gentity_t *ent )
+{
+	if ( !ent->client->sess.isHologram )
+	{
+		ent->client->sess.isHologram = qtrue;
+		trap_SendServerCommand( ent-g_entities, "hologram" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Hologram of yourself ^7ON^2.\n\"" );
+		return;
+	}
+	else
+	{
+		ent->client->sess.isHologram = qfalse;
+		trap_SendServerCommand( ent-g_entities, "hologram" );
+		trap_SendServerCommand( ent-g_entities, "print \"^2Hologram of yourself ^7OFF^2.\n\"" );
+		return;
+	}
+}
+
+void Cmd_AutoWalk_F( gentity_t *ent )
+{
+	if ( !ent->client->sess.isAutoWalking )
+		ent->client->sess.isAutoWalking = qtrue;
+	else
+		ent->client->sess.isAutoWalking = qfalse;
+	return;
+}

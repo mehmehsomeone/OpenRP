@@ -15,6 +15,7 @@ typedef struct {
 	qboolean timer;
 	int timerSeconds;
 	qboolean timerIsMyTeam;
+	qboolean isHologram;
 } OpenRP_t;
 
 

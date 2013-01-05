@@ -690,7 +690,7 @@ void Cmd_amAnnounce_F(gentity_t *ent)
 		trap_SendServerCommand( ent-g_entities, va("print \"Client %s is not active\n\"", cmdTarget ) ); 
 		return; 
 	}
-	G_Sound( &g_entities[clientid], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/info.mp3" ) );
+	trap_SendServerCommand( clientid, "localSound sound/OpenRP/info.mp3" );
 	trap_SendServerCommand(clientid, va("print \"%s\n\"", real_msg));
 	trap_SendServerCommand(clientid, va("cp \"%s\"", real_msg));
 	G_LogPrintf("Announce admin command executed by %s. It was sent to %s. The announcement was: %s\n", ent->client->pers.netname, g_entities[clientid].client->pers.netname, real_msg);
@@ -1150,7 +1150,6 @@ void Cmd_amMap_F(gentity_t *ent)
 	G_LogPrintf("Map changed to %s by %s.\n", map, ent->client->pers.netname);
 	return;
 }
-
 /*
 ============
 amweather Function
@@ -1824,7 +1823,7 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 			if ( loggedIn )
 			{
 				AddSkill( &g_entities[clientID], changedSkillPoints );
-				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/xp.mp3" ) );
+				trap_SendServerCommand( clientID, "localSound sound/OpenRP/xp.mp3" );
 				trap_SendServerCommand( clientID, va( "print \"^2You received %i skill points! You are the highest level, so you won't level up anymore!\n\"", changedSkillPoints ) );
 			}
 			break;
@@ -1832,7 +1831,7 @@ void Cmd_GiveSkillPoints_F(gentity_t * ent)
 			if ( loggedIn )
 			{
 				AddSkill( &g_entities[clientID], changedSkillPoints );
-				G_Sound( &g_entities[clientID], CHAN_MUSIC, G_SoundIndex( "sound/OpenRP/xp.mp3" ) );
+				trap_SendServerCommand( clientID, "localSound sound/OpenRP/xp.mp3" );
 				trap_SendServerCommand( clientID, va( "print \"^2You received %i skill points!\n\"", changedSkillPoints ) );
 			}
 			LevelCheck(charID);

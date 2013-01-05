@@ -2452,6 +2452,8 @@ Ghoul2 Insert End
 	cgs.media.viewPainShader_Shields			= trap_R_RegisterShader( "gfx/mp/dmgshader_shields" );
 	cgs.media.viewPainShader_ShieldsAndHealth	= trap_R_RegisterShader( "gfx/mp/dmgshader_shieldsandhealth" );
 
+	cgs.media.hologramShader					= trap_R_RegisterShader( "gfx/effects/hologramShader" );
+
 	// register the inline models
 	breakPoint = cgs.numInlineModels = trap_CM_NumInlineModels();
 	for ( i = 1 ; i < cgs.numInlineModels ; i++ ) {

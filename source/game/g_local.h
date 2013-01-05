@@ -963,6 +963,8 @@ typedef struct {
 
 	qboolean fadeToBlack;
 
+	qboolean isHologram;
+
 } clientSession_t;
 
 // playerstate mGameFlags

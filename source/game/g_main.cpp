@@ -869,7 +869,11 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_doWarmup, "g_doWarmup", "0", CVAR_ARCHIVE, 0, qtrue  },
 	//{ &g_doWarmup, "g_doWarmup", "0", 0, 0, qtrue  },
 	//[/FIXWARMUP]
-	{ &g_log, "g_log", "games.log", CVAR_ARCHIVE, 0, qfalse  },
+
+	//OpenRP Bugfix - If a user had a different setting for g_log in their server.cfg
+	//than the default of games.log, games.log was still generated in addition to the user's name
+	//for the log file
+	{ &g_log, "g_log", "", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_logSync, "g_logSync", "0", CVAR_ARCHIVE, 0, qfalse  },
 
 	{ &g_statLog, "g_statLog", "0", CVAR_ARCHIVE, 0, qfalse },

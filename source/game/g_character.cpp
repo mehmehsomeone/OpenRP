@@ -1133,15 +1133,11 @@ Displays the shop
 */
 void Cmd_Shop_F( gentity_t * ent )
 {
-	/*
+	
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char parameter[MAX_STRING_CHARS], itemName[MAX_STRING_CHARS];
-	int itemCost, itemLevel, newTotal;
-	int currentCredits;
-	int currentLevel;
-	int newTotalCredits;
-	int currentTotal;
+	int itemCost, itemLevel, newTotal, currentCredits, currentLevel, newTotalCredits, currentTotal, forceSensitive;
 
 	if ( !db.Connected() )
 	{
@@ -1179,9 +1175,10 @@ void Cmd_Shop_F( gentity_t * ent )
 
 	if ( !Q_stricmp( parameter, "buy" ) )
 	{
+		forceSensitive = q.get_num( va( "SELECT ForceSensitive FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
+		if ( forceSensitive && !openrp_forceSensitiveBuyGuns.integer )
 		if ( !Q_stricmp( itemName, "pistol" ) )
 		{
-
 			itemCost = openrp_pistolBuyCost.integer;
 			itemLevel = openrp_pistolLevel.integer;
 		}

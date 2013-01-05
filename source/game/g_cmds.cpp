@@ -4924,9 +4924,19 @@ void ClientCommand( int clientNum ) {
 		Cmd_aminfo_F( ent );
 		return;
 	}
+	if ( !Q_stricmp( cmd, "autowalk" ) )
+	{
+		Cmd_AutoWalk_F( ent );
+		return;
+	}
 	if ( !Q_stricmp( cmd, "eminfo" ) )
 	{
 		Cmd_eminfo_F( ent );
+		return;
+	}
+	if ( !Q_stricmp( cmd, "hologram" ) )
+	{
+		Cmd_Hologram_F( ent );
 		return;
 	}
 	if ( !Q_stricmp( cmd, "info" ) )

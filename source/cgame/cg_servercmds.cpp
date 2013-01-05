@@ -1885,6 +1885,7 @@ static void CG_ServerCommand( void ) {
 	}
 	//[/OpenRP - Fade to black]
 
+	//[OpenRP - Timer]
 	if ( !Q_stricmp( cmd, "timer" ) )
 	{
 		if ( !cg.OpenRP.timer )
@@ -1895,6 +1896,24 @@ static void CG_ServerCommand( void ) {
 		}
 		return;
 	}
+	//[/OpenRP - Timer]
+
+	//[OpenRP - Holograms]
+	if ( !Q_stricmp( cmd, "hologram" ) )
+	{
+		if ( !cg.OpenRP.isHologram )
+			cg.OpenRP.isHologram = qtrue;
+		else
+			cg.OpenRP.isHologram = qfalse;
+		return;
+	}
+	//[/OpenRP - Holograms]
+	//[OpenRP - Local Sounds]
+	if ( !Q_stricmp( cmd, "localSound" ) )
+	{
+		trap_S_StartLocalSound( trap_S_RegisterSound( va( "%s", CG_Argv( 1 ) ) ), CHAN_LOCAL_SOUND );
+	}
+	///[OpenRP - Local Sounds]
 
 
 	if ( strcmp( cmd, "forcechanged" ) )

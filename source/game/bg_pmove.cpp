@@ -13066,6 +13066,14 @@ void PmoveSingle (pmove_t *pmove) {
 
 	PM_CmdForSaberMoves(&pm->cmd);
 
+	#ifdef QAGAME
+		if ( ( ( gentity_t * )pm_entSelf )->client->sess.isAutoWalking )
+		{
+			pm->cmd.rightmove = 0;
+			pm->cmd.upmove = 0;
+			pm->cmd.forwardmove = 64;
+		}
+	#endif
 	BG_AdjustClientSpeed(pm->ps, &pm->cmd, pm->cmd.serverTime);
 
 	if ( pm->ps->stats[STAT_HEALTH] <= 0 ) {

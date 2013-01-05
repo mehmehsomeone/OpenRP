@@ -1328,6 +1328,8 @@ typedef struct {
 	qhandle_t	viewPainShader_Shields;
 	qhandle_t	viewPainShader_ShieldsAndHealth;
 
+	qhandle_t hologramShader;
+
 	qhandle_t	itemRespawningPlaceholder;
 	qhandle_t	itemRespawningRezOut;
 
