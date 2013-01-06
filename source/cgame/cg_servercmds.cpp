@@ -1877,8 +1877,30 @@ static void CG_ServerCommand( void ) {
 	//[OpenRP - Fade to black]
 	if ( !Q_stricmp( cmd, "fadeToBlack" ) )
 	{
-		if ( !cg.OpenRP.fadingToBlack && !cg.OpenRP.fadedToBlack )
-			cg.OpenRP.fadingToBlack = qtrue;
+		if ( !cg.OpenRP.fadingInToBlack && !cg.OpenRP.fadedToBlack )
+		{
+			cg.OpenRP.fadeToBlackTime = cg.time;
+			cg.OpenRP.fadeToBlackMSecondsPassedMin = 1000;
+			cg.OpenRP.fadeToBlackMSecondsPassedMax = 2000;
+			cg.OpenRP.fadeToBlackMSecondsPassed = 0;
+			cg.OpenRP.fadingInToBlack = qtrue;
+			cg.OpenRP.fadeColor[0] = cg.OpenRP.fadeColor[1] = cg.OpenRP.fadeColor[2] = cg.OpenRP.fadeColor[3] = 0;
+		}
+		else if ( !cg.OpenRP.fadingInToBlack && cg.OpenRP.fadedToBlack )
+		{
+			cg.OpenRP.fadedToBlack = qfalse;
+			cg.OpenRP.fadeToBlackTime = cg.time;
+			cg.OpenRP.fadeToBlackMSecondsPassedMin = 1000;
+			cg.OpenRP.fadeToBlackMSecondsPassedMax = 2000;
+			cg.OpenRP.fadeToBlackMSecondsPassed = 0;
+			cg.OpenRP.fadingOutOfBlack = qtrue;
+		}
+		return;
+	}
+	if ( !Q_stricmp( cmd, "toBlackImmediately" ) )
+	{
+		if ( !cg.OpenRP.fadedToBlack )
+			cg.OpenRP.fadedToBlack = qtrue;
 		else
 			cg.OpenRP.fadedToBlack = qfalse;
 		return;

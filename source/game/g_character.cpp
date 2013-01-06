@@ -1133,7 +1133,7 @@ Displays the shop
 */
 void Cmd_Shop_F( gentity_t * ent )
 {
-	
+	/*
 	Database db(DATABASE_PATH);
 	Query q(db);
 	char parameter[MAX_STRING_CHARS], itemName[MAX_STRING_CHARS];
@@ -1177,6 +1177,10 @@ void Cmd_Shop_F( gentity_t * ent )
 	{
 		forceSensitive = q.get_num( va( "SELECT ForceSensitive FROM Characters WHERE CharID='%i'", ent->client->sess.characterID ) );
 		if ( forceSensitive && !openrp_forceSensitiveBuyGuns.integer )
+		{
+			trap_SendServerCommand( ent-g_entities, "print \"^1This server does not allow force sensitives to buy weapons from the shop.\n\"" );
+			return;
+		}
 		if ( !Q_stricmp( itemName, "pistol" ) )
 		{
 			itemCost = openrp_pistolBuyCost.integer;
@@ -1237,7 +1241,7 @@ void Cmd_Shop_F( gentity_t * ent )
 			itemCost = openrp_cloakBuyCost.integer;
 			itemLevel = openrp_cloakLevel.integer;
 		}
-			else if ( !Q_stricmp( itemName, "td" ) )
+		else if ( !Q_stricmp( itemName, "td" ) )
 		{
 			itemCost = openrp_tdBuyCost.integer;
 			itemLevel = openrp_tdLevel.integer;

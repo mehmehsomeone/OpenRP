@@ -8224,20 +8224,6 @@ static void CG_Draw2DScreenTints( void )
 		
 		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, hcolor  );
 	}
-
-	//[OpenRP - Fade to black]
-	if ( cg.OpenRP.fadingToBlack )
-	{
-		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, colorTable[CT_BLACK]  );
-		cg.OpenRP.fadingToBlack = qfalse;
-		cg.OpenRP.fadedToBlack = qtrue;
-	}
-	
-	if ( cg.OpenRP.fadedToBlack )
-	{
-		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, colorTable[CT_BLACK]  );
-	}
-	//[/OpenRP - Fade to black]
 }
 
 static void CG_Draw2D( void ) {
@@ -8275,6 +8261,56 @@ static void CG_Draw2D( void ) {
 		cgYsalFadeVal = 0;
 	}
 
+	//[OpenRP - Fade to black]
+	if ( cg.OpenRP.fadingInToBlack )
+	{
+		if ( ( ( cg.time - cg.OpenRP.fadeToBlackTime ) >= cg.OpenRP.fadeToBlackMSecondsPassedMin ) && 
+			( ( cg.time - cg.OpenRP.fadeToBlackTime ) <= cg.OpenRP.fadeToBlackMSecondsPassedMax ) &&
+			( cg.OpenRP.fadeToBlackMSecondsPassed != cg.OpenRP.fadeToBlackMSecondsPassedMin ) )
+		{
+			cg.OpenRP.fadeToBlackMSecondsPassed = cg.OpenRP.fadeToBlackMSecondsPassedMin;
+			cg.OpenRP.fadeToBlackMSecondsPassedMin += 1000;
+			cg.OpenRP.fadeToBlackMSecondsPassedMax += 1000;
+			cg.OpenRP.fadeColor[3] += 0.2;
+		}
+		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, cg.OpenRP.fadeColor  );
+
+		if ( cg.OpenRP.fadeColor[3] == 1 )
+		{
+			cg.OpenRP.fadingInToBlack = qfalse;
+			cg.OpenRP.fadedToBlack = qtrue;
+		}
+		CG_ChatBox_DrawStrings();
+		return;
+	}
+	if ( cg.OpenRP.fadingOutOfBlack )
+	{
+		if ( ( ( cg.time - cg.OpenRP.fadeToBlackTime ) >= cg.OpenRP.fadeToBlackMSecondsPassedMin ) && 
+			( ( cg.time - cg.OpenRP.fadeToBlackTime ) <= cg.OpenRP.fadeToBlackMSecondsPassedMax ) &&
+			( cg.OpenRP.fadeToBlackMSecondsPassed != cg.OpenRP.fadeToBlackMSecondsPassedMin ) )
+		{
+			cg.OpenRP.fadeToBlackMSecondsPassed = cg.OpenRP.fadeToBlackMSecondsPassedMin;
+			cg.OpenRP.fadeToBlackMSecondsPassedMin += 1000;
+			cg.OpenRP.fadeToBlackMSecondsPassedMax += 1000;
+			cg.OpenRP.fadeColor[3] -= 0.2;
+		}
+		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, cg.OpenRP.fadeColor  );
+
+		if ( cg.OpenRP.fadeColor[3] == 0 )
+		{
+			cg.OpenRP.fadingOutOfBlack = qfalse;
+		}
+		CG_ChatBox_DrawStrings();
+		return;
+	}
+	if ( cg.OpenRP.fadedToBlack )
+	{
+		CG_DrawRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH*SCREEN_HEIGHT, colorTable[CT_BLACK]  );
+		CG_ChatBox_DrawStrings();
+		return;
+	}
+	//[/OpenRP - Fade to black]
+
 	if ( cg_draw2D.integer == 0 ) {
 		return;
 	}
@@ -8286,12 +8322,6 @@ static void CG_Draw2D( void ) {
 	}
 
 	CG_Draw2DScreenTints();
-
-	if ( cg.OpenRP.fadedToBlack )
-	{
-		CG_ChatBox_DrawStrings();
-		return;
-	}
 
 	if (cg.snap->ps.rocketLockIndex != ENTITYNUM_NONE && (cg.time - cg.snap->ps.rocketLockTime) > 0)
 	{

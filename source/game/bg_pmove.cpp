@@ -9059,7 +9059,8 @@ static void PM_Weapon( void )
 		return;
 	}
 	else if(pm->ps->weapon == WP_REPEATER || (pm->ps->weapon == WP_BRYAR_PISTOL
-#ifdef QGAME
+//OpenRP bugfix - was QGAME
+#ifdef QAGAME
 		&& g_entities[pm->ps->clientNum].client->skillLevel[SK_PISTOL] == FORCE_LEVEL_2
 #endif
 		))
@@ -9543,10 +9544,14 @@ static void PM_Weapon( void )
 			gentity_t *ent = &g_entities[pm->ps->clientNum];
 			if(ent->client->ps.weapon == WP_BLASTER && 
 				ent->client->skillLevel[SK_BLASTERRATEOFFIREUPGRADE] > FORCE_LEVEL_0)
-				addTime =350;
+				addTime = 350;
 			if(ent->client->ps.weapon == WP_BRYAR_PISTOL &&//1.3
 				ent->client->skillLevel[SK_PISTOL] == FORCE_LEVEL_1)
 				addTime = 500;//Rawr change this to someplace else to be moar editable
+			//OpenRP Bugfix - Pistol level 2 didn't have a rate of fire
+			if(ent->client->ps.weapon == WP_BRYAR_PISTOL &&
+				ent->client->skillLevel[SK_PISTOL] == FORCE_LEVEL_2)
+				addTime = 450;
 			if(ent->client->ps.weapon == WP_BRYAR_PISTOL &&
 				ent->client->skillLevel[SK_PISTOL] == FORCE_LEVEL_3)
 				addTime = 400;
@@ -13066,14 +13071,18 @@ void PmoveSingle (pmove_t *pmove) {
 
 	PM_CmdForSaberMoves(&pm->cmd);
 
+	//[OpenRP - Autowalk]
 	#ifdef QAGAME
 		if ( ( ( gentity_t * )pm_entSelf )->client->sess.isAutoWalking )
 		{
 			pm->cmd.rightmove = 0;
 			pm->cmd.upmove = 0;
 			pm->cmd.forwardmove = 64;
+			pm->cmd.buttons |= BUTTON_WALKING;
 		}
 	#endif
+	//[/OpenRP - Autowalk]
+
 	BG_AdjustClientSpeed(pm->ps, &pm->cmd, pm->cmd.serverTime);
 
 	if ( pm->ps->stats[STAT_HEALTH] <= 0 ) {

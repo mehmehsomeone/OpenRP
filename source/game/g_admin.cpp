@@ -2757,29 +2757,62 @@ void Cmd_CheckStats_F( gentity_t *ent )
 	return;
 }
 
-void Cmd_FadeToBlack_F( gentity_t *ent )
+void Cmd_ToBlack_F( gentity_t *ent )
 {
-	qboolean fadeToBlack;
+	qboolean fadeToBlack, toBlackImmediately;
+	char parameter[7];
 
-	if( !G_CheckAdmin( ent, ADMIN_FADETOBLACK ) )
+	if( !G_CheckAdmin( ent, ADMIN_TOBLACK ) )
 	{
 		trap_SendServerCommand(ent-g_entities, va("print \"^1You are not allowed to use this command.\n\""));
 		return;
 	}
+	if ( trap_Argc() < 2 )
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amToBlack <fade/nofade> Fading takes 10 seconds.\n\"" );
+		return;
+	}
 
-	if ( !ent->client->sess.fadeToBlack )
-		fadeToBlack = qtrue;
+	trap_Argv( 1, parameter, sizeof( parameter ) );
+
+	if( !Q_stricmpn( parameter, "fade", 4 ) )
+	{
+
+		if ( !ent->client->sess.fadeToBlack )
+			fadeToBlack = qtrue;
+		else
+			fadeToBlack = qfalse;
+
+		if ( fadeToBlack )
+			trap_SendServerCommand( ent-g_entities, "print \"^2All players' screens now fade to black...\n\"" );
+		else
+			trap_SendServerCommand( ent-g_entities, "print \"^2All players' screens now come back to normal.\n\"" );
+
+		ent->client->sess.fadeToBlack = fadeToBlack;
+
+		trap_SendServerCommand( -1, "fadeToBlack" );
+	}
+	else if( !Q_stricmpn( parameter, "nofade", 6 ) )
+	{
+		if ( !ent->client->sess.toBlackImmediately )
+			toBlackImmediately = qtrue;
+		else
+			toBlackImmediately = qfalse;
+
+		if ( toBlackImmediately )
+			trap_SendServerCommand( ent-g_entities, "print \"^2All players' screens now immediately turn black...\n\"" );
+		else
+			trap_SendServerCommand( ent-g_entities, "print \"^2All players screens now come back to normal.\n\"" );
+
+		ent->client->sess.toBlackImmediately = toBlackImmediately;
+
+		trap_SendServerCommand( -1, "toBlackImmediately" );
+	}
 	else
-		fadeToBlack = qfalse;
-
-	if ( fadeToBlack )
-		trap_SendServerCommand( ent-g_entities, "print \"^2All players screens now fade to black...\n\"" );
-	else
-		trap_SendServerCommand( ent-g_entities, "print \"^2All players screens now come back to normal.\n\"" );
-
-	ent->client->sess.fadeToBlack = fadeToBlack;
-
-	trap_SendServerCommand( -1, "fadeToBlack" );
+	{
+		trap_SendServerCommand( ent-g_entities, "print \"^2Command Usage: /amToBlack <fade/nofade> Fading takes 10 seconds.\n\"" );
+		return;
+	}
 
 	return;
 }

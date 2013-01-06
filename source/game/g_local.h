@@ -374,83 +374,6 @@ extern vmCvar_t		ojp_truebalance;//[TrueBalance]
 
 extern vmCvar_t ojp_modelscaleEnabled;//[Modelscale]
 
-//[OpenRP]
-extern vmCvar_t		openrp_maxWarnings; 
-
-//OpenRP website
-extern vmCvar_t		openrp_website;
-
-//Shop stuff
-extern vmCvar_t		openrp_e11BuyCost;
-extern vmCvar_t		openrp_e11SellCost;
-extern vmCvar_t		openrp_e11Level;
-extern vmCvar_t		openrp_e11Description;
-
-extern vmCvar_t		openrp_pistolBuyCost;
-extern vmCvar_t		openrp_pistolSellCost;
-extern vmCvar_t		openrp_pistolLevel;
-extern vmCvar_t		openrp_pistolDescription;
-
-extern vmCvar_t		openrp_disruptorBuyCost;
-extern vmCvar_t		openrp_disruptorSellCost;
-extern vmCvar_t		openrp_disruptorLevel;
-extern vmCvar_t		openrp_disruptorDescription;
-
-extern vmCvar_t		openrp_bowcasterBuyCost;
-extern vmCvar_t		openrp_bowcasterSellCost;
-extern vmCvar_t		openrp_bowcasterLevel;
-extern vmCvar_t		openrp_bowcasterDescription;
-
-extern vmCvar_t		openrp_repeaterBuyCost;
-extern vmCvar_t		openrp_repeaterSellCost;
-extern vmCvar_t		openrp_repeaterLevel;
-extern vmCvar_t		openrp_repeaterDescription;
-
-extern vmCvar_t		openrp_demp2BuyCost;
-extern vmCvar_t		openrp_demp2SellCost;
-extern vmCvar_t		openrp_demp2Level;
-extern vmCvar_t		openrp_demp2Description;
-
-extern vmCvar_t		openrp_flechetteBuyCost;
-extern vmCvar_t		openrp_flechetteSellCost;
-extern vmCvar_t		openrp_flechetteLevel;
-extern vmCvar_t		openrp_flechetteDescription;
-
-extern vmCvar_t		openrp_rocketBuyCost;
-extern vmCvar_t		openrp_rocketSellCost;
-extern vmCvar_t		openrp_rocketLevel;
-extern vmCvar_t		openrp_rocketDescription;
-
-extern vmCvar_t		openrp_concussionBuyCost;
-extern vmCvar_t		openrp_concussionSellCost;
-extern vmCvar_t		openrp_concussionLevel;
-extern vmCvar_t		openrp_concussionDescription;
-
-//Bitvalues for Admins
-extern vmCvar_t		openrp_admin1Bitvalues;
-extern vmCvar_t		openrp_admin2Bitvalues; 
-extern vmCvar_t		openrp_admin3Bitvalues;
-extern vmCvar_t		openrp_admin4Bitvalues;
-extern vmCvar_t		openrp_admin5Bitvalues;
-extern vmCvar_t		openrp_admin6Bitvalues;
-extern vmCvar_t		openrp_admin7Bitvalues;
-extern vmCvar_t		openrp_admin8Bitvalues;
-extern vmCvar_t		openrp_admin9Bitvalues;
-extern vmCvar_t		openrp_admin10Bitvalues;
-
-
-//Determines whether admins can perform admin commands on higher admin levels.
-//If it's on (set to 1), then lower level admins can't use cmds like sleep on higher level admins.
-extern vmCvar_t		openrp_adminControl;
-
-//extern vmCvar_t		openrp_jetpackFuel;
-//extern vmCvar_t		openrp_cloakFuel;
-
-extern vmCvar_t		openrp_showRenames;
-
-extern vmCvar_t		openrp_databasePath;
-//[/OpenRP]
-
 #define XCVAR_PROTO	
 	#include "g_xcvar.h"
 #undef XCVAR_PROTO
@@ -962,8 +885,11 @@ typedef struct {
 	qboolean trainingSaber;
 
 	qboolean fadeToBlack;
+	qboolean toBlackImmediately;
 
 	qboolean isHologram;
+
+	qboolean isEmote;
 
 } clientSession_t;
 

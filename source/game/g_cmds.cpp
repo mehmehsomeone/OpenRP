@@ -4777,9 +4777,9 @@ void ClientCommand( int clientNum ) {
 		Cmd_FactionGenerateCredits_F( ent );
 		return;
 	}
-	if ( !Q_stricmp( cmd, "amfadetoblack" ) )
+	if ( !Q_stricmp( cmd, "amtoblack" ) )
 	{
-		Cmd_FadeToBlack_F( ent );
+		Cmd_ToBlack_F( ent );
 		return;
 	}
 	if ( !Q_stricmp( cmd, "amforceteam" ) )

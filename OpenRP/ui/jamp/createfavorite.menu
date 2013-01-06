@@ -159,13 +159,13 @@
 		{
 			name				addressEntry
 			style				1
-			maxPaintChars			21
+			maxPaintChars		30
 			text				" "
 			descText			@MENUS_INPUT_IP_ADDRESS_OF_SERVER
 			font				2
 			textscale			.8
 			TYPE				4
-			maxchars			21
+			maxchars			50
 			cvar				"ui_favoriteAddress"
 			rect				10 59 220 20
 			textalign			ITEM_ALIGN_LEFT

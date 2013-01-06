@@ -10,12 +10,18 @@
 // needs to be larger than PACKET_BACKUP
 
 typedef struct {
-	qboolean fadingToBlack;
-	qboolean fadedToBlack;
+	qboolean fadingInToBlack; //Fade in to black
+	qboolean fadingOutOfBlack; //Fade out of black
+	qboolean fadedToBlack; //Successfully faded to black
+	int fadeToBlackTime;
+	int fadeToBlackMSecondsPassed;
+	int fadeToBlackMSecondsPassedMin;
+	int fadeToBlackMSecondsPassedMax;
 	qboolean timer;
-	int timerSeconds;
-	qboolean timerIsMyTeam;
+	int timerSeconds; //Time for /amTimer
+	qboolean timerIsMyTeam; //Used for timer's text color
 	qboolean isHologram;
+	vec4_t fadeColor;
 } OpenRP_t;
 
 
