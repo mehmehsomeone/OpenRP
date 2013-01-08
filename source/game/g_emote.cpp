@@ -23,8 +23,8 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 	extern void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText );
 	char *msg = ConcatArgs(1);
 
+	
 	int i = 0;
-
 	if ( ent->client->sess.spectatorState == SPECTATOR_FOLLOW || ent->client->sess.spectatorState == SPECTATOR_FREE )
 		return;
 	if (ent->client->ps.groundEntityNum == ENTITYNUM_NONE)
@@ -33,6 +33,7 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 		ent->client->ps.saberHolstered = 2;
 	if ( BG_SaberInAttack(ent->client->ps.saberMove) || BG_SaberInSpecialAttack(ent->client->ps.saberMove) || ent->client->ps.saberLockTime )
 		return;
+	/*
 	//[OpenRP - Endlessly floating up bug]
 	if(ent && ent->client && ent->client->forceLifting != -1)
 	{
@@ -87,39 +88,35 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 	{
 		StandardSetBodyAnim(ent, anim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
 	}
+	*/
+	ent->client->ps.forceHandExtend = HANDEXTEND_TAUNT;
+	ent->client->ps.forceDodgeAnim = anim;
+	// MJN - Entry for emotes
+	if (InSpecialEmote( anim ) )
+	{
+		// MJN - Stop running Forcepowers
+		while (i < NUM_FORCE_POWERS)
+		{
+			if ((ent->client->ps.fd.forcePowersActive & (1 << i)) && i != FP_LEVITATION)		
+			{
+				WP_ForcePowerStop(ent, i);
+			}
+				i++;
+		}
+		ent->client->ps.forceHandExtendTime = level.time + 9999999;
+		ent->client->saberKnockedTime = level.time + 9999999;
+		ent->client->ps.weaponTime = 99999999;
+	}
+	else
+	{// basejk
+		ent->client->ps.forceHandExtendTime = level.time + BG_AnimLength(ent->localAnimIndex, (animNumber_t)anim);
+	}
 
 	if ( trap_Argc() >= 2 )
 		G_Say( ent, NULL, SAY_ME, msg );
 
 	return;
 }
-
-/*
-if ( ent->client->ps.groundEntityNum != ENTITYNUM_NONE ) 
-			{
-				ent->client->ps.forceHandExtend = HANDEXTEND_TAUNT;
-				ent->client->ps.forceDodgeAnim = anim;
-				// MJN - Entry for emotes
-				if (InSpecialEmote( anim ) )
-				{
-					// MJN - Stop running Forcepowers
-					while (i < NUM_FORCE_POWERS)
-					{
-						if ((ent->client->ps.fd.forcePowersActive & (1 << i)) && i != FP_LEVITATION)
-						{
-							WP_ForcePowerStop(ent, i);
-						}
-						i++;
-					}
-					ent->client->ps.forceHandExtendTime = level.time + 9999999;
-					ent->client->saberKnockedTime = level.time + 9999999;
-					ent->client->ps.weaponTime = 99999999;
-				}
-				else{// basejk
-					ent->client->ps.forceHandExtendTime = level.time + BG_AnimLength(ent->localAnimIndex, (animNumber_t)anim);
-				}
-			}
-			*/
 
 /*
 ==================
