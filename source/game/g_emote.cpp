@@ -22,9 +22,8 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 {
 	extern void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText );
 	char *msg = ConcatArgs(1);
-
-	
 	int i = 0;
+
 	if ( ent->client->sess.spectatorState == SPECTATOR_FOLLOW || ent->client->sess.spectatorState == SPECTATOR_FREE )
 		return;
 	if (ent->client->ps.groundEntityNum == ENTITYNUM_NONE)
@@ -33,7 +32,7 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 		ent->client->ps.saberHolstered = 2;
 	if ( BG_SaberInAttack(ent->client->ps.saberMove) || BG_SaberInSpecialAttack(ent->client->ps.saberMove) || ent->client->ps.saberLockTime )
 		return;
-	/*
+
 	//[OpenRP - Endlessly floating up bug]
 	if(ent && ent->client && ent->client->forceLifting != -1)
 	{
@@ -45,16 +44,34 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 	}
 	//[/OpenRP - Endlessly floating up bug]
 
-	// MJN - Stop any running forcepowers.
-	while (i < NUM_FORCE_POWERS)
+	ent->client->ps.forceHandExtend = HANDEXTEND_TAUNT;
+	ent->client->ps.forceDodgeAnim = anim;
+	// MJN - Entry for emotes
+	//if (InSpecialEmote( anim ) )
+	if ( freeze )
 	{
-		if ((ent->client->ps.fd.forcePowersActive & (1 << i)) && i != FP_LEVITATION)
+		// MJN - Stop running Forcepowers
+		while ( i < NUM_FORCE_POWERS )
 		{
+			if ( ( ent->client->ps.fd.forcePowersActive & (1 << i) ) && i != FP_LEVITATION )
 				WP_ForcePowerStop(ent, i);
+            i++;
 		}
-		i++;
+		ent->client->ps.forceHandExtendTime = level.time + 9999999;
+		ent->client->saberKnockedTime = level.time + 9999999;
+		ent->client->ps.weaponTime = 99999999;
+	}
+	else
+	{// basejk
+		ent->client->ps.forceHandExtendTime = level.time + BG_AnimLength(ent->localAnimIndex, (animNumber_t)anim);
 	}
 
+	if ( trap_Argc() >= 2 )
+		G_Say( ent, NULL, SAY_ME, msg );
+
+	return;
+
+	/*
 	if (freeze == qtrue)
 	{
 		if (ent->client->ps.forceDodgeAnim == anim)
@@ -75,7 +92,7 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 			ent->client->ps.saberMove = LS_NONE;
 			ent->client->ps.saberBlocked = 0;
 			ent->client->ps.saberBlocking = 0;
-			ent->client->saberKnockedTime = level.time + 9999999; // Disable Saber 
+			ent->client->saberKnockedTime = level.time + 9999999; // Disable Saber
 			ent->client->ps.weaponTime = 99999999; // Disable Weapons
 			ent->client->ps.saberCanThrow = qfalse;
 			ent->client->ps.forceHandExtend = HANDEXTEND_TAUNT;
@@ -83,39 +100,12 @@ void TheEmote(int anim, gentity_t *ent, qboolean freeze )
 			ent->client->ps.forceHandExtendTime = level.time + Q3_INFINITE;
 			StandardSetBodyAnim(ent, anim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
 		}
-	} 
+	}
 	else
 	{
 		StandardSetBodyAnim(ent, anim, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_HOLDLESS);
 	}
 	*/
-	ent->client->ps.forceHandExtend = HANDEXTEND_TAUNT;
-	ent->client->ps.forceDodgeAnim = anim;
-	// MJN - Entry for emotes
-	if (InSpecialEmote( anim ) )
-	{
-		// MJN - Stop running Forcepowers
-		while (i < NUM_FORCE_POWERS)
-		{
-			if ((ent->client->ps.fd.forcePowersActive & (1 << i)) && i != FP_LEVITATION)		
-			{
-				WP_ForcePowerStop(ent, i);
-			}
-				i++;
-		}
-		ent->client->ps.forceHandExtendTime = level.time + 9999999;
-		ent->client->saberKnockedTime = level.time + 9999999;
-		ent->client->ps.weaponTime = 99999999;
-	}
-	else
-	{// basejk
-		ent->client->ps.forceHandExtendTime = level.time + BG_AnimLength(ent->localAnimIndex, (animNumber_t)anim);
-	}
-
-	if ( trap_Argc() >= 2 )
-		G_Say( ent, NULL, SAY_ME, msg );
-
-	return;
 }
 
 /*
@@ -129,7 +119,7 @@ int InEmote( int anim )
 {
 	switch ( anim )
 	{
-		// MJN - add new freeze emotes here. 
+		// MJN - add new freeze emotes here.
 		case BOTH_SIT2:
 		case BOTH_SIT6:
 		case BOTH_SIT7:
@@ -166,13 +156,25 @@ int InSpecialEmote( int anim )
 {
 	switch ( anim )
 	{
-		// MJN - add new freeze emotes here. 
+		// MJN - add new freeze emotes here.
 		case BOTH_STAND4:
 		case TORSO_SURRENDER_START:
 		case BOTH_STAND8:
 		case BOTH_GUARD_IDLE1:
 		//New emotes
 		case TORSO_WEAPONIDLE4:
+        case BOTH_DEATH1:
+        case BOTH_DEATH14:
+        case BOTH_DEATH17:
+        case BOTH_DEATH4:
+        case BOTH_SIT1:
+        case BOTH_SIT2:
+        case BOTH_SIT3:
+        case BOTH_SIT4:
+        case BOTH_SIT5:
+        case BOTH_SIT6:
+        case BOTH_SIT7:
+        case BOTH_CONSOLE1:
 		return anim;
 		break;
 	}
