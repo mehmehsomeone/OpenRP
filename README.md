@@ -1,3 +1,5 @@
+This is a fork of the amazing work by mehmehsomeone [here](https://github.com/mehmehsomeone/OpenRP). This is just a couple buddies messing around and seeing if we can get something to work, please don't think anything you see here is stable or even functional at any point.
+
 OpenRP
 ======
 
