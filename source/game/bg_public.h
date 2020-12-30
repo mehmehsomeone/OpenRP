@@ -21,7 +21,7 @@
 
 //[ClientPlugInDetect]
 #define OPENRP_CLIENTVERSION		"Pre-alpha 8"
-#define OPENRP_SERVERVERSION		"Pre-alpha Built: " __DATE__" "__TIME__
+#define OPENRP_SERVERVERSION		"Pre-alpha Built: " __DATE__" " __TIME__
 //[/ClientPlugInDetect]
 
 #define	STEPSIZE		18

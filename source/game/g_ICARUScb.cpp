@@ -8025,7 +8025,7 @@ qboolean Q3_Set( int taskID, int entID, const char *type_name, const char *data 
 	case SET_OBJECTIVE_SHOW:
 		//[CoOp]
 		trap_SP_GetStringTextString( va("OBJECTIVES_%s", data), char_data, sizeof(char_data));
-		trap_SendServerCommand(-1, va("cp \""S_COLOR_BLUE"New Mission Objective:\n%s\"", char_data));
+		trap_SendServerCommand(-1, va("cp \"", S_COLOR_BLUE"New Mission Objective:\n%s\"", char_data));
 		//G_DebugPrint( WL_WARNING, "SET_OBJECTIVE_SHOW: NOT SUPPORTED IN MP\n");
 		//[/CoOp]
 		break;
@@ -8035,14 +8035,14 @@ qboolean Q3_Set( int taskID, int entID, const char *type_name, const char *data 
 	case SET_OBJECTIVE_SUCCEEDED:
 		//[CoOp]
 		trap_SP_GetStringTextString( va("OBJECTIVES_%s", data), char_data, sizeof(char_data));
-		trap_SendServerCommand(-1, va("cp \""S_COLOR_BLUE"Mission Objective Complete:\n%s\"", char_data));
+		trap_SendServerCommand(-1, va("cp \"", S_COLOR_BLUE"Mission Objective Complete:\n%s\"", char_data));
 		//G_DebugPrint( WL_WARNING, "SET_OBJECTIVE_SUCCEEDED: NOT SUPPORTED IN MP\n");
 		//[/CoOp]
 		break;
 	case SET_OBJECTIVE_FAILED:
 		//[CoOp]
 		trap_SP_GetStringTextString( va("OBJECTIVES_%s", data), char_data, sizeof(char_data));
-		trap_SendServerCommand(-1, va("cp \""S_COLOR_RED"Mission Objective Failed:\n%s\"", char_data));
+		trap_SendServerCommand(-1, va("cp \"", S_COLOR_RED"Mission Objective Failed:\n%s\"", char_data));
 		//G_DebugPrint( WL_WARNING, "SET_OBJECTIVE_FAILED: NOT SUPPORTED IN MP\n");
 		//[/CoOp]
 		break;
@@ -8054,7 +8054,7 @@ qboolean Q3_Set( int taskID, int entID, const char *type_name, const char *data 
 	case SET_MISSIONFAILED:
 		//[CoOp]
 		trap_SP_GetStringTextString( va("SP_INGAME_%s", data), char_data, sizeof(char_data));
-		trap_SendServerCommand(-1, va("cp \""S_COLOR_RED"Mission Failed\n%s\"", char_data));
+		trap_SendServerCommand(-1, va("cp \"", S_COLOR_RED"Mission Failed\n%s\"", char_data));
 		LogExit("Co-Op Mission Failed.");
 		//we want the intermission to activate a little slower than normal.
 		level.intermissionQueued = level.time + 5000;

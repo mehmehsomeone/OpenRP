@@ -230,7 +230,7 @@
 
 	static void USED SvSay_Handler( char *msg )
 	{
-		trap_SendServerCommand( -1, va( "chat \"Server^7"EC": ^7%s\"", msg+8 ) );
+		trap_SendServerCommand( -1, va( "chat \"Server^7", EC": ^7%s\"", msg+8 ) );
 	}
 
 	HOOK( SvSay )

@@ -29,7 +29,7 @@ void CancelReload(gentity_t *ent);
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
-#define	GAMEVERSION	"OpenRP " OPENRP_SERVERVERSION
+#define	GAMEVERSION	"OpenRP " OPENRP_SERVERVERSION " "
 
 //JAC
 #define SECURITY_LOG "security.log"

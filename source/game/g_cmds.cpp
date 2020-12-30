@@ -1996,7 +1996,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	default:
 	case SAY_ALL:
 		G_LogPrintf( "say: %s: %s\n", ent->client->pers.netname, chatText );
-		Com_sprintf (name, sizeof(name), "%s%c%c"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+		Com_sprintf (name, sizeof(name), "%s%c%c", EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		color = COLOR_GREEN;
 		distance = 600;
 		break;
@@ -2035,60 +2035,60 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 			target->client->sess.sessionTeam == ent->client->sess.sessionTeam &&
 			Team_GetLocationMsg(ent, location, sizeof(location)))
 		{
-			Com_sprintf (name, sizeof(name), EC"[%s%c%c"EC"]"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+			Com_sprintf (name, sizeof(name), EC"[%s%c%c", EC"]", EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 			locMsg = location;
 		}
 		else
 		{
-			Com_sprintf (name, sizeof(name), EC"[%s%c%c"EC"]"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+			Com_sprintf (name, sizeof(name), EC"[%s%c%c", EC"]", EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		}
 		color = COLOR_MAGENTA;
 		break;
 	case SAY_YELL:
-		Com_sprintf (name, sizeof(name), EC"^7<YELL> %s%c%c"EC": ", 
+		Com_sprintf (name, sizeof(name), EC"^7<YELL> %s%c%c", EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		color = COLOR_GREEN;
 		distance = 1200;
 		break;
 	case SAY_WHISPER:
-		Com_sprintf (name, sizeof(name), EC"^7<Whisper> %s%c%c"EC": ", 
+		Com_sprintf (name, sizeof(name), EC"^7<Whisper> %s%c%c", EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		color = COLOR_GREEN;
 		distance = 150;
 		break;
 	case SAY_ME:
-		Com_sprintf (name, sizeof(name), EC"^3%s%c%c"EC" ", 
+		Com_sprintf (name, sizeof(name), EC"^3%s%c%c", EC" ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
 		color = COLOR_YELLOW;
 		distance = 1200;
 		break;
 	case SAY_IT:
-		Com_sprintf (name, sizeof(name), EC""EC"" 
+		Com_sprintf (name, sizeof(name), EC"", EC"" 
 		);
 		color = COLOR_YELLOW;
 		distance = 1200;
 		break;
 	case SAY_ADMIN:
-		Com_sprintf (name, sizeof(name), EC"^6<Admin Chat> ^7%s%c%c"EC": ", 
+		Com_sprintf (name, sizeof(name), EC"^6<Admin Chat> ^7%s%c%c", EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
 		color = COLOR_MAGENTA;
 		break;
 	case SAY_OOC:
 		if (Team_GetLocationMsg(ent, location, sizeof(location)))
 		{
-			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c"EC": ", 
+			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c", EC": ", 
 				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_RED );
 			locMsg = location;
 		}
 		else
 		{
-			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c"EC": ", 
+			Com_sprintf (name, sizeof(name), EC"^1<OOC> %s%c%c", EC": ", 
 				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_RED );
 		}
 		color = COLOR_RED;
 		break;
 	case SAY_LOOC:
-		Com_sprintf (name, sizeof(name), EC"^6<LOOC> ^7%s%c%c"EC": ", 
+		Com_sprintf (name, sizeof(name), EC"^6<LOOC> ^7%s%c%c", EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
 		color = COLOR_MAGENTA;
 		distance = 1200;
@@ -2100,7 +2100,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 			return;
 		}
 		trap_SendServerCommand( ent-g_entities, va( "chat \"^6<REPORT!> ^7%s^6: %s\"", ent->client->pers.netname, chatText ) );
-		Com_sprintf (name, sizeof(name), EC"^6<REPORT!> ^7%s%c%c"EC": ", 
+		Com_sprintf (name, sizeof(name), EC"^6<REPORT!> ^7%s%c%c", EC": ", 
 		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_MAGENTA);
 		color = COLOR_MAGENTA;
 		break;
