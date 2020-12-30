@@ -1525,7 +1525,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	}
 	//[/OLDGAMETYPES]
 
-	 PatchEngine();
+	 //PatchEngine();
 }
 
 
@@ -1550,7 +1550,7 @@ void G_ShutdownGame( int restart ) {
 //	G_Printf ("==== ShutdownGame ====\n");
 
 	//JAC: Added
-	UnpatchEngine();
+	//UnpatchEngine();
 
 	//[AdminCommands]
 	G_SaveBanIP();
