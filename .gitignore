@@ -40,7 +40,9 @@ local.properties
 *.suo
 *.user
 *.sln.docstates
-*.VC.db
+Browse.VC.d*
+Browse.VC.opendb
+Solution.VC.db*
 
 # Build results
 [Dd]ebug/
